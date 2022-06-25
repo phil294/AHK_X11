@@ -1,0 +1,8 @@
+/docs/
+/lib/
+/bin/
+/.shards/
+*.dwarf
+todo*
+AutoHotkey*.chm
+.vscode/.history

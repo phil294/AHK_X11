@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug AHKX11",
+      "type": "gdb",
+      "request": "launch",
+      "target": "./bin/${workspaceFolderBasename}",
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": "Compile"
+    }
+  ]
+}
