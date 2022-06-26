@@ -52,42 +52,50 @@ class Parser
 		"echo" => EchoCmd,
 	} of String => Cmd.class
 
-	def build_instructions(lines : Array(String))
+	def parse_into_cmds(lines : Array(String))
 		cmds = [] of Cmd
 		lines.each_with_index do |line, line_no|
-			cmd_name = "" # todo should be nil instead pbly
-			arg_start = 0
+			cmd_name = nil
+			arg_start = nil
 			arg_end = 0
 			csv_args = [] of String
 			line.each_char_with_index do |char, i|
-				if cmd_name.empty?
-					if ! char.ascii_letter?
+				if cmd_name.nil?
+					if char.ascii_letter?
+						if arg_start.nil?
+							arg_start = i
+						end
+					else
 						if (char.whitespace? || char == ',')
-							if i > 0 # todo same as next line
-								cmd_name = line[0..i-1].downcase.strip # todo this strip stuff makes cmd_name stay emtpy if only indention so far. this was just a quick hack and needs a rewrite
+							if ! arg_start.nil?
+								cmd_name = line[arg_start..i-1].downcase
+								arg_start = nil
 							end
 						else
 							raise ParsingException.new "Parsing Error in line #{line_no}"
 						end
 					end
 				elsif char == ','
-					csv_args << line[arg_start..arg_end]
-					arg_start = 0
-					arg_end = 0
+					if arg_start.nil?
+						csv_args << ""
+					else
+						csv_args << line[arg_start..arg_end]
+						arg_start = nil
+					end
 				elsif ! char.whitespace? # trim leading and trailing spaces of all args
-					arg_start = i if arg_start == 0
+					arg_start = i if arg_start.nil?
 					arg_end = i
 				end
 			end
-			if cmd_name.empty?
+			if cmd_name.nil?
 				cmd_name = line.strip.downcase
-			elsif arg_start > 0
+			elsif ! arg_start.nil?
 				csv_args << line[arg_start..arg_end]
 			end
 			
 			cmd_class = @cmd_class_by_name[cmd_name]?
 			if cmd_class.nil?
-				raise ParsingException.new "Parsing Error in line #{line_no}"
+				raise ParsingException.new "Parsing Error in line #{line_no}: Command '#{cmd_name}' not found"
 			end
 			begin
 				cmd = cmd_class.new csv_args
@@ -106,7 +114,7 @@ ahk_script = [
 	"Echo some te,,,xt",
 ]
 
-cmds = Parser.new.build_instructions ahk_script
+cmds = Parser.new.parse_into_cmds ahk_script
 
 class Instruction
 	property je : Instruction? # not yet in use
