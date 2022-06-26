@@ -1,12 +1,12 @@
-name: autohotkey_linux
+name: ahkx11
 version: 0.1.0
 
 authors:
-  - Philip Waritschlager <philip@waritschlager.de>
+	- Philip Waritschlager <philip@waritschlager.de>
 
 targets:
-  autohotkey_linux:
-    main: src/autohotkey_linux.cr
+	ahkx11:
+		main: src/ahkx11.cr
 
 crystal: 1.4.1
 
