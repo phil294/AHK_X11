@@ -1,4 +1,5 @@
-require "./parser"
+require "./build"
+require "./run"
 
 # test code
 ahk_script = [
@@ -6,25 +7,15 @@ ahk_script = [
 	" 	 filecopy a*,  aout ,  ",
 ]
 
-parser = Parser.new
-
-cmds = parser.parse_into_cmds ahk_script
-
-class Instruction
-	property je : Instruction? # not yet in use
-	property jne : Instruction? # not yet in use
-	getter cmd
-	def initialize(@cmd : Cmd)
-	end
+begin
+	start = Builder.new.build ahk_script
+rescue e : SyntaxException | ParsingException
+	# TODO msgbox
+	abort e.message
+end
+if ! start
+	# TODO msgbox
+	abort "No executable lines found"
 end
 
-start_instruction = nil
-cmds.each do |cmd|
-	instruction = Instruction.new cmd
-	start_instruction ||= instruction
-end
-
-raise "????" if start_instruction.nil?
-
-# so far only the first line executes
-start_instruction.cmd.run
+Runner.new.run start
