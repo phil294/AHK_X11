@@ -24,6 +24,10 @@ abstract class Cmd
 	# 	[ EchoCmd ]
 	# end
 
+	def inspect
+		"#{self.class.name}\n    @#{pointerof(@line_no)} line_no #{@line_no}\n    next: #{@next.class.name}\n    je: #{je.class.name}\n    jne: #{jne.class.name}"
+	end
+
 end
 
 class SyntaxException < Exception end

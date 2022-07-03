@@ -105,9 +105,18 @@ class LoopControlFlow < ControlFlow
 		@section
 	end
 
+	@breaks = [] of BreakCmd
+	@continues = [] of ContinueCmd
+	def cmd(cmd : Cmd)
+		super(cmd)
+		@breaks << cmd if cmd.is_a?(BreakCmd)
+		@continues << cmd if cmd.is_a?(ContinueCmd)
+	end
 	private def link_all(next_cmd : Cmd? = nil) : Cmd?
 		@section.cmd.je = @section.first_child || next_cmd
 		@section.last_child.try &.next = @section.cmd
+		@breaks.each &.next = next_cmd
+		@continues.each &.next = @section.cmd
 		@section.cmd.jne = next_cmd
 		@section.cmd
 	end
@@ -126,10 +135,11 @@ class Builder
 
 	def to_cmd_chain(cmds)
 		start = nil
-		last = nil
+		last_normal = nil
 		flows = [] of ControlFlow
 		is_else = false
 		cmds.each do |cmd|
+			is_normal = false
 			begin
 				if cmd.is_a?(ElseCmd)
 					raise "" if is_else
@@ -152,9 +162,6 @@ class Builder
 					raise "" if ! flows.last? || is_else
 					flows.last.block_end
 				else # any command, including if or loop
-					last.next = cmd if last
-					last = cmd
-					start ||= cmd
 					if is_else
 						if cmd.class.control_flow
 							flows.last.unsafe_as(IfControlFlow).else_if cmd
@@ -163,6 +170,8 @@ class Builder
 							flows.last.cmd cmd
 						end
 					else
+						is_normal = true
+						last_normal.next = cmd if last_normal # only link two normal cmds to each other
 						while flows.last? && flows.last.resolvable?
 							flows.last.resolve cmd
 							flows.pop
@@ -180,6 +189,13 @@ class Builder
 					end
 				end
 
+				if is_normal
+					start ||= cmd
+					last_normal = cmd
+				else
+					last_normal = nil
+				end
+
 				is_else = false
 			rescue e
 				raise SyntaxException.new "Unexpected '#{cmd.class.name}' in line #{cmd.line_no+1}. #{e.message}"
@@ -194,6 +210,8 @@ class Builder
 			end
 			flows.pop
 		end
+
+		# pp! cmds
 
 		start
 	end
