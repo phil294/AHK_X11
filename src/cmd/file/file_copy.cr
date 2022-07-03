@@ -2,12 +2,13 @@ require "../cmd"
 
 # INCOMPAT: file mod date is not preserved (seems better this way tho), glob is case sensitive
 class FileCopyCmd < Cmd
+	def self.name; "filecopy"; end
 	def self.min_args; 2 end
 	def self.max_args; 3 end
 	@srcs : String
 	@dst : String
 	@flag : UInt8
-	def initialize(args)
+	def initialize(@line_no, args)
 		@srcs = args[0]
 		@dst = args[1]
 		@flag = (args[2]?.try &.to_u8) || 0_u8

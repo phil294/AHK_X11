@@ -9,7 +9,7 @@ class Runner
 	def run(ins : Instruction)
 		while ins
 			result = ins.cmd.run(self)
-			if ins.cmd.conditional
+			if ins.conditional
 				if result
 					ins = ins.je
 				else
