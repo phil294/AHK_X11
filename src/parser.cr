@@ -21,15 +21,18 @@ class Parser
 
 	@cmds = [] of Cmd
 
+	@block_comment = false
+
 	def parse_into_cmds(lines : Array(String))
 		@cmds = [] of Cmd
 		lines.each_with_index do |line, line_no|
 			begin
 				add_line line, line_no
-			rescue e : SyntaxException
+			rescue e
 				raise SyntaxException.new "Syntax Error in line #{line_no}: '#{e.message}'. Line content was: '#{line}'."
 			end
 		end
+		raise SyntaxException.new "Missing */" if @block_comment
 		@cmds
 	end
 
@@ -45,7 +48,14 @@ class Parser
 		# Almost everything starts with a regular command, but there are
 		# a few exceptions: if, assignments.
 		cmd_class = @cmd_class_by_name[first_word]?
-		if cmd_class
+		if first_word == "/*"
+			@block_comment = true
+		elsif first_word == "*/"
+			raise "Unexpected */" if ! @block_comment
+			@block_comment = false
+		elsif @block_comment
+			#
+		elsif cmd_class
 			csv_args = args.split(',', cmd_class.max_args + 1, remove_empty: true).map &.strip
 			if csv_args.size > cmd_class.max_args
 				if cmd_class.multi_command
@@ -60,7 +70,7 @@ class Parser
 					@cmds << cmd_class.new line_no, csv_args
 				end
 			elsif csv_args.size < cmd_class.min_args
-				raise SyntaxException.new "Line #{line_no}: Minimum arguments required is '#{cmd_class.min_args}', got '#{csv_args.size}'"
+				raise "Minimum arguments required for '#{cmd_class.name}' is '#{cmd_class.min_args}', got '#{csv_args.size}'"
 			else
 				@cmds << cmd_class.new line_no, csv_args
 			end
@@ -70,7 +80,7 @@ class Parser
 			when "="
 				cmd_class = IfEqualCmd
 			else
-				raise ParsingException.new "Line #{line_no}: If condition '#{split[1]?}' is unknown"
+				raise "If condition '#{split[1]?}' is unknown"
 			end
 			csv_args = [split[0], split[2]? || ""]
 			@cmds << cmd_class.new line_no, csv_args
@@ -80,7 +90,7 @@ class Parser
 				cmd_class = SetEnvCmd
 				csv_args = [first_word, split[1]? || ""]
 			else
-				raise ParsingException.new "Line #{line_no}: Command '#{first_word}' not found"
+				raise "Command '#{first_word}' not found"
 			end
 			@cmds << cmd_class.new line_no, csv_args
 		end
