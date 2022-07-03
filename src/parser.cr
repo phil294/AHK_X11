@@ -62,7 +62,11 @@ class Parser
 		elsif @block_comment
 			#
 		elsif cmd_class
-			csv_args = args.split(',', cmd_class.max_args + 1, remove_empty: true).map &.strip
+			if args.empty?
+				csv_args = [] of String
+			else
+				csv_args = args.split(',', cmd_class.max_args + 1).map &.strip
+			end
 			if csv_args.size > cmd_class.max_args
 				if cmd_class.multi_command
 					# examples: if, ifequals, else, }, ifequals, ... can all have residue content.
