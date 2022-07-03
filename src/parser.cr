@@ -34,21 +34,10 @@ class Parser
 	end
 
 	def add_line(line, line_no)
-		from = 0
-		while line[from]?.try &.whitespace?
-			from += 1
-		end
-		to = from
-		while line[to+1]? && ! line[to+1].whitespace? && line[to+1] != ','
-			to += 1
-		end
-		first_word = line[from..to].downcase
-		while line[to+1]?.try &.whitespace?
-			to += 1
-		end
-		to += 1 if line[to+1]? == ','
-
-		args = line[to+1..]? || ""
+		match = line
+			.match(/^\s*([^\s,]*)\s*,?(.*)$/).not_nil!
+		first_word = match[1].downcase
+		args = match[2]
 		csv_args = [] of String
 
 		return if first_word.empty?
