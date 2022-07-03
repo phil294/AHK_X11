@@ -7,7 +7,7 @@ class AhkString
 		var_start = nil
 		String.build do |build|
 			str.each_char_with_index do |char, i|
-				if char == escape_char
+				if ! escape && char == escape_char
 					escape = true
 				else
 					if escape
