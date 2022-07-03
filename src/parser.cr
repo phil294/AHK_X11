@@ -51,6 +51,7 @@ class Parser
 		args = line[to+1..]? || ""
 		csv_args = [] of String
 
+		return if first_word.empty?
 		# Almost everything starts with a regular command, but there are
 		# a few exceptions: if, assignments.
 		cmd_class = @cmd_class_by_name[first_word]?
