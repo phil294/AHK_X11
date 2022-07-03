@@ -17,6 +17,7 @@ class Parser
 		"loop" => LoopCmd,
 		"break" => BreakCmd,
 		"continue" => ContinueCmd,
+		"sleep" => SleepCmd,
 	} of String => Cmd.class
 	# @cmd_class_by_name : Array(Cmd.class)
 	# def initialize() TODO
