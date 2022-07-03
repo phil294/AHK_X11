@@ -14,11 +14,16 @@ abstract class Cmd
 	abstract def initialize(@line_no, args)
 	abstract def run(runner)
 
+	property next : Cmd?
+	property je : Cmd?
+	property jne : Cmd?
+	
 	# TODO
 	# def self.all_subclasses : Array(Cmd.class)
 	# 	# {{ @type.all_subclasses.map &.class }}
 	# 	[ EchoCmd ]
 	# end
+
 end
 
 class SyntaxException < Exception end

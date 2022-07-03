@@ -6,10 +6,10 @@ class Runner
 	property user_vars = {} of String => String
 	property escape_char = '`' # todo at build time?
 
-	def run(ins : Instruction)
+	def run(ins : Cmd)
 		while ins
-			result = ins.cmd.run(self)
-			if ins.control_flow
+			result = ins.run(self)
+			if ins.class.control_flow
 				if result
 					ins = ins.je
 				else
