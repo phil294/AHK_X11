@@ -19,6 +19,8 @@ class Parser
 	# 	@cmd_class_by_name = Cmd.all_subclasses
 	# end
 
+	@comment_flag = ";"
+
 	@cmds = [] of Cmd
 
 	@block_comment = false
@@ -38,7 +40,7 @@ class Parser
 
 	def add_line(line, line_no)
 		match = line
-			.sub(/(^| |\t);.*$/, "") # rm commments
+			.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm commments
 			.match(/^\s*([^\s,]*)\s*,?(.*)$/).not_nil!
 		first_word = match[1].downcase
 		args = match[2]
