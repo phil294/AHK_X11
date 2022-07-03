@@ -13,6 +13,7 @@ class Parser
 		"{" => BlockStartCmd,
 		"}" => BlockEndCmd,
 		"else" => ElseCmd,
+		"ahk11_print_vars" => AHKX11_print_vars_Cmd,
 	} of String => Cmd.class
 	# @cmd_class_by_name : Array(Cmd.class)
 	# def initialize() TODO
