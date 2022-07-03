@@ -32,7 +32,7 @@ class Parser
 			begin
 				add_line line, line_no
 			rescue e
-				raise SyntaxException.new "Syntax Error in line #{line_no}: '#{e.message}'. Line content was: '#{line}'."
+				raise SyntaxException.new "Syntax Error in line #{line_no+1}: '#{e.message}'. Line content was: '#{line}'."
 			end
 		end
 		raise SyntaxException.new "Missing */" if @block_comment
