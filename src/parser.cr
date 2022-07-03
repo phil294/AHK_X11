@@ -32,6 +32,9 @@ class Parser
 			begin
 				add_line line, line_no
 			rescue e
+				{% if ! flag?(:release) %}
+					puts "[debug]", e.inspect_with_backtrace
+				{% end %}
 				raise SyntaxException.new "Syntax Error in line #{line_no+1}: '#{e.message}'. Line content was: '#{line}'."
 			end
 		end
