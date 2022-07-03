@@ -21,6 +21,7 @@ class Parser
 	# end
 
 	@comment_flag = ";"
+	@escape_character = "`"
 
 	@cmds = [] of Cmd
 
@@ -65,7 +66,9 @@ class Parser
 			if args.empty?
 				csv_args = [] of String
 			else
-				csv_args = args.split(',', cmd_class.max_args + 1).map &.strip
+				csv_args = args.split(/(?<!#{@escape_character}),/, cmd_class.max_args + 1).map do |arg|
+					arg.strip.gsub(/(?<!#{@escape_character})#{@escape_character},/, ",")
+				end
 			end
 			if csv_args.size > cmd_class.max_args
 				if cmd_class.multi_command
