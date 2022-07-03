@@ -6,7 +6,7 @@ class IfEqualCmd < Cmd
 	def self.min_args; 1 end
 	def self.max_args; 2 end
 	def self.multi_command; true end
-	def self.conditional; true end
+	def self.control_flow; true end
 	@var : String
 	@value : String
 	def initialize(@line_no, args)

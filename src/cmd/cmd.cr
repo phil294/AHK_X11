@@ -7,7 +7,7 @@ abstract class Cmd
 	def self.max_args; 0 end
 	# :ditto:
 	def self.multi_command; false end
-	def self.conditional; false end
+	def self.control_flow; false end
 
 	getter line_no = -1
 

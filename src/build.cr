@@ -4,16 +4,19 @@ class Instruction # maybe combine this and Cmd into single class
 	getter cmd : Cmd
 	def initialize(@cmd)
 	end
-	def conditional
-		@cmd.class.conditional
+	def control_flow
+		@cmd.class.control_flow
 	end
 	property next : Instruction?
 	property je : Instruction?
 	property jne : Instruction?
 end
 
-class Conditional
-	class ConditionalSection
+# describes some kind of logic struct that can handle sub instructions with or without {},
+# such as `if` or `loop`. At minimum, an implementation needs to have one control flow section
+# where these can be inserted into.
+abstract class ControlFlow
+	class ControlFlowSection
 		property instruction : Instruction
 		property first_child : Instruction?
 		property last_child : Instruction?
@@ -27,49 +30,72 @@ class Conditional
 		end
 	end
 
-	@if_section : ConditionalSection
-	@if_else_sections = [] of ConditionalSection
-	@else_section : ConditionalSection?
-	getter child_conditionals = [] of Conditional
+	getter child_control_flows = [] of ControlFlow
+	@resolved = false
 
-	def initialize(conditional_ins : Instruction)
-		@if_section = ConditionalSection.new conditional_ins
-	end
+	abstract def initialize(control_flow_ins : Instruction)
+	
 	# bottommost section, regardless if open or not
-	private def last_section
-		@else_section || @if_else_sections.last? || @if_section
-	end
-	def else_if(if_cond : Instruction)
-		raise "" if @else_section || last_section.open?
-		@if_else_sections << ConditionalSection.new if_cond
-	end
-	def else
-		raise "" if @else_section || last_section.open?
-		@else_section = ConditionalSection.new Instruction.new(ElseCmd.new(0, ""))
-	end
+	private abstract def active_section : ControlFlowSection
+	
 	def block_start
-		raise "" if last_section.block_started || last_section.first_child
-		last_section.block_started = true
+		raise "" if active_section.block_started || active_section.first_child
+		active_section.block_started = true
 	end
 	def block_end
-		raise "" if last_section.block_ended || ! last_section.block_started
-		last_section.block_ended = true
+		raise "" if active_section.block_ended || ! active_section.block_started
+		active_section.block_ended = true
 	end
 	def ins(ins : Instruction)
-		raise "" if ! last_section.open?
-		last_section.first_child ||= ins
-		last_section.last_child = ins
+		raise "" if ! active_section.open?
+		active_section.first_child ||= ins
+		active_section.last_child = ins
 	end
-	# does not need any more child instructions, good to resolve and destroy. Doesn't mean it has to though,
-	# there can be any amount of else-ifs added before the last else
+
+	# does not need any more child instructions, good to resolve and destroy. Doesn't mean it immediately has to though
 	def resolvable?
-		! last_section.open?
+		! active_section.open?
 	end
 	# link all collected instructions appropriately to each other, with the final ones pointing to
-	# *next_ins* if given (if omitted, this will mean this `if` is the end of the ahkthread / followed by return)
+	# *next_ins* if given (if omitted, this will mean this flow element is the end of the file)
 	def resolve(next_ins : Instruction? = nil)
 		raise "" if ! resolvable?
-		@child_conditionals.each &.resolve # recursive; order doesn't matter
+		return if @resolved
+		link_children_to_ins = link_all next_ins
+		while @child_control_flows.last?
+			@child_control_flows.last.resolve link_children_to_ins
+			@child_control_flows.pop
+		end
+		@resolved = true
+	end
+
+	# return the instruction where child control flaws should redirect to at their end(s)
+	private abstract def link_all(next_ins : Instruction? = nil) : Instruction?
+end
+
+class IfControlFlow < ControlFlow
+	@if_section : ControlFlowSection
+	@if_else_sections = [] of ControlFlowSection
+	@else_section : ControlFlowSection?
+
+	def initialize(control_flow_ins : Instruction)
+		@if_section = ControlFlowSection.new control_flow_ins
+	end
+
+	private def active_section : ControlFlowSection
+		@else_section || @if_else_sections.last? || @if_section
+	end
+
+	def else_if(if_cond : Instruction)
+		raise "" if @else_section || active_section.open?
+		@if_else_sections << ControlFlowSection.new if_cond
+	end
+	def else
+		raise "" if @else_section || active_section.open?
+		@else_section = ControlFlowSection.new Instruction.new(ElseCmd.new(0, ""))
+	end
+	
+	private def link_all(next_ins : Instruction? = nil) : Instruction?
 		@if_section.instruction.je = @if_section.first_child || next_ins
 		@if_section.last_child.try &.next = next_ins
 		@if_section.instruction.jne = @if_else_sections.first?.try &.first_child || @else_section.try &.first_child || next_ins
@@ -79,6 +105,23 @@ class Conditional
 			if_else_section.instruction.jne = @if_else_sections[i+1]?.try &.first_child || @else_section.try &.first_child || next_ins
 		end
 		@else_section.try &.last_child.try &.next = next_ins
+		next_ins
+	end
+end
+
+class LoopControlFlow < ControlFlow
+	def initialize(control_flow_ins : Instruction)
+		@section = ControlFlowSection.new control_flow_ins
+	end
+	private def active_section : ControlFlowSection
+		@section
+	end
+
+	private def link_all(next_ins : Instruction? = nil) : Instruction?
+		@section.instruction.je = @section.first_child || next_ins
+		@section.last_child.try &.next = @section.instruction
+		@section.instruction.jne = next_ins
+		@section.instruction
 	end
 end
 
@@ -96,7 +139,7 @@ class Builder
 	def to_instruction_chain(cmds)
 		start = nil
 		last = nil
-		conds = [] of Conditional
+		flows = [] of ControlFlow
 		is_else = false
 		cmds.each do |cmd|
 			begin
@@ -106,39 +149,46 @@ class Builder
 					next
 				end
 
+				# type guard apparently too complicated for type restriction, pbly compiler limitation;
+				# that's why there's some `.unsafe_as(IfControlFlow)` inside is_else blocks below
+				raise "" if is_else && (!flows.last? || ! flows.last.is_a?(IfControlFlow))
+
 				if cmd.is_a?(BlockStartCmd)
-					raise "" if ! conds.last
-					conds.last.else if is_else
-					conds.last.block_start
+					raise "" if ! flows.last
+					flows.last.unsafe_as(IfControlFlow).else if is_else
+					flows.last.block_start
 				elsif cmd.is_a?(BlockEndCmd)
-					while conds.last? && conds.last.resolvable?
-						conds.pop
+					while flows.last? && flows.last.resolvable?
+						flows.pop
 					end
-					raise "" if ! conds.last? || is_else
-					conds.last.block_end
+					raise "" if ! flows.last? || is_else
+					flows.last.block_end
 				else # any command, including if or loop
 					ins = Instruction.new cmd
 					last.next = ins if last
 					last = ins
 					start ||= ins
 					if is_else
-						raise "" if ! conds.last?
-						if ins.conditional
-							conds.last.else_if ins
+						if ins.control_flow
+							flows.last.unsafe_as(IfControlFlow).else_if ins
 						else
-							conds.last.else
-							conds.last.ins ins
+							flows.last.unsafe_as(IfControlFlow).else
+							flows.last.ins ins
 						end
 					else
-						while conds.last? && conds.last.resolvable?
-							conds.last.resolve ins
-							conds.pop
+						while flows.last? && flows.last.resolvable?
+							flows.last.resolve ins
+							flows.pop
 						end
-						conds.last.ins ins if conds.last?
-						if ins.conditional
-							new_cond = Conditional.new ins
-							conds.last.child_conditionals << new_cond if conds.last?
-							conds << new_cond
+						flows.last.ins ins if flows.last?
+						if ins.control_flow
+							if cmd.is_a?(LoopCmd)
+								new_cond = LoopControlFlow.new ins
+							else
+								new_cond = IfControlFlow.new ins
+							end
+							flows.last.child_control_flows << new_cond if flows.last?
+							flows << new_cond
 						end
 					end
 				end
@@ -149,13 +199,13 @@ class Builder
 			end
 		end
 
-		while conds.last?
+		while flows.last?
 			begin
-				conds.last.resolve
+				flows.last.resolve
 			rescue e
 				raise SyntaxException.new "Could not parse condition near the end of the script; most likely a closing brace is missing somewhere. (#{e.message})"
 			end
-			conds.pop
+			flows.pop
 		end
 
 		start
