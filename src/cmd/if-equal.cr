@@ -8,7 +8,7 @@ class IfEqualCmd < Cmd
 	def self.multi_command; true end
 	def self.control_flow; true end
 	def run(runner)
-		a = runner.user_vars[@args[0]]? || ""
+		a = runner.get_var(@args[0]) || ""
 		b = runner.str(@args[1]? || "")
 		a_f = a.to_f?(strict: true)
 		b_f = b.to_f?(strict: true)

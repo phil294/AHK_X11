@@ -1,7 +1,7 @@
 class AhkString
 	# Substitute all %var% with their respective values, and get missing vars via block.
 	# This allows computation of pseudo-variable values at runtime, such as %A_Now%.
-	def self.process(str, escape_char, vars)
+	def self.process(str, escape_char)
 		last = nil
 		escape = false
 		var_start = nil
@@ -16,9 +16,8 @@ class AhkString
 						if var_start.nil?
 							var_start = i + 1
 						else
-							var_name = str[var_start..i-1].downcase # todo empty vars probbaly reuslt in garbage
-							var = vars[var_name]?
-							var = yield var_name if ! var
+							var_name = str[var_start..i-1] # todo empty vars probbaly reuslt in garbage
+							var = yield var_name
 							build << var
 							var_start = nil
 						end

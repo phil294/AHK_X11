@@ -3,8 +3,8 @@ require "./ahk-string"
 # can start a completely fresh and isolated ahk execution instance with its own
 # variables etc. All properties can and will be heavily accessed from outside (commands).
 class Runner
-	property user_vars = {} of String => String
-	property escape_char = '`' # todo at build time?
+	@user_vars = {} of String => String
+	@escape_char = '`' # todo at build time?
 	@labels : Hash(String, Cmd)
 	@exit_code = 0
 	@stack = [] of Cmd
@@ -55,9 +55,18 @@ class Runner
 		@stack.clear
 	end
 
+	def get_var(var)
+		@user_vars[var.downcase]? || ""
+	end
+	def set_var(var, value)
+		@user_vars[var.downcase] = value
+	end
+	def print_vars
+		puts @user_vars
+	end
 	def str(str)
-		AhkString.process(str, escape_char, user_vars) do |missing_var|
-			""
+		AhkString.process(str, @escape_char) do |varname_lookup|
+			get_var(varname_lookup)
 		end
 	end
 end
