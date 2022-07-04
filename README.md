@@ -1,4 +1,4 @@
-# AHKX11
+# AHK_X11
 
 AutoHotkey for Linux. (WORK IN PROGRESS)
 

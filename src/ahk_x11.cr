@@ -2,7 +2,7 @@ require "./build"
 require "./run"
 
 if ! ARGV[0]?
-	abort "Missing file argument.\nUsage:\n    ahkx11 path/to/script.ahk"
+	abort "Missing file argument.\nUsage:\n    ahk_x11 path/to/script.ahk"
 end
 
 ahkstr = File.read ARGV[0]

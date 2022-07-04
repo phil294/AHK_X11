@@ -13,7 +13,7 @@ class Parser
 		"{" => BlockStartCmd,
 		"}" => BlockEndCmd,
 		"else" => ElseCmd,
-		"ahk11_print_vars" => AHKX11_print_vars_Cmd,
+		"ahk11_print_vars" => AHK_X11_print_vars_Cmd,
 		"loop" => LoopCmd,
 		"break" => BreakCmd,
 		"continue" => ContinueCmd,

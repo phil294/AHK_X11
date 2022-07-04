@@ -1,12 +1,12 @@
-name: ahkx11
+name: ahk_x11
 version: 0.1.0
 
 authors:
   - Philip Waritschlager <philip@waritschlager.de>
 
 targets:
-  ahkx11:
-    main: src/ahkx11.cr
+  ahk_x11:
+    main: src/ahk_x11.cr
 
 crystal: 1.4.1
 
