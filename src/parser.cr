@@ -18,6 +18,10 @@ class Parser
 		"break" => BreakCmd,
 		"continue" => ContinueCmd,
 		"sleep" => SleepCmd,
+		"exit" => ExitCmd,
+		"return" => ReturnCmd,
+		"gosub" => GosubCmd,
+		"goto" => GotoCmd,
 	} of String => Cmd.class
 	# @cmd_class_by_name : Array(Cmd.class)
 	# def initialize() TODO
@@ -102,6 +106,9 @@ class Parser
 			end
 			csv_args = [split[0], split[2]? || ""]
 			@cmds << cmd_class.new line_no, csv_args
+		elsif first_word.ends_with?(':')
+			raise "Labels can not have arguments" if args.size > 0
+			@cmds << LabelCmd.new line_no, [first_word[...-1]]
 		else
 			split = args.split()
 			if split[0]? == "="

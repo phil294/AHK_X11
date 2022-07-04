@@ -130,17 +130,24 @@ class Builder
 
 	def build(lines : Array(String))
 		cmds = @parser.parse_into_cmds lines
-		to_cmd_chain cmds
+		link cmds
 	end
 
-	def to_cmd_chain(cmds)
+	def link(cmds)
 		start = nil
+		labels = {} of String => Cmd
+		label = nil
 		last_normal = nil
 		flows = [] of ControlFlow
 		is_else = false
 		cmds.each do |cmd|
 			is_normal = false
 			begin
+				if cmd.is_a?(LabelCmd)
+					label = cmd.name
+					next
+				end
+
 				if cmd.is_a?(ElseCmd)
 					raise "" if is_else
 					is_else = true
@@ -192,6 +199,10 @@ class Builder
 				if is_normal
 					start ||= cmd
 					last_normal = cmd
+					if label
+						labels[label] = cmd
+						label = nil
+					end
 				else
 					last_normal = nil
 				end
@@ -213,6 +224,6 @@ class Builder
 
 		# pp! cmds
 
-		start
+		{ labels: labels, auto_execute_section: start }
 	end
 end

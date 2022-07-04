@@ -5,20 +5,54 @@ require "./ahk-string"
 class Runner
 	property user_vars = {} of String => String
 	property escape_char = '`' # todo at build time?
-
-	def run(ins : Cmd)
-		while ins
+	@labels : Hash(String, Cmd)
+	@exit_code = 0
+	@stack = [] of Cmd
+	def initialize(ctx)
+		@labels = ctx[:labels]
+		if aes = ctx[:auto_execute_section]
+			@stack << aes
+		end
+	end
+	def run
+		while ins = @stack.last?
+			stack_i = @stack.size - 1
 			result = ins.run(self)
+			next_ins = ins.next
 			if ins.class.control_flow
 				if result
-					ins = ins.je
+					next_ins = ins.je
 				else
-					ins = ins.jne
+					next_ins = ins.jne
 				end
-			else
-				ins = ins.next
+			end
+			# current stack el may have been altered by prev ins.run(), in which case disregard the normal flow
+			if @stack[stack_i]? == ins # not altered
+				if ! next_ins
+					@stack.delete_at(stack_i)
+				else
+					@stack[stack_i] = next_ins
+				end
 			end
 		end
+		::exit @exit_code
+	end
+	def gosub(label)
+		cmd = @labels[label]?
+		raise RuntimeException.new "gosub: label '#{label}' not found" if ! cmd
+		@stack << cmd
+	end
+	def goto(label)
+		cmd = @labels[label]?
+		raise RuntimeException.new "goto: label '#{label}' not found" if ! cmd
+		@stack[@stack.size - 1] = cmd
+	end
+	def return
+		@stack.pop
+	end
+	def exit(code)
+		@exit_code = code || 0
+		@stack.clear
 	end
 
 	def str(str)

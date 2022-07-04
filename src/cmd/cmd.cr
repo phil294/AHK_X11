@@ -31,3 +31,5 @@ abstract class Cmd
 end
 
 class SyntaxException < Exception end
+
+class RuntimeException < Exception end

@@ -9,14 +9,10 @@ ahkstr = File.read ARGV[0]
 ahkarr = ahkstr.split /\r?\n/
 
 begin
-	start = Builder.new.build ahkarr
+	ctx = Builder.new.build ahkarr
 rescue e : SyntaxException | ParsingException
 	# TODO msgbox
 	abort e.message
 end
-if ! start
-	# TODO msgbox
-	abort "No executable lines found"
-end
 
-Runner.new.run start
+Runner.new(ctx).run
