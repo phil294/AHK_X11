@@ -5,25 +5,18 @@ class FileCopyCmd < Cmd
 	def self.name; "filecopy"; end
 	def self.min_args; 2 end
 	def self.max_args; 3 end
-	@srcs : String
-	@dst : String
-	@flag : UInt8
-	def initialize(@line_no, args)
-		@srcs = args[0]
-		@dst = args[1]
-		@flag = (args[2]?.try &.to_u8) || 0_u8
-	end
 	def run(runner)
-		Dir.glob(runner.str(@srcs)).each do |src|
-			dst = runner.str(@dst)
-			dst = ! Dir.exists?(dst) ? dst :
+		flag = runner.str(@args[2]? || "0").to_u8
+		dst = runner.str(@args[1])
+		Dir.glob(runner.str(@args[0])).each do |src|
+			this_dst = ! Dir.exists?(dst) ? dst :
 				Path[dst, File.basename(src)]
-			next if Dir.exists?(src) || Dir.exists?(dst)
-			if File.exists? dst
-				next if @flag == 0_u8
-				File.delete dst
+			next if Dir.exists?(src) || Dir.exists?(this_dst)
+			if File.exists? this_dst
+				next if flag == 0_u8
+				File.delete this_dst
 			end
-			File.copy(src, dst)
+			File.copy(src, this_dst)
 		end
 	end
 end

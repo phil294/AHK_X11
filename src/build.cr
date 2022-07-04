@@ -80,7 +80,7 @@ class IfControlFlow < ControlFlow
 	end
 	def else
 		raise "" if @else_section || active_section.open?
-		@else_section = ControlFlowSection.new ElseCmd.new(0, "")
+		@else_section = ControlFlowSection.new ElseCmd.new(0, [] of String)
 	end
 	
 	private def link_all(next_cmd : Cmd? = nil) : Cmd?

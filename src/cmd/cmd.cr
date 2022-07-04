@@ -10,8 +10,11 @@ abstract class Cmd
 	def self.control_flow; false end
 
 	getter line_no = -1
+	@args : Array(String)
 
-	abstract def initialize(@line_no, args)
+	def initialize(@line_no, @args)
+	end
+	
 	abstract def run(runner)
 
 	property next : Cmd?
