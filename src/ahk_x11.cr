@@ -15,4 +15,9 @@ rescue e : SyntaxException | ParsingException
 	abort e.message
 end
 
-Runner.new(ctx).run
+begin
+	Runner.new(ctx).run
+rescue e : RuntimeException
+	# TODO msgbox
+	abort e.message
+end
