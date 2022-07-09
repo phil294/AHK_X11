@@ -123,24 +123,28 @@ class LoopControlFlow < ControlFlow
 end
 
 # parses and transforms ahk lines into a linked list of cmds that can be iterated without
-# any further interlinking state. In other words, all if/else/loop "commands" are eaten up
+# any further interlinking state. In other words, all if/else/loop commands are eaten up
 # and replaced with direct cmd go tos.
 class Builder
 	@parser = Parser.new
+	getter start : Cmd? = nil
+	getter labels = {} of String => Cmd
+	getter escape_char = '`'
+	@cmds = [] of Cmd
 
 	def build(lines : Array(String))
-		cmds = @parser.parse_into_cmds lines
-		link cmds
+		@cmds = @parser.parse_into_cmds lines
+		@escape_char = @parser.escape_char
+		link
+		nil
 	end
-
-	def link(cmds)
-		start = nil
-		labels = {} of String => Cmd
+	
+	private def link
 		label = nil
 		last_normal = nil
 		flows = [] of ControlFlow
 		is_else = false
-		cmds.each do |cmd|
+		@cmds.each do |cmd|
 			is_normal = false
 			begin
 				if cmd.is_a?(LabelCmd)
@@ -197,7 +201,7 @@ class Builder
 				end
 
 				if is_normal
-					start ||= cmd
+					@start ||= cmd
 					last_normal = cmd
 					if label
 						labels[label] = cmd
@@ -223,7 +227,5 @@ class Builder
 		end
 
 		# pp! cmds
-
-		{ labels: labels, auto_execute_section: start }
 	end
 end

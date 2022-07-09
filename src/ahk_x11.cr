@@ -6,17 +6,19 @@ if ! ARGV[0]?
 end
 
 ahkstr = File.read ARGV[0]
-ahkarr = ahkstr.split /\r?\n/
+lines = ahkstr.split /\r?\n/
 
 begin
-	ctx = Builder.new.build ahkarr
+	builder = Builder.new
+	builder.build lines
 rescue e : SyntaxException | ParsingException
 	# TODO msgbox
 	abort e.message
 end
 
 begin
-	Runner.new(ctx).run
+	runner = Runner.new labels: builder.labels, auto_execute_section: builder.start, escape_char: builder.escape_char
+	runner.run
 rescue e : RuntimeException
 	# TODO msgbox
 	abort e.message

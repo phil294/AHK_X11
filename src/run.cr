@@ -4,15 +4,12 @@ require "./ahk-string"
 # variables etc. All properties can and will be heavily accessed from outside (commands).
 class Runner
 	@user_vars = {} of String => String
-	@escape_char = '`' # todo at build time?
+	@escape_char = '`'
 	@labels : Hash(String, Cmd)
 	@exit_code = 0
 	@stack = [] of Cmd
-	def initialize(ctx)
-		@labels = ctx[:labels]
-		if aes = ctx[:auto_execute_section]
-			@stack << aes
-		end
+	def initialize(@labels, auto_execute_section : Cmd?, @escape_char) # todo force positional params with ** ?
+		@stack << auto_execute_section if auto_execute_section
 	end
 	def run
 		while ins = @stack.last?

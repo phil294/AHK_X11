@@ -28,15 +28,13 @@ class Parser
 	# 	@cmd_class_by_name = Cmd.all_subclasses
 	# end
 
-	@comment_flag = ";"
-	@escape_character = "`"
-
 	@cmds = [] of Cmd
+	getter comment_flag = ";"
+	getter escape_char = '`'
 
 	@block_comment = false
 
 	def parse_into_cmds(lines : Array(String))
-		@cmds = [] of Cmd
 		lines.each_with_index do |line, line_no|
 			begin
 				add_line line, line_no
@@ -74,8 +72,8 @@ class Parser
 			if args.empty?
 				csv_args = [] of String
 			else
-				csv_args = args.split(/(?<!#{@escape_character}),/, cmd_class.max_args + 1).map do |arg|
-					arg.strip.gsub(/(?<!#{@escape_character})#{@escape_character},/, ",")
+				csv_args = args.split(/(?<!#{@escape_char}),/, cmd_class.max_args + 1).map do |arg|
+					arg.strip.gsub(/(?<!#{@escape_char})#{@escape_char},/, ",")
 				end
 			end
 			if csv_args.size > cmd_class.max_args
