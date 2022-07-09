@@ -82,7 +82,7 @@ class Parser
 				if cmd_class.multi_command
 					# examples: if, ifequals, else, }, ifequals, ... can all have residue content.
 					# split this line in two, add a new virtual line with the remainder.
-					@cmds << cmd_class.new line_no, csv_args[..cmd_class.max_args-1] # TODO what if max is 0?
+					@cmds << cmd_class.new line_no, cmd_class.max_args > 0 ? csv_args[..cmd_class.max_args-1] : [] of String
 					add_line csv_args[cmd_class.max_args], line_no
 				else
 					# attach the remainder again and pass as is to the arg
