@@ -27,7 +27,8 @@ class AhkString
 					escape = false
 				end
 			end
-			# if var_start todo syntax error? build error? how does ahk do it?
+			# INCOMPAT: only raises at runtime, on ahk it's build time
+			raise RuntimeException.new "missing ending percent sign. Line content: '#{str}'" if var_start
 		end
 	end
 end
