@@ -15,7 +15,7 @@ abstract class Cmd
 	def initialize(@line_no, @args)
 	end
 	
-	abstract def run(runner)
+	abstract def run(thread)
 
 	property next : Cmd?
 	property je : Cmd?

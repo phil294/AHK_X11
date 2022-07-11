@@ -5,51 +5,69 @@ require "./ahk-string"
 class Runner
 	@user_vars = {} of String => String
 	@escape_char = '`'
-	@labels : Hash(String, Cmd)
-	@exit_code = 0
-	@stack = [] of Cmd
-	def initialize(@labels, auto_execute_section : Cmd?, @escape_char) # todo force positional params with ** ?
-		@stack << auto_execute_section if auto_execute_section
-	end
-	def run
-		while ins = @stack.last?
-			stack_i = @stack.size - 1
-			result = ins.run(self)
-			next_ins = ins.next
-			if ins.class.control_flow
-				if result
-					next_ins = ins.je
-				else
-					next_ins = ins.jne
-				end
-			end
-			# current stack el may have been altered by prev ins.run(), in which case disregard the normal flow
-			if @stack[stack_i]? == ins # not altered
-				if ! next_ins
-					@stack.delete_at(stack_i)
-				else
-					@stack[stack_i] = next_ins
-				end
-			end
+	protected getter labels : Hash(String, Cmd)
+	@threads = [] of Thread
+
+	# ahk threads are no real threads but pretty much like crystal fibers, except they're not
+	# cooperative at all; they take each other's place (prioritized) and continue until their invididual end.
+	class Thread
+		getter runner : Runner
+		@stack = [] of Cmd
+		@exit_code = 0
+		def initialize(@runner, start)
+			@stack << start
 		end
-		::exit @exit_code
+
+		def run
+			while ins = @stack.last?
+				stack_i = @stack.size - 1
+				result = ins.run(self)
+				next_ins = ins.next
+				if ins.class.control_flow
+					if result
+						next_ins = ins.je
+					else
+						next_ins = ins.jne
+					end
+				end
+				# current stack el may have been altered by prev ins.run(), in which case disregard the normal flow
+				if @stack[stack_i]? == ins # not altered
+					if ! next_ins
+						@stack.delete_at(stack_i)
+					else
+						@stack[stack_i] = next_ins
+					end
+				end
+			end
+			@exit_code
+		end
+
+		def gosub(label)
+			cmd = @runner.labels[label]?
+			raise RuntimeException.new "gosub: label '#{label}' not found" if ! cmd
+			@stack << cmd
+		end
+		def goto(label)
+			cmd = @runner.labels[label]?
+			raise RuntimeException.new "goto: label '#{label}' not found" if ! cmd
+			@stack[@stack.size - 1] = cmd
+		end
+		def return
+			@stack.pop
+		end
+		def exit(code)
+			@exit_code = code || 0
+			@stack.clear
+		end
 	end
-	def gosub(label)
-		cmd = @labels[label]?
-		raise RuntimeException.new "gosub: label '#{label}' not found" if ! cmd
-		@stack << cmd
+	
+	def initialize(@labels, @auto_execute_section : Cmd, @escape_char) # todo force positional params with ** ?
 	end
-	def goto(label)
-		cmd = @labels[label]?
-		raise RuntimeException.new "goto: label '#{label}' not found" if ! cmd
-		@stack[@stack.size - 1] = cmd
-	end
-	def return
-		@stack.pop
-	end
-	def exit(code)
-		@exit_code = code || 0
-		@stack.clear
+
+	def run
+		auto_execute_thread = Thread.new(self, @auto_execute_section)
+		exit_code = auto_execute_thread.run
+		::exit exit_code
 	end
 
 	def get_var(var)
@@ -61,6 +79,7 @@ class Runner
 	def print_vars
 		puts @user_vars
 	end
+	
 	def str(str)
 		AhkString.process(str, @escape_char) do |varname_lookup|
 			get_var(varname_lookup)

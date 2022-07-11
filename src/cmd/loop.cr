@@ -7,9 +7,9 @@ class LoopCmd < Cmd
 	def self.control_flow; true end
 	@repeat_count : Int32?
 	@i = 0
-	def run(runner)
+	def run(thread)
 		if @args[0]? && ! @repeat_count
-			repeat_count = runner.str(@args[0]).to_i32?(strict: true)
+			repeat_count = thread.runner.str(@args[0]).to_i32?(strict: true)
 			raise "invalid loop count" if ! repeat_count
 			@repeat_count = repeat_count
 		end

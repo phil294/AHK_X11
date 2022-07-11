@@ -5,10 +5,10 @@ class FileCopyCmd < Cmd
 	def self.name; "filecopy"; end
 	def self.min_args; 2 end
 	def self.max_args; 3 end
-	def run(runner)
-		flag = runner.str(@args[2]? || "0").to_u8
-		dst = runner.str(@args[1])
-		Dir.glob(runner.str(@args[0])).each do |src|
+	def run(thread)
+		flag = thread.runner.str(@args[2]? || "0").to_u8
+		dst = thread.runner.str(@args[1])
+		Dir.glob(thread.runner.str(@args[0])).each do |src|
 			this_dst = ! Dir.exists?(dst) ? dst :
 				Path[dst, File.basename(src)]
 			next if Dir.exists?(src) || Dir.exists?(this_dst)
