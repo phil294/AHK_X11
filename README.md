@@ -17,8 +17,48 @@ Features:
 
 Status: None of the above yet, planned is all of it. Basic implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
-- *Done* **3%** (14/213): Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy, [Echo], [ahk_x11_print_vars]
-- *Missing* **97%** (199/213): AutoTrim, BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, ControlGetPos, ControlGetText, ControlMove, ControlSend / ControlSendRaw , ControlSetText, CoordMode, DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, EnvAdd, EnvDiv, EnvMult, EnvSet, EnvSub, EnvUpdate, ExitApp, FileAppend, FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, FileInstall, FileReadLine, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion, FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir, FileSelectFile, FileSelectFolder, FileSetAttrib, FileSetTime, FormatTime, GetKeyState, GroupActivate, GroupAdd, GroupClose, GroupDeactivate, Gui, GuiControl, GuiControlGet, Hotkey, If var [not] between, If var [not] in/contains MatchList , If var is [not] type, IfNotEqual, IfExist/IfNotExist, IfGreater/IfGreaterOrEqual, IfInString/IfNotInString, IfLess/IfLessOrEqual, IfMsgBox, IfWinActive/IfWinNotActive, IfWinExist/IfWinNotExist, IniDelete, IniRead, IniWrite, Input, InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders) , Loop (parse a string) , Loop (read file contents) , Loop (registry), Menu, MouseClick, MouseClickDrag, MouseGetPos, MouseMove, MsgBox, OnExit, Pause, PixelGetColor, PixelSearch, PostMessage, Process, Progress, Random, RegDelete, RegRead, RegWrite, Reload, Run, RunAs, RunWait, Send / SendRaw , SendMessage, SetBatchLines, SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetEnv, SetFormat, SetKeyDelay, SetMouseDelay, SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTimer, SetTitleMatchMode, SetWinDelay, SetWorkingDir, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, StatusBarWait, StringCaseSense, StringGetPos, StringLeft, StringLen, StringLower, StringMid, StringReplace, StringRight, StringSplit, StringTrimLeft, StringTrimRight, StringUpper, Suspend, SysGet, Thread, ToolTip, Transform, TrayTip, URLDownloadToFile, WinActivate, WinActivateBottom, WinClose, WinGetActiveStats, WinGetActiveTitle, WinGetClass, WinGet, WinGetPos, WinGetText, WinGetTitle, WinHide, WinKill, WinMaximize, WinMenuSelectItem, WinMinimize, WinMinimizeAll, WinMinimizeAllUndo, WinMove, WinRestore, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, WinWaitClose, WinWaitNotActive, #AllowSameLineComments, #CommentFlag, #ErrorStdOut, #EscapeChar, #HotkeyInterval, #HotkeyModifierTimeout, #Hotstring, #Include, #InstallKeybdHook, #InstallMouseHook, #MaxHotkeysPerInterval, #MaxMem, #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #Persistent, #SingleInstance, #UseHook, #WinActivateForce (some of these make no sense in Linux though and will never be done, such as RegRead)
+```diff
+DONE     6% (13/213):
++ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy
+
+NEW      1% (2/213): (new Linux-specific commands)
+@@ Echo, ahk_x11_print_vars @@
+
+REMOVED   5% (10/213): (those that simply make no sense in Linux)
+# EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
+# #InstallMouseHook, #UseHook
+
+MISSING   88% (188/213): (TBD)
+- AutoTrim, BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
+- ControlGetPos, ControlGetText, ControlMove, ControlSend / ControlSendRaw, ControlSetText, CoordMode, 
+- DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, EnvAdd, EnvDiv, 
+- EnvMult, EnvSub, ExitApp, FileAppend, FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
+- FileInstall, FileReadLine, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion, 
+- FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir, FileSelectFile, 
+- FileSelectFolder, FileSetAttrib, FileSetTime, FormatTime, GetKeyState, GroupActivate, GroupAdd, 
+- GroupClose, GroupDeactivate, Gui, GuiControl, GuiControlGet, Hotkey, If var [not] between,
+- If var [not] in/contains MatchList, If var is [not] type, IfNotEqual, IfExist/IfNotExist, 
+- IfGreater / IfGreaterOrEqual, IfInString/IfNotInString, IfLess/IfLessOrEqual, IfMsgBox, 
+- IfWinActive / IfWinNotActive, IfWinExist/IfWinNotExist, IniDelete, IniRead, IniWrite, Input, 
+- InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
+- Loop (parse a string), Loop (read file contents), Loop (registry), Menu, MouseClick, 
+- MouseClickDrag, MouseGetPos, MouseMove, MsgBox, OnExit, Pause, PixelGetColor, PixelSearch, 
+- Process, Progress, Random, Reload, Run, RunAs, RunWait, Send / SendRaw, SetBatchLines, 
+- SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
+- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTimer, SetTitleMatchMode, 
+- SetWinDelay, SetWorkingDir, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
+- SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, 
+- StatusBarWait, StringCaseSense, StringGetPos, StringLeft, StringLen, StringLower, StringMid, 
+- StringReplace, StringRight, StringSplit, StringTrimLeft, StringTrimRight, StringUpper, Suspend, 
+- SysGet, Thread, ToolTip, Transform, TrayTip, URLDownloadToFile, WinActivate, WinActivateBottom, 
+- WinClose, WinGetActiveStats, WinGetActiveTitle, WinGetClass, WinGet, WinGetPos, WinGetText, 
+- WinGetTitle, WinHide, WinKill, WinMaximize, WinMenuSelectItem, WinMinimize, WinMinimizeAll, 
+- WinMinimizeAllUndo, WinMove, WinRestore, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 
+- WinWaitClose, WinWaitNotActive, #AllowSameLineComments, #CommentFlag, #ErrorStdOut, #EscapeChar, 
+- #HotkeyInterval, #HotkeyModifierTimeout, #Hotstring, #Include, #MaxHotkeysPerInterval, #MaxMem, 
+- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #Persistent, #SingleInstance, 
+- #WinActivateForce
+```
 
 ## Performance
 
