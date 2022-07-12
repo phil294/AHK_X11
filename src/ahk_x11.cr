@@ -1,5 +1,5 @@
 require "./build"
-require "./run"
+require "./runner"
 
 if ! ARGV[0]?
 	abort "Missing file argument.\nUsage:\n    ahk_x11 path/to/script.ahk"
@@ -20,7 +20,7 @@ start = builder.start
 exit if ! start
 
 begin
-	runner = Runner.new labels: builder.labels, auto_execute_section: start, escape_char: builder.escape_char
+	runner = Run::Runner.new labels: builder.labels, auto_execute_section: start, escape_char: builder.escape_char
 rescue e : RuntimeException
 	# TODO msgbox
 	abort e.message
