@@ -15,6 +15,8 @@ abstract class Cmd
 	def initialize(@line_no, @args)
 	end
 	
+	# When class.control_flow, the return value determines the next branch.
+	# Return value is ignored for non-control_flow cmds.
 	abstract def run(thread)
 
 	property next : Cmd?

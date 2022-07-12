@@ -21,7 +21,6 @@ exit if ! start
 
 begin
 	runner = Runner.new labels: builder.labels, auto_execute_section: start, escape_char: builder.escape_char
-	runner.run
 rescue e : RuntimeException
 	# TODO msgbox
 	abort e.message

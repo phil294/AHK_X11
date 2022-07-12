@@ -7,10 +7,11 @@ class Runner
 	@escape_char = '`'
 	protected getter labels : Hash(String, Cmd)
 	@threads = [] of Thread
+	@exit_code = 0
 
 	# ahk threads are no real threads but pretty much like crystal fibers, except they're not
 	# cooperative at all; they take each other's place (prioritized) and continue until their invididual end.
-	class Thread
+	private class Thread
 		getter runner : Runner
 		@stack = [] of Cmd
 		@exit_code = 0
@@ -18,28 +19,28 @@ class Runner
 			@stack << start
 		end
 
-		def run
-			while ins = @stack.last?
-				stack_i = @stack.size - 1
-				result = ins.run(self)
-				next_ins = ins.next
-				if ins.class.control_flow
-					if result
-						next_ins = ins.je
-					else
-						next_ins = ins.jne
-					end
-				end
-				# current stack el may have been altered by prev ins.run(), in which case disregard the normal flow
-				if @stack[stack_i]? == ins # not altered
-					if ! next_ins
-						@stack.delete_at(stack_i)
-					else
-						@stack[stack_i] = next_ins
-					end
+		protected def next
+			ins = @stack.last?
+			return @exit_code if ! ins
+			stack_i = @stack.size - 1
+			result = ins.run(self)
+			next_ins = ins.next
+			if ins.class.control_flow
+				if result
+					next_ins = ins.je
+				else
+					next_ins = ins.jne
 				end
 			end
-			@exit_code
+			# current stack el may have been altered by prev ins.run(), in which case disregard the normal flow
+			if @stack[stack_i]? == ins # not altered
+				if ! next_ins
+					@stack.delete_at(stack_i)
+				else
+					@stack[stack_i] = next_ins
+				end
+			end
+			nil
 		end
 
 		def gosub(label)
@@ -62,12 +63,29 @@ class Runner
 	end
 	
 	def initialize(@labels, @auto_execute_section : Cmd, @escape_char) # todo force positional params with ** ?
+		spawn_thread @auto_execute_section
 	end
 
-	def run
-		auto_execute_thread = Thread.new(self, @auto_execute_section)
-		exit_code = auto_execute_thread.run
-		::exit exit_code
+	def spawn_thread(cmd)
+		thread = Thread.new(self, cmd)
+		@threads << thread
+		clock
+	end
+
+	private def clock
+		while thread = @threads.last?
+			exit_code = thread.next
+			if @threads.last != thread
+				# we're not top level anymore, something more important came along.
+				# clock is now running in that thread instead.
+				return
+			end
+			if ! exit_code.nil?
+				@exit_code = exit_code
+				@threads.pop
+			end
+		end
+		::exit @exit_code
 	end
 
 	def get_var(var)
