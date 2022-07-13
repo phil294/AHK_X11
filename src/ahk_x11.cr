@@ -25,3 +25,4 @@ rescue e : RuntimeException
 	# TODO msgbox
 	abort e.message
 end
+sleep # exiting is completely handled in runner

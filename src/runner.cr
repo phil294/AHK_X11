@@ -9,32 +9,44 @@ module Run
 		@escape_char = '`'
 		protected getter labels : Hash(String, Cmd)
 		@threads = [] of Thread
+		@auto_execute_thread : Thread?
+		@interrupt = Channel(Nil).new
 		@exit_code = 0
 
-		def initialize(@labels, @auto_execute_section : Cmd, @escape_char) # todo force positional params with ** ?
-			spawn_thread @auto_execute_section
+		def initialize(@labels, auto_execute_section : Cmd, @escape_char) # todo force positional params with ** ?
+			@auto_execute_thread = spawn_thread auto_execute_section
 		end
 
-		def spawn_thread(cmd)
+		# add to the thread queue and start if it isn't running already
+		protected def spawn_thread(cmd) : Thread
 			thread = Thread.new(self, cmd)
 			@threads << thread
-			clock
+			if @threads.size > 1
+				@interrupt.send(nil)
+			else
+				spawn clock
+			end
+			thread
 		end
 
+		# there must only be one
 		private def clock
 			while thread = @threads.last?
-				exit_code = thread.next
-				if @threads.last != thread
-					# we're not top level anymore, something more important came along.
-					# clock is now running in that thread instead.
-					return
-				end
-				if ! exit_code.nil?
-					@exit_code = exit_code
-					@threads.pop
+				select
+				when @interrupt.receive
+					# current command may finish in the background, but its result handling and thread continuation
+					# will have to wait: probably because another, more important thread came along which will now
+					# get attention in the next iteration
+				when exit_code = thread.next.receive?
+					if ! exit_code.nil?
+						@exit_code = exit_code
+						@threads.pop
+						if thread == @auto_execute_thread
+							::exit @exit_code
+						end
+					end
 				end
 			end
-			::exit @exit_code
 		end
 
 		def get_var(var)
