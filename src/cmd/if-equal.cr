@@ -1,7 +1,6 @@
 require "./cmd"
 
 class IfEqualCmd < Cmd
-	def self.name; "ifequal"; end
 	# todo is this the right syntax for these kinds of publicly accessible and inheritable class method constants?
 	def self.min_args; 1 end
 	def self.max_args; 2 end

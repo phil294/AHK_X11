@@ -2,7 +2,6 @@ require "./no-run"
 
 class LabelCmd < Cmd
 	include NoRun
-	def self.name; "label"; end
 	def self.min_args; 1 end
 	def self.max_args; 1 end
 	getter name : String

@@ -1,7 +1,6 @@
 require "./cmd"
 
 class SetTimerCmd < Cmd
-	def self.name; "settimer"; end
 	def self.min_args; 1 end
 	def self.max_args; 3 end
 	def run(thread)

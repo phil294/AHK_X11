@@ -1,5 +1,7 @@
 abstract class Cmd
-	def self.name; "cmd"; end
+	def self.name
+		{{ @type.name.stringify[0..-4].downcase }}
+	end
 	def self.min_args; 0 end
 	# anything above max_args will not be split or stripped anymore, instead either combined
 	# into the last arg (allowing for commands with open end like SetEnv or Echo) or moved

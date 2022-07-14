@@ -1,7 +1,6 @@
 require "./cmd"
 
 class LoopCmd < Cmd
-	def self.name; "loop"; end
 	def self.min_args; 0 end
 	def self.max_args; 1 end
 	def self.control_flow; true end
