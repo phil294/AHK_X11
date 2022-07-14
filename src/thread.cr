@@ -4,11 +4,14 @@ module Run
     # Threads never really run in parallel: There's always one "current thread"
     private class Thread
         getter runner : Runner
+        # each threads starts with its own set of settings (e.g. coordmode),
+        # the default can be changed in the auto execute section
+        getter settings : ThreadSettings
         @stack = [] of Cmd
         getter priority = 0
         @exit_code = 0
         @result_channel : Channel(Int32?)?
-        def initialize(@runner, start, @priority)
+        def initialize(@runner, start, @priority, @settings)
             @stack << start
         end
 
@@ -69,5 +72,8 @@ module Run
             @exit_code = code || 0
             @stack.clear
         end
+    end
+    private struct ThreadSettings
+        # property xyz = true
     end
 end

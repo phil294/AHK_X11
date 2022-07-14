@@ -16,6 +16,7 @@ module Run
 		@interrupt = Channel(Nil).new
 		@exit_code = 0
 		@timers = {} of String => Timer
+		@default_thread_settings = ThreadSettings.new
 
 		def initialize(@labels, auto_execute_section : Cmd, @escape_char) # todo force positional params with ** ?
 			@auto_execute_thread = spawn_thread auto_execute_section, 0
@@ -23,7 +24,7 @@ module Run
 
 		# add to the thread queue and start if it isn't running already
 		protected def spawn_thread(cmd, priority) : Thread
-			thread = Thread.new(self, cmd, priority)
+			thread = Thread.new(self, cmd, priority, @default_thread_settings)
 			@threads << thread
 			if @threads.size > 1
 				@interrupt.send(nil)
@@ -46,6 +47,7 @@ module Run
 						@exit_code = exit_code
 						@threads.pop
 						if thread == @auto_execute_thread
+							@default_thread_settings = thread.settings
 							::exit @exit_code
 						end
 					end
