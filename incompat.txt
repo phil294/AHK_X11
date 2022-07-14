@@ -1,0 +1,7 @@
+Incompatibilities with normal AHK:
+most are noted with an `INCOMPAT` keyword at their respective code position.
+Others, e.g. missing features, are listed below.
+
+AutoTrim
+    always off
+    reason: if on, it would not differentiate between %a_space% and %some_var%. it's possible but needs significant changes
