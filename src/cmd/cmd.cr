@@ -23,11 +23,9 @@ abstract class Cmd
 	property je : Cmd?
 	property jne : Cmd?
 	
-	# TODO
-	# def self.all_subclasses : Array(Cmd.class)
-	# 	# {{ @type.all_subclasses.map &.class }}
-	# 	[ EchoCmd ]
-	# end
+	def self.all_subclasses
+		{{ @type.all_subclasses }}
+	end
 
 	def inspect
 		"#{self.class.name}\n    @#{pointerof(@line_no)} line_no #{@line_no}\n    next: #{@next.class.name}\n    je: #{je.class.name}\n    jne: #{jne.class.name}"

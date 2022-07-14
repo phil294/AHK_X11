@@ -5,29 +5,14 @@ class ParsingException < Exception end
 # parse lines into fully instantiated ahk commands with their respective arguments
 # (includes syntax checks)
 class Parser
-	@cmd_class_by_name = { # TODO solve with macro
-		"filecopy" => FileCopyCmd,
-		"echo" => EchoCmd,
-		"setenv" => SetEnvCmd,
-		"ifequal" => IfEqualCmd,
-		"{" => BlockStartCmd,
-		"}" => BlockEndCmd,
-		"else" => ElseCmd,
-		"ahk11_print_vars" => AHK_X11_print_vars_Cmd,
-		"loop" => LoopCmd,
-		"break" => BreakCmd,
-		"continue" => ContinueCmd,
-		"sleep" => SleepCmd,
-		"exit" => ExitCmd,
-		"return" => ReturnCmd,
-		"gosub" => GosubCmd,
-		"goto" => GotoCmd,
-		"settimer" => SetTimerCmd,
-	} of String => Cmd.class
-	# @cmd_class_by_name : Array(Cmd.class)
-	# def initialize() TODO
-	# 	@cmd_class_by_name = Cmd.all_subclasses
-	# end
+	@cmd_class_by_name : Hash(String, Cmd.class)
+	def initialize()
+		@cmd_class_by_name = Cmd.all_subclasses
+			.reduce({} of String => Cmd.class) do |acc, cmd_class|
+				acc[cmd_class.name] = cmd_class
+				acc
+			end
+	end
 
 	@cmds = [] of Cmd
 	getter comment_flag = ";"
