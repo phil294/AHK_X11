@@ -6,14 +6,12 @@ module Build
 	# parse lines into fully instantiated ahk commands with their respective arguments
 	# (includes syntax checks)
 	class Parser
-		@cmd_class_by_name : Hash(String, Cmd::Base.class)
-		def initialize()
-			@cmd_class_by_name = Cmd::Base.all_subclasses
-				.reduce({} of String => Cmd::Base.class) do |acc, cmd_class|
-					acc[cmd_class.name] = cmd_class
-					acc
-				end
-		end
+		@@cmd_class_by_name : Hash(String, Cmd::Base.class)
+		@@cmd_class_by_name = Cmd::Base.all_subclasses
+			.reduce({} of String => Cmd::Base.class) do |acc, cmd_class|
+				acc[cmd_class.name] = cmd_class
+				acc
+			end
 
 		@cmds = [] of Cmd::Base
 		getter comment_flag = ";"
@@ -47,7 +45,7 @@ module Build
 			return if first_word.empty?
 			# Almost everything starts with a regular command, but there are
 			# a few exceptions: if, assignments.
-			cmd_class = @cmd_class_by_name[first_word]?
+			cmd_class = @@cmd_class_by_name[first_word]?
 			if first_word == "/*"
 				@block_comment = true
 			elsif first_word == "*/"
