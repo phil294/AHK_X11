@@ -19,7 +19,7 @@ module Run
 		@timers = {} of String => Timer
 		@default_thread_settings = ThreadSettings.new
 
-		def initialize(@labels, auto_execute_section : Cmd, @escape_char) # todo force positional params with ** ?
+		def initialize(*, @labels, auto_execute_section : Cmd, @escape_char)
 			@auto_execute_thread = spawn_thread auto_execute_section, 0
 		end
 
