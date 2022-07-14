@@ -7,6 +7,6 @@ class SleepCmd < Cmd
 	def run(thread)
 		val = thread.runner.str(@args[0]).to_f?(strict: true)
 		raise RuntimeException.new "invalid sleep value" if ! val
-		sleep val
+		sleep val.milliseconds
 	end
 end
