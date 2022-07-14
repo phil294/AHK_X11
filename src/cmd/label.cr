@@ -1,4 +1,4 @@
-require "./norun"
+require "./no-run"
 
 class LabelCmd < Cmd
 	include NoRun

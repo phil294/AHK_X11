@@ -72,9 +72,9 @@ class IfControlFlow < ControlFlow
 		@else_section || @if_else_sections.last? || @if_section
 	end
 
-	def else_if(if_cond : Cmd)
+	def else_if(if_condition : Cmd)
 		raise "" if @else_section || active_section.open?
-		@if_else_sections << ControlFlowSection.new if_cond
+		@if_else_sections << ControlFlowSection.new if_condition
 	end
 	def else
 		raise "" if @else_section || active_section.open?
@@ -146,7 +146,7 @@ class Linker
 					next
 				end
 
-				# type guard apparently too complicated for type restriction, pbly compiler limitation;
+				# type guard apparently too complicated for type restriction, probably compiler limitation;
 				# that's why there's some `.unsafe_as(IfControlFlow)` inside is_else blocks below
 				raise "" if is_else && (!flows.last? || ! flows.last.is_a?(IfControlFlow))
 
@@ -178,12 +178,12 @@ class Linker
 						flows.last.cmd cmd if flows.last?
 						if cmd.class.control_flow
 							if cmd.is_a?(LoopCmd)
-								new_cond = LoopControlFlow.new cmd
+								new_condition = LoopControlFlow.new cmd
 							else
-								new_cond = IfControlFlow.new cmd
+								new_condition = IfControlFlow.new cmd
 							end
-							flows.last.child_control_flows << new_cond if flows.last?
-							flows << new_cond
+							flows.last.child_control_flows << new_condition if flows.last?
+							flows << new_condition
 						end
 					end
 				end

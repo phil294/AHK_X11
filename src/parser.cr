@@ -52,7 +52,7 @@ class Parser
 
 	def add_line(line, line_no)
 		match = line
-			.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm commments
+			.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
 			.match(/^\s*([^\s,]*)\s*,?(.*)$/).not_nil!
 		first_word = match[1].downcase
 		args = match[2]

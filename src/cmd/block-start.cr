@@ -1,4 +1,4 @@
-require "./norun"
+require "./no-run"
 
 class BlockStartCmd < Cmd
 	include NoRun

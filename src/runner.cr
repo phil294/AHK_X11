@@ -7,6 +7,7 @@ module Run
 	# variables etc. All properties can and will be heavily accessed from outside (commands).
 	class Runner
 		@user_vars = {
+			# INCOMPAT(fix?) static built-in variables can be overridden
 			"a_space" => " "
 		}
 		@escape_char = '`'
@@ -68,8 +69,8 @@ module Run
 		end
 		
 		def str(str)
-			AhkString.process(str, @escape_char) do |varname_lookup|
-				get_var(varname_lookup)
+			AhkString.process(str, @escape_char) do |var_name_lookup|
+				get_var(var_name_lookup)
 			end
 		end
 

@@ -1,10 +1,10 @@
 module Run
     # ahk threads are no real threads but pretty much like crystal fibers, except they're not
-    # cooperative at all; they take each other's place (prioritized) and continue until their invididual end.
+    # cooperative at all; they take each other's place (prioritized) and continue until their individual end.
     # Threads never really run in parallel: There's always one "current thread"
     class Thread
         getter runner : Runner
-        # each threads starts with its own set of settings (e.g. coordmode),
+        # each threads starts with its own set of settings (e.g. CoordMode),
         # the default can be changed in the auto execute section
         getter settings : ThreadSettings
         @stack = [] of Cmd

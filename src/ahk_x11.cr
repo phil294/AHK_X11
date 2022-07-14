@@ -5,8 +5,8 @@ if ! ARGV[0]?
 	abort "Missing file argument.\nUsage:\n    ahk_x11 path/to/script.ahk"
 end
 
-ahkstr = File.read ARGV[0]
-lines = ahkstr.split /\r?\n/
+ahk_str = File.read ARGV[0]
+lines = ahk_str.split /\r?\n/
 
 begin
 	builder = Builder.new
