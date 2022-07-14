@@ -18,8 +18,8 @@ Features:
 Status: None of the above yet, planned is all of it. Basic implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE     6% (13/213):
-+ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy
+DONE     7% (14/213):
++ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy, SetTimer
 
 NEW      1% (2/213): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -28,7 +28,7 @@ REMOVED   5% (10/213): (those that simply make no sense in Linux)
 # EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
 # #InstallMouseHook, #UseHook
 
-MISSING   88% (188/213): (TBD)
+MISSING   88% (187/213): (TBD)
 - AutoTrim, BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
 - ControlGetPos, ControlGetText, ControlMove, ControlSend / ControlSendRaw, ControlSetText, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, EnvAdd, EnvDiv, 
@@ -45,7 +45,7 @@ MISSING   88% (188/213): (TBD)
 - MouseClickDrag, MouseGetPos, MouseMove, MsgBox, OnExit, Pause, PixelGetColor, PixelSearch, 
 - Process, Progress, Random, Reload, Run, RunAs, RunWait, Send / SendRaw, SetBatchLines, 
 - SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
-- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTimer, SetTitleMatchMode, 
+- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
 - SetWinDelay, SetWorkingDir, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
 - SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, 
 - StatusBarWait, StringCaseSense, StringGetPos, StringLeft, StringLen, StringLower, StringMid, 

@@ -11,3 +11,7 @@ targets:
 crystal: 1.4.1
 
 license: MIT
+
+dependencies:
+  tasker:
+      github: spider-gazelle/tasker

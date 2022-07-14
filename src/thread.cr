@@ -2,13 +2,13 @@ module Run
     # ahk threads are no real threads but pretty much like crystal fibers, except they're not
     # cooperative at all; they take each other's place (prioritized) and continue until their invididual end.
     # Threads never really run in parallel: There's always one "current thread"
-    class Thread
+    private class Thread
         getter runner : Runner
         @stack = [] of Cmd
         getter priority = 0
         @exit_code = 0
         @result_channel : Channel(Int32?)?
-        def initialize(@runner, start, @priority = 0)
+        def initialize(@runner, start, @priority)
             @stack << start
         end
 

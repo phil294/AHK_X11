@@ -1,2 +1,14 @@
 version: 2.0
-shards: {}
+shards:
+  cron_parser:
+    git: https://github.com/kostya/cron_parser.git
+    version: 0.4.0
+
+  future:
+    git: https://github.com/crystal-community/future.cr.git
+    version: 1.0.0
+
+  tasker:
+    git: https://github.com/spider-gazelle/tasker.git
+    version: 2.0.5
+

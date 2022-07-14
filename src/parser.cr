@@ -22,6 +22,7 @@ class Parser
 		"return" => ReturnCmd,
 		"gosub" => GosubCmd,
 		"goto" => GotoCmd,
+		"settimer" => SetTimerCmd,
 	} of String => Cmd.class
 	# @cmd_class_by_name : Array(Cmd.class)
 	# def initialize() TODO

@@ -1,5 +1,6 @@
 require "./ahk-string"
 require "./thread"
+require "./timer"
 
 module Run
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -12,14 +13,15 @@ module Run
 		@auto_execute_thread : Thread?
 		@interrupt = Channel(Nil).new
 		@exit_code = 0
+		@timers = {} of String => Timer
 
 		def initialize(@labels, auto_execute_section : Cmd, @escape_char) # todo force positional params with ** ?
-			@auto_execute_thread = spawn_thread auto_execute_section
+			@auto_execute_thread = spawn_thread auto_execute_section, 0
 		end
 
 		# add to the thread queue and start if it isn't running already
-		protected def spawn_thread(cmd) : Thread
-			thread = Thread.new(self, cmd)
+		protected def spawn_thread(cmd, priority) : Thread
+			thread = Thread.new(self, cmd, priority)
 			@threads << thread
 			if @threads.size > 1
 				@interrupt.send(nil)
@@ -63,6 +65,17 @@ module Run
 			AhkString.process(str, @escape_char) do |varname_lookup|
 				get_var(varname_lookup)
 			end
+		end
+
+		def get_timer(label)
+			@timers[label]?
+		end
+		def add_timer(label, period, priority)
+			cmd = labels[label]?
+            raise RuntimeException.new "timer: label '#{label}' not found" if ! cmd
+			timer = Timer.new(self, cmd, period, priority)
+			@timers[label] = timer
+			timer
 		end
 	end
 end
