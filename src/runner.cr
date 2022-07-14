@@ -25,10 +25,12 @@ module Run
 		# add to the thread queue and start if it isn't running already
 		protected def spawn_thread(cmd, priority) : Thread
 			thread = Thread.new(self, cmd, priority, @default_thread_settings)
-			@threads << thread
-			if @threads.size > 1
-				@interrupt.send(nil)
+			if @threads.size > 0
+				i = @threads.index { |t| t.priority > thread.priority } || @threads.size
+				@interrupt.send(nil) if i == @threads.size
+				@threads.insert(i, thread)
 			else
+				@threads << thread
 				spawn clock
 			end
 			thread
