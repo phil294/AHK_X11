@@ -6,7 +6,9 @@ module Run
 	# can start a completely fresh and isolated ahk execution instance with its own
 	# variables etc. All properties can and will be heavily accessed from outside (commands).
 	class Runner
-		@user_vars = {} of String => String
+		@user_vars = {
+			"a_space" => " "
+		}
 		@escape_char = '`'
 		protected getter labels : Hash(String, Cmd)
 		@threads = [] of Thread
