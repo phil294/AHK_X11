@@ -2,7 +2,7 @@ module Run
     # ahk threads are no real threads but pretty much like crystal fibers, except they're not
     # cooperative at all; they take each other's place (prioritized) and continue until their invididual end.
     # Threads never really run in parallel: There's always one "current thread"
-    private class Thread
+    class Thread
         getter runner : Runner
         # each threads starts with its own set of settings (e.g. coordmode),
         # the default can be changed in the auto execute section
@@ -10,6 +10,7 @@ module Run
         @stack = [] of Cmd
         getter priority = 0
         @exit_code = 0
+        getter done = false
         @result_channel : Channel(Int32?)?
         def initialize(@runner, start, @priority, @settings)
             @stack << start
@@ -31,7 +32,10 @@ module Run
         # returns exit code or nil if this thread isn't done yet
         private def do_next
             ins = @stack.last?
-            return @exit_code if ! ins
+            if ! ins
+                @done = true
+                return @exit_code
+            end
             stack_i = @stack.size - 1
 
             result = ins.run(self)
