@@ -1,9 +1,11 @@
-require "./cmd"
+require "./base"
 
-class ContinueCmd < Cmd
-	def self.min_args; 0 end
-	def self.max_args; 0 end
-	def run(thread)
-		true
+module Cmd
+	class Continue < Base
+		def self.min_args; 0 end
+		def self.max_args; 0 end
+		def run(thread)
+			true
+		end
 	end
 end

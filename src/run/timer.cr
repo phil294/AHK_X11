@@ -4,7 +4,7 @@ module Run
 	class Timer
 		@task : Tasker::Repeat(Thread)?
 		@last_thread : Run::Thread?
-		def initialize(@runner : Run::Runner, @cmd : Cmd, @period : Time::Span, @priority : Int32)
+		def initialize(@runner : Run::Runner, @cmd : Cmd::Base, @period : Time::Span, @priority : Int32)
 			update
 		end
 		def cancel

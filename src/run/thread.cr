@@ -7,7 +7,7 @@ module Run
         # each threads starts with its own set of settings (e.g. CoordMode),
         # the default can be changed in the auto execute section
         getter settings : ThreadSettings
-        @stack = [] of Cmd
+        @stack = [] of Cmd::Base
         getter priority = 0
         @exit_code = 0
         getter done = false
@@ -61,12 +61,12 @@ module Run
 
         def gosub(label)
             cmd = @runner.labels[label]?
-            raise RuntimeException.new "gosub: label '#{label}' not found" if ! cmd
+            raise Cmd::RuntimeException.new "gosub: label '#{label}' not found" if ! cmd
             @stack << cmd
         end
         def goto(label)
             cmd = @runner.labels[label]?
-            raise RuntimeException.new "goto: label '#{label}' not found" if ! cmd
+            raise Cmd::RuntimeException.new "goto: label '#{label}' not found" if ! cmd
             @stack[@stack.size - 1] = cmd
         end
         def return

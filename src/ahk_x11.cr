@@ -1,5 +1,5 @@
-require "./build"
-require "./runner"
+require "./build/builder"
+require "./run/runner"
 
 if ! ARGV[0]?
 	abort "Missing file argument.\nUsage:\n    ahk_x11 path/to/script.ahk"
@@ -9,9 +9,9 @@ ahk_str = File.read ARGV[0]
 lines = ahk_str.split /\r?\n/
 
 begin
-	builder = Builder.new
+	builder = Build::Builder.new
 	builder.build lines
-rescue e : SyntaxException | ParsingException
+rescue e : Cmd::SyntaxException | Build::ParsingException
 	# TODO msgbox
 	abort e.message
 end
@@ -21,7 +21,7 @@ exit if ! start
 
 begin
 	runner = Run::Runner.new labels: builder.labels, auto_execute_section: start, escape_char: builder.escape_char
-rescue e : RuntimeException
+rescue e : Cmd::RuntimeException
 	# TODO msgbox
 	abort e.message
 end

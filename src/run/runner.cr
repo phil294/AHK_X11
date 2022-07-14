@@ -1,6 +1,7 @@
 require "./ahk-string"
 require "./thread"
 require "./timer"
+require "../cmd/base"
 
 module Run
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -11,7 +12,7 @@ module Run
 			"a_space" => " "
 		}
 		@escape_char = '`'
-		protected getter labels : Hash(String, Cmd)
+		protected getter labels : Hash(String, Cmd::Base)
 		@threads = [] of Thread
 		@auto_execute_thread : Thread?
 		@interrupt = Channel(Nil).new
@@ -19,7 +20,7 @@ module Run
 		@timers = {} of String => Timer
 		@default_thread_settings = ThreadSettings.new
 
-		def initialize(*, @labels, auto_execute_section : Cmd, @escape_char)
+		def initialize(*, @labels, auto_execute_section : Cmd::Base, @escape_char)
 			@auto_execute_thread = spawn_thread auto_execute_section, 0
 		end
 
@@ -79,7 +80,7 @@ module Run
 		end
 		def add_timer(label, period, priority)
 			cmd = labels[label]?
-            raise RuntimeException.new "timer: label '#{label}' not found" if ! cmd
+            raise Cmd::RuntimeException.new "timer: label '#{label}' not found" if ! cmd
 			timer = Timer.new(self, cmd, period, priority)
 			@timers[label] = timer
 			timer
