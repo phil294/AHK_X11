@@ -38,7 +38,15 @@ module Run
             end
             stack_i = @stack.size - 1
 
-            result = ins.run(self)
+            begin
+                result = ins.run(self)
+            rescue e : Cmd::RuntimeException
+                # TODO msgbox
+	            puts "#{e.message}. The current thread will exit."
+                @done = true
+                @exit_code = 2
+                return @exit_code
+            end
 
             next_ins = ins.next
             if ins.class.control_flow
@@ -61,12 +69,12 @@ module Run
 
         def gosub(label)
             cmd = @runner.labels[label]?
-            raise Cmd::RuntimeException.new "gosub: label '#{label}' not found" if ! cmd
+            raise Cmd::RuntimeException.new "gosub: target label '#{label}' does not exist" if ! cmd
             @stack << cmd
         end
         def goto(label)
             cmd = @runner.labels[label]?
-            raise Cmd::RuntimeException.new "goto: label '#{label}' not found" if ! cmd
+            raise Cmd::RuntimeException.new "goto: target label '#{label}' does not exist" if ! cmd
             @stack[@stack.size - 1] = cmd
         end
         def return
