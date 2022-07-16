@@ -4,8 +4,12 @@
         "downcase",
         "gosub",
         "gsub",
+        "Hotstring",
+        "Hotstrings",
         "INCOMPAT",
+        "keysym",
         "msgbox",
-        "Tasker"
+        "Tasker",
+        "ungrab"
     ]
 }

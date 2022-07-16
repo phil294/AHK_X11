@@ -19,6 +19,12 @@ end
 start = builder.start
 exit if ! start
 
-runner = Run::Runner.new labels: builder.labels, auto_execute_section: start, escape_char: builder.escape_char
+begin
+	runner = Run::Runner.new labels: builder.labels, hotkey_labels: builder.hotkey_labels, auto_execute_section: start, escape_char: builder.escape_char
+rescue e : Cmd::RuntimeException
+	# TODO msgbox
+	abort e.message
+end
+# TODO uncaught error handler? -> abort, and externalize abort from here and thread into something else
 
 sleep # exiting is completely handled in runner

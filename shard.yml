@@ -15,3 +15,5 @@ license: MIT
 dependencies:
   tasker:
       github: spider-gazelle/tasker
+  x11:
+    github: TamasSzekeres/x11-cr

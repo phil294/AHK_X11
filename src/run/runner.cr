@@ -1,7 +1,9 @@
 require "./ahk-string"
 require "./thread"
 require "./timer"
+require "./hotkey"
 require "../cmd/base"
+require "./x11"
 
 module Run
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -19,8 +21,13 @@ module Run
 		@exit_code = 0
 		@timers = {} of String => Timer
 		@default_thread_settings = ThreadSettings.new
+		@x11 : X11
+		@hotkeys = {} of String => Hotkey
 
-		def initialize(*, @labels, auto_execute_section : Cmd::Base, @escape_char)
+		def initialize(*, @labels, hotkey_labels : Array(String), auto_execute_section : Cmd::Base, @escape_char)
+			@x11 = X11.new
+			hotkey_labels.each { |l| add_hotkey l }
+			spawn @x11.run(self)
 			@auto_execute_thread = spawn_thread auto_execute_section, 0
 		end
 
@@ -80,10 +87,24 @@ module Run
 		end
 		def add_timer(label, period, priority)
 			cmd = labels[label]?
-            raise Cmd::RuntimeException.new "timer: label '#{label}' not found" if ! cmd
+            raise Cmd::RuntimeException.new "add timer: label '#{label}' not found" if ! cmd
 			timer = Timer.new(self, cmd, period, priority)
 			@timers[label] = timer
 			timer
+		end
+
+		def add_hotkey(label)
+			cmd = labels[label]?
+            raise Cmd::RuntimeException.new "add hotkey: label '#{label}' not found" if ! cmd
+			hotkey = Hotkey.new(self, cmd, label)
+			@hotkeys[label] = hotkey
+			@x11.register_hotkey hotkey
+			hotkey
+		end
+		def remove_hotkey(label)
+			hotkey = @hotkeys.delete(label)
+			raise Cmd::RuntimeException.new "remove hotkey: label '#{label}' not found" if ! hotkey
+			@x11.unregister_hotkey hotkey
 		end
 	end
 end

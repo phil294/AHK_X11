@@ -13,13 +13,14 @@ module Build
 				acc
 			end
 
-		@cmds = [] of Cmd::Base
+		getter cmds = [] of Cmd::Base
+		getter hotkey_labels = [] of String
 		getter comment_flag = ";"
 		getter escape_char = '`'
 
 		@block_comment = false
 
-		def parse_into_cmds(lines : Array(String))
+		def parse_into_cmds!(lines : Array(String))
 			lines.each_with_index do |line, line_no|
 				begin
 					add_line line, line_no
@@ -31,7 +32,6 @@ module Build
 				end
 			end
 			raise Cmd::SyntaxException.new "Missing */" if @block_comment
-			@cmds
 		end
 
 		def add_line(line, line_no)
@@ -89,6 +89,11 @@ module Build
 				end
 				csv_args = [split[0], split[2]? || ""]
 				@cmds << cmd_class.new line_no, csv_args
+			elsif first_word.ends_with?("::")
+				raise "Hotkeys can not have arguments" if args.size > 0
+				label = first_word[...-2]
+				@cmds << Cmd::Label.new line_no, [label]
+				@hotkey_labels << label
 			elsif first_word.ends_with?(':')
 				raise "Labels can not have arguments" if args.size > 0
 				@cmds << Cmd::Label.new line_no, [first_word[...-1]]

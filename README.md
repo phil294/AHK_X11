@@ -7,15 +7,16 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 > Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite in C# with a similar goal.
 
 Features:
-- [ ] Hotkeys
-- [ ] Hotstrings
-- [ ] Window management
-- [ ] Keyboard and mouse control
-- [ ] File management
-- [ ] GUIs
-- [ ] Compile script to executable
+- [x] Hotkeys (basic support complete)
+- [ ] Hotstrings (difficult in X11; help needed)
+- [ ] Window management (TBD)
+- [ ] Keyboard and mouse control (TBD)
+- [x] File management (setup complete, but most commands are still missing)
+- [ ] GUIs (TBD)
+- [ ] Compile script to executable (TBD)
+- [x] Scripting: labels, flow control: If/Else, Loop
 
-Status: None of the above yet, planned is all of it. Basic implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
+Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
 DONE     7% (14/213):
