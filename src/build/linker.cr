@@ -129,7 +129,7 @@ module Build
 		getter labels = {} of String => Cmd::Base
 
 		def link!(cmds)
-			label = nil
+			pending_labels = [] of String
 			last_normal = nil
 			flows = [] of ControlFlow
 			is_else = false
@@ -137,7 +137,7 @@ module Build
 				is_normal = false
 				begin
 					if cmd.is_a?(Cmd::Label)
-						label = cmd.name
+						pending_labels << cmd.name
 						next
 					end
 
@@ -192,10 +192,8 @@ module Build
 					if is_normal
 						@start ||= cmd
 						last_normal = cmd
-						if label
-							labels[label] = cmd
-							label = nil
-						end
+						pending_labels.each { |lbl| labels[lbl] = cmd }
+						pending_labels.clear
 					else
 						last_normal = nil
 					end
