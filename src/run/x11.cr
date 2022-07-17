@@ -131,11 +131,18 @@ module Run
 				# TODO: need a better solution, such as calling .next_event inside a separate OS thread?
 				sleep 17.milliseconds
 				loop do
-					event = @display.check_mask_event KeyReleaseMask # | KeyPressMask # event.release?
-					break if ! event.is_a?(KeyEvent)
-					sub = @subscriptions.find! do |sub|
+					break if @display.pending == 0
+					event = @display.next_event
+					next if ! event.is_a?(KeyEvent) || ! event.press?
+					sub = @subscriptions.find do |sub|
 						sub[:subscription].keycode == event.keycode &&
 						sub[:subscription].modifiers.any? &.== event.state
+					end
+					if ! sub
+						# Happens often when spamming hotkeys that do SendRaw because these events are apparently
+						# also reported back.
+						# raise "x11: got unexpected keycode/modifier #{@display.keycode_to_keysym(event.keycode.to_u8, 0)}/#{event.state}"
+						next
 					end
 					runner.spawn_thread sub[:hotkey].cmd, 0
 				end
