@@ -3,7 +3,7 @@ require "./base"
 class Cmd::Loop < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 1 end
-	def self.control_flow; true end
+	def self.conditional; true end
 	@repeat_count : Int32?
 	@i = 0
 	def run(thread)

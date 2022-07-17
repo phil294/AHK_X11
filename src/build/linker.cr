@@ -1,9 +1,9 @@
 module Build
 	# describes some kind of logic struct that can handle sub cmds with or without {},
-	# such as `if` or `loop`. At minimum, an implementation needs to have one control flow section
+	# such as `if` or `loop`. At minimum, an implementation needs to have one section
 	# where these can be inserted into.
-	abstract class ControlFlow
-		class ControlFlowSection
+	abstract class Conditional
+		class ConditionalSection
 			property cmd : Cmd::Base
 			property first_child : Cmd::Base?
 			property last_child : Cmd::Base?
@@ -17,13 +17,13 @@ module Build
 			end
 		end
 
-		getter child_control_flows = [] of ControlFlow
+		getter child_conditionals = [] of Conditional
 		@resolved = false
 
-		abstract def initialize(control_flow_cmd : Cmd::Base)
+		abstract def initialize(conditional_cmd : Cmd::Base)
 		
 		# bottommost section, regardless if open or not
-		private abstract def active_section : ControlFlowSection
+		private abstract def active_section : ConditionalSection
 		
 		def block_start
 			raise "" if active_section.block_started || active_section.first_child
@@ -44,14 +44,14 @@ module Build
 			! active_section.open?
 		end
 		# link all collected cmds appropriately to each other, with the final ones pointing to
-		# *next_cmd* if given (if omitted, this will mean this flow element is the end of the file)
+		# *next_cmd* if given (if omitted, this will mean this conditional element is the end of the file)
 		def resolve(next_cmd : Cmd::Base? = nil)
 			raise "" if ! resolvable?
 			return if @resolved
 			link_children_to_cmd = link_all next_cmd
-			while @child_control_flows.last?
-				@child_control_flows.last.resolve link_children_to_cmd
-				@child_control_flows.pop
+			while @child_conditionals.last?
+				@child_conditionals.last.resolve link_children_to_cmd
+				@child_conditionals.pop
 			end
 			@resolved = true
 		end
@@ -60,26 +60,26 @@ module Build
 		private abstract def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
 	end
 
-	class IfControlFlow < ControlFlow
-		@if_section : ControlFlowSection
-		@if_else_sections = [] of ControlFlowSection
-		@else_section : ControlFlowSection?
+	class IfConditional < Conditional
+		@if_section : ConditionalSection
+		@if_else_sections = [] of ConditionalSection
+		@else_section : ConditionalSection?
 
-		def initialize(control_flow_cmd : Cmd::Base)
-			@if_section = ControlFlowSection.new control_flow_cmd
+		def initialize(conditional_cmd : Cmd::Base)
+			@if_section = ConditionalSection.new conditional_cmd
 		end
 
-		private def active_section : ControlFlowSection
+		private def active_section : ConditionalSection
 			@else_section || @if_else_sections.last? || @if_section
 		end
 
 		def else_if(if_condition : Cmd::Base)
 			raise "" if @else_section || active_section.open?
-			@if_else_sections << ControlFlowSection.new if_condition
+			@if_else_sections << ConditionalSection.new if_condition
 		end
 		def else
 			raise "" if @else_section || active_section.open?
-			@else_section = ControlFlowSection.new Cmd::Else.new(0, [] of String)
+			@else_section = ConditionalSection.new Cmd::Else.new(0, [] of String)
 		end
 		
 		private def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
@@ -96,11 +96,11 @@ module Build
 		end
 	end
 
-	class LoopControlFlow < ControlFlow
-		def initialize(control_flow_cmd : Cmd::Base)
-			@section = ControlFlowSection.new control_flow_cmd
+	class LoopConditional < Conditional
+		def initialize(conditional_cmd : Cmd::Base)
+			@section = ConditionalSection.new conditional_cmd
 		end
-		private def active_section : ControlFlowSection
+		private def active_section : ConditionalSection
 			@section
 		end
 
@@ -131,7 +131,7 @@ module Build
 		def link!(cmds)
 			pending_labels = [] of String
 			last_normal = nil
-			flows = [] of ControlFlow
+			conds = [] of Conditional
 			is_else = false
 			cmds.each do |cmd|
 				is_normal = false
@@ -148,43 +148,43 @@ module Build
 					end
 
 					# type guard apparently too complicated for type restriction, probably compiler limitation;
-					# that's why there's some `.unsafe_as(IfControlFlow)` inside is_else blocks below
-					raise "" if is_else && (!flows.last? || ! flows.last.is_a?(IfControlFlow))
+					# that's why there's some `.unsafe_as(IfConditional)` inside is_else blocks below
+					raise "" if is_else && (!conds.last? || ! conds.last.is_a?(IfConditional))
 
 					if cmd.is_a?(Cmd::BlockStart)
-						raise "" if ! flows.last
-						flows.last.unsafe_as(IfControlFlow).else if is_else
-						flows.last.block_start
+						raise "" if ! conds.last
+						conds.last.unsafe_as(IfConditional).else if is_else
+						conds.last.block_start
 					elsif cmd.is_a?(Cmd::BlockEnd)
-						while flows.last? && flows.last.resolvable?
-							flows.pop
+						while conds.last? && conds.last.resolvable?
+							conds.pop
 						end
-						raise "" if ! flows.last? || is_else
-						flows.last.block_end
+						raise "" if ! conds.last? || is_else
+						conds.last.block_end
 					else # any command, including if or loop
 						if is_else
-							if cmd.class.control_flow
-								flows.last.unsafe_as(IfControlFlow).else_if cmd
+							if cmd.class.conditional
+								conds.last.unsafe_as(IfConditional).else_if cmd
 							else
-								flows.last.unsafe_as(IfControlFlow).else
-								flows.last.cmd cmd
+								conds.last.unsafe_as(IfConditional).else
+								conds.last.cmd cmd
 							end
 						else
 							is_normal = true
 							last_normal.next = cmd if last_normal # only link two normal cmds to each other
-							while flows.last? && flows.last.resolvable?
-								flows.last.resolve cmd
-								flows.pop
+							while conds.last? && conds.last.resolvable?
+								conds.last.resolve cmd
+								conds.pop
 							end
-							flows.last.cmd cmd if flows.last?
-							if cmd.class.control_flow
+							conds.last.cmd cmd if conds.last?
+							if cmd.class.conditional
 								if cmd.is_a?(Cmd::Loop)
-									new_condition = LoopControlFlow.new cmd
+									new_condition = LoopConditional.new cmd
 								else
-									new_condition = IfControlFlow.new cmd
+									new_condition = IfConditional.new cmd
 								end
-								flows.last.child_control_flows << new_condition if flows.last?
-								flows << new_condition
+								conds.last.child_conditionals << new_condition if conds.last?
+								conds << new_condition
 							end
 						end
 					end
@@ -204,13 +204,13 @@ module Build
 				end
 			end
 
-			while flows.last?
+			while conds.last?
 				begin
-					flows.last.resolve
+					conds.last.resolve
 				rescue e
 					raise SyntaxException.new "Could not parse condition near the end of the script; most likely a closing brace is missing somewhere. (#{e.message})"
 				end
-				flows.pop
+				conds.pop
 			end
 
 			# pp! cmds

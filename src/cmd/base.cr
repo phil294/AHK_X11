@@ -10,7 +10,7 @@ module Cmd
 		def self.max_args; 0 end
 		# :ditto:
 		def self.multi_command; false end
-		def self.control_flow; false end
+		def self.conditional; false end
 
 		getter line_no = -1
 		@args : Array(String)
@@ -18,8 +18,8 @@ module Cmd
 		def initialize(@line_no, @args)
 		end
 		
-		# When class.control_flow, the return value determines the next branch.
-		# Return value is ignored for non-control_flow cmds.
+		# When class.conditional, the return value determines the next branch.
+		# Return value is ignored for non-conditional cmds.
 		abstract def run(thread)
 
 		property next : Base?

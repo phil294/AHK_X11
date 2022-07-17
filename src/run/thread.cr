@@ -49,7 +49,7 @@ module Run
 			end
 
 			next_cmd = cmd.next
-			if cmd.class.control_flow
+			if cmd.class.conditional
 				if result
 					next_cmd = cmd.je
 				else
