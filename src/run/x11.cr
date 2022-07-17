@@ -128,6 +128,7 @@ module Run
 			while ! @stop
 				# attempt reading new keys max 60 times per second, but once there is one, read them all.
 				# this kind of polling is pretty horrible but apparently the sanest solution of them all... https://stackoverflow.com/q/8592292
+				# TODO: need a better solution, such as calling .next_event inside a separate OS thread?
 				sleep 17.milliseconds
 				loop do
 					event = @display.check_mask_event KeyReleaseMask # | KeyPressMask # event.release?
