@@ -125,13 +125,14 @@ module Run
 		@stop = true
 		def run(runner : Runner)
 			@stop = false
+			fired_last_round = [] of Hotkey
+			fired_this_round = [] of Hotkey
 			while ! @stop
 				# attempt reading new keys max 60 times per second, but once there is one, read them all.
 				# this kind of polling is pretty horrible but apparently the sanest solution of them all... https://stackoverflow.com/q/8592292
 				# TODO: need a better solution, such as calling .next_event inside a separate OS thread?
-				sleep 17.milliseconds
-				loop do
-					break if @display.pending == 0
+				sleep 16.milliseconds
+				while @display.pending > 0
 					event = @display.next_event
 					next if ! event.is_a?(KeyEvent) || ! event.press?
 					sub = @subscriptions.find do |sub|
@@ -144,8 +145,20 @@ module Run
 						# raise "x11: got unexpected keycode/modifier #{@display.keycode_to_keysym(event.keycode.to_u8, 0)}/#{event.state}"
 						next
 					end
-					runner.spawn_thread sub[:hotkey].cmd, 0
+					# prevent a hotkey from firing twice within two iterations to avoid a hotkey calling itself
+					# by means of Send or the like. todo: This is also rather hacky, but it seems to be impossible to see
+					# if an event was xdo'ed or physically typed? So the only (?) proper fix will be thoroughly
+					# integrating Send keys with this module and compare the sent/received keys, so a lot of work and edge cases
+					if ! fired_last_round.includes? sub[:hotkey]
+						fired_this_round << sub[:hotkey]
+					end
 				end
+				fired_this_round.each do |hotkey|
+					runner.spawn_thread hotkey.cmd, 0
+				end
+				fired_last_round.clear
+				fired_last_round.concat fired_this_round
+				fired_this_round.clear
 			end
 		end
 		def stop
