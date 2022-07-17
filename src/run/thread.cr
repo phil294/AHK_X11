@@ -42,7 +42,7 @@ module Run
                 result = ins.run(self)
             rescue e : Cmd::RuntimeException
                 # TODO msgbox
-	            puts "#{e.message}. The current thread will exit."
+	            puts "Runtime error in line #{ins.line_no+1}: '#{e.message}'. The current thread will exit."
                 @done = true
                 @exit_code = 2
                 return @exit_code
