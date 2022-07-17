@@ -22,14 +22,15 @@ module Run
 		@exit_code = 0
 		@timers = {} of String => Timer
 		@default_thread_settings = ThreadSettings.new
-		@x11 : X11
+		@x11 = X11.new
 		@hotkeys = {} of String => Hotkey
 		getter x_do = XDo.new
 
-		def initialize(*, @labels, hotkey_labels : Array(String), auto_execute_section : Cmd::Base, @escape_char)
-			@x11 = X11.new
+		def initialize(*, @labels, @escape_char)
+		end
+		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
 			hotkey_labels.each { |l| add_hotkey l }
-			spawn @x11.run(self)
+			spawn @x11.run self
 			
 			@auto_execute_thread = spawn_thread auto_execute_section, 0
 		end
