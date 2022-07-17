@@ -90,7 +90,7 @@ module Run
 		end
 		def add_timer(label, period, priority)
 			cmd = labels[label]?
-            raise RuntimeException.new "add timer: label '#{label}' not found" if ! cmd
+			raise RuntimeException.new "add timer: label '#{label}' not found" if ! cmd
 			timer = Timer.new(self, cmd, period, priority)
 			@timers[label] = timer
 			timer
@@ -98,7 +98,7 @@ module Run
 
 		def add_hotkey(label)
 			cmd = labels[label]?
-            raise RuntimeException.new "add hotkey: label '#{label}' not found" if ! cmd
+			raise RuntimeException.new "add hotkey: label '#{label}' not found" if ! cmd
 			hotkey = Hotkey.new(self, cmd, label)
 			@hotkeys[label] = hotkey
 			@x11.register_hotkey hotkey
