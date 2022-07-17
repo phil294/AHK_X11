@@ -10,7 +10,8 @@ Features:
 - [x] Hotkeys (basic support complete)
 - [ ] Hotstrings (difficult in X11; help needed)
 - [x] <strike>Window management (setup complete, but most commands are still missing)</strike> *currently broken*
-- [ ] Keyboard and mouse control (TBD)
+- [x] Send keys (basic support complete)
+- [ ] Control mouse (TBD)
 - [x] File management (setup complete, but most commands are still missing)
 - [ ] GUIs (TBD)
 - [ ] Compile script to executable (TBD)
@@ -19,20 +20,20 @@ Features:
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE      7% (15/213):
-+ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy, SetTimer, WinActivate
+DONE      7% (16/214):
++ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy, SetTimer, WinActivate, SendRaw
 
-NEW       1% (2/213): (new Linux-specific commands)
+NEW       1% (2/214): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
 
-REMOVED   5% (11/213):
+REMOVED   5% (11/214):
 # ### Those that simply make no sense in Linux:
 # EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
 # #InstallMouseHook, #UseHook
 # ### Skipped for other reasons:
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%. It's possible but needs significant work
 
-TO DO     87% (185/213): alphabetically
+TO DO     86% (185/214): alphabetically
 - BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
 - ControlGetPos, ControlGetText, ControlMove, ControlSend / ControlSendRaw, ControlSetText, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, EnvAdd, EnvDiv, 
@@ -47,7 +48,7 @@ TO DO     87% (185/213): alphabetically
 - InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
 - Loop (parse a string), Loop (read file contents), Loop (registry), Menu, MouseClick, 
 - MouseClickDrag, MouseGetPos, MouseMove, MsgBox, OnExit, Pause, PixelGetColor, PixelSearch, 
-- Process, Progress, Random, Reload, Run, RunAs, RunWait, Send / SendRaw, SetBatchLines, 
+- Process, Progress, Random, Reload, Run, RunAs, RunWait, Send, SetBatchLines, 
 - SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
 - SetWinDelay, SetWorkingDir, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
