@@ -28,7 +28,7 @@ class AhkString
 				end
 			end
 			# INCOMPAT: only raises at runtime, on ahk it's build time
-			raise Cmd::RuntimeException.new "missing ending percent sign. Line content: '#{str}'" if var_start
+			raise Run::RuntimeException.new "missing ending percent sign. Line content: '#{str}'" if var_start
 		end
 	end
 end

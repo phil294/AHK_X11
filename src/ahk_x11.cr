@@ -11,7 +11,7 @@ lines = ahk_str.split /\r?\n/
 begin
 	builder = Build::Builder.new
 	builder.build lines
-rescue e : Cmd::SyntaxException | Build::ParsingException
+rescue e : Build::SyntaxException | Build::ParsingException
 	# TODO msgbox
 	abort e.message
 end
@@ -21,7 +21,7 @@ exit if ! start
 
 begin
 	runner = Run::Runner.new labels: builder.labels, hotkey_labels: builder.hotkey_labels, auto_execute_section: start, escape_char: builder.escape_char
-rescue e : Cmd::RuntimeException
+rescue e : Run::RuntimeException
 	# TODO msgbox
 	abort e.message
 end

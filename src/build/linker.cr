@@ -200,7 +200,7 @@ module Build
 
 					is_else = false
 				rescue e
-					raise Cmd::SyntaxException.new "Unexpected '#{cmd.class.name}' in line #{cmd.line_no+1}. #{e.message}"
+					raise SyntaxException.new "Unexpected '#{cmd.class.name}' in line #{cmd.line_no+1}. #{e.message}"
 				end
 			end
 
@@ -208,7 +208,7 @@ module Build
 				begin
 					flows.last.resolve
 				rescue e
-					raise Cmd::SyntaxException.new "Could not parse condition near the end of the script; most likely a closing brace is missing somewhere. (#{e.message})"
+					raise SyntaxException.new "Could not parse condition near the end of the script; most likely a closing brace is missing somewhere. (#{e.message})"
 				end
 				flows.pop
 			end

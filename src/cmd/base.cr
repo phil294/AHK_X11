@@ -35,8 +35,4 @@ module Cmd
 		end
 
 	end
-
-	class SyntaxException < Exception end
-
-	class RuntimeException < Exception end
 end

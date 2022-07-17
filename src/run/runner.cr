@@ -62,7 +62,7 @@ module Run
 						@threads.pop
 						if thread == @auto_execute_thread
 							@default_thread_settings = thread.settings
-							::exit @exit_code
+							# ::exit @exit_code
 						end
 					end
 				end
@@ -90,7 +90,7 @@ module Run
 		end
 		def add_timer(label, period, priority)
 			cmd = labels[label]?
-            raise Cmd::RuntimeException.new "add timer: label '#{label}' not found" if ! cmd
+            raise RuntimeException.new "add timer: label '#{label}' not found" if ! cmd
 			timer = Timer.new(self, cmd, period, priority)
 			@timers[label] = timer
 			timer
@@ -98,7 +98,7 @@ module Run
 
 		def add_hotkey(label)
 			cmd = labels[label]?
-            raise Cmd::RuntimeException.new "add hotkey: label '#{label}' not found" if ! cmd
+            raise RuntimeException.new "add hotkey: label '#{label}' not found" if ! cmd
 			hotkey = Hotkey.new(self, cmd, label)
 			@hotkeys[label] = hotkey
 			@x11.register_hotkey hotkey
@@ -110,4 +110,6 @@ module Run
 			@x11.unregister_hotkey hotkey
 		end
 	end
+
+	class RuntimeException < Exception end
 end

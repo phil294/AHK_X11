@@ -40,7 +40,7 @@ module Run
 
             begin
                 result = ins.run(self)
-            rescue e : Cmd::RuntimeException
+            rescue e : RuntimeException
                 # TODO msgbox
 	            puts "Runtime error in line #{ins.line_no+1}: '#{e.message}'. The current thread will exit."
                 @done = true
@@ -69,12 +69,12 @@ module Run
 
         def gosub(label)
             cmd = @runner.labels[label]?
-            raise Cmd::RuntimeException.new "gosub: target label '#{label}' does not exist" if ! cmd
+            raise RuntimeException.new "gosub: target label '#{label}' does not exist" if ! cmd
             @stack << cmd
         end
         def goto(label)
             cmd = @runner.labels[label]?
-            raise Cmd::RuntimeException.new "goto: target label '#{label}' does not exist" if ! cmd
+            raise RuntimeException.new "goto: target label '#{label}' does not exist" if ! cmd
             @stack[@stack.size - 1] = cmd
         end
         def return

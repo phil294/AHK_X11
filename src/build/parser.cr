@@ -28,10 +28,10 @@ module Build
 					{% if ! flag?(:release) %}
 						puts "[debug]", e.inspect_with_backtrace
 					{% end %}
-					raise Cmd::SyntaxException.new "Syntax Error in line #{line_no+1}: '#{e.message}'. Line content was: '#{line}'."
+					raise SyntaxException.new "Syntax Error in line #{line_no+1}: '#{e.message}'. Line content was: '#{line}'."
 				end
 			end
-			raise Cmd::SyntaxException.new "Missing */" if @block_comment
+			raise SyntaxException.new "Missing */" if @block_comment
 		end
 
 		def add_line(line, line_no)

@@ -20,4 +20,6 @@ module Build
 			nil
 		end
 	end
+
+	class SyntaxException < Exception end
 end
