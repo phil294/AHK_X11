@@ -16,3 +16,7 @@ shards:
     git: https://github.com/tamasszekeres/x11-cr.git
     version: 1.0.1
 
+  x_do:
+    git: https://github.com/woodruffw/x_do.cr.git
+    version: 0.8.3
+

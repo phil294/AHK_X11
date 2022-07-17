@@ -9,7 +9,7 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 Features:
 - [x] Hotkeys (basic support complete)
 - [ ] Hotstrings (difficult in X11; help needed)
-- [ ] Window management (TBD)
+- [x] <strike>Window management (setup complete, but most commands are still missing)</strike> *currently broken*
 - [ ] Keyboard and mouse control (TBD)
 - [x] File management (setup complete, but most commands are still missing)
 - [ ] GUIs (TBD)
@@ -19,8 +19,8 @@ Features:
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE      7% (14/213):
-+ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy, SetTimer
+DONE      7% (15/213):
++ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy, SetTimer, WinActivate
 
 NEW       1% (2/213): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -32,7 +32,7 @@ REMOVED   5% (11/213):
 # ### Skipped for other reasons:
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%. It's possible but needs significant work
 
-TO DO     87% (186/213): alphabetically
+TO DO     87% (185/213): alphabetically
 - BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
 - ControlGetPos, ControlGetText, ControlMove, ControlSend / ControlSendRaw, ControlSetText, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, EnvAdd, EnvDiv, 
@@ -54,7 +54,7 @@ TO DO     87% (186/213): alphabetically
 - SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, 
 - StatusBarWait, StringCaseSense, StringGetPos, StringLeft, StringLen, StringLower, StringMid, 
 - StringReplace, StringRight, StringSplit, StringTrimLeft, StringTrimRight, StringUpper, Suspend, 
-- SysGet, Thread, ToolTip, Transform, TrayTip, URLDownloadToFile, WinActivate, WinActivateBottom, 
+- SysGet, Thread, ToolTip, Transform, TrayTip, URLDownloadToFile, WinActivateBottom, 
 - WinClose, WinGetActiveStats, WinGetActiveTitle, WinGetClass, WinGet, WinGetPos, WinGetText, 
 - WinGetTitle, WinHide, WinKill, WinMaximize, WinMenuSelectItem, WinMinimize, WinMinimizeAll, 
 - WinMinimizeAllUndo, WinMove, WinRestore, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 

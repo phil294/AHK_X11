@@ -86,6 +86,6 @@ module Run
         end
     end
     private struct ThreadSettings
-        # property xyz = true
+        property last_found_window : XDo::Window?
     end
 end
