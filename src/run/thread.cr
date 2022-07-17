@@ -31,37 +31,37 @@ module Run
         end
         # returns exit code or nil if this thread isn't done yet
         private def do_next
-            ins = @stack.last?
-            if ! ins
+            cmd = @stack.last?
+            if ! cmd
                 @done = true
                 return @exit_code
             end
             stack_i = @stack.size - 1
 
             begin
-                result = ins.run(self)
+                result = cmd.run(self)
             rescue e : RuntimeException
                 # TODO msgbox
-	            puts "Runtime error in line #{ins.line_no+1}: '#{e.message}'. The current thread will exit."
+	            puts "Runtime error in line #{cmd.line_no+1}: '#{e.message}'. The current thread will exit."
                 @done = true
                 @exit_code = 2
                 return @exit_code
             end
 
-            next_ins = ins.next
-            if ins.class.control_flow
+            next_cmd = cmd.next
+            if cmd.class.control_flow
                 if result
-                    next_ins = ins.je
+                    next_cmd = cmd.je
                 else
-                    next_ins = ins.jne
+                    next_cmd = cmd.jne
                 end
             end
-            # current stack el may have been altered by prev ins.run(), in which case disregard the normal flow
-            if @stack[stack_i]? == ins # not altered
-                if ! next_ins
+            # current stack el may have been altered by prev cmd.run(), in which case disregard the normal flow
+            if @stack[stack_i]? == cmd # not altered
+                if ! next_cmd
                     @stack.delete_at(stack_i)
                 else
-                    @stack[stack_i] = next_ins
+                    @stack[stack_i] = next_cmd
                 end
             end
             nil
