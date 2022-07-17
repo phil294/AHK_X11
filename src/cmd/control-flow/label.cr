@@ -1,6 +1,6 @@
-require "./no-run"
+require "../no-run"
 
-class Cmd::Label < Cmd::Base
+class Cmd::ControlFlow::Label < Cmd::Base
 	include NoRun
 	def self.min_args; 1 end
 	def self.max_args; 1 end

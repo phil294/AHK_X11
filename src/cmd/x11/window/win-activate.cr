@@ -1,4 +1,4 @@
-require "../base"
+require "../../base"
 require "./win-util"
 
 class Cmd::Window::WinActivate < Cmd::Base

@@ -1,6 +1,6 @@
-require "./base"
+require "../base"
 
-class Cmd::Sleep < Cmd::Base
+class Cmd::ControlFlow::Sleep < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 1 end
 	def run(thread)

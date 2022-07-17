@@ -1,6 +1,6 @@
-require "./base"
+require "../base"
 
-class Cmd::SetTimer < Cmd::Base
+class Cmd::ControlFlow::SetTimer < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 3 end
 	def run(thread)

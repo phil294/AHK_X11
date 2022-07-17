@@ -1,6 +1,6 @@
-require "./base"
+require "../base"
 
-class Cmd::Loop < Cmd::Base
+class Cmd::ControlFlow::Loop < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 1 end
 	def self.conditional; true end

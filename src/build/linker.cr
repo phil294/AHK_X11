@@ -1,4 +1,7 @@
 module Build
+	# include Cmd
+	include Cmd::ControlFlow
+
 	# describes some kind of logic struct that can handle sub cmds with or without {},
 	# such as `if` or `loop`. At minimum, an implementation needs to have one section
 	# where these can be inserted into.
@@ -79,7 +82,7 @@ module Build
 		end
 		def else
 			raise "" if @else_section || active_section.open?
-			@else_section = ConditionalSection.new Cmd::Else.new(0, [] of String)
+			@else_section = ConditionalSection.new Else.new(0, [] of String)
 		end
 		
 		private def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
@@ -104,12 +107,12 @@ module Build
 			@section
 		end
 
-		@breaks = [] of Cmd::Break
-		@continues = [] of Cmd::Continue
+		@breaks = [] of Break
+		@continues = [] of Continue
 		def cmd(cmd : Cmd::Base)
 			super(cmd)
-			@breaks << cmd if cmd.is_a?(Cmd::Break)
-			@continues << cmd if cmd.is_a?(Cmd::Continue)
+			@breaks << cmd if cmd.is_a?(Break)
+			@continues << cmd if cmd.is_a?(Continue)
 		end
 		private def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
 			@section.cmd.je = @section.first_child || next_cmd
@@ -136,12 +139,12 @@ module Build
 			cmds.each do |cmd|
 				is_normal = false
 				begin
-					if cmd.is_a?(Cmd::Label)
+					if cmd.is_a?(Label)
 						pending_labels << cmd.name
 						next
 					end
 
-					if cmd.is_a?(Cmd::Else)
+					if cmd.is_a?(Else)
 						raise "" if is_else
 						is_else = true
 						next
@@ -151,11 +154,11 @@ module Build
 					# that's why there's some `.unsafe_as(IfConditional)` inside is_else blocks below
 					raise "" if is_else && (!conds.last? || ! conds.last.is_a?(IfConditional))
 
-					if cmd.is_a?(Cmd::BlockStart)
+					if cmd.is_a?(BlockStart)
 						raise "" if ! conds.last
 						conds.last.unsafe_as(IfConditional).else if is_else
 						conds.last.block_start
-					elsif cmd.is_a?(Cmd::BlockEnd)
+					elsif cmd.is_a?(BlockEnd)
 						while conds.last? && conds.last.resolvable?
 							conds.pop
 						end
@@ -178,7 +181,7 @@ module Build
 							end
 							conds.last.cmd cmd if conds.last?
 							if cmd.class.conditional
-								if cmd.is_a?(Cmd::Loop)
+								if cmd.is_a?(Loop)
 									new_condition = LoopConditional.new cmd
 								else
 									new_condition = IfConditional.new cmd

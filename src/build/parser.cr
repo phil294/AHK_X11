@@ -83,7 +83,7 @@ module Build
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				case split[1]?
 				when "="
-					cmd_class = Cmd::IfEqual
+					cmd_class = Cmd::ControlFlow::IfEqual
 				else
 					raise "If condition '#{split[1]?}' is unknown"
 				end
@@ -92,15 +92,15 @@ module Build
 			elsif first_word.ends_with?("::")
 				raise "Hotkeys can not have arguments" if args.size > 0
 				label = first_word[...-2]
-				@cmds << Cmd::Label.new line_no, [label]
+				@cmds << Cmd::ControlFlow::Label.new line_no, [label]
 				@hotkey_labels << label
 			elsif first_word.ends_with?(':')
 				raise "Labels can not have arguments" if args.size > 0
-				@cmds << Cmd::Label.new line_no, [first_word[...-1]]
+				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
 			else
 				split = args.split()
 				if split[0]? == "="
-					cmd_class = Cmd::SetEnv
+					cmd_class = Cmd::Variable::SetEnv
 					csv_args = [first_word, split[1]? || ""]
 				else
 					raise "Command '#{first_word}' not found"

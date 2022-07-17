@@ -1,6 +1,6 @@
-require "./no-run"
+require "../no-run"
 
-class Cmd::BlockEnd < Cmd::Base
+class Cmd::ControlFlow::BlockEnd < Cmd::Base
 	include NoRun
 	def self.name; "}"; end
 	def self.multi_command; true end

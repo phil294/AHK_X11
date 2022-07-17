@@ -1,6 +1,6 @@
-require "./base"
+require "../base"
 
-class Cmd::IfEqual < Cmd::Base
+class Cmd::ControlFlow::IfEqual < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 2 end
 	def self.multi_command; true end
