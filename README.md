@@ -68,6 +68,8 @@ TO DO     87% (186/213): alphabetically
 
 Not yet explicitly tuned for performance, but by design and choice of technology, it should run reasonably fast. Most recent tests yielded 0.03 ms for parsing one instruction line (this happens once at startup). Execution speed even is at least x100 faster than that.
 
+There can be a delay of no more than 16 ms between a key press and its thread invocation. Haven't really figured out how to solve this yet.
+
 TODO: speed measurements for `Send` and window operations
 
 ## Installation
