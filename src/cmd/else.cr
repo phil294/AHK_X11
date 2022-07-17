@@ -1,8 +1,6 @@
 require "./no-run"
 
-module Cmd
-	class Else < Base
-		include NoRun
-		def self.multi_command; true end
-	end
+class Cmd::Else < Cmd::Base
+	include NoRun
+	def self.multi_command; true end
 end
