@@ -122,47 +122,57 @@ module Run
 			@display.close
 		end
 
-		@stop = true
 		def run(runner : Runner)
-			@stop = false
-			fired_last_round = [] of Hotkey
-			fired_this_round = [] of Hotkey
-			while ! @stop
-				# attempt reading new keys max 60 times per second, but once there is one, read them all.
-				# this kind of polling is pretty horrible but apparently the sanest solution of them all... https://stackoverflow.com/q/8592292
-				# TODO: need a better solution, such as calling .next_event inside a separate OS thread?
-				sleep 16.milliseconds
-				while @display.pending > 0
-					event = @display.next_event
-					next if ! event.is_a?(KeyEvent) || ! event.press?
-					sub = @subscriptions.find do |sub|
-						sub[:subscription].keycode == event.keycode &&
-						sub[:subscription].modifiers.any? &.== event.state
+			# attempt reading new keys max 60 times per second, but once there is one, read them all.
+			# this kind of polling is pretty horrible but apparently the sanest solution of them all... https://stackoverflow.com/q/8592292
+			# TODO: need a better solution, such as calling .next_event inside a separate OS thread?
+			# https://stackoverflow.com/q/73016552
+			polling_interval = 16.milliseconds
+			loop do
+				loop do
+					select
+					when @resume_channel.receive
+						raise "cannot resume already running x11 loop"
+					when @pause_channel.receive
+						break
+					when timeout polling_interval
 					end
-					if ! sub
-						# Happens often when spamming hotkeys that do SendRaw because these events are apparently
-						# also reported back.
-						# raise "x11: got unexpected keycode/modifier #{@display.keycode_to_keysym(event.keycode.to_u8, 0)}/#{event.state}"
-						next
-					end
-					# prevent a hotkey from firing twice within two iterations to avoid a hotkey calling itself
-					# by means of Send or the like. todo: This is also rather hacky, but it seems to be impossible to see
-					# if an event was xdo'ed or physically typed? So the only (?) proper fix will be thoroughly
-					# integrating Send keys with this module and compare the sent/received keys, so a lot of work and edge cases
-					if ! fired_last_round.includes? sub[:hotkey]
-						fired_this_round << sub[:hotkey]
+
+					while @display.pending > 0
+						event = @display.next_event
+						next if ! event.is_a?(KeyEvent) || ! event.release?
+						sub = @subscriptions.find do |sub|
+							sub[:subscription].keycode == event.keycode &&
+							sub[:subscription].modifiers.any? &.== event.state
+						end
+						next if ! sub # Unrelated events are somehow randomly also reported, don't ask me why
+						runner.spawn_thread sub[:hotkey].cmd, 0
 					end
 				end
-				fired_this_round.each do |hotkey|
-					runner.spawn_thread hotkey.cmd, 0
+				loop do
+					# we're now in a pause state. Wait until all pause requests have been resumed,
+					# then flush all and go back into regular polling loop
+					pause_counter = 1
+					select
+					when @resume_channel.receive
+						pause_counter -= 1
+					when @pause_channel.receive
+						pause_counter += 1
+					end
+					break if pause_counter == 0
 				end
-				fired_last_round.clear
-				fired_last_round.concat fired_this_round
-				fired_this_round.clear
+				@display.sync(true) # disregard events aggregated during the pausing
 			end
 		end
-		def stop
-			@stop = true
+		@pause_channel = Channel(Nil).new
+		@resume_channel = Channel(Nil).new
+		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
+		# from triggering themselves (or others)
+		def pause
+			@pause_channel.send nil
+		end
+		def resume
+			@resume_channel.send nil
 		end
 
 		@subscriptions = [] of NamedTuple(hotkey: Hotkey, subscription: Subscription)

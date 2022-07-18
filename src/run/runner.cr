@@ -110,6 +110,12 @@ module Run
 			raise Cmd::RuntimeException.new "remove hotkey: label '#{label}' not found" if ! hotkey
 			@x11.unregister_hotkey hotkey
 		end
+		def pause_x11
+			@x11.pause
+		end
+		def resume_x11
+			@x11.resume
+		end
 	end
 
 	class RuntimeException < Exception end
