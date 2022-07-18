@@ -21,7 +21,8 @@ Implementation details follow below; note however that this is not very represen
 
 ```diff
 DONE      7% (16/214):
-+ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy, SetTimer, WinActivate, SendRaw
++ Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
++ SetTimer, WinActivate, SendRaw
 
 NEW       1% (2/214): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
