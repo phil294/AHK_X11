@@ -84,7 +84,26 @@ TODO
 
 ## Development
 
-TODO
+These are the steps required to build this project locally. Most of it is all WIP and temporary and only necessary so the different dependencies get along fine (x11 and gobject bindings).
+As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` calls) and thus reduce the overall compile time from ~6 to ~3 seconds.
+I haven't double checked these steps, so it's best to check the results manually.
+
+1. Install Crystal, Shards, clone project
+1. `shards install`
+1. `crystal run lib/gobject/src/generator/build_namespace.cr -- Gtk 3.0 > lib/gobject/src/gtk/gobject-cache-gtk.cr`
+1. `crystal run lib/gobject/src/generator/build_namespace.cr -- xlib 2.0 > lib/gobject/src/gtk/gobject-cache-xlib--modified.cr`
+1. ```bash
+    for lib in "GObject 2.0" "GLib 2.0" "Gio 2.0" "GModule 2.0" "Atk 1.0" "HarfBuzz 0.0" "GdkPixbuf 2.0" "cairo 1.0" "Pango 1.0" "Gdk 3.0"; do
+        echo "### $lib" >> lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
+        crystal run lib/gobject/src/generator/build_namespace.cr -- $lib >> lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
+    done
+    ```
+1. `sed -i -E 's/^(require_gobject)/# \1/g' lib/gobject/src/gtk/gobject-cache-gtk.cr lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr`
+1. `sed -i -E 's/^require_gobject "Gtk", "3.0"$/require ".\/gobject-cache-gtk"/' lib/gobject/src/gtk/gtk.cr`
+1. `echo 'require "./gobject-cache-xlib--modified"' > tmp.txt; echo 'require "./gobject-cache-gtk-other-deps"' >> tmp.txt; cat lib/gobject/src/gtk/gobject-cache-gtk.cr >> tmp.txt; mv tmp.txt lib/gobject/src/gtk/gobject-cache-gtk.cr`
+1. `echo 'macro require_gobject(namespace, version = nil) end' >> lib/gobject/src/gobject.cr` # (all caching is done)
+1. `sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr` # (remove conflict fun from cache)
+1. `shards build --release`, then `bin/ahk_x11 "your ahk file.ahk"` or while in development, `shards run -- "your ahk file.ahk"`
 
 ## Contributing
 

@@ -28,4 +28,4 @@ rescue e : Run::RuntimeException
 end
 # TODO uncaught error handler? -> abort, and externalize abort from here and thread into something else
 
-sleep # exiting is completely handled in runner
+# sleep # exiting is completely handled in runner # TODO

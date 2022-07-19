@@ -3,6 +3,7 @@ require "./thread"
 require "./timer"
 require "./hotkey"
 require "../cmd/base"
+require "./gui"
 require "./x11"
 require "x_do"
 
@@ -25,12 +26,14 @@ module Run
 		@x11 = X11.new
 		@hotkeys = {} of String => Hotkey
 		getter x_do = XDo.new
+		getter gui = Gui.new
 
 		def initialize(*, @labels, @escape_char)
 		end
 		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
 			hotkey_labels.each { |l| add_hotkey l }
 			spawn @x11.run self
+			@gui.run
 			
 			@auto_execute_thread = spawn_thread auto_execute_section, 0
 		end

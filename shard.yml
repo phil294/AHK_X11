@@ -19,3 +19,7 @@ dependencies:
     github: TamasSzekeres/x11-cr
   x_do:
     github: woodruffw/x_do.cr
+  gobject:
+    github: jhass/crystal-gobject
+  malloc_pthread_shim:
+    github: jhass/crystal-malloc_pthread_shim
