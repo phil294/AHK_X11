@@ -11,19 +11,19 @@ class Cmd::Window::Util
 			return thread.runner.x_do.active_window if a_is_active
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here"
 		else
-			# text = match_conditions[1]? || "" # todo
+			# text = match_conditions[1]? || "" # TODO:
 			exclude_title = match_conditions[2]? || ""
-			# exclude_text = match_conditions[3]? || "" # todo
+			# exclude_text = match_conditions[3]? || "" # TODO:
 
 			# broken: https://github.com/woodruffw/x_do.cr/issues/10
 			wins = thread.runner.x_do.search do
 				require_all
 				if title.starts_with?("ahk_class ")
-					window_class_name title[10..] # todo is this regex? how to make partial matches like ahk?
+					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
 				elsif title.starts_with?("ahk_id ")
 					id = title[7..].to_i?(strict: true)
 					raise Run::RuntimeException.new "ahk_id must be a number" if ! id
-					pid id # todo should be win id instead (?) but xdo apparently doesn't provide a method for that?
+					pid id # TODO: should be win id instead (?) but xdo apparently doesn't provide a method for that?
 				else
 					window_name title
 				end

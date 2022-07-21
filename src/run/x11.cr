@@ -6,8 +6,8 @@ module X11::C
 	# see lib/x11/src/x11/c/keysymdef.cr, stripped from XK_ and underscores
 	private def self.ahk_key_name_to_keysym_generic
 		{{
-			@type.constants # todo possible to declare this outside of the module?
-				.select { |c| c.stringify.starts_with?("XK_") } # && c.underlying-var-type.is_a?(Int32) < todo how to, so the bools are skipped? (and `|| ! sym.is_a?(Int32)` can be removed)
+			@type.constants # TODO: possible to declare this outside of the module?
+				.select { |c| c.stringify.starts_with?("XK_") } # && c.underlying-var-type.is_a?(Int32) < TODO: how to, so the bools are skipped? (and `|| ! sym.is_a?(Int32)` can be removed)
 				.reduce({} of String => Int32) do |acc, const_name|
 					key_name = const_name.stringify[3..].downcase
 					acc[key_name.gsub(/_/, "")] = const_name
@@ -27,7 +27,7 @@ module X11::C
 			"pgup" => XK_Page_Up,
 			"pgdown" => XK_Page_Down,
 			"printscreen" => XK_Print,
-			# todo:
+			# TODO:
 			# LButton - the left mouse button 
 			# RButton - the right mouse button 
 			# MButton - the middle or wheel mouse button 

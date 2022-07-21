@@ -19,7 +19,7 @@ begin
 	builder = Build::Builder.new
 	builder.build lines
 rescue e : Build::SyntaxException | Build::ParsingException
-	# TODO msgbox
+	# TODO: msgbox
 	abort e.message
 end
 
@@ -30,9 +30,9 @@ begin
 	runner = Run::Runner.new labels: builder.labels, escape_char: builder.escape_char
 	runner.run hotkey_labels: builder.hotkey_labels, auto_execute_section: start
 rescue e : Run::RuntimeException
-	# TODO msgbox
+	# TODO: msgbox
 	abort e.message
 end
-# TODO uncaught error handler? -> abort, and externalize abort from here and thread into something else
+# TODO: uncaught error handler? -> abort, and externalize abort from here and thread into something else
 
 sleep # exiting is completely handled in runner
