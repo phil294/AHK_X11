@@ -39,7 +39,8 @@ REMOVED   5% (11/214):
 # EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
 # #InstallMouseHook, #UseHook
 # ### Skipped for other reasons:
-# AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%. It's possible but needs significant work
+# AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
+#           It's possible but needs significant work.
 
 TO DO     86% (184/214): alphabetically
 - BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
