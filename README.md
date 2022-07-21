@@ -118,4 +118,16 @@ As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` c
 
 ## Contributing
 
-TODO
+If you feel like it, you are welcome to contribute. This program has a very modular structure by its nature which should make it easier to add features. Most work pending is just implementing commands, as almost everything more complicated is now bootstrapped. Simply adhere to the 2004 chm docs linked above.
+
+Commands behave mostly autonomous. See for example `src/cmd/file/file-copy.cr`: All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
+Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `get_var` and `set_var`.
+
+A more general overview:
+- `src/build` does the parsing etc. and is mostly complete
+- `src/run/runner` and `src/run/thread` are worth looking into, this is the heart of the application and where global and thread state is stored
+- `src/cmd` contains all commands exposed to the user.
+
+## License
+
+[GPL-2.0](https://tldrlegal.com/license/gnu-general-public-license-v2)
