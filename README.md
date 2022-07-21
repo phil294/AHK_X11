@@ -76,7 +76,40 @@ Then, you can download the latest x86_64 binary from [here](https://github.com/p
 
 ## Usage
 
-See "Development"
+Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`.
+
+<details>
+<summary>Here's a working demo script showing several of the commands so far implemented.</summary>
+
+```AutoHotkey
+GoSub greet
+return ; some comment
+
+greet:
+my_var = 1234
+sleep 0.001
+IfEqual, my_var, 1234, MsgBox, %my_var%! Try pressing ctrl+shift+A.
+else, msgbox ??
+return
+
+^+a::
+msgbox You pressed ctrl shift A. If you press ctrl+shift+B, ahk_x11 should type something for you.
+return
+
+^+b::
+SetTimer, my_timer, %myvar%
+loop, 3
+{
+	sendraw, loop no %A_Index% `; ...
+}
+return
+
+my_timer:
+settimer, my_timer, off
+msgbox, A timer was triggered!
+return
+```
+</details>
 
 ### Caveats
 
