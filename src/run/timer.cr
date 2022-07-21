@@ -21,7 +21,7 @@ module Run
 				if last_thread && ! last_thread.done
 					next last_thread # skip
 				end
-				@last_thread = @runner.spawn_thread @cmd, @priority
+				@last_thread = @runner.add_thread @cmd, @priority
 			end
 		end
 	end

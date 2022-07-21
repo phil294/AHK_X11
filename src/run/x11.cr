@@ -123,56 +123,36 @@ module Run
 		end
 
 		def run(runner : Runner)
-			# attempt reading new keys max 60 times per second, but once there is one, read them all.
-			# this kind of polling is pretty horrible but apparently the sanest solution of them all... https://stackoverflow.com/q/8592292
-			# TODO: need a better solution, such as calling .next_event inside a separate OS thread?
-			# https://stackoverflow.com/q/73016552
-			polling_interval = 16.milliseconds
 			loop do
-				loop do
-					select
-					when @resume_channel.receive
-						raise "cannot resume already running x11 loop"
-					when @pause_channel.receive
-						break
-					when timeout polling_interval
-					end
-
-					while @display.pending > 0
-						event = @display.next_event
-						next if ! event.is_a?(KeyEvent) || ! event.release?
-						sub = @subscriptions.find do |sub|
-							sub[:subscription].keycode == event.keycode &&
-							sub[:subscription].modifiers.any? &.== event.state
-						end
-						next if ! sub # Unrelated events are somehow randomly also reported, don't ask me why
-						runner.spawn_thread sub[:hotkey].cmd, 0
-					end
+				event = @display.next_event
+				next if @is_paused || ! event.is_a?(KeyEvent) || ! event.release?
+				sub = @subscriptions.find do |sub|
+					sub[:subscription].keycode == event.keycode &&
+					sub[:subscription].modifiers.any? &.== event.state
 				end
-				loop do
-					# we're now in a pause state. Wait until all pause requests have been resumed,
-					# then flush all and go back into regular polling loop
-					pause_counter = 1
-					select
-					when @resume_channel.receive
-						pause_counter -= 1
-					when @pause_channel.receive
-						pause_counter += 1
-					end
-					break if pause_counter == 0
-				end
-				@display.sync(true) # disregard events aggregated during the pausing
+				next if ! sub # Unrelated events are somehow randomly also reported, don't ask me why
+				runner.add_thread sub[:hotkey].cmd, 0
 			end
 		end
-		@pause_channel = Channel(Nil).new
-		@resume_channel = Channel(Nil).new
 		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
 		# from triggering themselves (or others)
+		@pause_counter = 0
+		@is_paused = false
+		@pause_mutex = Mutex.new
 		def pause
-			@pause_channel.send nil
+			@pause_mutex.lock
+			@pause_counter += 1
+			@is_paused = true
+			@pause_mutex.unlock
 		end
 		def resume
-			@resume_channel.send nil
+			@pause_mutex.lock
+			@pause_counter -= 1
+			if @pause_counter < 1
+				@pause_counter = 0
+				@is_paused = false
+			end
+			@pause_mutex.unlock
 		end
 
 		@subscriptions = [] of NamedTuple(hotkey: Hotkey, subscription: Subscription)

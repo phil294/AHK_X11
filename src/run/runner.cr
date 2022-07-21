@@ -19,12 +19,12 @@ module Run
 		protected getter labels : Hash(String, Cmd::Base)
 		@threads = [] of Thread
 		@auto_execute_thread : Thread?
-		@interrupt = Channel(Nil).new
+		@run_thread_channel = Channel(Nil).new
 		@exit_code = 0
 		@timers = {} of String => Timer
 		@default_thread_settings = ThreadSettings.new
-		@x11 = X11.new
 		@hotkeys = {} of String => Hotkey
+		@x11 = X11.new
 		getter x_do = XDo.new
 		getter gui = Gui.new
 
@@ -33,43 +33,43 @@ module Run
 		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
 			hotkey_labels.each { |l| add_hotkey l }
 			spawn @x11.run self
-			@gui.run
-			
-			@auto_execute_thread = spawn_thread auto_execute_section, 0
+			spawn @gui.run
+			spawn same_thread: true { clock }
+			@auto_execute_thread = add_thread auto_execute_section, 0
 		end
 
-		# add to the thread queue and start if it isn't running already
-		protected def spawn_thread(cmd, priority) : Thread
+		# add to the thread queue. Depending on priority and @threads, it may be picked up
+		# by the clock fiber immediately afterwards
+		protected def add_thread(cmd, priority) : Thread
 			thread = Thread.new(self, cmd, priority, @default_thread_settings)
-			if @threads.size > 0
-				i = @threads.index { |t| t.priority > thread.priority } || @threads.size
-				@interrupt.send(nil) if i == @threads.size
-				@threads.insert(i, thread)
-			else
-				@threads << thread
-				spawn clock
-			end
+			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
+			@threads.insert(i, thread)
+			@run_thread_channel.send(nil) if i == @threads.size - 1
 			thread
 		end
 
 		# there must only be one
 		private def clock
-			while thread = @threads.last?
-				select
-				when @interrupt.receive
-					# current command may finish in the background, but its result handling and thread continuation
-					# will have to wait: probably because another, more important thread came along which will now
-					# get attention in the next iteration
-				when exit_code = thread.next.receive?
-					if ! exit_code.nil?
-						@exit_code = exit_code
-						@threads.pop
-						if thread == @auto_execute_thread
-							@default_thread_settings = thread.settings
-							# ::exit @exit_code
+			loop do
+				while thread = @threads.last?
+					select
+					when @run_thread_channel.receive
+						# current command may finish in the background, but its result handling and thread continuation
+						# will have to wait: probably because another, more important thread came along which will now
+						# get attention in the next iteration
+					when exit_code = thread.next.receive?
+						if ! exit_code.nil?
+							@exit_code = exit_code
+							@threads.pop
+							if thread == @auto_execute_thread
+								@default_thread_settings = thread.settings
+								# ::exit @exit_code
+							end
 						end
 					end
 				end
+				# all done, now wait for something new to do
+				@run_thread_channel.receive
 			end
 		end
 

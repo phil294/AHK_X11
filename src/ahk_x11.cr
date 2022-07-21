@@ -1,6 +1,13 @@
 require "./build/builder"
 require "./run/runner"
 
+fun main(argc : Int32, argv : UInt8**) : Int32
+	# Enforce 4 threads because less than that break the program. For now, this is the
+	# only way to enforce it. (1 = main, 2 = x11, 3 = gui, 4 = ? probably timer)
+	LibC.setenv("CRYSTAL_WORKERS", "4", 1)
+	Crystal.main(argc, argv)
+end
+
 if ! ARGV[0]?
 	abort "Missing file argument.\nUsage:\n    ahk_x11 path/to/script.ahk"
 end
@@ -28,4 +35,4 @@ rescue e : Run::RuntimeException
 end
 # TODO uncaught error handler? -> abort, and externalize abort from here and thread into something else
 
-# sleep # exiting is completely handled in runner # TODO
+sleep # exiting is completely handled in runner

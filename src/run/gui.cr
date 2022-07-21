@@ -1,35 +1,42 @@
 # require "malloc_pthread_shim"
-require "gobject/gtk/autorun"
-# require "gobject/gtk"
+require "gobject/gtk"
 
 module Run
-    class Gui
-        def run
-            # application = Gtk::Application.new(application_id: "org.crystal.sample")
-            # application.on_activate do
-            #     window = Gtk::ApplicationWindow.new(application: application, title: "Hello", border_width: 20)
-            #     window.connect "destroy", &->application.quit
-            #     window.add Gtk::Label.new("Hello World!")
-            #     window.show_all
-            # end
-            # application.run
+	class Gui
+		def run
+			_argc = 0
+			LibGtk.init pointerof(_argc), Pointer(UInt8**).new(0)
+			LibGtk.main
+		end
 
-            # dialog = Gtk::MessageDialog.new text: "Hello world!", message_type: :info, buttons: :ok, secondary_text: "This is an example dialog."
-            # dialog.on_response do
-            #     Gtk.main_quit
-            #     end
-            # dialog.show
+		private def act(&block)
+			GLib.idle_add do
+				block.call
+				false
+			end
+		end
 
-            window = Gtk::Window.new(title: "Hello World!", border_width: 10)
-            # window.connect "destroy", &->Gtk.main_quit
-            button = Gtk::Button.new label: "Hello World!"
-            button.on_clicked do |button|
-                p! button
-                puts "Hello World!"
-            end
-            button.connect "clicked", &->window.destroy
-            window.add button
-            window.show_all
-        end
-    end
+		def msgbox(txt, *, title = ARGV[0]? || PROGRAM_NAME)
+			channel = Channel(Nil).new
+			act do
+				dialog = Gtk::MessageDialog.new text: txt || "Press OK to continue.", title: title, message_type: :info, buttons: :ok, urgency_hint: true
+				dialog.on_response do |_, response_id|
+					response = Gtk::ResponseType.new(response_id)
+					channel.send(nil)
+					dialog.destroy
+				end
+				dialog.show
+			end
+			channel.receive
+		end
+
+		def some_gui
+			act do
+				window = Gtk::Window.new title: "Hello" # , border_width: 20
+				lbl = Gtk::Label.new "Hello World!"
+				window.add lbl
+				window.show_all
+			end
+		end
+	end
 end

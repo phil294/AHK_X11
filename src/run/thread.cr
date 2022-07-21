@@ -20,7 +20,7 @@ module Run
 			result_channel = @result_channel
 			return result_channel if result_channel
 			result_channel = @result_channel = Channel(Int32?).new
-			spawn do
+			spawn same_thread: true do
 				result = do_next
 				result_channel.send(result)
 				result_channel.close

@@ -7,6 +7,7 @@ class Cmd::Window::WinActivate < Cmd::Base
 	def run(thread)
 		win = Util.match(thread, @args[0..], empty_is_last_found: true, a_is_active: false)
 		return if ! win
+		# TODO: incompat: Six attempts will be made to activate the target window over the course of 60ms. Thus, it is usually unnecessary to follow it with the WinWaitActive 
 		win.activate!
 	end
 end

@@ -9,20 +9,20 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 Features:
 - [x] Hotkeys (basic support complete)
 - [ ] Hotstrings (difficult in X11; help needed)
-- [x] <strike>Window management (setup complete, but most commands are still missing)</strike> *currently broken*
+- [x] <strike>Window management (setup complete, but all commands are still missing)</strike> *currently broken*
 - [x] Send keys (basic support complete)
 - [ ] Control mouse (TBD)
-- [x] File management (setup complete, but most commands are still missing)
-- [ ] GUIs (TBD)
+- [x] File management (setup complete, but all commands are still missing)
+- [x] GUIs (setup complete, but all commands are missing)
 - [ ] Compile script to executable (TBD)
 - [x] Scripting: labels, flow control: If/Else, Loop
 
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE      7% (16/214):
+DONE      8% (17/214):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
-+ SetTimer, WinActivate, SendRaw
++ SetTimer, WinActivate, MsgBox (incomplete), Gui (demo window), SendRaw
 
 NEW       1% (2/214): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -34,7 +34,7 @@ REMOVED   5% (11/214):
 # ### Skipped for other reasons:
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%. It's possible but needs significant work
 
-TO DO     86% (185/214): alphabetically
+TO DO     86% (184/214): alphabetically
 - BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
 - ControlGetPos, ControlGetText, ControlMove, ControlSend / ControlSendRaw, ControlSetText, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, EnvAdd, EnvDiv, 
@@ -48,7 +48,7 @@ TO DO     86% (185/214): alphabetically
 - IfWinActive / IfWinNotActive, IfWinExist/IfWinNotExist, IniDelete, IniRead, IniWrite, Input, 
 - InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
 - Loop (parse a string), Loop (read file contents), Loop (registry), Menu, MouseClick, 
-- MouseClickDrag, MouseGetPos, MouseMove, MsgBox, OnExit, Pause, PixelGetColor, PixelSearch, 
+- MouseClickDrag, MouseGetPos, MouseMove, OnExit, Pause, PixelGetColor, PixelSearch, 
 - Process, Progress, Random, Reload, Run, RunAs, RunWait, Send, SetBatchLines, 
 - SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
@@ -66,6 +66,12 @@ TO DO     86% (185/214): alphabetically
 - #WinActivateForce
 ```
 
+## Caveats
+
+### Focus stealing prevention
+
+`MsgBox` (which currently only accepts 0 or 1 arguments) should always work fine, but some Linux distros apply some form of focus stealing prevention. If you have enabled that, it is very likely that those msgbox popups will be created hidden behind all other open windows. This is even more problematic because popups do not appear in the task bar, so they are essentially invisible. (Only?) solution: Disable focus stealing prevention.
+
 ## Performance
 
 Not yet explicitly tuned for performance, but by design and choice of technology, it should run reasonably fast. Most recent tests yielded 0.03 ms for parsing one instruction line (this happens once at startup). Execution speed even is at least x100 faster than that.
@@ -76,34 +82,39 @@ TODO: speed measurements for `Send` and window operations
 
 ## Installation
 
-This is a normal Crystal program, refer to the respective documentation
+No releases yet. Please see "Development" for now
 
 ## Usage
 
-TODO
+See "Development"
 
 ## Development
 
 These are the steps required to build this project locally. Most of it is all WIP and temporary and only necessary so the different dependencies get along fine (x11 and gobject bindings).
 As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` calls) and thus reduce the overall compile time from ~6 to ~3 seconds.
-I haven't double checked these steps, so it's best to check the results manually.
 
-1. Install Crystal, Shards, clone project
-1. `shards install`
-1. `crystal run lib/gobject/src/generator/build_namespace.cr -- Gtk 3.0 > lib/gobject/src/gtk/gobject-cache-gtk.cr`
-1. `crystal run lib/gobject/src/generator/build_namespace.cr -- xlib 2.0 > lib/gobject/src/gtk/gobject-cache-xlib--modified.cr`
-1. ```bash
+1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
+1. `git clone https://github.com/phil294/AHK_X11`
+1. `cd AHK_X11`
+1. Run these commands one by one (I haven't double them, so it's best to check the results manually)
+    ```bash
+    shards install
+    # populate cache
+    crystal run lib/gobject/src/generator/build_namespace.cr -- Gtk 3.0 > lib/gobject/src/gtk/gobject-cache-gtk.cr
+    crystal run lib/gobject/src/generator/build_namespace.cr -- xlib 2.0 > lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
     for lib in "GObject 2.0" "GLib 2.0" "Gio 2.0" "GModule 2.0" "Atk 1.0" "HarfBuzz 0.0" "GdkPixbuf 2.0" "cairo 1.0" "Pango 1.0" "Gdk 3.0"; do
         echo "### $lib" >> lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
         crystal run lib/gobject/src/generator/build_namespace.cr -- $lib >> lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
     done
+    # update lib to use cache
+    sed -i -E 's/^(require_gobject)/# \1/g' lib/gobject/src/gtk/gobject-cache-gtk.cr lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
+    sed -i -E 's/^require_gobject "Gtk", "3.0"$/require ".\/gobject-cache-gtk"/' lib/gobject/src/gtk/gtk.cr
+    echo 'require "./gobject-cache-xlib--modified"' > tmp.txt; echo 'require "./gobject-cache-gtk-other-deps"' >> tmp.txt; cat lib/gobject/src/gtk/gobject-cache-gtk.cr >> tmp.txt; mv tmp.txt lib/gobject/src/gtk/gobject-cache-gtk.cr
+    echo 'macro require_gobject(namespace, version = nil) end' >> lib/gobject/src/gobject.cr
+    # delete conflicting c function binding by modifying the cache
+    sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
     ```
-1. `sed -i -E 's/^(require_gobject)/# \1/g' lib/gobject/src/gtk/gobject-cache-gtk.cr lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr`
-1. `sed -i -E 's/^require_gobject "Gtk", "3.0"$/require ".\/gobject-cache-gtk"/' lib/gobject/src/gtk/gtk.cr`
-1. `echo 'require "./gobject-cache-xlib--modified"' > tmp.txt; echo 'require "./gobject-cache-gtk-other-deps"' >> tmp.txt; cat lib/gobject/src/gtk/gobject-cache-gtk.cr >> tmp.txt; mv tmp.txt lib/gobject/src/gtk/gobject-cache-gtk.cr`
-1. `echo 'macro require_gobject(namespace, version = nil) end' >> lib/gobject/src/gobject.cr` # (all caching is done)
-1. `sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr` # (remove conflict fun from cache)
-1. `shards build --release`, then `bin/ahk_x11 "your ahk file.ahk"` or while in development, `shards run -- "your ahk file.ahk"`
+1. `shards build -Dpreview_mt --release`, then `bin/ahk_x11 "your ahk file.ahk"` or while in development, `shards run -Dpreview_mt -- "your ahk file.ahk"`
 
 ## Contributing
 
