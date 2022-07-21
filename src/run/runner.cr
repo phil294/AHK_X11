@@ -13,7 +13,8 @@ module Run
 	class Runner
 		@user_vars = {
 			# INCOMPAT(fix?) static built-in variables can be overridden
-			"a_space" => " "
+			"a_space" => " ",
+			"a_index" => "0"
 		}
 		@escape_char = '`'
 		protected getter labels : Hash(String, Cmd::Base)

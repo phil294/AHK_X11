@@ -13,13 +13,15 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 			@repeat_count = repeat_count
 		end
 		repeat_count = @repeat_count
-		return true if ! repeat_count
 		@i += 1
+		thread.runner.set_var("A_Index", @i.to_s)
+		return true if ! repeat_count
 		fin = @i > repeat_count
 		if fin
 			# reset so it is recalculated if visited again (e.g. another wrapping loop)
 			@repeat_count = nil
 			@i = 0
+			thread.runner.set_var("A_Index", "0")
 		end
 		! fin
 	end
