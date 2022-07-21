@@ -1,18 +1,19 @@
 class Cmd::Window::Util
-	# param args is those four [, WinTitle, WinText, ExcludeTitle, ExcludeText] from the docs
+	# param match_conditions is those four [, WinTitle, WinText, ExcludeTitle, ExcludeText] from the docs
+	# that are used in various window commands,
 	# and consequently also be an empty array
-	protected def self.match(thread, args, *, empty_is_last_found, a_is_active)
-		title = thread.runner.str(args[0]? || "")
-		if args.size == 0
+	protected def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
+		title = match_conditions[0]? || ""
+		if match_conditions.size == 0
 			return thread.settings.last_found_window if empty_is_last_found
 			raise Run::RuntimeException.new "expected window matching arguments as 'last found window' cannot be inferred here"
-		elsif title == "A" && args.size == 1
+		elsif title == "A" && match_conditions.size == 1
 			return thread.runner.x_do.active_window if a_is_active
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here"
 		else
-			# text = thread.runner.str(args[1]? || "") # todo
-			exclude_title = thread.runner.str(args[2]? || "")
-			# exclude_text = thread.runner.str(args[3]? || "") # todo
+			# text = match_conditions[1]? || "" # todo
+			exclude_title = match_conditions[2]? || ""
+			# exclude_text = match_conditions[3]? || "" # todo
 
 			# broken: https://github.com/woodruffw/x_do.cr/issues/10
 			wins = thread.runner.x_do.search do

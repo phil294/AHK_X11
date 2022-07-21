@@ -13,14 +13,15 @@ module Cmd
 		def self.conditional; false end
 
 		getter line_no = -1
-		@args : Array(String)
+		getter args : Array(String)
 
 		def initialize(@line_no, @args)
 		end
 		
+		# param args is like @args, but parsed (vars substituted).
 		# When class.conditional, the return value determines the next branch.
 		# Return value is ignored for non-conditional cmds.
-		abstract def run(thread)
+		abstract def run(thread, args)
 
 		property next : Base?
 		property je : Base?

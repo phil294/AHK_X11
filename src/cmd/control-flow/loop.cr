@@ -6,9 +6,9 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 	def self.conditional; true end
 	@repeat_count : Int32?
 	@i = 0
-	def run(thread)
-		if @args[0]? && ! @repeat_count
-			repeat_count = thread.runner.str(@args[0]).to_i32?(strict: true)
+	def run(thread, args)
+		if args[0]? && ! @repeat_count
+			repeat_count = args[0].to_i32?(strict: true)
 			raise "invalid loop count" if ! repeat_count
 			@repeat_count = repeat_count
 		end

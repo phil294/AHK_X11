@@ -38,8 +38,10 @@ module Run
 			end
 			stack_i = @stack.size - 1
 
+			parsed_args = cmd.args.map { |arg| @runner.str(arg) }
+
 			begin
-				result = cmd.run(self)
+				result = cmd.run(self, parsed_args)
 			rescue e : RuntimeException
 				# TODO msgbox
 				puts "Runtime error in line #{cmd.line_no+1}: '#{e.message}'. The current thread will exit."
