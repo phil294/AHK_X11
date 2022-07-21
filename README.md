@@ -82,6 +82,8 @@ TODO: speed measurements for `Send` and window operations
 
 ## Installation
 
+You need (?) to have `libxdo` installed, which is usually done by installing `xdotool` on your distribution. Also required is a running X11 server and GTK installed, which you most likely already have.
+
 No releases yet. Please see "Development" for now
 
 ## Usage
