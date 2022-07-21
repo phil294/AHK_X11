@@ -178,7 +178,7 @@ module Run
 				end
 			end
 			sym = ::X11::C.ahk_key_name_to_keysym(key_name)
-			raise RuntimeException.new "hotkey key name '#{key_name}' not found" if ! sym || ! sym.is_a?(Int32)
+			raise RuntimeException.new "Hotkey key name '#{key_name}' not found." if ! sym || ! sym.is_a?(Int32)
 			# adopted from https://stackoverflow.com/q/4037230. For a non-grabbing alternative that could also but used to implemented Hotstrings, check the `x11-follow-focus` branch (broken) and https://stackoverflow.com/q/22749444
 			modifiers = [ modifiers, modifiers | Mod2Mask.to_u32 ]
 			keycode = @display.keysym_to_keycode(sym.to_u64)

@@ -9,7 +9,7 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 	def run(thread, args)
 		if args[0]? && ! @repeat_count
 			repeat_count = args[0].to_i32?(strict: true)
-			raise "invalid loop count" if ! repeat_count
+			raise Run::RuntimeException.new "Invalid loop count" if ! repeat_count
 			@repeat_count = repeat_count
 		end
 		repeat_count = @repeat_count

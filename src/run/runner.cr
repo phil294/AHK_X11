@@ -103,7 +103,7 @@ module Run
 
 		def add_hotkey(label)
 			cmd = labels[label]?
-			raise RuntimeException.new "add hotkey: label '#{label}' not found" if ! cmd
+			raise RuntimeException.new "Add Hotkey: Label '#{label}' not found" if ! cmd
 			hotkey = Hotkey.new(self, cmd, label)
 			@hotkeys[label] = hotkey
 			@x11.register_hotkey hotkey
@@ -111,7 +111,7 @@ module Run
 		end
 		def remove_hotkey(label)
 			hotkey = @hotkeys.delete(label)
-			raise Cmd::RuntimeException.new "remove hotkey: label '#{label}' not found" if ! hotkey
+			raise Cmd::RuntimeException.new "Remove Hotkey: Label '#{label}' not found" if ! hotkey
 			@x11.unregister_hotkey hotkey
 		end
 		def pause_x11

@@ -43,8 +43,9 @@ module Run
 			begin
 				result = cmd.run(self, parsed_args)
 			rescue e : RuntimeException
-				# TODO: msgbox
-				puts "Runtime error in line #{cmd.line_no+1}: '#{e.message}'. The current thread will exit."
+				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
+				@runner.gui.msgbox msg
+				STDERR.puts msg
 				@done = true
 				@exit_code = 2
 				return @exit_code

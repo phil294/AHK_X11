@@ -20,7 +20,7 @@ class Cmd::ControlFlow::SetTimer < Cmd::Base
 			timer.cancel
 		else
 			period = action.to_i?(strict: true)
-			raise "invalid timer period" if ! period
+			raise Run::RuntimeException.new "invalid timer period" if ! period
 			if ! timer
 				timer = thread.runner.add_timer label, period.milliseconds, priority
 			else
