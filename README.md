@@ -66,20 +66,6 @@ TO DO     86% (184/214): alphabetically
 - #WinActivateForce
 ```
 
-## Caveats
-
-### Focus stealing prevention
-
-`MsgBox` (which currently only accepts 0 or 1 arguments) should always work fine, but some Linux distros apply some form of focus stealing prevention. If you have enabled that, it is very likely that those msgbox popups will be created hidden behind all other open windows. This is even more problematic because popups do not appear in the task bar, so they are essentially invisible. (Only?) solution: Disable focus stealing prevention.
-
-## Performance
-
-Not yet explicitly tuned for performance, but by design and choice of technology, it should run reasonably fast. Most recent tests yielded 0.03 ms for parsing one instruction line (this happens once at startup). Execution speed even is at least x100 faster than that.
-
-There can be a delay of no more than 16 ms between a key press and its thread invocation. Haven't really figured out how to solve this yet.
-
-TODO: speed measurements for `Send` and window operations
-
 ## Installation
 
 You need (?) to have `libxdo` installed, which is usually done by installing `xdotool` on your distribution. Also required is a running X11 server and GTK installed, which you most likely already have.
@@ -89,6 +75,12 @@ No releases yet. Please see "Development" for now
 ## Usage
 
 See "Development"
+
+### Caveats
+
+#### Focus stealing prevention
+
+`MsgBox` (which currently only accepts 0 or 1 arguments) should always work fine, but some Linux distros apply some form of focus stealing prevention. If you have enabled that, it is very likely that those msgbox popups will be created hidden behind all other open windows. This is even more problematic because popups do not appear in the task bar, so they are essentially invisible. (Only?) solution: Disable focus stealing prevention.
 
 ## Development
 
@@ -117,6 +109,14 @@ As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` c
     sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
     ```
 1. `shards build -Dpreview_mt --release`, then `bin/ahk_x11 "your ahk file.ahk"` or while in development, `shards run -Dpreview_mt -- "your ahk file.ahk"`
+
+## Performance
+
+Not yet explicitly tuned for performance, but by design and choice of technology, it should run reasonably fast. Most recent tests yielded 0.03 ms for parsing one instruction line (this happens once at startup). Execution speed even is at least x100 faster than that.
+
+There can be a delay of no more than 16 ms between a key press and its thread invocation. Haven't really figured out how to solve this yet.
+
+TODO: speed measurements for `Send` and window operations
 
 ## Contributing
 
