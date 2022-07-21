@@ -2,6 +2,13 @@
 
 AutoHotkey for Linux. (WORK IN PROGRESS)
 
+<center>
+
+![MsgBox](popup.png)
+
+`MsgBox, AHK_X11` (*)
+</center>
+
 More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up in Crystal with the help of [x11-cr](https://github.com/TamasSzekeres/x11-cr/), [libxdo](https://github.com/jordansissel/xdotool)([bindings](https://github.com/woodruffw/x_do.cr)) and [crystal-gobject](https://github.com/jhass/crystal-gobject)(GTK), with the eventual goal of 80% feature parity, but most likely never full compatibility. More importantly, because of the old version of the spec (you can check the old manual by installing or extracting the old `.chm` manual from [here](https://www.autohotkey.com/download/1.0/AutoHotkey1024.exe)), many modern AHK features will be missing, especially expressions (`:=`, `% v`) and functions, so you probably can't just port your scripts from Windows. Maybe this will also be added some day, but it does not have high priority for me personally. This AHK will be shipped as a single executable native binary with very low resource overhead and fast execution time.
 
 > Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
@@ -116,6 +123,10 @@ return
 #### Focus stealing prevention
 
 `MsgBox` (which currently only accepts 0 or 1 arguments) should always work fine, but some Linux distros apply some form of focus stealing prevention. If you have enabled that, it is very likely that those msgbox popups will be created hidden behind all other open windows. This is even more problematic because popups do not appear in the task bar, so they are essentially invisible. (Only?) solution: Disable focus stealing prevention.
+
+#### Appearance
+
+(*) The `MsgBox` picture at the top was taken on a XFCE system with [Chicago95](https://github.com/grassmunk/Chicago95) installed, a theme that resembles Win95 look&feel. On your system, it will look like whatever GTK popups always look like.
 
 ## Development
 
