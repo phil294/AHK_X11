@@ -86,6 +86,8 @@ Then, you can download the latest x86_64 binary from [here](https://github.com/p
 
 Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`.
 
+In the future, we'll also have proper Desktop integration so you can double click ahk files to run them.
+
 <details>
 <summary>Here's a working demo script showing several of the commands so far implemented.</summary>
 
