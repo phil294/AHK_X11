@@ -1,6 +1,7 @@
 class Cmd::Window::Util
-	# param match_conditions is those four [, WinTitle, WinText, ExcludeTitle, ExcludeText] from the docs
-	# that are used in various window commands,
+	# Find a single window.
+	# param `match_conditions` is those four `[, WinTitle, WinText, ExcludeTitle, ExcludeText]`
+	# from the docs that are used in various window commands,
 	# and consequently also be an empty array
 	protected def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
 		title = match_conditions[0]? || ""

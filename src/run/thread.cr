@@ -1,7 +1,8 @@
 module Run
-	# ahk threads are no real threads but pretty much like crystal fibers, except they're not
-	# cooperative at all; they take each other's place (prioritized) and continue until their individual end.
-	# Threads never really run in parallel: There's always one "current thread"
+	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,
+	# except they're not cooperative at all; they take each other's place (prioritized) and
+	# continue until their individual end. Threads never really run in parallel:
+	# There's always one "current thread"
 	class Thread
 		getter runner : Runner
 		# each threads starts with its own set of settings (e.g. CoordMode),
@@ -16,6 +17,7 @@ module Run
 			@stack << start
 		end
 
+		# Spawns the `do_next` fiber if it isn't running already and returns the result channel.
 		protected def next
 			result_channel = @result_channel
 			return result_channel if result_channel
@@ -62,9 +64,9 @@ module Run
 			# current stack el may have been altered by prev cmd.run(), in which case disregard the normal flow
 			if @stack[stack_i]? == cmd # not altered
 				if ! next_cmd
-					@stack.delete_at(stack_i)
+					@stack.delete_at(stack_i) # thread finished
 				else
-					@stack[stack_i] = next_cmd
+					@stack[stack_i] = next_cmd # proceed
 				end
 			end
 			nil
@@ -88,6 +90,7 @@ module Run
 			@stack.clear
 		end
 	end
+	# see Thread.settings
 	private struct ThreadSettings
 		property last_found_window : XDo::Window?
 	end

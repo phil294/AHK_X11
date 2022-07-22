@@ -1,5 +1,6 @@
 module Cmd
 	abstract class Base
+		# For example, for `Cmd::File::FileCopy` it's `"filecopy"`.
 		def self.name
 			{{ @type.name(generic_args: false).stringify.downcase.split("::").last }}
 		end
@@ -10,6 +11,7 @@ module Cmd
 		def self.max_args; 0 end
 		# :ditto:
 		def self.multi_command; false end
+		# conditional commands require special treatment and implementation in `Build::Linker`
 		def self.conditional; false end
 
 		getter line_no = -1
@@ -19,6 +21,7 @@ module Cmd
 		end
 		
 		# param args is like @args, but parsed (vars substituted).
+		# runner can be accessed via `thread.runner`.
 		# When class.conditional, the return value determines the next branch.
 		# Return value is ignored for non-conditional cmds.
 		abstract def run(thread, args)

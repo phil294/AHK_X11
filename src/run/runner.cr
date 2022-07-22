@@ -10,9 +10,14 @@ require "x_do"
 module Run
 	# can start a completely fresh and isolated ahk execution instance with its own
 	# variables etc. All properties can and will be heavily accessed from outside (commands).
+	# Currently however, there's only ever one single runner instance and there's no real reason
+	# why multiple should be needed, but it still makes sense to encapsulate appropriately.
+	#
+	# All Runner state (vars, labels, etc.) is global (cross-thread).
 	class Runner
+		# Some variables like A_Now are computed on usage; this happens in `str`.
+		# INCOMPAT static built-in variables can be overridden and should probably be fixed TODO:
 		@user_vars = {
-			# INCOMPAT(fix?) static built-in variables can be overridden
 			"a_space" => " ",
 			"a_index" => "0"
 		}
@@ -23,6 +28,7 @@ module Run
 		@run_thread_channel = Channel(Nil).new
 		@exit_code = 0
 		@timers = {} of String => Timer
+		# see Thread.settings
 		@default_thread_settings = ThreadSettings.new
 		@hotkeys = {} of String => Hotkey
 		@x11 = X11.new
@@ -33,13 +39,13 @@ module Run
 		end
 		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
 			hotkey_labels.each { |l| add_hotkey l }
-			spawn @x11.run self
-			spawn @gui.run
+			spawn @x11.run self # separate worker thread because event loop is blocking
+			spawn @gui.run # separate worker thread because gtk loop is blocking
 			spawn same_thread: true { clock }
 			@auto_execute_thread = add_thread auto_execute_section, 0
 		end
 
-		# add to the thread queue. Depending on priority and @threads, it may be picked up
+		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
 		protected def add_thread(cmd, priority) : Thread
 			thread = Thread.new(self, cmd, priority, @default_thread_settings)
@@ -49,7 +55,13 @@ module Run
 			thread
 		end
 
-		# there must only be one
+		# Forever continuously figures out the "current thread" (`@threads.last`) and
+		# runs one command after another. Commands are only ever called synchronously
+		# from a single thread, never multiple handled at the same time. However, a long
+		# running command (e.g. `sleep, 10000`) may run until its end in the background while
+		# another thread takes the lead.
+		#
+		# There must only be one instance of this running.
 		private def clock
 			loop do
 				while thread = @threads.last?
@@ -74,9 +86,11 @@ module Run
 			end
 		end
 
+		# case insensitive
 		def get_var(var)
 			@user_vars[var.downcase]? || ""
 		end
+		# `var` is case insensitive
 		def set_var(var, value)
 			@user_vars[var.downcase] = value
 		end
@@ -84,6 +98,7 @@ module Run
 			puts @user_vars
 		end
 		
+		# Substitute all %var% with their respective values, be it variable or computed built-in.
 		def str(str)
 			AhkString.process(str, @escape_char) do |var_name_lookup|
 				get_var(var_name_lookup)
@@ -114,9 +129,12 @@ module Run
 			raise Cmd::RuntimeException.new "Remove Hotkey: Label '#{label}' not found" if ! hotkey
 			@x11.unregister_hotkey hotkey
 		end
+		# multiple threads may request a pause. x11 will only resume after all have called
+		# `resume_x11` again.
 		def pause_x11
 			@x11.pause
 		end
+		# before resume, x11 will discard all events collected since it got paused
 		def resume_x11
 			@x11.resume
 		end

@@ -5,6 +5,7 @@ module Build
 	# describes some kind of logic struct that can handle sub cmds with or without {},
 	# such as `if` or `loop`. At minimum, an implementation needs to have one section
 	# where these can be inserted into.
+	# An instance of this is only used for the linking process and can be disregarded after that.
 	abstract class Conditional
 		class ConditionalSection
 			property cmd : Cmd::Base
@@ -28,6 +29,7 @@ module Build
 		# bottommost section, regardless if open or not
 		private abstract def active_section : ConditionalSection
 		
+		# TODO: rename start_block / end_block
 		def block_start
 			raise "" if active_section.block_started || active_section.first_child
 			active_section.block_started = true
@@ -36,6 +38,7 @@ module Build
 			raise "" if active_section.block_ended || ! active_section.block_started
 			active_section.block_ended = true
 		end
+		# TODO: rename this
 		def cmd(cmd : Cmd::Base)
 			raise "" if ! active_section.open?
 			active_section.first_child ||= cmd
@@ -176,6 +179,9 @@ module Build
 							is_normal = true
 							last_normal.next = cmd if last_normal # only link two normal cmds to each other
 							while conds.last? && conds.last.resolvable?
+								# e.g. the last commands were a loop, and now a new command comes along.
+								# We resolve the loop and pass the current `cmd`, because any finish or `break`
+								# inside the loop needs to point to it.
 								conds.last.resolve cmd
 								conds.pop
 							end

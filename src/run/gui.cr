@@ -2,13 +2,19 @@
 require "gobject/gtk"
 
 module Run
+	# Please note that all GUI logic needs to happen on the same worker thread where `run` was called
+	# because anything else can result in undefined behavior (in fact, it just doesn't work).
+	# That's why all GUI commands need to somehow pass through `Gui.act`.
 	class Gui
 		def run
 			_argc = 0
+			# taken from "gobject/gtk/autorun". There's probably a better way.
 			LibGtk.init pointerof(_argc), Pointer(UInt8**).new(0)
-			LibGtk.main
+			LibGtk.main # blocking!
 		end
 
+		# `idle_add` tells GTK to run the `block` in its free time (on its own worker thread),
+		# so perfect for Gui modifications, new window requests etc.
 		private def act(&block)
 			GLib.idle_add do
 				block.call
@@ -16,6 +22,9 @@ module Run
 			end
 		end
 
+		# Only run this after `run` has started, as it depends on a running gtk main.
+		# If you don't see the popup, it may be because of focus stealing prevention from the
+		# window manager, please see the README.
 		def msgbox(txt, *, title = ARGV[0]? || PROGRAM_NAME)
 			channel = Channel(Nil).new
 			act do

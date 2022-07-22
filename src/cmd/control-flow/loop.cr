@@ -6,6 +6,7 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 	def self.conditional; true end
 	@repeat_count : Int32?
 	@i = 0
+	# returns true (go into block) while loop condition is true, else leave this loop
 	def run(thread, args)
 		if args[0]? && ! @repeat_count
 			repeat_count = args[0].to_i32?(strict: true)

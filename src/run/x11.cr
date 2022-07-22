@@ -3,7 +3,7 @@ require "x11"
 at_exit { GC.collect }
 
 module X11::C
-	# see lib/x11/src/x11/c/keysymdef.cr, stripped from XK_ and underscores
+	# Infer a long list of key names from lib/x11/src/x11/c/keysymdef.cr, stripped from XK_ and underscores
 	private def self.ahk_key_name_to_keysym_generic
 		{{
 			@type.constants # TODO: possible to declare this outside of the module?
@@ -110,6 +110,10 @@ module X11::C
 end
 
 module Run
+	# Responsible for registering hotkeys to the X11 server and calling threads on trigger.
+	# Parts of the grab_key stuff is adopted from https://stackoverflow.com/q/4037230.
+	# For a non-grabbing alternative that could also but used to implemented Hotstrings,
+	# check the `x11-follow-focus` branch (broken) and https://stackoverflow.com/q/22749444
 	class X11
 		include ::X11
 
@@ -179,7 +183,6 @@ module Run
 			end
 			sym = ::X11::C.ahk_key_name_to_keysym(key_name)
 			raise RuntimeException.new "Hotkey key name '#{key_name}' not found." if ! sym || ! sym.is_a?(Int32)
-			# adopted from https://stackoverflow.com/q/4037230. For a non-grabbing alternative that could also but used to implemented Hotstrings, check the `x11-follow-focus` branch (broken) and https://stackoverflow.com/q/22749444
 			modifiers = [ modifiers, modifiers | Mod2Mask.to_u32 ]
 			keycode = @display.keysym_to_keycode(sym.to_u64)
 			@subscriptions << {
