@@ -112,7 +112,7 @@ end
 module Run
 	# Responsible for registering hotkeys to the X11 server and calling threads on trigger.
 	# Parts of the grab_key stuff is adopted from https://stackoverflow.com/q/4037230.
-	# For a non-grabbing alternative that could also but used to implemented Hotstrings,
+	# For a non-grabbing alternative that could also be used to implemented Hotstrings,
 	# check the `x11-follow-focus` branch (broken) and https://stackoverflow.com/q/22749444
 	class X11
 		include ::X11
@@ -128,7 +128,9 @@ module Run
 
 		def run(runner : Runner)
 			loop do
-				event = @display.next_event
+				event = @display.next_event # blocking!
+				# Currently, hotkeys are always based on key release event. Trigger on press introduced
+				# repetition and trigger loop bugs that I couldn't resolve. (TODO:)
 				next if @is_paused || ! event.is_a?(KeyEvent) || ! event.release?
 				sub = @subscriptions.find do |sub|
 					sub[:subscription].keycode == event.keycode &&
