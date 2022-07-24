@@ -77,7 +77,7 @@ module Run
 							@threads.pop
 							if thread == @auto_execute_thread
 								@default_thread_settings = thread.settings
-								::exit @exit_code if ! @settings.persistent
+								::exit @exit_code if ! @settings.persistent && @hotkeys.size == 0
 							end
 						end
 					end
