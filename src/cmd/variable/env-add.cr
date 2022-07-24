@@ -9,6 +9,7 @@ class Cmd::Variable::EnvAdd < Cmd::Base
 		time_units = args[2]?
 		
 		current_value = thread.runner.get_var(var)
+		pure_int = ! current_value.includes?('.') && ! add_value.includes?('.')
 		add_value = add_value.to_f?(strict: true)
 
 		if time_units
@@ -37,10 +38,10 @@ class Cmd::Variable::EnvAdd < Cmd::Base
 			end
 		else
 			current_value = current_value.to_f?(strict: true) || 0
-			current_value = current_value.to_i if current_value.round == current_value
 			add_value = add_value || 0
-			add_value = add_value.to_i if add_value.round == add_value
-			new_value = (current_value + add_value).to_s
+			new_value = current_value + add_value
+			new_value = new_value.to_i if pure_int
+			new_value = new_value.to_s
 		end
 		
 		thread.runner.set_var(var, new_value)
