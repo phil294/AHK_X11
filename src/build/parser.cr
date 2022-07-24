@@ -54,13 +54,7 @@ module Build
 			elsif @block_comment
 				#
 			elsif cmd_class
-				if args.empty?
-					csv_args = [] of String
-				else
-					csv_args = args.split(/(?<!#{@escape_char}),/, cmd_class.max_args + 1).map do |arg|
-						arg.strip.gsub(/(?<!#{@escape_char})#{@escape_char},/, ",")
-					end
-				end
+				csv_args = split_args(args, cmd_class.max_args + 1)
 				if csv_args.size > cmd_class.max_args
 					if cmd_class.multi_command
 						# examples: if, ifequals, else, }, ifequals, ... can all have residue content.
@@ -97,16 +91,37 @@ module Build
 			elsif first_word.ends_with?(':')
 				raise "Labels can not have arguments" if args.size > 0
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
+			elsif first_word.ends_with?("++")
+				raise "Unexpected argument next to increment" if args.size > 0
+				@cmds << Cmd::Variable::EnvAdd.new line_no, [first_word[...-2], "1"]
+			elsif first_word.starts_with?("++")
+				raise "Unexpected argument next to increment" if args.size > 0
+				@cmds << Cmd::Variable::EnvAdd.new line_no, [first_word[2..], "1"]
 			else
-				split = args.split()
-				if split[0]? == "="
+				split = args.split(2)
+				second_word, more_args = split[0]?, split[1]? || ""
+				csv_args = [first_word, *split_args(more_args)]
+				case second_word
+				when "="
 					cmd_class = Cmd::Variable::SetEnv
-					csv_args = [first_word, split[1]? || ""]
+				when "+="
+					cmd_class = Cmd::Variable::EnvAdd
+					raise "Add value missing for '+=' expression" if ! csv_args[1]?
 				else
 					raise "Command '#{first_word}' not found"
 				end
 				@cmds << cmd_class.new line_no, csv_args
 			end
 		end
+
+		def split_args(args, limit = nil)
+			if args.empty?
+				return [] of String
+			end
+		 	args.split(/(?<!#{@escape_char}),/, limit).map do |arg|
+				arg.strip.gsub(/(?<!#{@escape_char})#{@escape_char},/, ",")
+			end
+		end
+
 	end
 end

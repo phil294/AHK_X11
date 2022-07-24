@@ -1,3 +1,4 @@
+require "./global/*"
 require "./build/builder"
 require "./run/runner"
 
