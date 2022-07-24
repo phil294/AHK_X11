@@ -77,7 +77,7 @@ module Run
 							@threads.pop
 							if thread == @auto_execute_thread
 								@default_thread_settings = thread.settings
-								::exit @exit_code if ! @settings.persistent && @hotkeys.size == 0
+								exit_app @exit_code if ! @settings.persistent && @hotkeys.size == 0
 							end
 						end
 					end
@@ -85,6 +85,10 @@ module Run
 				# all done, now wait for something new to do
 				@run_thread_channel.receive
 			end
+		end
+
+		def exit_app(code)
+			::exit code
 		end
 
 		# case insensitive
