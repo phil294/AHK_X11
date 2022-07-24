@@ -97,6 +97,12 @@ module Build
 			elsif first_word.starts_with?("++")
 				raise "Unexpected argument next to increment" if args.size > 0
 				@cmds << Cmd::Variable::EnvAdd.new line_no, [first_word[2..], "1"]
+			elsif first_word.ends_with?("--")
+				raise "Unexpected argument next to decrement" if args.size > 0
+				@cmds << Cmd::Variable::EnvSub.new line_no, [first_word[...-2], "1"]
+			elsif first_word.starts_with?("--")
+				raise "Unexpected argument next to decrement" if args.size > 0
+				@cmds << Cmd::Variable::EnvSub.new line_no, [first_word[2..], "1"]
 			else
 				split = args.split(2)
 				second_word, more_args = split[0]?, split[1]? || ""
@@ -107,6 +113,9 @@ module Build
 				when "+="
 					cmd_class = Cmd::Variable::EnvAdd
 					raise "Add value missing for '+=' expression" if ! csv_args[1]?
+				when "-="
+					cmd_class = Cmd::Variable::EnvSub
+					raise "Add value missing for '-=' expression" if ! csv_args[1]?
 				else
 					raise "Command '#{first_word}' not found"
 				end
