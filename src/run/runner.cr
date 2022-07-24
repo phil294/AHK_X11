@@ -34,8 +34,9 @@ module Run
 		@x11 = X11.new
 		getter x_do = XDo.new
 		getter gui = Gui.new
+		getter settings : RunnerSettings
 
-		def initialize(*, @labels, @escape_char)
+		def initialize(*, @labels, @escape_char, @settings)
 		end
 		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
 			hotkey_labels.each { |l| add_hotkey l }
@@ -76,7 +77,7 @@ module Run
 							@threads.pop
 							if thread == @auto_execute_thread
 								@default_thread_settings = thread.settings
-								# ::exit @exit_code
+								::exit @exit_code if ! @settings.persistent
 							end
 						end
 					end
@@ -141,4 +142,9 @@ module Run
 	end
 
 	class RuntimeException < Exception end
+
+	# see Runner.settings
+	struct RunnerSettings
+		property persistent = false
+	end
 end

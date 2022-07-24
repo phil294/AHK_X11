@@ -133,6 +133,7 @@ module Build
 	class Linker
 		getter start : Cmd::Base? = nil
 		getter labels = {} of String => Cmd::Base
+		getter runner_settings = Run::RunnerSettings.new
 
 		def link!(cmds)
 			pending_labels = [] of String
@@ -142,32 +143,34 @@ module Build
 			cmds.each do |cmd|
 				is_normal = false
 				begin
-					if cmd.is_a?(Label)
+					case cmd
+					when Label
 						pending_labels << cmd.name
 						next
-					end
-
-					if cmd.is_a?(Else)
+					when Else
 						raise "" if is_else
 						is_else = true
 						next
+					when DirectivePersistent
+						@runner_settings.persistent = true
 					end
 
 					# type guard apparently too complicated for type restriction, probably compiler limitation;
 					# that's why there's some `.unsafe_as(IfConditional)` inside is_else blocks below
 					raise "" if is_else && (!conds.last? || ! conds.last.is_a?(IfConditional))
 
-					if cmd.is_a?(BlockStart)
+					case cmd
+					when BlockStart
 						raise "" if ! conds.last
 						conds.last.unsafe_as(IfConditional).else if is_else
 						conds.last.block_start
-					elsif cmd.is_a?(BlockEnd)
+					when BlockEnd
 						while conds.last? && conds.last.resolvable?
 							conds.pop
 						end
 						raise "" if ! conds.last? || is_else
 						conds.last.block_end
-					else # any command, including if or loop
+					when # any command, including if or loop
 						if is_else
 							if cmd.class.conditional
 								conds.last.unsafe_as(IfConditional).else_if cmd

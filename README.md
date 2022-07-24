@@ -27,9 +27,9 @@ Features:
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE      8% (17/214):
+DONE      ?% (18/214):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
-+ SetTimer, WinActivate, MsgBox (incomplete), Gui (demo window), SendRaw
++ SetTimer, WinActivate, MsgBox (incomplete), Gui (demo window), SendRaw, #Persistent
 
 NEW       1% (2/214): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -42,7 +42,7 @@ REMOVED   5% (11/214):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     86% (184/214): alphabetically
+TO DO     ?% (183/214): alphabetically
 - BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
 - ControlGetPos, ControlGetText, ControlMove, ControlSend / ControlSendRaw, ControlSetText, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, EnvAdd, EnvDiv, 
@@ -70,7 +70,7 @@ TO DO     86% (184/214): alphabetically
 - WinMinimizeAllUndo, WinMove, WinRestore, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 
 - WinWaitClose, WinWaitNotActive, #AllowSameLineComments, #CommentFlag, #ErrorStdOut, #EscapeChar, 
 - #HotkeyInterval, #HotkeyModifierTimeout, #Hotstring, #Include, #MaxHotkeysPerInterval, #MaxMem, 
-- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #Persistent, #SingleInstance, 
+- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #SingleInstance, 
 - #WinActivateForce
 ```
 

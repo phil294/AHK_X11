@@ -35,7 +35,7 @@ start = builder.start
 exit if ! start
 
 begin
-	runner = Run::Runner.new labels: builder.labels, escape_char: builder.escape_char
+	runner = Run::Runner.new labels: builder.labels, escape_char: builder.escape_char, settings: builder.runner_settings
 	runner.run hotkey_labels: builder.hotkey_labels, auto_execute_section: start
 rescue e : Run::RuntimeException
 	build_error e.message
