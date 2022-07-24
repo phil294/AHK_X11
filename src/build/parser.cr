@@ -113,6 +113,9 @@ module Build
 				when "*="
 					cmd_class = Cmd::Variable::EnvMult
 					raise "Mult value missing for '*=' expression" if ! csv_args[1]?
+				when "/="
+					cmd_class = Cmd::Variable::EnvDiv
+					raise "Div value missing for '/=' expression" if ! csv_args[1]?
 				else
 					raise "Command '#{first_word}' not found"
 				end
