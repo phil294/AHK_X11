@@ -23,6 +23,7 @@ Features:
 - [x] GUIs (setup complete, but all commands are missing)
 - [ ] Compile script to executable (TBD)
 - [x] Scripting: labels, flow control: If/Else, Loop
+- [ ] Window Spy
 
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
