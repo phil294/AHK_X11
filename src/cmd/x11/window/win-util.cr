@@ -29,7 +29,9 @@ class Cmd::Window::Util
 					window_name title
 				end
 			end.reject &.name.nil?
+
 			wins.reject! &.name.not_nil!.includes? exclude_title if ! exclude_title.empty?
+			
 			return wins.first?
 		end
 	end
