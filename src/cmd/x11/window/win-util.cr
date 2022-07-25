@@ -2,7 +2,8 @@ class Cmd::Window::Util
 	# Find a single window.
 	# param `match_conditions` is those four `[, WinTitle, WinText, ExcludeTitle, ExcludeText]`
 	# from the docs that are used in various window commands,
-	# and consequently also be an empty array
+	# and consequently also be an empty array.
+	# INCOMPAT: text/excludetext is ignored
 	protected def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
 		title = match_conditions[0]? || ""
 		if match_conditions.size == 0
@@ -12,13 +13,12 @@ class Cmd::Window::Util
 			return thread.runner.x_do.active_window if a_is_active
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here"
 		else
-			# text = match_conditions[1]? || "" # TODO:
 			exclude_title = match_conditions[2]? || ""
-			# exclude_text = match_conditions[3]? || "" # TODO:
 
 			# broken: https://github.com/woodruffw/x_do.cr/issues/10
 			wins = thread.runner.x_do.search do
 				require_all
+				only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
 				if title.starts_with?("ahk_class ")
 					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
 				elsif title.starts_with?("ahk_id ")
@@ -28,8 +28,8 @@ class Cmd::Window::Util
 				else
 					window_name title
 				end
-			end
-			wins.reject! &.name.includes? exclude_title if ! exclude_title.empty?
+			end.reject &.name.nil?
+			wins.reject! &.name.not_nil!.includes? exclude_title if ! exclude_title.empty?
 			return wins.first?
 		end
 	end
