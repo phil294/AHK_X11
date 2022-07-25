@@ -4,7 +4,7 @@ class Cmd::Window::Util
 	# from the docs that are used in various window commands,
 	# and consequently also be an empty array.
 	# INCOMPAT: text/excludetext is ignored
-	protected def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
+	def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
 		title = match_conditions[0]? || ""
 		if match_conditions.size == 0
 			return thread.settings.last_found_window if empty_is_last_found
@@ -20,6 +20,7 @@ class Cmd::Window::Util
 			wins = thread.runner.x_do.search do
 				require_all
 				only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
+				# TODO: INCOMPAT: these should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
 				if title.starts_with?("ahk_class ")
 					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
 				elsif title.starts_with?("ahk_id ")

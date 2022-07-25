@@ -28,10 +28,10 @@ Features:
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE      ?% (24/214):
+DONE      ?% (25/214):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox (incomplete), Gui (demo window), SendRaw, #Persistent, ExitApp,
-+ EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw
++ EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist
 
 NEW       1% (2/214): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -49,7 +49,7 @@ REMOVED   ?% (21/214):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (167/214): alphabetically
+TO DO     ?% (166/214): alphabetically
 - BlockInput, ClipWait, ControlSend, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
 - FileAppend, FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
@@ -58,8 +58,8 @@ TO DO     ?% (167/214): alphabetically
 - FileSelectFolder, FileSetAttrib, FileSetTime, FormatTime, GetKeyState, GroupActivate, GroupAdd, 
 - GroupClose, GroupDeactivate, Gui, GuiControl, GuiControlGet, Hotkey, If var [not] between,
 - If var [not] in/contains MatchList, If var is [not] type, IfNotEqual, IfExist/IfNotExist, 
-- IfGreater / IfGreaterOrEqual, IfInString/IfNotInString, IfLess/IfLessOrEqual, IfMsgBox, 
-- IfWinActive / IfWinNotActive, IfWinExist/IfWinNotExist, IniDelete, IniRead, IniWrite, Input, 
+- IfGreater/IfGreaterOrEqual, IfInString/IfNotInString, IfLess/IfLessOrEqual, IfMsgBox, 
+- IfWinActive/IfWinNotActive, IniDelete, IniRead, IniWrite, Input, 
 - InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
 - Loop (parse a string), Loop (read file contents), Loop (registry), Menu, MouseClick, 
 - MouseClickDrag, MouseGetPos, MouseMove, OnExit, Pause, PixelGetColor, PixelSearch, 
