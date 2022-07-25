@@ -1,3 +1,5 @@
 Incompatibilities with normal AHK:
 most are noted with an `INCOMPAT` keyword at their respective code position.
 Others, e.g. missing features, are listed below.
+
+#NoEnv is the default
