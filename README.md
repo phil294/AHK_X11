@@ -16,7 +16,7 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 Features:
 - [x] Hotkeys (basic support complete)
 - [ ] Hotstrings (difficult in X11; help needed)
-- [x] <strike>Window management (setup complete, but all commands are still missing)</strike> [*currently broken*](https://github.com/woodruffw/x_do.cr/issues/10)
+- [x] <strike>Window management (setup complete, but all commands are still missing)</strike> *currently broken*, [1](https://github.com/woodruffw/x_do.cr/issues/10) [2](https://github.com/woodruffw/x_do.cr/issues/12)
 - [x] Send keys (basic support complete)
 - [ ] Control mouse (TBD)
 - [x] File management (setup complete, but all commands are still missing)
