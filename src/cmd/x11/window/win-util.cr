@@ -1,4 +1,4 @@
-class Cmd::Window::Util
+class Cmd::X11::Window::Util
 	# Find a single window.
 	# param `match_conditions` is those four `[, WinTitle, WinText, ExcludeTitle, ExcludeText]`
 	# from the docs that are used in various window commands,

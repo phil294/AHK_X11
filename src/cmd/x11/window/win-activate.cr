@@ -1,7 +1,7 @@
 require "../../base"
 require "./win-util"
 
-class Cmd::Window::WinActivate < Cmd::Base
+class Cmd::X11::Window::WinActivate < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end
 	def run(thread, args)

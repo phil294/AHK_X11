@@ -1,6 +1,6 @@
 require "../base"
 
-class Cmd::SendRaw < Cmd::Base
+class Cmd::X11::SendRaw < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 1 end
 	def run(thread, args)
