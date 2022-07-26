@@ -22,7 +22,11 @@ def build_error(msg)
 end
 # TODO: fiber unhandled exception handler set to build_errow somehow?
 
-ahk_str = File.read ARGV[0]
+begin
+	ahk_str = File.read ARGV[0]
+rescue
+	build_error "File '#{ARGV[0]}' could not be read."
+end
 lines = ahk_str.split /\r?\n/
 
 begin
