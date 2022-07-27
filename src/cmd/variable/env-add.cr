@@ -44,6 +44,6 @@ class Cmd::Variable::EnvAdd < Cmd::Base
 			new_value = new_value.to_s
 		end
 		
-		thread.runner.set_var(var, new_value)
+		thread.runner.set_user_var(var, new_value)
 	end
 end

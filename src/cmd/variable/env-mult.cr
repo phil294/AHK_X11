@@ -13,6 +13,6 @@ class Cmd::Variable::EnvMult < Cmd::Base
 		new_value = current_value * mult_value
 		new_value = new_value.to_i if pure_int
 		new_value = new_value.to_s
-		thread.runner.set_var(var, new_value)
+		thread.runner.set_user_var(var, new_value)
 	end
 end

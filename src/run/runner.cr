@@ -15,11 +15,12 @@ module Run
 	#
 	# All Runner state (vars, labels, etc.) is global (cross-thread).
 	class Runner
-		# Some variables like A_Now are computed on usage; this happens in `str`.
-		# INCOMPAT static built-in variables can be overridden and should probably be fixed TODO:
-		@user_vars = {
+		# These are editable by the user
+		@user_vars = {} of String => String
+		# These are only changed by the program. See also `get_built_in_computed_var`
+		@built_in_static_vars = {
 			"a_space" => " ",
-			"a_index" => "0"
+			"a_index" => "0",
 		}
 		@escape_char = '`'
 		protected getter labels : Hash(String, Cmd::Base)
@@ -91,16 +92,31 @@ module Run
 			::exit code
 		end
 
-		# case insensitive
+		# Get the value of anything, regardless if user set or not.
+		# Case insensitive
 		def get_var(var)
-			@user_vars[var.downcase]? || ""
+			down = var.downcase
+			@user_vars[down]? || @built_in_static_vars[down]? || get_built_in_computed_var(down) || ""
+		end
+		def print_user_vars # TODO is that true / ListVars shouldnt print builtins?
+			puts @user_vars
 		end
 		# `var` is case insensitive
-		def set_var(var, value)
+		def set_user_var(var, value)
 			@user_vars[var.downcase] = value
 		end
-		def print_vars
-			puts @user_vars
+		# `var` is case insensitive
+		def set_built_in_static_var(var, value)
+			@built_in_static_vars[var.downcase] = value
+		end
+		# `var` is case insensitive
+		private def get_built_in_computed_var(var)
+			case var.downcase
+			when "a_now"
+				"123"
+			else
+				nil
+			end
 		end
 		
 		# Substitute all %var% with their respective values, be it variable or computed built-in.
