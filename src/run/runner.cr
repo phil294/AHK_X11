@@ -1,4 +1,3 @@
-require "./ahk-string"
 require "./thread"
 require "./timer"
 require "./hotkey"
@@ -8,6 +7,12 @@ require "./x11"
 require "x_do"
 
 module Run
+	# see `Thread.settings` for scope explanation
+	struct RunnerSettings
+		property persistent = false
+		property escape_char = '`'
+	end
+
 	# can start a completely fresh and isolated ahk execution instance with its own
 	# variables etc. All properties can and will be heavily accessed from outside (commands).
 	# Currently however, there's only ever one single runner instance and there's no real reason
@@ -17,12 +22,12 @@ module Run
 	class Runner
 		# These are editable by the user
 		@user_vars = {} of String => String
-		# These are only changed by the program. See also `get_built_in_computed_var`
+		# These are only changed by the program. See also `get_global_built_in_computed_var`
 		@built_in_static_vars = {
 			"a_space" => " ",
 			"a_index" => "0",
+			"a_workingdir" => Dir.current,
 		}
-		@escape_char = '`'
 		protected getter labels : Hash(String, Cmd::Base)
 		@threads = [] of Thread
 		@auto_execute_thread : Thread?
@@ -35,9 +40,11 @@ module Run
 		@x11 = X11.new
 		getter x_do = XDo.new
 		getter gui = Gui.new
+		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 
-		def initialize(*, @labels, @escape_char, @settings)
+		def initialize(*, @labels, escape_char, @settings)
+			@settings.escape_char = escape_char
 		end
 		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
 			hotkey_labels.each { |l| add_hotkey l }
@@ -92,13 +99,17 @@ module Run
 			::exit code
 		end
 
-		# Get the value of anything, regardless if user set or not.
-		# Case insensitive
-		def get_var(var)
-			down = var.downcase
-			@user_vars[down]? || @built_in_static_vars[down]? || get_built_in_computed_var(down) || ""
+		# Do not use directly, use `Thread.get_var` instead.
+		# Get the value of global values, regardless if user set or not.
+		# Case sensitive.
+		def get_global_var(var)
+			@user_vars[var]? || @built_in_static_vars[var]? || get_global_built_in_computed_var(var)
 		end
-		def print_user_vars # TODO is that true / ListVars shouldnt print builtins?
+		# Case insensitive
+		def get_user_var(var)
+			@user_vars[var.downcase]? || ""
+		end
+		def print_user_vars # TODO is that true / ListVars shouldnt print builtins / threadlocals like errorlevel?
 			puts @user_vars
 		end
 		# `var` is case insensitive
@@ -106,26 +117,19 @@ module Run
 			@user_vars[var.downcase] = value
 		end
 		# `var` is case insensitive
-		def set_built_in_static_var(var, value)
+		def set_global_built_in_static_var(var, value)
 			@built_in_static_vars[var.downcase] = value
 		end
 		# `var` is case insensitive
-		private def get_built_in_computed_var(var)
+		private def get_global_built_in_computed_var(var)
 			case var.downcase
 			when "a_now"
-				"123"
+				"123" # TODO
 			else
 				nil
 			end
 		end
 		
-		# Substitute all %var% with their respective values, be it variable or computed built-in.
-		def str(str)
-			AhkString.process(str, @escape_char) do |var_name_lookup|
-				get_var(var_name_lookup)
-			end
-		end
-
 		def get_timer(label)
 			@timers[label]?
 		end
@@ -162,9 +166,4 @@ module Run
 	end
 
 	class RuntimeException < Exception end
-
-	# see Runner.settings
-	struct RunnerSettings
-		property persistent = false
-	end
 end

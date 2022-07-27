@@ -1,13 +1,32 @@
+require "./ahk-string"
+
 module Run
+	# see Thread.settings
+	private struct ThreadSettings
+		property last_found_window : XDo::Window?
+	end
+
 	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,
 	# except they're not cooperative at all; they take each other's place (prioritized) and
 	# continue until their individual end. Threads never really run in parallel:
 	# There's always one "current thread"
 	class Thread
 		getter runner : Runner
-		# each threads starts with its own set of settings (e.g. CoordMode),
-		# the default can be changed in the auto execute section
+		# `Settings` are configuration properties that may or may not be modified by various
+		# `Cmd`s and affect the script's execution logic. Settings are **never**, however,
+		# directly exposed to the user as `%variables%`, but may be accessed by dedicated
+		# commands. If a setting refers to a built-in variable name, it should live in
+		# `@built_in_static_vars` instead, either in `Runner` or `Thread`, depending on its scope.
+		#
+		# Each thread starts with its own set of settings (e.g. CoordMode),
+		# the default can be changed in the auto execute section.
 		getter settings : ThreadSettings
+		# These thread-specific vars are only changed by the program and also exposed
+		# to the user. Also see `settings`.
+		# User-modifiable variables are inherently global and thus live in `Runner`.
+		@built_in_static_vars = {
+			"errorlevel" => "0"
+		}
 		@stack = [] of Cmd::Base
 		getter priority = 0
 		@exit_code = 0
@@ -40,7 +59,7 @@ module Run
 			end
 			stack_i = @stack.size - 1
 
-			parsed_args = cmd.args.map { |arg| @runner.str(arg) }
+			parsed_args = cmd.args.map { |arg| str(arg) }
 
 			begin
 				result = cmd.run(self, parsed_args)
@@ -89,9 +108,24 @@ module Run
 			@exit_code = code || 0
 			@stack.clear
 		end
-	end
-	# see Thread.settings
-	private struct ThreadSettings
-		property last_found_window : XDo::Window?
+
+		# Get the value of both thread-local and global values,
+		# regardless if user set or built-in.
+		# Case insensitive
+		def get_var(var)
+			down = var.downcase
+			@built_in_static_vars[down]? || @runner.get_global_var(down) || ""
+		end
+		# `var` is case insensitive
+		def set_thread_built_in_static_var(var, value)
+			@built_in_static_vars[var.downcase] = value
+		end
+
+		# Substitute all %var% with their respective values, no matter where from.
+		def str(str)
+			AhkString.process(str, @runner.settings.escape_char) do |var_name_lookup|
+				get_var(var_name_lookup)
+			end
+		end
 	end
 end

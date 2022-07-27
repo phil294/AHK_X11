@@ -6,7 +6,7 @@ class Cmd::ControlFlow::IfEqual < Cmd::Base
 	def self.multi_command; true end
 	def self.conditional; true end
 	def run(thread, args)
-		a = thread.runner.get_var(args[0]) || ""
+		a = thread.get_var(args[0]) || ""
 		b = args[1]? || ""
 		a_f = a.to_f?(strict: true)
 		b_f = b.to_f?(strict: true)
