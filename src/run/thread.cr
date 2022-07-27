@@ -79,6 +79,9 @@ module Run
 				else
 					next_cmd = cmd.jne
 				end
+			elsif cmd.class.sets_error_level
+				raise "Result should be String for ErrorLevel command??" if ! result.is_a?(String)
+				set_thread_built_in_static_var("ErrorLevel", result)
 			end
 			# current stack el may have been altered by prev cmd.run(), in which case disregard the normal flow
 			if @stack[stack_i]? == cmd # not altered

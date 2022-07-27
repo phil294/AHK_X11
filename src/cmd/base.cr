@@ -13,6 +13,8 @@ module Cmd
 		def self.multi_command; false end
 		# conditional commands require special treatment and implementation in `Build::Linker`
 		def self.conditional; false end
+		# see `run`
+		def self.sets_error_level; false end
 
 		getter line_no = -1
 		getter args : Array(String)
@@ -20,10 +22,12 @@ module Cmd
 		def initialize(@line_no, @args)
 		end
 		
-		# param args is like @args, but parsed (vars substituted).
+		# *args* is like `@args`, but parsed (vars substituted).
 		# runner can be accessed via `thread.runner`.
-		# When class.conditional, the return value determines the next branch.
-		# Return value is ignored for non-conditional cmds.
+		# When `class.conditional`, the return value determines the next branch.
+		# When `class.sets_error_level`, the thread's `ErrorLevel` will be set
+		# to the return value .
+		# In all other cases, the return value is ignored.
 		abstract def run(thread, args)
 
 		property next : Base?
