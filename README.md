@@ -28,10 +28,11 @@ Features:
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE      ?% (26/214):
+DONE      ?% (27/214):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox (incomplete), Gui (demo window), SendRaw, #Persistent, ExitApp,
-+ EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir
++ EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
++ FileAppend
 
 NEW       1% (2/214): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -49,10 +50,10 @@ REMOVED   ?% (21/214):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (165/214): alphabetically
+TO DO     ?% (164/214): alphabetically
 - BlockInput, ClipWait, ControlSend, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
-- FileAppend, FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
+- FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
 - FileInstall, FileReadLine, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion, 
 - FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir, FileSelectFile, 
 - FileSelectFolder, FileSetAttrib, FileSetTime, FormatTime, GetKeyState, GroupActivate, GroupAdd, 
