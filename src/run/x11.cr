@@ -133,11 +133,12 @@ module Run
 				# repetition and trigger loop bugs that I couldn't resolve. (TODO:)
 				next if @is_paused || ! event.is_a?(KeyEvent) || ! event.release?
 				sub = @subscriptions.find do |sub|
+					sub[:hotkey].active &&
 					sub[:subscription].keycode == event.keycode &&
 					sub[:subscription].modifiers.any? &.== event.state
 				end
 				next if ! sub # Unrelated events are somehow randomly also reported, don't ask me why
-				runner.add_thread sub[:hotkey].cmd, 0
+				runner.add_thread sub[:hotkey].cmd, sub[:hotkey].priority
 			end
 		end
 		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
@@ -172,14 +173,14 @@ module Run
 		def register_hotkey(hotkey)
 			modifiers = 0_u32
 			key_name = ""
-			hotkey.label.each_char_with_index do |char, i|
+			hotkey.key_str.each_char_with_index do |char, i|
 				case char
 				when '^' then modifiers |= ControlMask
 				when '+' then modifiers |= ShiftMask
 				when '!' then modifiers |= Mod1Mask
 				when '#' then modifiers |= Mod4Mask
 				else
-					key_name = hotkey.label[i..]
+					key_name = hotkey.key_str[i..]
 					break
 				end
 			end

@@ -47,7 +47,7 @@ module Run
 			@settings.escape_char = escape_char
 		end
 		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
-			hotkey_labels.each { |l| add_hotkey l }
+			hotkey_labels.each { |l| add_or_update_hotkey label: l, key_str: l, priority: 0 }
 			spawn @x11.run self # separate worker thread because event loop is blocking
 			spawn @gui.run # separate worker thread because gtk loop is blocking
 			spawn same_thread: true { clock }
@@ -141,18 +141,30 @@ module Run
 			timer
 		end
 
-		def add_hotkey(label)
-			cmd = labels[label]?
-			raise RuntimeException.new "Add Hotkey: Label '#{label}' not found" if ! cmd
-			hotkey = Hotkey.new(self, cmd, label)
-			@hotkeys[label] = hotkey
-			@x11.register_hotkey hotkey
+		def add_or_update_hotkey(*, key_str, label, priority, active_state = nil)
+			if label
+				cmd = labels[label]?
+				raise RuntimeException.new "Add Hotkey: Label '#{label}' not found" if ! cmd
+			end
+			hotkey = @hotkeys[key_str]?
+			if hotkey
+				@x11.unregister_hotkey hotkey
+				active_state = hotkey.active if active_state.nil?
+			else
+				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{key_str}" if ! label
+				hotkey = Hotkey.new(self, cmd.not_nil!, key_str, priority: priority)
+				@hotkeys[hotkey.key_str] = hotkey
+				active_state = true if active_state.nil?
+			end
+			hotkey.cmd = cmd if cmd
+			hotkey.priority = priority if priority
+			if active_state
+				@x11.register_hotkey hotkey
+				hotkey.active = true
+			else
+				hotkey.active = false
+			end
 			hotkey
-		end
-		def remove_hotkey(label)
-			hotkey = @hotkeys.delete(label)
-			raise Cmd::RuntimeException.new "Remove Hotkey: Label '#{label}' not found" if ! hotkey
-			@x11.unregister_hotkey hotkey
 		end
 		# multiple threads may request a pause. x11 will only resume after all have called
 		# `resume_x11` again.
