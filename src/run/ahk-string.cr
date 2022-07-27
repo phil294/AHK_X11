@@ -11,6 +11,13 @@ class AhkString
 					escape = true
 				else
 					if escape
+						char = case char
+						when 'n' then '\n'
+						when 'r' then '\r'
+						when 'v' then '\v'
+						when 'a' then '\a'
+						when 'f' then '\f'
+						end
 						build << char
 					elsif char == '%'
 						if var_start.nil?
