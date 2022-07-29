@@ -85,11 +85,9 @@ TO DO     76% (163/214): alphabetically
 
 You need (?) to have `libxdo` installed, which is usually done by installing `xdotool` on your distribution. Only works with version 2016x currently, not with 2021x (will soon be fixed). This is the default in Ubuntu. Also required is a running X11 server and GTK installed, which you most likely already have.
 
-Then, you can download the latest x86_64 binary from [here](https://github.com/phil294/AHK_X11/releases/download/0.0.1/ahk_x11) or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
+Then, you can download the latest binary from the release section at the top right or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
 
-**Binary was built on Arch Linux and probably does not run on Debian or Ubuntu. Please use the instructions under Development instead. (I'll attach Debian builds too soon)**
-
-**Please note that the current version is still pretty useless** because most things are not implemented yet.
+**Please note that the current version is still barely usable** because most things are not implemented yet.
 
 ## Usage
 
