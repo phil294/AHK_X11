@@ -7,5 +7,8 @@ module Run
 		property active : Bool
 		def initialize(@runner, @cmd, @key_str, *, @priority, @active = true)
 		end
+		def trigger
+			@runner.add_thread @cmd, @priority
+		end
 	end
 end

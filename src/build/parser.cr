@@ -1,4 +1,5 @@
 require "../cmd/**"
+require "../run/hotstring"
 
 module Build
 	class ParsingException < Exception end
@@ -15,6 +16,7 @@ module Build
 
 		getter cmds = [] of Cmd::Base
 		getter hotkey_labels = [] of String
+		getter hotstrings = [] of Run::Hotstring
 		getter comment_flag = ";"
 		getter escape_char = '`'
 
@@ -84,9 +86,19 @@ module Build
 				csv_args = [split[0], split[2]? || ""]
 				@cmds << cmd_class.new line_no, csv_args
 			elsif first_word.ends_with?("::")
-				label = first_word[...-2]
-				@cmds << Cmd::ControlFlow::Label.new line_no, [label]
-				@hotkey_labels << label
+				if first_word.starts_with?(":")
+					match = first_word.match(/^(:([^:]*):([^:]+))::$/)
+					raise "Hotstring definition invalid or too complicated " if match.nil?
+					_, label, options, abbrev = match
+					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
+					hotstring = Run::Hotstring.new label, abbrev
+					hotstring.immediate = true if options == "*"
+					@hotstrings << hotstring
+				else
+					label = first_word[...-2]
+					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
+					@hotkey_labels << label
+				end
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
 			elsif first_word.ends_with?("++")

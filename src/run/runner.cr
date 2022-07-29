@@ -37,6 +37,7 @@ module Run
 		# see Thread.settings
 		@default_thread_settings = ThreadSettings.new
 		@hotkeys = {} of String => Hotkey
+		@hotstrings = [] of Hotstring
 		@x11 = X11.new
 		getter x_do = XDo.new
 		getter gui = Gui.new
@@ -46,8 +47,9 @@ module Run
 		def initialize(*, @labels, escape_char, @settings)
 			@settings.escape_char = escape_char
 		end
-		def run(*, hotkey_labels : Array(String), auto_execute_section : Cmd::Base)
+		def run(*, hotkey_labels : Array(String), hotstrings, auto_execute_section : Cmd::Base)
 			hotkey_labels.each { |l| add_or_update_hotkey label: l, key_str: l, priority: 0 }
+			hotstrings.each { |h| add_hotstring h }
 			spawn @x11.run self # separate worker thread because event loop is blocking
 			spawn @gui.run # separate worker thread because gtk loop is blocking
 			spawn same_thread: true { clock }
@@ -85,7 +87,7 @@ module Run
 							@threads.pop
 							if thread == @auto_execute_thread
 								@default_thread_settings = thread.settings
-								exit_app @exit_code if ! @settings.persistent && @hotkeys.size == 0
+								exit_app @exit_code if ! @settings.persistent && @hotkeys.empty? && @hotstrings.empty?
 							end
 						end
 					end
@@ -165,6 +167,13 @@ module Run
 				hotkey.active = false
 			end
 			hotkey
+		end
+		def add_hotstring(hotstring)
+			hotstring.runner = self # TODO: revise this
+			hotstring.cmd = labels[hotstring.label]
+			@hotstrings << hotstring
+			@x11.register_hotstring hotstring
+			hotstring
 		end
 		# multiple threads may request a pause. x11 will only resume after all have called
 		# `resume_x11` again.

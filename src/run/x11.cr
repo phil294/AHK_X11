@@ -115,30 +115,80 @@ module Run
 	# For a non-grabbing alternative that could also be used to implemented Hotstrings,
 	# check the `x11-follow-focus` branch (broken) and https://stackoverflow.com/q/22749444
 	class X11
-		include ::X11
+		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else 
 
 		@root_win = 0_u64
+		@focussed_win = 0_u64
 		def initialize
-			@display = Display.new
+			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
 		end
 		def finalize
 			@display.close
 		end
 
+		private def refresh_focus
+			if @focussed_win != 0_u64 && @focussed_win != @root_win
+				@display.select_input @focussed_win, 0 # unsubscribe
+			end
+			@focussed_win = @display.input_focus[:focus]
+			if @focussed_win == ::X11::PointerRoot
+				@focussed_win = @root_win
+			end
+			@display.select_input @focussed_win, ::X11::KeyReleaseMask | ::X11::FocusChangeMask # ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | FocusChangeMask
+		end
+
+		@key_buff = StaticArray(UInt32, 30).new(0)
+		@key_buff_i = 0_u8
+
+		@hotstring_end_chars : StaticArray(Int32, 20)
+		@hotstring_end_chars = StaticArray['-'.ord, '('.ord, ')'.ord, '['.ord, ']'.ord, '{'.ord, '}'.ord, ':'.ord, ';'.ord, '\''.ord, '"'.ord, '/'.ord, '\\'.ord, ','.ord, '.'.ord, '?'.ord, '!'.ord, '\n'.ord, ' '.ord, '\t'.ord] # TODO: solve with macro somehow
+		@hotstring_candidate : Hotstring? = nil
+
 		def run(runner : Runner)
+			refresh_focus
 			loop do
 				event = @display.next_event # blocking!
 				# Currently, hotkeys are always based on key release event. Trigger on press introduced
 				# repetition and trigger loop bugs that I couldn't resolve. (TODO:)
-				next if @is_paused || ! event.is_a?(KeyEvent) || ! event.release?
-				sub = @subscriptions.find do |sub|
-					sub[:hotkey].active &&
-					sub[:subscription].keycode == event.keycode &&
-					sub[:subscription].modifiers.any? &.== event.state
+				case event
+				when ::X11::KeyEvent
+					next if @is_paused || ! event.release?
+
+					keysym = event.lookup_keysym(0).to_u32
+
+					if keysym == ::X11::XK_BackSpace
+						@key_buff_i -= 1 if @key_buff_i > 0
+					elsif @hotstring_end_chars.includes?(keysym)
+						@hotstring_candidate.not_nil!.trigger if ! @hotstring_candidate.nil?
+						@hotstring_candidate = nil
+						@key_buff_i = 0_u8
+					else
+						# TODO: figure out if the StaticArray hassle is actually worth the effort performance-wise
+						@key_buff_i = 0_u8 if @key_buff_i > 29
+						@key_buff[@key_buff_i] = keysym
+						@key_buff_i += 1
+						match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
+						if match
+							if match.immediate
+								match.trigger
+								@key_buff_i = 0_u8
+							else
+								@hotstring_candidate = match
+							end
+						end
+					end
+
+					sub = @subscriptions.find do |sub|
+						sub[:hotkey].active &&
+						sub[:subscription].keycode == event.keycode &&
+						sub[:subscription].modifiers.any? &.== event.state
+					end
+					next if ! sub
+					sub[:hotkey].trigger
+				when ::X11::FocusChangeEvent
+					refresh_focus if event.out?
 				end
-				next if ! sub # Unrelated events are somehow randomly also reported, don't ask me why
-				runner.add_thread sub[:hotkey].cmd, sub[:hotkey].priority
 			end
 		end
 		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
@@ -170,15 +220,20 @@ module Run
 			end
 		end
 
+		@hotstrings = [] of Hotstring
+		def register_hotstring(hotstring)
+			@hotstrings << hotstring
+		end
+
 		def register_hotkey(hotkey)
 			modifiers = 0_u32
 			key_name = ""
 			hotkey.key_str.each_char_with_index do |char, i|
 				case char
-				when '^' then modifiers |= ControlMask
-				when '+' then modifiers |= ShiftMask
-				when '!' then modifiers |= Mod1Mask
-				when '#' then modifiers |= Mod4Mask
+				when '^' then modifiers |= ::X11::ControlMask
+				when '+' then modifiers |= ::X11::ShiftMask
+				when '!' then modifiers |= ::X11::Mod1Mask
+				when '#' then modifiers |= ::X11::Mod4Mask
 				else
 					key_name = hotkey.key_str[i..]
 					break
@@ -186,14 +241,14 @@ module Run
 			end
 			sym = ::X11::C.ahk_key_name_to_keysym(key_name)
 			raise RuntimeException.new "Hotkey key name '#{key_name}' not found." if ! sym || ! sym.is_a?(Int32)
-			modifiers = [ modifiers, modifiers | Mod2Mask.to_u32 ]
+			modifiers = [ modifiers, modifiers | ::X11::Mod2Mask.to_u32 ]
 			keycode = @display.keysym_to_keycode(sym.to_u64)
 			@subscriptions << {
 				hotkey: hotkey,
 				subscription: Subscription.new(keycode, modifiers)
 			}
 			modifiers.each do |mod|
-				@display.grab_key(keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: GrabModeAsync, keyboard_mode: GrabModeAsync)
+				@display.grab_key(keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 			end
 		end
 		def unregister_hotkey(hotkey)
