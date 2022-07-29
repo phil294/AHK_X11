@@ -83,7 +83,7 @@ TO DO     76% (163/214): alphabetically
 
 ## Installation
 
-You need (?) to have `libxdo` installed, which is usually done by installing `xdotool` on your distribution. Also required is a running X11 server and GTK installed, which you most likely already have.
+You need (?) to have `libxdo` installed, which is usually done by installing `xdotool` on your distribution. Only works with version 2016x currently, not with 2021x (will soon be fixed). This is the default in Ubuntu. Also required is a running X11 server and GTK installed, which you most likely already have.
 
 Then, you can download the latest x86_64 binary from [here](https://github.com/phil294/AHK_X11/releases/download/0.0.1/ahk_x11) or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
 
@@ -101,14 +101,23 @@ In the future, we'll also have proper Desktop integration so you can double clic
 <summary>Here's a working demo script showing several of the commands so far implemented.</summary>
 
 ```AutoHotkey
+#Persistent
+IfWinExist, ahk_class firefox
+    WinActivate
+tomorrow += 1, days
+FileAppend, %tomorrow%, tomorrow.txt
 GoSub greet
 return ; some comment
 
 greet:
 my_var = 1234
 sleep 0.001
-IfEqual, my_var, 1234, MsgBox, %my_var%! Try pressing ctrl+shift+A.
+IfEqual, my_var, 1234, MsgBox, %my_var%!. Try writing "btw" or pressing ctrl+shift+A.
 else, msgbox ??
+return
+
+:*:btw::
+SendRaw by the way
 return
 
 ^+a::
