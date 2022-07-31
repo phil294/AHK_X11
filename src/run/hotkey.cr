@@ -17,15 +17,17 @@ module Run
 		def init
 			modifiers = 0_u32
 			key_name = ""
-			@key_str.each_char_with_index do |char, i|
+			str = @key_str.sub("<^>!", "\0")
+			str.each_char_with_index do |char, i|
 				case char
 				when '^' then modifiers |= ::X11::ControlMask
 				when '+' then modifiers |= ::X11::ShiftMask
 				when '!' then modifiers |= ::X11::Mod1Mask
 				when '#' then modifiers |= ::X11::Mod4Mask
+				when '\0' then modifiers |= ::X11::Mod5Mask
 				when '~' then @no_grab = true # INCOMPAT: will then not work in some windows
 				else
-					key_name = @key_str[i..]
+					key_name = str[i..]
 					break
 				end
 			end
