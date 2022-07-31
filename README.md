@@ -16,7 +16,7 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 Features:
 - [x] Hotkeys (basic support complete)
 - [x] Hotstrings (only basic support so far; also does not work in some windows: help needed)
-- [x] <strike>Window management (setup complete, but all commands are still missing)</strike> *currently broken*, [1](https://github.com/woodruffw/x_do.cr/issues/10) [2](https://github.com/woodruffw/x_do.cr/issues/12)
+- [x] Window management (setup complete, but many commands are still missing)
 - [x] Send keys (basic support complete)
 - [ ] Control mouse (TBD)
 - [x] File management (setup complete, but all commands are still missing)
@@ -85,11 +85,9 @@ TO DO     76% (163/214): alphabetically
 
 You need (?) to have `libxdo` installed, which is usually done by installing `xdotool` on your distribution. Only works with version 2016x currently, not with 2021x (will soon be fixed). This is the default in Ubuntu. Also required is a running X11 server and GTK installed, which you most likely already have.
 
-Then, you can download the latest x86_64 binary from [here](https://github.com/phil294/AHK_X11/releases/download/0.0.1/ahk_x11) or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
+Then, you can download the latest binary from the release section at the top right or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
 
-**Binary was built on Arch Linux and probably does not run on Debian or Ubuntu. Please use the instructions under Development instead. (I'll attach Debian builds too soon)**
-
-**Please note that the current version is still pretty useless** because most things are not implemented yet.
+**Please note that the current version is still barely usable** because most things are not implemented yet.
 
 ## Usage
 
