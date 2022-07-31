@@ -23,6 +23,7 @@ class Cmd::ControlFlow::Hotkey < Cmd::Base
 		priority = 0
 		max_threads = nil # TODO: not used
 		n = nil
+		# TODO: cant handle multi digit numbers, also externalize this because option parsing is done in other commands etc too
 		options.reverse.each_char do |char|
 			next if char == ' '
 			if char >= '0' && char <= '9'

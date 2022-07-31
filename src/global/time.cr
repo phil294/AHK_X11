@@ -10,7 +10,6 @@ struct Time # extending because this is ahk std lib
 		begin
 			return parse(str, "%Y%m%d%H%M%S", Time::Location.local)
 		rescue e
-			pp! e
 			return nil
 		end
 	end

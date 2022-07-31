@@ -8,7 +8,9 @@
         "Hotstring",
         "Hotstrings",
         "INCOMPAT",
+        "keycodes",
         "keysym",
+        "keysyms",
         "msgbox",
         "Tasker",
         "ungrab"

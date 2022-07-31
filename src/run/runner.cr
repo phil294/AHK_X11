@@ -27,6 +27,7 @@ module Run
 			"a_space" => " ",
 			"a_index" => "0",
 			"a_workingdir" => Dir.current,
+			"a_endchar" => ""
 		}
 		protected getter labels : Hash(String, Cmd::Base)
 		@threads = [] of Thread
@@ -47,8 +48,8 @@ module Run
 		def initialize(*, @labels, escape_char, @settings)
 			@settings.escape_char = escape_char
 		end
-		def run(*, hotkey_labels : Array(String), hotstrings, auto_execute_section : Cmd::Base)
-			hotkey_labels.each { |l| add_or_update_hotkey label: l, key_str: l, priority: 0 }
+		def run(*, hotkeys, hotstrings, auto_execute_section : Cmd::Base)
+			hotkeys.each { |h| add_hotkey h }
 			hotstrings.each { |h| add_hotstring h }
 			spawn @x11.run self # separate worker thread because event loop is blocking
 			spawn @gui.run # separate worker thread because gtk loop is blocking
@@ -143,10 +144,16 @@ module Run
 			timer
 		end
 
+		def add_hotkey(hotkey)
+			hotkey.runner = self
+			hotkey.cmd = labels[hotkey.key_str]
+			@x11.register_hotkey hotkey
+			hotkey
+		end
 		def add_or_update_hotkey(*, key_str, label, priority, active_state = nil)
 			if label
 				cmd = labels[label]?
-				raise RuntimeException.new "Add Hotkey: Label '#{label}' not found" if ! cmd
+				raise RuntimeException.new "Add or update Hotkey: Label '#{label}' not found" if ! cmd
 			end
 			hotkey = @hotkeys[key_str]?
 			if hotkey
@@ -168,8 +175,9 @@ module Run
 			end
 			hotkey
 		end
+
 		def add_hotstring(hotstring)
-			hotstring.runner = self # TODO: revise this
+			hotstring.runner = self
 			hotstring.cmd = labels[hotstring.label]
 			@hotstrings << hotstring
 			@x11.register_hotstring hotstring

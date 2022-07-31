@@ -7,14 +7,14 @@ module Build
 		@linker = Linker.new
 		getter start : Cmd::Base? = nil
 		getter labels = {} of String => Cmd::Base
-		getter hotkey_labels = [] of String
+		getter hotkeys = [] of Run::Hotkey
 		getter hotstrings = [] of Run::Hotstring
 		getter escape_char = '`'
 		getter runner_settings = Run::RunnerSettings.new
 
 		def build(lines : Array(String))
 			@parser.parse_into_cmds! lines
-			@hotkey_labels = @parser.hotkey_labels
+			@hotkeys = @parser.hotkeys
 			@hotstrings = @parser.hotstrings
 			@escape_char = @parser.escape_char
 			@linker.link! @parser.cmds

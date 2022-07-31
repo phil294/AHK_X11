@@ -138,13 +138,6 @@ module Run
 			@display.select_input @focussed_win, ::X11::KeyReleaseMask | ::X11::FocusChangeMask # ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | FocusChangeMask
 		end
 
-		@key_buff = StaticArray(UInt32, 30).new(0)
-		@key_buff_i = 0_u8
-
-		@hotstring_end_chars : StaticArray(Int32, 20)
-		@hotstring_end_chars = StaticArray['-'.ord, '('.ord, ')'.ord, '['.ord, ']'.ord, '{'.ord, '}'.ord, ':'.ord, ';'.ord, '\''.ord, '"'.ord, '/'.ord, '\\'.ord, ','.ord, '.'.ord, '?'.ord, '!'.ord, '\n'.ord, ' '.ord, '\t'.ord] # TODO: solve with macro somehow
-		@hotstring_candidate : Hotstring? = nil
-
 		def run(runner : Runner)
 			refresh_focus
 			loop do
@@ -154,38 +147,7 @@ module Run
 				case event
 				when ::X11::KeyEvent
 					next if @is_paused || ! event.release?
-
-					keysym = event.lookup_keysym(0).to_u32
-
-					if keysym == ::X11::XK_BackSpace
-						@key_buff_i -= 1 if @key_buff_i > 0
-					elsif @hotstring_end_chars.includes?(keysym)
-						@hotstring_candidate.not_nil!.trigger if ! @hotstring_candidate.nil?
-						@hotstring_candidate = nil
-						@key_buff_i = 0_u8
-					else
-						# TODO: figure out if the StaticArray hassle is actually worth the effort performance-wise
-						@key_buff_i = 0_u8 if @key_buff_i > 29
-						@key_buff[@key_buff_i] = keysym
-						@key_buff_i += 1
-						match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
-						if match
-							if match.immediate
-								match.trigger
-								@key_buff_i = 0_u8
-							else
-								@hotstring_candidate = match
-							end
-						end
-					end
-
-					sub = @subscriptions.find do |sub|
-						sub[:hotkey].active &&
-						sub[:subscription].keycode == event.keycode &&
-						sub[:subscription].modifiers.any? &.== event.state
-					end
-					next if ! sub
-					sub[:hotkey].trigger
+					handle_key_event event, runner
 				when ::X11::FocusChangeEvent
 					refresh_focus if event.out?
 				end
@@ -212,52 +174,83 @@ module Run
 			@pause_mutex.unlock
 		end
 
-		@subscriptions = [] of NamedTuple(hotkey: Hotkey, subscription: Subscription)
-		private class Subscription
-			getter keycode : UInt8
-			getter modifiers : Array(UInt32)
-			def initialize(@keycode, @modifiers)
-			end
-		end
-
+		# apparently keycodes are display-dependent so they can't be determined at build time
+		@hotkey_subscriptions = [] of NamedTuple(hotkey: Hotkey, keycode: UInt8)
 		@hotstrings = [] of Hotstring
+
 		def register_hotstring(hotstring)
 			@hotstrings << hotstring
 		end
 
 		def register_hotkey(hotkey)
-			modifiers = 0_u32
-			key_name = ""
-			hotkey.key_str.each_char_with_index do |char, i|
-				case char
-				when '^' then modifiers |= ::X11::ControlMask
-				when '+' then modifiers |= ::X11::ShiftMask
-				when '!' then modifiers |= ::X11::Mod1Mask
-				when '#' then modifiers |= ::X11::Mod4Mask
-				else
-					key_name = hotkey.key_str[i..]
-					break
-				end
-			end
-			sym = ::X11::C.ahk_key_name_to_keysym(key_name)
-			raise RuntimeException.new "Hotkey key name '#{key_name}' not found." if ! sym || ! sym.is_a?(Int32)
-			modifiers = [ modifiers, modifiers | ::X11::Mod2Mask.to_u32 ]
-			keycode = @display.keysym_to_keycode(sym.to_u64)
-			@subscriptions << {
+			keycode = @display.keysym_to_keycode(hotkey.keysym)
+			@hotkey_subscriptions << {
 				hotkey: hotkey,
-				subscription: Subscription.new(keycode, modifiers)
+				keycode: keycode
 			}
-			modifiers.each do |mod|
+			hotkey.modifiers.each do |mod|
 				@display.grab_key(keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 			end
 		end
 		def unregister_hotkey(hotkey)
-			i = @subscriptions.index! { |sub| sub.[:hotkey] == hotkey }
-			sub = @subscriptions[i][:subscription]
-			sub.modifiers.each do |mod|
-				@display.ungrab_key(sub.keycode, mod, grab_window: @root_win)
+			i = @hotkey_subscriptions.index! { |sub| sub.[:hotkey] == hotkey }
+			sub = @hotkey_subscriptions[i]
+			sub[:hotkey].modifiers.each do |mod|
+				@display.ungrab_key(sub[:keycode], mod, grab_window: @root_win)
 			end
-			@subscriptions.delete i
+			@hotkey_subscriptions.delete i
+		end
+
+		@key_buff = HotstringAbbrevKeysyms.new('0')
+		@key_buff_i = 0_u8
+
+		@hotstring_end_chars : StaticArray(Char, 21)
+		# Pressing return is a \r, not sure if \n even ever fires
+		@hotstring_end_chars = StaticArray['-', '(', ')', '[', ']', '{', '}', ':', ';', '\'', '"', '/', '\\', ',', '.', '?', '!', '\n', ' ', '\t', '\r']
+		@hotstring_candidate : Hotstring? = nil
+
+		private def handle_key_event(event, runner)
+			##### 1. Hotkeys
+			sub = @hotkey_subscriptions.find do |sub|
+				sub[:hotkey].active &&
+				sub[:keycode] == event.keycode &&
+				sub[:hotkey].modifiers.any? &.== event.state
+			end
+			sub[:hotkey].trigger if sub
+			
+			##### 2. Hotstrings
+			lookup = event.lookup_string
+			char = lookup[:string][0]?
+
+			prev_hotstring_candidate = @hotstring_candidate
+			@hotstring_candidate = nil
+			if ! char
+				@key_buff_i = 0_u8
+			else
+				if char == '\b' # ::X11::XK_BackSpace
+					@key_buff_i -= 1 if @key_buff_i > 0
+				elsif @hotstring_end_chars.includes?(char)
+					@key_buff_i = 0_u8
+					if ! prev_hotstring_candidate.nil?
+						runner.set_global_built_in_static_var("A_EndChar", char.to_s)
+						prev_hotstring_candidate.trigger
+					end
+				else
+					@key_buff_i = 0_u8 if @key_buff_i > 29
+					@key_buff[@key_buff_i] = char
+					@key_buff_i += 1
+					match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
+					if match
+						if match.immediate
+							@key_buff_i = 0_u8
+							runner.set_global_built_in_static_var("A_EndChar", "")
+							match.trigger
+						else
+							@hotstring_candidate = match
+						end
+					end
+				end
+			end
 		end
 	end
 end

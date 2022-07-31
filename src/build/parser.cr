@@ -15,7 +15,7 @@ module Build
 			end
 
 		getter cmds = [] of Cmd::Base
-		getter hotkey_labels = [] of String
+		getter hotkeys = [] of Run::Hotkey
 		getter hotstrings = [] of Run::Hotstring
 		getter comment_flag = ";"
 		getter escape_char = '`'
@@ -97,7 +97,7 @@ module Build
 				else
 					label = first_word[...-2]
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
-					@hotkey_labels << label
+					@hotkeys << Run::Hotkey.new label, priority: 0
 				end
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
