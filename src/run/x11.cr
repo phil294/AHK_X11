@@ -188,8 +188,10 @@ module Run
 				hotkey: hotkey,
 				keycode: keycode
 			}
-			hotkey.modifiers.each do |mod|
-				@display.grab_key(keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
+			if ! hotkey.no_grab
+				hotkey.modifiers.each do |mod|
+					@display.grab_key(keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
+				end
 			end
 		end
 		def unregister_hotkey(hotkey)

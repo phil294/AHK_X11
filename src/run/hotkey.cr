@@ -7,6 +7,7 @@ module Run
 		property active = true
 		getter modifiers = [] of UInt32
 		getter keysym = 0_u64
+		getter no_grab = false
 		def initialize(@key_str, *, @priority)
 			init
 		end
@@ -22,6 +23,7 @@ module Run
 				when '+' then modifiers |= ::X11::ShiftMask
 				when '!' then modifiers |= ::X11::Mod1Mask
 				when '#' then modifiers |= ::X11::Mod4Mask
+				when '~' then @no_grab = true # INCOMPAT: will then not work in some windows
 				else
 					key_name = @key_str[i..]
 					break
