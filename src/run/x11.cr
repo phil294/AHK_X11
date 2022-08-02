@@ -3,7 +3,8 @@ require "x11"
 at_exit { GC.collect }
 
 module X11::C
-	# Infer a long list of key names from lib/x11/src/x11/c/keysymdef.cr, stripped from XK_ and underscores
+	# Infer a long list of key names from lib/x11/src/x11/c/keysymdef.cr, stripped from XK_ and underscores.
+	# TODO: Maybe use XStringToKeysym instead if that can be case insensitive?
 	private def self.ahk_key_name_to_keysym_generic
 		{{
 			@type.constants # TODO: possible to declare this outside of the module?
@@ -127,6 +128,10 @@ module Run
 			@display.close
 		end
 
+		def keysym_to_keycode(sym : UInt64)
+			@display.keysym_to_keycode(sym)
+		end
+
 		private def refresh_focus
 			if @focussed_win != 0_u64 && @focussed_win != @root_win
 				@display.select_input @focussed_win, 0 # unsubscribe
@@ -153,6 +158,9 @@ module Run
 				end
 			end
 		end
+		
+		# multiple threads may request a pause. x11 will only resume after all have called
+		# `resume_x11` again.
 		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
 		# from triggering themselves (or others)
 		@pause_counter = 0
@@ -164,6 +172,7 @@ module Run
 			@is_paused = true
 			@pause_mutex.unlock
 		end
+		# before resume, x11 will discard all events collected since it got paused
 		def resume
 			@pause_mutex.lock
 			@pause_counter -= 1
@@ -183,7 +192,7 @@ module Run
 		end
 
 		def register_hotkey(hotkey)
-			keycode = @display.keysym_to_keycode(hotkey.keysym)
+			keycode = keysym_to_keycode(hotkey.keysym)
 			@hotkey_subscriptions << {
 				hotkey: hotkey,
 				keycode: keycode

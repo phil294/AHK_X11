@@ -39,7 +39,7 @@ module Run
 		@default_thread_settings = ThreadSettings.new
 		@hotkeys = {} of String => Hotkey
 		@hotstrings = [] of Hotstring
-		@x11 = X11.new
+		getter x11 = X11.new
 		getter x_do = XDo.new
 		getter gui = Gui.new
 		# similar to `ThreadSettings`
@@ -183,15 +183,6 @@ module Run
 			@hotstrings << hotstring
 			@x11.register_hotstring hotstring
 			hotstring
-		end
-		# multiple threads may request a pause. x11 will only resume after all have called
-		# `resume_x11` again.
-		def pause_x11
-			@x11.pause
-		end
-		# before resume, x11 will discard all events collected since it got paused
-		def resume_x11
-			@x11.resume
 		end
 	end
 

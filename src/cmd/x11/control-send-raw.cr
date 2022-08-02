@@ -10,8 +10,8 @@ class Cmd::X11::ControlSendRaw < Cmd::Base
 		_control, keys, *match_conditions = args
 		win = Cmd::X11::Window::Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true)
 		return if ! win
-		thread.runner.pause_x11
+		thread.runner.x11.pause
 		win.type keys
-		thread.runner.resume_x11
+		thread.runner.x11.resume
 	end
 end
