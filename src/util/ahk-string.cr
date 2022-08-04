@@ -1,4 +1,4 @@
-class AhkString
+class Util::AhkString
 	# Substitute all %var% with their respective values by yielding each var name,
 	# and convert special chars such as `n => \n.
 	# This allows computation of pseudo-variable values at runtime, such as %A_Now%.
@@ -41,12 +41,12 @@ class AhkString
 
 	# Parses all ^+c{Tab up} etc., including normal keys, and converts it all into a yielded
 	# sequence of charcodemaps.
-	def self.parse_keys(str, escape_char : Char, x11)
+	def self.parse_keys(str, escape_char : Char, x11 : Run::X11)
 		escape = false
 		modifiers = 0
 		iter = str.each_char
 		while (char = iter.next) != Iterator::Stop::INSTANCE
-			if ! escape && char == escape_char
+			if ! escape && char == escape_char # This escape char stuff *could* be externalized into a custom Iterator, maybe putting it into global/string.cr, but that would only barely reduce LOC
 				escape = true
 			else
 				key_name = nil
@@ -56,7 +56,6 @@ class AhkString
 				if escape
 					key_name = char.to_s
 				else
-					# TODO somewhat duplicate code with hotkey parsing in run/hotkey.cr
 					case char
 					when '^' then modifiers |= ::X11::ControlMask
 					when '+' then modifiers |= ::X11::ShiftMask
@@ -84,7 +83,7 @@ class AhkString
 					end
 				end
 				escape = false
-				if ! key_name.nil?
+				if key_name
 					keysym = ::X11::C.ahk_key_name_to_keysym(key_name)
 					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
 					key_map = XDo::LibXDo::Charcodemap.new
@@ -101,6 +100,30 @@ class AhkString
 					modifiers = 0
 				end
 			end
+		end
+	end
+
+	# Parses single-char-numbers combinations with optional spaces in between,
+	# e.g. `A1B2` or `*0 c100` and yields each char-number combination.
+	def self.parse_letter_options(str, escape_char : Char)
+		iter = str.each_char
+		n = ""
+		letter = nil
+		while (char = iter.next) != Iterator::Stop::INSTANCE
+			case char
+			when ' ' then next
+			when /[0-9]/
+				n += char.as(Char)
+			else
+				if letter
+					yield letter, n.to_i?(strict: true)
+				end
+				n = ""
+				letter = char.as(Char)
+			end
+		end
+		if letter
+			yield letter, n.to_i?(strict: true)
 		end
 	end
 end

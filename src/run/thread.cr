@@ -1,4 +1,4 @@
-require "./ahk-string"
+require "../util/ahk-string"
 
 module Run
 	# see Thread.settings
@@ -60,7 +60,7 @@ module Run
 			stack_i = @stack.size - 1
 
 			parsed_args = cmd.args.map do |arg|
-				AhkString.substitute_variables(arg, @runner.settings.escape_char) do |var_name_lookup|
+				Util::AhkString.substitute_variables(arg, @runner.settings.escape_char) do |var_name_lookup|
 					get_var(var_name_lookup)
 				end
 			end
@@ -129,8 +129,11 @@ module Run
 		end
 
 		def parse_keys(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> Nil)
-			AhkString.parse_keys(str, @runner.settings.escape_char, @runner.x11, &block)
-			"".each_char
+			Util::AhkString.parse_keys(str, @runner.settings.escape_char, @runner.x11, &block)
+		end
+
+		def parse_letter_options(str, &block : Char, Int32? -> Nil)
+			Util::AhkString.parse_letter_options(str, @runner.settings.escape_char, &block)
 		end
 	end
 end

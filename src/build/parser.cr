@@ -55,6 +55,8 @@ module Build
 				@block_comment = false
 			elsif @block_comment
 				#
+			# This is the "normal" case where 90% of all commands fall into. All other if-clauses
+			# are special cases.
 			elsif cmd_class
 				csv_args = split_args(args, cmd_class.max_args + 1)
 				if csv_args.size > cmd_class.max_args
@@ -91,8 +93,7 @@ module Build
 					raise "Hotstring definition invalid or too complicated " if match.nil?
 					_, label, options, abbrev = match
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
-					hotstring = Run::Hotstring.new label, abbrev
-					hotstring.immediate = true if options == "*"
+					hotstring = Run::Hotstring.new label, abbrev, options, @escape_char
 					@hotstrings << hotstring
 				else
 					label = first_word[...-2]

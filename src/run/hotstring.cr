@@ -1,3 +1,5 @@
+require "../util/ahk-string"
+
 module Run
 	alias HotstringAbbrevKeysyms = StaticArray(Char, 30)
 
@@ -8,14 +10,20 @@ module Run
 		getter abbrev_size : UInt8
 		property label : String
 		property cmd : Cmd::Base?
-		property immediate = false
-		def initialize(@label, @abbrev)
+		getter immediate = false
+		def initialize(@label, @abbrev, options, escape_char)
 			@abbrev_size = @abbrev.size.to_u8
 			@abbrev_keysyms = HotstringAbbrevKeysyms.new do |i|
 				if i >= @abbrev_size
 					'0'
 				else
 					@abbrev[i]
+				end
+			end
+
+			Util::AhkString.parse_letter_options(options, escape_char) do |char, n|
+				case char
+				when '*' then @immediate = true
 				end
 			end
 		end

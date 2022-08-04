@@ -22,23 +22,12 @@ class Cmd::ControlFlow::Hotkey < Cmd::Base
 		buffer = false # TODO: not used
 		priority = 0
 		max_threads = nil # TODO: not used
-		n = nil
-		# TODO: cant handle multi digit numbers, also externalize this because option parsing is done in other commands etc too
-		options.reverse.each_char do |char|
-			next if char == ' '
-			if char >= '0' && char <= '9'
-				n = char.to_i
-				next
-			elsif char == 'B'
-				buffer = n == 0
-			elsif char == 'P'
-				priority = n || 0
-			elsif char == 'T'
-				max_threads = n
-			else
-				raise Run::RuntimeException.new "Invalid Hotkey option"
+		thread.parse_letter_options options do |char, n|
+			case char
+			when 'B' then buffer = n == 0
+			when 'P' then priority = n || 0
+			when 'T' then max_threads = n
 			end
-			n = nil
 		end
 		
 		thread.runner.add_or_update_hotkey label: label, key_str: key_name, priority: priority, active_state: active_state
