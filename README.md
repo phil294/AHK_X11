@@ -14,10 +14,10 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 > Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
 
 Features:
-- [x] Hotkeys (basic support complete)
+- [x] Hotkeys
 - [x] Hotstrings (only basic support so far; also does not work in some windows: help needed)
 - [x] Window management (setup complete, but many commands are still missing)
-- [x] Send keys (basic support complete)
+- [x] Send keys
 - [ ] Control mouse (TBD)
 - [x] File management (setup complete, but all commands are still missing)
 - [x] GUIs (setup complete, but all commands are missing)
@@ -28,11 +28,11 @@ Features:
 Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
 
 ```diff
-DONE      13% (28/214):
+DONE      14% (30/214):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox (incomplete), Gui (demo window), SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
-+ FileAppend, Hotkey
++ FileAppend, Hotkey, Send, ControlSend
 
 NEW       1% (2/214): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -50,8 +50,8 @@ REMOVED   10% (21/214):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     76% (163/214): alphabetically
-- BlockInput, ClipWait, ControlSend, CoordMode, 
+TO DO     75% (161/214): alphabetically
+- BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
 - FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
 - FileInstall, FileReadLine, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion, 
@@ -64,7 +64,7 @@ TO DO     76% (163/214): alphabetically
 - InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
 - Loop (parse a string), Loop (read file contents), Loop (registry), Menu, MouseClick, 
 - MouseClickDrag, MouseGetPos, MouseMove, OnExit, Pause, PixelGetColor, PixelSearch, 
-- Process, Progress, Random, Reload, Run, RunAs, RunWait, Send, SetBatchLines, 
+- Process, Progress, Random, Reload, Run, RunAs, RunWait, SetBatchLines, 
 - SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
 - SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
