@@ -28,7 +28,11 @@ module X11::C
 			"pgup" => XK_Page_Up,
 			"pgdown" => XK_Page_Down,
 			"printscreen" => XK_Print,
+
 			# TODO:
+			# I tried so catch mouse events too by adding ButtonReleaseMask and then adding some
+			# fake keysyms here for manual mapping (see WIP-add-mouse-hotkey-support branch).
+			# This should mostly work but mouse events are almost never reported :(
 			# LButton - the left mouse button 
 			# RButton - the right mouse button 
 			# MButton - the middle or wheel mouse button 
@@ -37,7 +41,8 @@ module X11::C
 			# Supported only in Windows XP/2000+:
 			# XButton1 - a button that appears only on certain mice 
 			# XButton2 - a button that appears only on certain mice 
-			# all joystick buttons
+			# ...all joystick buttons
+
 			# The following special keys were determined either using `xev` or with https://github.com/qtile/qtile/blob/master/libqtile/backend/x11/xkeysyms.py (x11 must have them somewhere too??). TODO: These are mostly untested out of a loack of fitting keyboard.
 			"volume_mute" => 0x1008ff12, # XF86AudioMute
 			"volume_down" => 0x1008ff11, # XF86AudioLowerVolume
@@ -101,6 +106,8 @@ module X11::C
 			"alt" => XK_Alt_L,
 			"lalt" => XK_Alt_L,
 			"ralt" => XK_Alt_R,
+			
+			# TODO:
 			# RAlt -- Note: If your keyboard layout has AltGr instead of RAlt, you can probably use it as a hotkey prefix via <^>! as described here. In addition, "LControl & RAlt::" would make AltGr itself into a hotkey. 
 		}
 	end
