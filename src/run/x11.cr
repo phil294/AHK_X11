@@ -38,57 +38,55 @@ module X11::C
 			# XButton1 - a button that appears only on certain mice 
 			# XButton2 - a button that appears only on certain mice 
 			# all joystick buttons
-			# Browser_Back
-			# Browser_Forward
-			# Browser_Refresh
-			# Browser_Stop
-			# Browser_Search
-			# Browser_Favorites
-			# Browser_Home
-			# Volume_Mute
-			# Volume_Down
-			# Volume_Up
-			# Media_Next
-			# Media_Prev
-			# Media_Stop
-			# Media_Play_Pause
-			# Launch_Mail
-			# Launch_Media
-			# Launch_App1
-			# Launch_App2 
-			# "special keys"
-			# ctrlbreak
-			# sleep
-			# NumpadDiv - the slash key
-			# NumpadMult - the asterisk key
-			# NumpadAdd - the plus key
-			# NumpadSub - the minus key
-			# NumpadEnter - the Enter key 
-			# The following keys are used when Numlock is OFF:
-			# NumpadDel
-			# NumpadIns
-			# NumpadClear - same physical key as Numpad5 on most keyboards
-			# NumpadUp
-			# NumpadDown
-			# NumpadLeft
-			# NumpadRight
-			# NumpadHome
-			# NumpadEnd
-			# NumpadPgUp
-			# NumpadPgDn 
-			# The following keys are used when Numlock is ON:
-			# Numpad0
-			# Numpad1
-			# Numpad2
-			# Numpad3
-			# Numpad4
-			# Numpad5
-			# Numpad6
-			# Numpad7
-			# Numpad8
-			# Numpad9
-			# NumpadDot - the decimal point (period) key 
-			# AppsKey - this is the key that invokes the right-click context menu. 
+			# The following special keys were determined either using `xev` or with https://github.com/qtile/qtile/blob/master/libqtile/backend/x11/xkeysyms.py (x11 must have them somewhere too??). TODO: These are mostly untested out of a loack of fitting keyboard.
+			"volume_mute" => 0x1008ff12, # XF86AudioMute
+			"volume_down" => 0x1008ff11, # XF86AudioLowerVolume
+			"volume_up" => 0x1008ff13, # XF86AudioRaiseVolume
+			"browser_back" => 0x1008ff26, # XF86Back
+			"browser_forward" => 0x1008ff27, # XF86Forward
+			"browser_refresh" => 0x1008ff73, # XF86Reload
+			"browser_search" => 0x1008ff1b, # XF86Search
+			"browser_homepage" => 0x1008ff18, # XF86HomePage
+			"browser_stop" => 0x1008FF28, # XF86Stop
+			"browser_favorites" => 0x1008FF30, # XF86Favorites
+			"media_next" => 0x1008FF17, # XF86AudioNext
+			"media_prev" => 0x1008FF16, # XF86AudioPrev
+			"media_stop" => 0x1008FF15, # XF86AudioStop
+			"media_play_pause" => 0x1008FF14, # XF86AudioPlay ?or? XF86AudioPause 0x1008FF31
+			"launch_mail" => 0x1008FF19, # XF86Mail
+			"launch_media" => 0x1008FF32, # XF86AudioMedia
+			"launch_app1" => 0x1008FF5D, # XF86Explorer
+			"launch_app2" => 0x1008FF1D, # XF86Calculator
+			"ctrlbreak" => XK_Break,
+			"sleep" => 0x1008FF2F, # XF86Sleep
+			"numpaddiv" => XK_KP_Divide,
+			"numpadmult" => XK_KP_Multiply,
+			"numpadadd" => XK_KP_Add,
+			"numpadsub" => XK_KP_Subtract,
+			"numpadenter" => XK_KP_Enter,
+			"numpaddel" => XK_KP_Delete,
+			"numpadins" => XK_KP_Insert,
+			"numpadclear" => XK_KP_Begin,
+			"numpadup" => XK_KP_Up,
+			"numpaddown" => XK_KP_Down,
+			"numpadleft" => XK_KP_Left,
+			"numpadright" => XK_KP_Right,
+			"numpadhome" => XK_KP_Home,
+			"numpadend" => XK_KP_End,
+			"numpadpgup" => XK_KP_Page_Up,
+			"numpadpgdn" => XK_KP_Page_Down,
+			"numpad0" => XK_KP_0,
+			"numpad1" => XK_KP_1,
+			"numpad2" => XK_KP_2,
+			"numpad3" => XK_KP_3,
+			"numpad4" => XK_KP_4,
+			"numpad5" => XK_KP_5,
+			"numpad6" => XK_KP_6,
+			"numpad7" => XK_KP_7,
+			"numpad8" => XK_KP_8,
+			"numpad9" => XK_KP_9,
+			"numpaddot" => XK_KP_Decimal,
+			"appskey" => XK_Menu,
 			"lwin" => XK_Super_L,
 			"rwin" => XK_Super_R,
 			"control" => XK_Control_L,
