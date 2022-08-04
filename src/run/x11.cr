@@ -89,23 +89,27 @@ module X11::C
 			# Numpad9
 			# NumpadDot - the decimal point (period) key 
 			# AppsKey - this is the key that invokes the right-click context menu. 
-			# LWin - the left windows key 
-			# RWin - the right windows key 
-			# Control (or Ctrl) 
-			# Alt
-			# Shift 
-			# Note: For the most part, these next 6 keys are not supported by Windows 95/98/Me. Use the above instead:
-			# LControl (or LCtrl) - the left control key 
-			# RControl (or RCtrl) - the right control key 
-			# LShift
-			# RShift
-			# LAlt
+			"lwin" => XK_Super_L,
+			"rwin" => XK_Super_R,
+			"control" => XK_Control_L,
+			"ctrl" => XK_Control_L,
+			"lcontrol" => XK_Control_L,
+			"lctrl" => XK_Control_L,
+			"rcontrol" => XK_Control_R,
+			"rctrl" => XK_Control_R,
+			"shift" => XK_Shift_L,
+			"lshift" => XK_Shift_L,
+			"rshift" => XK_Shift_R,
+			"alt" => XK_Alt_L,
+			"lalt" => XK_Alt_L,
+			"ralt" => XK_Alt_R,
 			# RAlt -- Note: If your keyboard layout has AltGr instead of RAlt, you can probably use it as a hotkey prefix via <^>! as described here. In addition, "LControl & RAlt::" would make AltGr itself into a hotkey. 
 		}
 	end
 	def self.ahk_key_name_to_keysym(key_name)
-		ahk_key_name_to_keysym_generic[key_name]? ||
-		ahk_key_name_to_keysym_custom[key_name]? ||
+		down = key_name.downcase
+		ahk_key_name_to_keysym_generic[down]? ||
+		ahk_key_name_to_keysym_custom[down]? ||
 		nil
 	end
 end

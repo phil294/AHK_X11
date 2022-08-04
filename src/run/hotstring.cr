@@ -30,14 +30,9 @@ module Run
 		def trigger
 			runner = @runner.not_nil!
 
-			backspace = XDo::LibXDo::Charcodemap.new
-			backspace.code = runner.x11.keysym_to_keycode(::X11::XK_BackSpace.to_u64)
-			backspace = [backspace]
-
 			runner.x11.pause
 			(@abbrev_size + (@immediate ? 0 : 1)).times do
-				runner.x_do.keys_raw backspace, pressed: true, delay: 0
-				runner.x_do.keys_raw backspace, pressed: false, delay: 0
+				runner.x_do.keys "BackSpace", delay: 0
 			end
 			runner.x11.resume
 			

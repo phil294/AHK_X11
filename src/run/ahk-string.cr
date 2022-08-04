@@ -1,8 +1,8 @@
 class AhkString
-	# Substitute all %var% with their respective values by yielding each var name.
+	# Substitute all %var% with their respective values by yielding each var name,
+	# and convert special chars such as `n => \n.
 	# This allows computation of pseudo-variable values at runtime, such as %A_Now%.
-	def self.process(str, escape_char : Char)
-		last = nil
+	def self.substitute_variables(str, escape_char : Char)
 		escape = false
 		var_start = nil
 		String.build do |build|
@@ -36,6 +36,71 @@ class AhkString
 			end
 			# INCOMPAT: only raises at runtime, on ahk it's build time
 			raise Run::RuntimeException.new "missing ending percent sign. Line content: '#{str}'" if var_start
+		end
+	end
+
+	# Parses all ^+c{Tab up} etc., including normal keys, and converts it all into a yielded
+	# sequence of charcodemaps.
+	def self.parse_keys(str, escape_char : Char, x11)
+		escape = false
+		modifiers = 0
+		iter = str.each_char
+		while (char = iter.next) != Iterator::Stop::INSTANCE
+			if ! escape && char == escape_char
+				escape = true
+			else
+				key_name = nil
+				up = false
+				down = false
+				repeat = 1
+				if escape
+					key_name = char.to_s
+				else
+					# TODO somewhat duplicate code with hotkey parsing in run/hotkey.cr
+					case char
+					when '^' then modifiers |= ::X11::ControlMask
+					when '+' then modifiers |= ::X11::ShiftMask
+					when '!' then modifiers |= ::X11::Mod1Mask
+					when '#' then modifiers |= ::X11::Mod4Mask
+					when '{'
+						key_name = ""
+						while (char = iter.next) != Iterator::Stop::INSTANCE
+							break if char == '}'
+							key_name += char.as(Char)
+						end
+						split = key_name.split(" ")
+						if split.size == 2
+							case what = split[1].downcase
+							when "up" then up = true
+							when "down" then down = true
+							else
+								repeat = what.to_i?(strict: true)
+								raise Run::RuntimeException.new "key name '#{key_name}' not understood" if ! repeat
+							end
+							key_name = split[0]
+						end
+					else
+						key_name = char.to_s
+					end
+				end
+				escape = false
+				if ! key_name.nil?
+					keysym = ::X11::C.ahk_key_name_to_keysym(key_name)
+					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
+					key_map = XDo::LibXDo::Charcodemap.new
+					key_map.code = x11.keysym_to_keycode(keysym.to_u64)
+					key_map.modmask = modifiers
+					repeat.times do
+						if down || ! up
+							yield [key_map], true
+						end
+						if up || ! down
+							yield [key_map], false
+						end
+					end
+					modifiers = 0
+				end
+			end
 		end
 	end
 end

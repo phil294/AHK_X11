@@ -59,7 +59,11 @@ module Run
 			end
 			stack_i = @stack.size - 1
 
-			parsed_args = cmd.args.map { |arg| str(arg) }
+			parsed_args = cmd.args.map do |arg|
+				AhkString.substitute_variables(arg, @runner.settings.escape_char) do |var_name_lookup|
+					get_var(var_name_lookup)
+				end
+			end
 
 			begin
 				result = cmd.run(self, parsed_args)
@@ -124,11 +128,9 @@ module Run
 			@built_in_static_vars[var.downcase] = value
 		end
 
-		# Substitute all %var% with their respective values, no matter where from.
-		def str(str)
-			AhkString.process(str, @runner.settings.escape_char) do |var_name_lookup|
-				get_var(var_name_lookup)
-			end
+		def parse_keys(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> Nil)
+			AhkString.parse_keys(str, @runner.settings.escape_char, @runner.x11, &block)
+			"".each_char
 		end
 	end
 end
