@@ -234,6 +234,8 @@ module Run
 			@hotkey_subscriptions.delete i
 		end
 
+		# Not using `String` here because it's more convenient (and also faster) to just
+		# move a char* pointer around
 		@key_buff = HotstringAbbrevKeysyms.new('0')
 		@key_buff_i = 0_u8
 
