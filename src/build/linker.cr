@@ -131,7 +131,6 @@ module Build
 	class Linker
 		getter start : Cmd::Base? = nil
 		getter labels = {} of String => Cmd::Base
-		getter runner_settings = Run::RunnerSettings.new
 
 		def link!(cmds)
 			pending_labels = [] of String
@@ -149,8 +148,6 @@ module Build
 						raise "" if is_else
 						is_else = true
 						next
-					when DirectivePersistent
-						@runner_settings.persistent = true
 					end
 
 					# type guard apparently too complicated for type restriction, probably compiler limitation;

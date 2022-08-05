@@ -19,6 +19,7 @@ module Build
 		getter hotstrings = [] of Run::Hotstring
 		getter comment_flag = ";"
 		getter escape_char = '`'
+		getter runner_settings = Run::RunnerSettings.new
 
 		@block_comment = false
 
@@ -78,6 +79,8 @@ module Build
 				else
 					@cmds << cmd_class.new line_no, csv_args
 				end
+			elsif first_word == "#persistent"
+				@runner_settings.persistent = true
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				case split[1]?

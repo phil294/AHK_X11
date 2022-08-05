@@ -7,7 +7,8 @@ require "./x11"
 require "x_do"
 
 module Run
-	# see `Thread.settings` for scope explanation
+	# see `Thread.settings` for scope explanation.
+	# Some RunnerSettings are constant (never changed) because they are set in parser only.
 	struct RunnerSettings
 		property persistent = false
 		property escape_char = '`'

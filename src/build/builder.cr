@@ -17,10 +17,12 @@ module Build
 			@hotkeys = @parser.hotkeys
 			@hotstrings = @parser.hotstrings
 			@escape_char = @parser.escape_char
+			@runner_settings = @parser.runner_settings
+
 			@linker.link! @parser.cmds
 			@start = @linker.start
 			@labels = @linker.labels
-			@runner_settings = @linker.runner_settings
+
 			nil
 		end
 	end
