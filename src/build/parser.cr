@@ -22,6 +22,7 @@ module Build
 		getter runner_settings = Run::RunnerSettings.new
 
 		@block_comment = false
+		@hotstring_default_options = ""
 
 		def parse_into_cmds!(lines : Array(String))
 			lines.each_with_index do |line, line_no|
@@ -86,6 +87,8 @@ module Build
 				if args[0..8].downcase == "endchars "
 					str = Util::AhkString.parse_string(args[8..].strip, @escape_char, no_variable_substitution: true){}
 					@runner_settings.hotstring_end_chars = str.chars
+				else
+					@hotstring_default_options = args.strip
 				end
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
@@ -104,13 +107,15 @@ module Build
 					raise "Hotstring definition invalid or too complicated " if match.nil?
 					_, options, abbrev = match
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
-					hotstring = Run::Hotstring.new label, abbrev, options: options, escape_char: @escape_char
+					hotstring = Run::Hotstring.new label, abbrev,
+						options: @hotstring_default_options + options,
+						escape_char: @escape_char
 					@hotstrings << hotstring
 					if ! instant_action.empty?
 						add_line "Send, #{instant_action}#{first_word_glue}#{args}%A_EndChar%", line_no
 						add_line "Return", line_no
 					end
-				else
+				else # Hotkey
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
 					@hotkeys << Run::Hotkey.new label, priority: 0
 					if ! instant_action.empty?
