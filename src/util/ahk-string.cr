@@ -13,10 +13,12 @@ class Util::AhkString
 					if escape
 						char = case char
 						when 'n' then '\n'
+						when 't' then '\t'
 						when 'r' then '\r'
 						when 'v' then '\v'
 						when 'a' then '\a'
 						when 'f' then '\f'
+						else char
 						end
 						build << char
 					elsif char == '%'

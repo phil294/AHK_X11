@@ -107,6 +107,11 @@ module X11::C
 			"lalt" => XK_Alt_L,
 			"ralt" => XK_Alt_R,
 
+			# Printable non-letters, symbols ;%@ etc.: Often their unicode ord is equal
+			# to the keysym so the fallback should work. Below are only known exceptions
+			"\n" => XK_Return,
+			"\t" => XK_Tab,
+			
 			# TODO:
 			# RAlt -- Note: If your keyboard layout has AltGr instead of RAlt, you can probably use it as a hotkey prefix via <^>! as described here. In addition, "LControl & RAlt::" would make AltGr itself into a hotkey. 
 		}
@@ -140,7 +145,12 @@ module Run
 			down = key_name.downcase
 			lookup = ::X11::C.ahk_key_name_to_keysym_generic[down]? ||
 			::X11::C.ahk_key_name_to_keysym_custom[down]?
-			return lookup
+			return lookup if lookup
+			char = key_name[0]
+			return nil if char >= 'A' && char < 'Z' || char >= 'a' && char <= 'z'
+			# This fallback may fail but it's very likely this is the correct match now.
+			# This is the normal path for special chars like . @ $ etc.
+			char.ord
 		end
 
 		private def refresh_focus
