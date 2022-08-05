@@ -164,7 +164,8 @@ module Run
 			@display.select_input @focussed_win, ::X11::KeyReleaseMask | ::X11::FocusChangeMask # ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | FocusChangeMask
 		end
 
-		def run(runner : Runner)
+		def run(runner : Runner, hotstring_end_chars)
+			@hotstring_end_chars = hotstring_end_chars
 			refresh_focus
 			loop do
 				event = @display.next_event # blocking!
@@ -236,9 +237,7 @@ module Run
 		@key_buff = HotstringAbbrevKeysyms.new('0')
 		@key_buff_i = 0_u8
 
-		@hotstring_end_chars : StaticArray(Char, 21)
-		# Pressing return is a \r, not sure if \n even ever fires
-		@hotstring_end_chars = StaticArray['-', '(', ')', '[', ']', '{', '}', ':', ';', '\'', '"', '/', '\\', ',', '.', '?', '!', '\n', ' ', '\t', '\r']
+		@hotstring_end_chars = [] of Char
 		@hotstring_candidate : Hotstring? = nil
 
 		private def handle_key_event(event, runner)

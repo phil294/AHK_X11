@@ -82,6 +82,11 @@ module Build
 				end
 			elsif first_word == "#persistent"
 				@runner_settings.persistent = true
+			elsif first_word == "#hotstring"
+				if args[0..8].downcase == "endchars "
+					str = Util::AhkString.parse_string(args[8..].strip, @escape_char, no_variable_substitution: true){}
+					@runner_settings.hotstring_end_chars = str.chars
+				end
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				case split[1]?

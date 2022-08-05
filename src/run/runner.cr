@@ -12,6 +12,8 @@ module Run
 	struct RunnerSettings
 		property persistent = false
 		property escape_char = '`'
+		# INCOMPAT: Pressing return is a \r, not sure if \n even ever fires
+		property hotstring_end_chars = ['-', '(', ')', '[', ']', '{', '}', ':', ';', '\'', '"', '/', '\\', ',', '.', '?', '!', '\n', ' ', '\t', '\r']
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -52,7 +54,7 @@ module Run
 		def run(*, hotkeys, hotstrings, auto_execute_section : Cmd::Base)
 			hotkeys.each { |h| add_hotkey h }
 			hotstrings.each { |h| add_hotstring h }
-			spawn @x11.run self # separate worker thread because event loop is blocking
+			spawn @x11.run self, @settings.hotstring_end_chars # separate worker thread because event loop is blocking
 			spawn @gui.run # separate worker thread because gtk loop is blocking
 			spawn same_thread: true { clock }
 			@auto_execute_thread = add_thread auto_execute_section, 0
