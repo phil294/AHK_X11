@@ -29,17 +29,15 @@ module Build
 		# bottommost section, regardless if open or not
 		private abstract def active_section : ConditionalSection
 		
-		# TODO: rename start_block / end_block
-		def block_start
+		def start_block
 			raise "" if active_section.block_started || active_section.first_child
 			active_section.block_started = true
 		end
-		def block_end
+		def end_block
 			raise "" if active_section.block_ended || ! active_section.block_started
 			active_section.block_ended = true
 		end
-		# TODO: rename this
-		def cmd(cmd : Cmd::Base)
+		def add_cmd(cmd : Cmd::Base)
 			raise "" if ! active_section.open?
 			active_section.first_child ||= cmd
 			active_section.last_child = cmd
@@ -112,7 +110,7 @@ module Build
 
 		@breaks = [] of Break
 		@continues = [] of Continue
-		def cmd(cmd : Cmd::Base)
+		def add_cmd(cmd : Cmd::Base)
 			super(cmd)
 			@breaks << cmd if cmd.is_a?(Break)
 			@continues << cmd if cmd.is_a?(Continue)
@@ -163,20 +161,20 @@ module Build
 					when BlockStart
 						raise "" if ! conds.last
 						conds.last.unsafe_as(IfConditional).else if is_else
-						conds.last.block_start
+						conds.last.start_block
 					when BlockEnd
 						while conds.last? && conds.last.resolvable?
 							conds.pop
 						end
 						raise "" if ! conds.last? || is_else
-						conds.last.block_end
+						conds.last.end_block
 					when # any command, including if or loop
 						if is_else
 							if cmd.class.conditional
 								conds.last.unsafe_as(IfConditional).else_if cmd
 							else
 								conds.last.unsafe_as(IfConditional).else
-								conds.last.cmd cmd
+								conds.last.add_cmd cmd
 							end
 						else
 							is_normal = true
@@ -188,7 +186,7 @@ module Build
 								conds.last.resolve cmd
 								conds.pop
 							end
-							conds.last.cmd cmd if conds.last?
+							conds.last.add_cmd cmd if conds.last?
 							if cmd.class.conditional
 								if cmd.is_a?(Loop)
 									new_condition = LoopConditional.new cmd
