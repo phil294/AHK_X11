@@ -2,7 +2,7 @@ class Util::AhkString
 	# Substitute all %var% with their respective values by yielding each var name,
 	# and convert special chars such as `n => \n.
 	# This allows computation of pseudo-variable values at runtime, such as %A_Now%.
-	def self.substitute_variables(str, escape_char : Char)
+	def self.parse_string(str, escape_char : Char)
 		escape = false
 		var_start = nil
 		String.build do |build|
