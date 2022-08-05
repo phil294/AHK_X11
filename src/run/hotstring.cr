@@ -10,17 +10,27 @@ module Run
 		property cmd : Cmd::Base?
 		getter immediate = false
 		@automatic_backspacing = true
+		@case_sensitive = false
+		@conform_case = true # TODO not implemented
 		def initialize(@label, @abbrev, *, options, escape_char)
 			Util::AhkString.parse_letter_options(options, escape_char) do |char, n|
 				case char
 				when '*' then @immediate = true
 				when 'b' then @automatic_backspacing = n != 0
+				when 'c'
+					@case_sensitive = n == nil
+					@conform_case = n != 1
 				end
 			end
 		end
 		def keysyms_equal?(other_keysyms : HotstringAbbrevKeysyms, other_size : UInt8)
-			other_size == @abbrev.size &&
+			return false if other_size != @abbrev.size
+			puts other_keysyms.join[...other_size], @abbrev
+			if @case_sensitive
 				other_keysyms.join[...other_size] == @abbrev
+			else
+				other_keysyms.join[...other_size].downcase == @abbrev.downcase
+			end
 		end
 		def trigger
 			runner = @runner.not_nil!

@@ -42,7 +42,8 @@ module Build
 			match = line
 				.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
 				.match(/^\s*([^\s,]*)(\s*,?)(.*)$/).not_nil!
-			first_word = match[1].downcase
+			first_word_case_sensitive = match[1]
+			first_word = first_word_case_sensitive.downcase
 			first_word_glue = match[2]
 			args = match[3]
 			csv_args = [] of String
@@ -101,13 +102,13 @@ module Build
 				csv_args = [split[0], split[2]? || ""]
 				@cmds << cmd_class.new line_no, csv_args
 			elsif first_word.includes?("::")
-				label, instant_action = first_word.split(/(?<=.)::/, limit: 2)
+				label, instant_action = first_word_case_sensitive.split(/(?<=.)::/, limit: 2)
 				if label.starts_with?(":") # Hotstring
 					match = label.match(/^:([^:]*):([^:]+)$/)
 					raise "Hotstring definition invalid or too complicated " if match.nil?
 					_, options, abbrev = match
-					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
-					hotstring = Run::Hotstring.new label, abbrev,
+					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
+					hotstring = Run::Hotstring.new label.downcase, abbrev,
 						options: @hotstring_default_options + options,
 						escape_char: @escape_char
 					@hotstrings << hotstring
@@ -116,8 +117,8 @@ module Build
 						add_line "Return", line_no
 					end
 				else # Hotkey
-					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
-					@hotkeys << Run::Hotkey.new label, priority: 0
+					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
+					@hotkeys << Run::Hotkey.new label.downcase, priority: 0
 					if ! instant_action.empty?
 						add_line "#{instant_action}#{first_word_glue}#{args}", line_no
 						add_line "Return", line_no

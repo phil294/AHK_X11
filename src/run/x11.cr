@@ -241,6 +241,8 @@ module Run
 
 		@hotstring_end_chars = [] of Char
 		@hotstring_candidate : Hotstring? = nil
+		@modifier_keysyms : StaticArray(Int32, 13)
+		@modifier_keysyms = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
 
 		private def handle_key_event(event, runner)
 			##### 1. Hotkeys
@@ -258,7 +260,12 @@ module Run
 			prev_hotstring_candidate = @hotstring_candidate
 			@hotstring_candidate = nil
 			if ! char
-				@key_buff_i = 0_u8
+				if @modifier_keysyms.includes? lookup[:keysym]
+					# left/right buttons etc. should cancel current buffer but modifiers not: keep
+					@hotstring_candidate = prev_hotstring_candidate
+				else
+					@key_buff_i = 0_u8
+				end
 			else
 				if char == '\b' # ::X11::XK_BackSpace
 					@key_buff_i -= 1 if @key_buff_i > 0
