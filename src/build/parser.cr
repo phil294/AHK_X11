@@ -66,6 +66,7 @@ module Build
 						@cmds << cmd_class.new line_no, cmd_class.max_args > 0 ? csv_args[..cmd_class.max_args-1] : [] of String
 						add_line csv_args[cmd_class.max_args], line_no
 					else
+						raise "'#{cmd_class.name}' accepts no arguments" if cmd_class.max_args == 0
 						# attach the remainder again and pass as is to the arg
 						# TODO: also maybe only if allowed via flag? so that commands don't accidentally accept / combine too many arguments
 						# TODO: spacing can wrongly get lost / added here because of the .strip + add ", " which may not add up
