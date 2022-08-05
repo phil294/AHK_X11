@@ -114,7 +114,7 @@ class Util::AhkString
 		while (char = iter.next) != Iterator::Stop::INSTANCE
 			case char
 			when ' ' then next
-			when /[0-9]/
+			when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 				n += char.as(Char)
 			else
 				if letter
