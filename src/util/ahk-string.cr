@@ -118,14 +118,14 @@ class Util::AhkString
 				n += char.as(Char)
 			else
 				if letter
-					yield letter, n.to_i?(strict: true)
+					yield letter.downcase, n.to_i?(strict: true)
 				end
 				n = ""
 				letter = char.as(Char)
 			end
 		end
 		if letter
-			yield letter, n.to_i?(strict: true)
+			yield letter.downcase, n.to_i?(strict: true)
 		end
 	end
 end
