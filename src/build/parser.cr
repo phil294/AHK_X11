@@ -87,18 +87,26 @@ module Build
 				end
 				csv_args = [split[0], split[2]? || ""]
 				@cmds << cmd_class.new line_no, csv_args
-			elsif first_word.ends_with?("::")
-				if first_word.starts_with?(":")
-					match = first_word.match(/^(:([^:]*):([^:]+))::$/)
+			elsif first_word.includes?("::")
+				label, instant_action = first_word.split(/(?<=.)::/, limit: 2)
+				if label.starts_with?(":") # Hotstring
+					match = label.match(/^:([^:]*):([^:]+)$/)
 					raise "Hotstring definition invalid or too complicated " if match.nil?
-					_, label, options, abbrev = match
+					_, options, abbrev = match
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
-					hotstring = Run::Hotstring.new label, abbrev, options, @escape_char
+					hotstring = Run::Hotstring.new label, abbrev, options: options, escape_char: @escape_char
 					@hotstrings << hotstring
+					if ! instant_action.empty?
+						add_line "Send, #{instant_action}%A_EndChar%", line_no
+						add_line "Return", line_no
+					end
 				else
-					label = first_word[...-2]
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
 					@hotkeys << Run::Hotkey.new label, priority: 0
+					if ! instant_action.empty?
+						add_line instant_action, line_no
+						add_line "Return", line_no
+					end
 				end
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]

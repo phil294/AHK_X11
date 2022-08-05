@@ -11,7 +11,7 @@ module Run
 		property label : String
 		property cmd : Cmd::Base?
 		getter immediate = false
-		def initialize(@label, @abbrev, options, escape_char)
+		def initialize(@label, @abbrev, *, options, escape_char)
 			@abbrev_size = @abbrev.size.to_u8
 			@abbrev_keysyms = HotstringAbbrevKeysyms.new do |i|
 				if i >= @abbrev_size

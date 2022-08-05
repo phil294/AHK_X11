@@ -146,6 +146,7 @@ module Run
 
 		def add_hotkey(hotkey)
 			hotkey.runner = self
+			hotkey.set_keysym
 			hotkey.cmd = labels[hotkey.key_str]
 			@hotkeys[hotkey.key_str] = hotkey
 			@x11.register_hotkey hotkey

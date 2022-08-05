@@ -4,8 +4,8 @@ at_exit { GC.collect }
 
 module X11::C
 	# Infer a long list of key names from lib/x11/src/x11/c/keysymdef.cr, stripped from XK_ and underscores.
-	# TODO: Maybe use XStringToKeysym instead if that can be case insensitive?
-	private def self.ahk_key_name_to_keysym_generic
+	# Seems to be necessary because XStringToKeysym is always case sensitive (?)
+	def self.ahk_key_name_to_keysym_generic
 		{{
 			@type.constants # TODO: possible to declare this outside of the module?
 				.select { |c| c.stringify.starts_with?("XK_") } # && c.underlying-var-type.is_a?(Int32) < TODO: how to, so the bools are skipped? (and `|| ! sym.is_a?(Int32)` can be removed)
@@ -18,7 +18,7 @@ module X11::C
 		}}
 	end
 	# these are ahk-specific
-	private def self.ahk_key_name_to_keysym_custom
+	def self.ahk_key_name_to_keysym_custom
 		{
 			"enter" => XK_Return,
 			"esc" => XK_Escape,
@@ -106,16 +106,10 @@ module X11::C
 			"alt" => XK_Alt_L,
 			"lalt" => XK_Alt_L,
 			"ralt" => XK_Alt_R,
-			
+
 			# TODO:
 			# RAlt -- Note: If your keyboard layout has AltGr instead of RAlt, you can probably use it as a hotkey prefix via <^>! as described here. In addition, "LControl & RAlt::" would make AltGr itself into a hotkey. 
 		}
-	end
-	def self.ahk_key_name_to_keysym(key_name)
-		down = key_name.downcase
-		ahk_key_name_to_keysym_generic[down]? ||
-		ahk_key_name_to_keysym_custom[down]? ||
-		nil
 	end
 end
 
@@ -139,6 +133,14 @@ module Run
 
 		def keysym_to_keycode(sym : UInt64)
 			@display.keysym_to_keycode(sym)
+		end
+
+		def ahk_key_name_to_keysym(key_name)
+			return nil if key_name.empty?
+			down = key_name.downcase
+			lookup = ::X11::C.ahk_key_name_to_keysym_generic[down]? ||
+			::X11::C.ahk_key_name_to_keysym_custom[down]?
+			return lookup
 		end
 
 		private def refresh_focus

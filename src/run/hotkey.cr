@@ -6,6 +6,7 @@ module Run
 		property priority : Int32
 		property active = true
 		getter modifiers = [] of UInt32
+		@key_name = ""
 		getter keysym = 0_u64
 		getter no_grab = false
 		def initialize(@key_str, *, @priority)
@@ -31,7 +32,6 @@ module Run
 		def init
 			modifiers = 0_u32
 			allow_other_modifiers = false
-			key_name = ""
 			str = @key_str.sub("<^>!", "\0")
 			str.each_char_with_index do |char, i|
 				case char
@@ -43,13 +43,10 @@ module Run
 				when '~' then @no_grab = true # INCOMPAT: will then not work in some windows
 				when '*' then allow_other_modifiers = true
 				else
-					key_name = str[i..]
+					@key_name = str[i..]
 					break
 				end
 			end
-			keysym = ::X11::C.ahk_key_name_to_keysym(key_name)
-			raise RuntimeException.new "Hotkey key name '#{key_name}' not found." if ! keysym || ! keysym.is_a?(Int32)
-			@keysym = keysym.to_u64
 			@modifiers << modifiers
 			@modifiers << (modifiers | ::X11::Mod2Mask.to_u32)
 			if allow_other_modifiers
@@ -59,6 +56,11 @@ module Run
 					end
 				end
 			end
+		end
+		def set_keysym
+			keysym = @runner.not_nil!.x11.ahk_key_name_to_keysym(@key_name)
+			raise RuntimeException.new "Hotkey key name '#{@key_name}' not found." if ! keysym || ! keysym.is_a?(Int32)
+			@keysym = keysym.to_u64
 		end
 		def trigger
 			@runner.not_nil!.add_thread @cmd.not_nil!, @priority
