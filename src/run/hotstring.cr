@@ -11,6 +11,7 @@ module Run
 		property label : String
 		property cmd : Cmd::Base?
 		getter immediate = false
+		@automatic_backspacing = true
 		def initialize(@label, @abbrev, *, options, escape_char)
 			@abbrev_size = @abbrev.size.to_u8
 			@abbrev_keysyms = HotstringAbbrevKeysyms.new do |i|
@@ -24,6 +25,7 @@ module Run
 			Util::AhkString.parse_letter_options(options, escape_char) do |char, n|
 				case char
 				when '*' then @immediate = true
+				when 'b' then @automatic_backspacing = n != 0
 				end
 			end
 		end
@@ -38,11 +40,13 @@ module Run
 		def trigger
 			runner = @runner.not_nil!
 
-			runner.x11.pause
-			(@abbrev_size + (@immediate ? 0 : 1)).times do
-				runner.x_do.keys "BackSpace", delay: 0
+			if @automatic_backspacing
+				runner.x11.pause
+				(@abbrev_size + (@immediate ? 0 : 1)).times do
+					runner.x_do.keys "BackSpace", delay: 0
+				end
+				runner.x11.resume
 			end
-			runner.x11.resume
 			
 			runner.add_thread @cmd.not_nil!, 0 # @priority
 		end
