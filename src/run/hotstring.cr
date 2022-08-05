@@ -12,20 +12,27 @@ module Run
 		@automatic_backspacing = true
 		@case_sensitive = false
 		@conform_case = true # TODO not implemented
+		@delay = 0 # INCOMPAT: only applies to BS, not typing (use setkeydelay for that)
+		getter omit_ending_character = false
+		@priority = 0
+		getter auto_send_raw = false
 		def initialize(@label, @abbrev, *, options, escape_char)
 			Util::AhkString.parse_letter_options(options, escape_char) do |char, n|
 				case char
-				when '*' then @immediate = true
+				when '*' then @immediate = n != 0
 				when 'b' then @automatic_backspacing = n != 0
 				when 'c'
 					@case_sensitive = n == nil
 					@conform_case = n != 1
+				when 'k' then @delay = n || 0
+				when 'o' then @omit_ending_character = n != 0
+				when 'p' then @priority = n || 0
+				when 'r' then @auto_send_raw = n != 0
 				end
 			end
 		end
 		def keysyms_equal?(other_keysyms : HotstringAbbrevKeysyms, other_size : UInt8)
 			return false if other_size != @abbrev.size
-			puts other_keysyms.join[...other_size], @abbrev
 			if @case_sensitive
 				other_keysyms.join[...other_size] == @abbrev
 			else
@@ -39,11 +46,12 @@ module Run
 				runner.x11.pause
 				(@abbrev.size + (@immediate ? 0 : 1)).times do
 					runner.x_do.keys "BackSpace", delay: 0
+					sleep @delay.milliseconds if @delay != -1
 				end
 				runner.x11.resume
 			end
 			
-			runner.add_thread @cmd.not_nil!, 0 # @priority
+			runner.add_thread @cmd.not_nil!, @priority
 		end
 	end
 end

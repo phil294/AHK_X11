@@ -39,7 +39,7 @@ module Build
 		end
 
 		def add_line(line, line_no)
-			match = line
+			match = line.strip
 				.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
 				.match(/^\s*([^\s,]*)(\s*,?)(.*)$/).not_nil!
 			first_word_case_sensitive = match[1]
@@ -113,7 +113,9 @@ module Build
 						escape_char: @escape_char
 					@hotstrings << hotstring
 					if ! instant_action.empty?
-						add_line "Send, #{instant_action}#{first_word_glue}#{args}%A_EndChar%", line_no
+						end_char = hotstring.omit_ending_character ? "" : "%A_EndChar%"
+						send = hotstring.auto_send_raw ? "SendRaw" : "Send"
+						add_line "#{send}, #{instant_action}#{first_word_glue}#{args}#{end_char}", line_no
 						add_line "Return", line_no
 					end
 				else # Hotkey

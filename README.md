@@ -14,8 +14,8 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 > Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
 
 Features:
-- [x] Hotkeys
-- [x] Hotstrings (only basic support so far; also does not work in some windows: help needed)
+- [x] Hotkeys (near-complete)
+- [x] Hotstrings (complete, but does not work *in some windows*: help needed)
 - [x] Window management (setup complete, but many commands are still missing)
 - [x] Send keys
 - [ ] Control mouse (TBD)
