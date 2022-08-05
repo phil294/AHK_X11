@@ -40,9 +40,10 @@ module Build
 		def add_line(line, line_no)
 			match = line
 				.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
-				.match(/^\s*([^\s,]*)\s*,?(.*)$/).not_nil!
+				.match(/^\s*([^\s,]*)(\s*,?)(.*)$/).not_nil!
 			first_word = match[1].downcase
-			args = match[2]
+			first_word_glue = match[2]
+			args = match[3]
 			csv_args = [] of String
 
 			return if first_word.empty?
@@ -101,14 +102,14 @@ module Build
 					hotstring = Run::Hotstring.new label, abbrev, options: options, escape_char: @escape_char
 					@hotstrings << hotstring
 					if ! instant_action.empty?
-						add_line "Send, #{instant_action}%A_EndChar%", line_no
+						add_line "Send, #{instant_action}#{first_word_glue}#{args}%A_EndChar%", line_no
 						add_line "Return", line_no
 					end
 				else
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label]
 					@hotkeys << Run::Hotkey.new label, priority: 0
 					if ! instant_action.empty?
-						add_line instant_action, line_no
+						add_line "#{instant_action}#{first_word_glue}#{args}", line_no
 						add_line "Return", line_no
 					end
 				end
