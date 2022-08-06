@@ -120,7 +120,9 @@ module Run
 		end
 		# `var` is case insensitive
 		def set_user_var(var, value)
-			@user_vars[var.downcase] = value
+			down = var.downcase
+			return if @built_in_static_vars[down]? || get_global_built_in_computed_var(down)
+			@user_vars[down] = value
 		end
 		# `var` is case insensitive
 		def set_global_built_in_static_var(var, value)
