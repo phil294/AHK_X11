@@ -62,7 +62,12 @@ module Run
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
-		protected def add_thread(cmd, priority) : Thread
+		def add_thread(cmd : Cmd::Base | String, priority) : Thread
+			if cmd.is_a?(String)
+				cmd_ = @labels[cmd]?
+				raise RuntimeException.new "Label '#{cmd}' not found" if ! cmd_
+				cmd = cmd_
+			end
 			thread = Thread.new(self, cmd, priority, @default_thread_settings)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
@@ -142,7 +147,7 @@ module Run
 			@timers[label]?
 		end
 		def add_timer(label, period, priority)
-			cmd = labels[label]?
+			cmd = @labels[label]?
 			raise RuntimeException.new "add timer: label '#{label}' not found" if ! cmd
 			timer = Timer.new(self, cmd, period, priority)
 			@timers[label] = timer
@@ -152,14 +157,14 @@ module Run
 		def add_hotkey(hotkey)
 			hotkey.runner = self
 			hotkey.set_keysym
-			hotkey.cmd = labels[hotkey.key_str]
+			hotkey.cmd = @labels[hotkey.key_str]
 			@hotkeys[hotkey.key_str] = hotkey
 			@x11.register_hotkey hotkey
 			hotkey
 		end
 		def add_or_update_hotkey(*, key_str, label, priority, active_state = nil)
 			if label
-				cmd = labels[label]?
+				cmd = @labels[label]?
 				raise RuntimeException.new "Add or update Hotkey: Label '#{label}' not found" if ! cmd
 			end
 			hotkey = @hotkeys[key_str]?
@@ -185,7 +190,7 @@ module Run
 
 		def add_hotstring(hotstring)
 			hotstring.runner = self
-			hotstring.cmd = labels[hotstring.label]
+			hotstring.cmd = @labels[hotstring.label]
 			@hotstrings << hotstring
 			@x11.register_hotstring hotstring
 			hotstring

@@ -130,10 +130,11 @@ class Util::AhkString
 	end
 
 	# Parses space/tab-delimited words, each optionally containing a `-` or `+` or
-	# numbers (anywhere!), and yields those infos separated (downcase).
-	# e.g. `+center x12 a+b-c8d2` yields three times, with the last one being
-	# `abcd`, `82`, `true`, `true`.
-	def self.parse_word_options(str, escape_char : Char, &block)
+	# numbers (anywhere!), and retrieve those infos separated (downcase).
+	# Every word is also treated as a single letter + body as a second entry.
+	# e.g. `+center ab8cd2` returns (pseudo) `{ "center" => {plus: true}, "c" => {v: "enter", plus: true}, "abcd" => {n: 82}, "a" => {v: "b8cd2"} }`
+	def self.parse_word_options(str, escape_char : Char)
+		ret = {} of String => NamedTuple(n: Int32?, v: String, minus: Bool, plus: Bool)
 		str.split().each do |part|
 			minus = false
 			plus = false
@@ -150,14 +151,13 @@ class Util::AhkString
 					word += char
 				end
 			end
-			n = n.to_i?(strict: true) || nil
-			yield word.downcase, n, minus, plus
-		end
-	end
-	def self.parse_word_options(str, escape_char : Char)
-		ret = {} of String => NamedTuple(word: String, n: Int32?, minus: Bool, plus: Bool)
-		self.parse_word_options(str, escape_char) do |word, n, minus, plus|
-			ret[word] = {word:word, n:n, minus:minus, plus:plus}
+			down = word.downcase
+			ret[down] = ret[part[0].downcase.to_s] = {
+				n: n.to_i?(strict: true) || nil,
+				v: part[1..]? || "",
+				minus: minus,
+				plus: plus
+			}
 		end
 		ret
 	end

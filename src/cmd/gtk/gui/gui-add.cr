@@ -8,14 +8,56 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 		type = args[1]
 		options = args[2]? || ""
 		text = args[3]? || ""
+		
+		opt = thread.parse_word_options options
+		runner = thread.runner
+		g_label = opt["g"]?.try &.[:v].downcase
+		run_g_label = ->{
+			if g_label
+				begin
+					runner.add_thread g_label, 0
+				rescue e
+					STDERR.puts e # TODO: Add application-global logger which shows popop
+					# (can't allow exceptions here because we're on the GUI thread)
+				end
+			end
+		}
+		
 		thread.runner.gui.gui(gui_id) do |gui|
-			opt = thread.parse_word_options options
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
 			when "text"
 				widget = ::Gtk::Label.new text
+				widget.has_window = true
+				widget.events = ::Gdk::EventMask::BUTTON_PRESS_MASK.to_i
+				widget.connect "button-press-event", run_g_label
+			when "edit"
+				if opt["r"]?.try &.[:n].try &.> 1
+					widget = ::Gtk::ScrolledWindow.new vexpand: true, hexpand: false, shadow_type: ::Gtk::ShadowType::IN
+					text_view = ::Gtk::TextView.new buffer: ::Gtk::TextBuffer.new, accepts_tab: false, wrap_mode: ::Gtk::WrapMode::WORD_CHAR, margin: 5
+					widget.add text_view
+					text_view.buffer.set_text text, -1
+					text_view.buffer.connect "changed", run_g_label
+				else
+					widget = ::Gtk::Entry.new
+					widget.text = text
+					widget.connect "changed", run_g_label
+				end
+			when "button"
+				widget = ::Gtk::Button.new label: text
+				widget.connect "clicked", run_g_label
+				button_click_label = "button" + text.gsub(/ &\n\r/, "")
+				widget.on_clicked do
+					begin runner.add_thread button_click_label, 0
+					rescue
+					end
+				end
 			else
 				raise Run::RuntimeException.new "Unknown Gui control '#{type}'"
+			end
+
+			if opt["v"]?
+				gui.var_control_info[opt["v"][:v]] = Run::Gui::ControlInfo.new widget
 			end
 
 			gui.padding = 7 if gui.padding == 0 # TODO:
@@ -34,17 +76,17 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			# 	last_w = last_h = 0
 			# end
 			x = case
-			when opt["x"]?
-				x_ = opt["x"][:n] || 0
-				# x_ += gui.last_x + last_w if opt["x"][:plus]
-				# x_ = gui.last_x + last_w - x_ if opt["x"][:minus]
-				x_
 			when opt["xp"]?
 				gui.last_x + (opt["xp"][:n] || 0) * (opt["xp"][:minus] ? -1 : 1)
 			when opt["xm"]?
 				gui.padding + (opt["xm"][:n] || 0) * (opt["xm"][:minus] ? -1 : 1)
 			when opt["xs"]?
 				gui.last_section_x + (opt["xs"][:n] || 0) * (opt["xs"][:minus] ? -1 : 1)
+			when opt["x"]?
+				x_ = opt["x"][:n] || 0
+				# x_ += gui.last_x + last_w if opt["x"][:plus]
+				# x_ = gui.last_x + last_w - x_ if opt["x"][:minus]
+				x_
 			else
 				if gui.last_x == 0
 					gui.padding
@@ -54,14 +96,14 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			end
 
 			y = case
-			when opt["y"]?
-				opt["y"][:n] || 0
 			when opt["yp"]?
 				gui.last_y + (opt["yp"][:n] || 0) * (opt["yp"][:minus] ? -1 : 1)
 			when opt["ym"]?
 				gui.padding + (opt["ym"][:n] || 0) * (opt["ym"][:minus] ? -1 : 1)
 			when opt["ys"]?
 				gui.last_section_y + (opt["ys"][:n] || 0) * (opt["ys"][:minus] ? -1 : 1)
+			when opt["y"]?
+				opt["y"][:n] || 0
 			else
 				if gui.last_y == 0
 					gui.padding
@@ -77,7 +119,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 
 			w = opt["w"]?.try &.[:n] || -1
 			h = opt["h"]?.try &.[:n] || -1
-			
+
 			widget.set_size_request w, h
 			gui.fixed.put widget, x, y
 

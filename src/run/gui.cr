@@ -51,6 +51,11 @@ module Run
 			channel.receive
 		end
 
+		class ControlInfo
+			getter control : Gtk::Widget
+			def initialize(@control)
+			end
+		end
 		private class GuiInfo
 			getter window : Gtk::Window
 			getter fixed : Gtk::Fixed
@@ -60,6 +65,7 @@ module Run
 			property padding = 0
 			property last_section_x = 0
 			property last_section_y = 0
+			getter var_control_info = {} of String => ControlInfo
 			def initialize(@window, @fixed)
 			end
 		end

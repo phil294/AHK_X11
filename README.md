@@ -14,23 +14,23 @@ More specifically: A very basic but functional reimplementation AutoHotkey v1.0.
 > Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
 
 Features:
-- [x] Hotkeys (near-complete)
+- [x] Hotkeys (complete)
 - [x] Hotstrings (complete, but does not work *in some windows*: help needed)
 - [x] Window management (setup complete, but many commands are still missing)
-- [x] Send keys
+- [x] Send keys (complete)
 - [ ] Control mouse (TBD)
 - [x] File management (setup complete, but all commands are still missing)
-- [x] GUIs (setup complete, but all commands are missing)
+- [x] GUIs (windows, g-labels, variables; Text, Edit, Button; Submit)
 - [ ] Compile script to executable (TBD)
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy
 
-Implementation details follow below; note however that this is not very representative. `Gui`, for example, is many times more massive and work requiring than any other command but still only listed as one.
+Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing.
 
 ```diff
 DONE      15% (31/214):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
-+ SetTimer, WinActivate, MsgBox (incomplete), Gui (demo window), SendRaw, #Persistent, ExitApp,
++ SetTimer, WinActivate, MsgBox (incomplete), Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
 + FileAppend, Hotkey, Send, ControlSend, #Hotstring
 
@@ -50,14 +50,14 @@ REMOVED   10% (21/214):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     75% (160/214): alphabetically
+TO DO     74% (159/214): alphabetically
 - BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
 - FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
 - FileInstall, FileReadLine, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion, 
 - FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir, FileSelectFile, 
 - FileSelectFolder, FileSetAttrib, FileSetTime, FormatTime, GetKeyState, GroupActivate, GroupAdd, 
-- GroupClose, GroupDeactivate, Gui, GuiControl, GuiControlGet, If var [not] between,
+- GroupClose, GroupDeactivate, GuiControl, GuiControlGet, If var [not] between,
 - If var [not] in/contains MatchList, If var is [not] type, IfNotEqual, IfExist/IfNotExist, 
 - IfGreater/IfGreaterOrEqual, IfInString/IfNotInString, IfLess/IfLessOrEqual, IfMsgBox, 
 - IfWinActive/IfWinNotActive, IniDelete, IniRead, IniWrite, Input, 
@@ -188,7 +188,7 @@ If you feel like it, you are welcome to contribute. This program has a very modu
 Commands behave mostly autonomous. See for example `src/cmd/file/file-copy.cr`: All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
 Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `thread.runner.get_user_var`, `thread.get_var` and `thread.runner.set_user_var`.
 
-GUI: A bit more complex than the other missing commands. Some wiring is still missing (variables, positioning, multi window etc.). Once that is done, all known controls need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` will be helpful.
+GUI: Most controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are be helpful.
 
 A more general overview:
 - `src/build` does the parsing etc. and is mostly complete

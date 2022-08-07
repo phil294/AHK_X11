@@ -12,7 +12,8 @@ class Cmd::Gtk::Gui::GuiShow < Cmd::Base
 			gui.window.show_all
 			w, h = gui.window.size
 			x, y = gui.window.position
-			thread.parse_word_options options do |w, n|
+			thread.parse_word_options(options).each do |w, i|
+				n = i[:n]
 				case w
 				when "w" then w = n if n
 				when "h" then h = n if n

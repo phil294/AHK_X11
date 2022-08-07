@@ -135,9 +135,6 @@ module Run
 		def parse_letter_options(str, &block : Char, Int32? -> _)
 			Util::AhkString.parse_letter_options(str, @runner.settings.escape_char, &block)
 		end
-		def parse_word_options(str, &block : String, Int32?, Bool, Bool -> _)
-			Util::AhkString.parse_word_options(str, @runner.settings.escape_char, &block)
-		end
 		def parse_word_options(str)
 			Util::AhkString.parse_word_options(str, @runner.settings.escape_char)
 		end
