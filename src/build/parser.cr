@@ -39,6 +39,9 @@ module Build
 		end
 
 		def add_line(line, line_no)
+			{% if ! flag?(:release) %}
+				puts "[debug] #{line_no}: #{line}" # TODO: externalize / use logger
+			{% end %}
 			match = line.strip
 				.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
 				.match(/^\s*([^\s,]*)(\s*,?)(.*)$/).not_nil!
@@ -126,6 +129,19 @@ module Build
 						add_line "Return", line_no
 					end
 				end
+			elsif first_word == "gui"
+				# Gui accepts many subcommands. Instead of duplicating parsing logic into a generic
+				# `Gui` cmd, instead join together (e.g. `GuiAdd`) and parse line again with that.
+				# All subcommands exist as standalone commands and expect the gui id as 1st arg.
+				split = split_args(args, 2)
+				sub_instruction = split[0]? || ""
+				rest_args = split[1]? || ""
+				match = sub_instruction.match(/(?:(\S+)\s*:\s*)?(.*)/).not_nil!
+				gui_id = match[1]? || "1"
+				sub_cmd = match[2]
+				raise "Gui subcommand missing" if sub_cmd.empty?
+				comma = rest_args.empty? ? "" : ","
+				add_line "Gui#{sub_cmd}, #{gui_id}#{comma} #{rest_args}", line_no
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
 			elsif first_word.ends_with?("++")

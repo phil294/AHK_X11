@@ -106,14 +106,14 @@ class Util::AhkString
 	end
 
 	# Parses single-char-numbers combinations with optional spaces in between,
-	# e.g. `A1B2` or `*0 c100` and yields each char-number combination.
+	# e.g. `A1B2` or `*0 c100` and yields each char-number combination (downcase).
 	def self.parse_letter_options(str, escape_char : Char)
-		iter = str.each_char
 		n = ""
 		letter = nil
-		while (char = iter.next) != Iterator::Stop::INSTANCE
+		str.each_char do |char|
 			case char
 			when ' ' then next
+			# TODO: better syntax without having to resort back to elsif?
 			when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 				n += char.as(Char)
 			else
@@ -127,5 +127,38 @@ class Util::AhkString
 		if letter
 			yield letter.downcase, n.to_i?(strict: true)
 		end
+	end
+
+	# Parses space/tab-delimited words, each optionally containing a `-` or `+` or
+	# numbers (anywhere!), and yields those infos separated (downcase).
+	# e.g. `+center x12 a+b-c8d2` yields three times, with the last one being
+	# `abcd`, `82`, `true`, `true`.
+	def self.parse_word_options(str, escape_char : Char, &block)
+		str.split().each do |part|
+			minus = false
+			plus = false
+			n = ""
+			i = 1
+			word = ""
+			part.each_char do |char|
+				case char
+				when '-' then minus = true
+				when '+' then plus = true
+				when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+					n += char
+				else
+					word += char
+				end
+			end
+			n = n.to_i?(strict: true) || nil
+			yield word.downcase, n, minus, plus
+		end
+	end
+	def self.parse_word_options(str, escape_char : Char)
+		ret = {} of String => NamedTuple(word: String, n: Int32?, minus: Bool, plus: Bool)
+		self.parse_word_options(str, escape_char) do |word, n, minus, plus|
+			ret[word] = {word:word, n:n, minus:minus, plus:plus}
+		end
+		ret
 	end
 end

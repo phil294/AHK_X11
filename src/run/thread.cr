@@ -128,12 +128,18 @@ module Run
 			@built_in_static_vars[var.downcase] = value
 		end
 
-		def parse_keys(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> Nil)
+		def parse_keys(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> _)
 			Util::AhkString.parse_keys(str, @runner.settings.escape_char, @runner.x11, &block)
 		end
 
-		def parse_letter_options(str, &block : Char, Int32? -> Nil)
+		def parse_letter_options(str, &block : Char, Int32? -> _)
 			Util::AhkString.parse_letter_options(str, @runner.settings.escape_char, &block)
+		end
+		def parse_word_options(str, &block : String, Int32?, Bool, Bool -> _)
+			Util::AhkString.parse_word_options(str, @runner.settings.escape_char, &block)
+		end
+		def parse_word_options(str)
+			Util::AhkString.parse_word_options(str, @runner.settings.escape_char)
 		end
 	end
 end
