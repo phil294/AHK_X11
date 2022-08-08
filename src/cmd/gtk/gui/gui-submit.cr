@@ -21,6 +21,16 @@ class Cmd::Gtk::Gui::GuiSubmit < Cmd::Base
 					text_buffer.text(iter_start, iter_end, true)
 				when ctrl.is_a?(::Gtk::CheckButton) then
 					ctrl.active ? "1" : "0"
+				when ctrl.is_a?(::Gtk::ComboBoxText) then
+					if info.alt_submit
+						(ctrl.active + 1).to_s
+					else
+						begin
+							ctrl.active_text
+						rescue
+							""
+						end
+					end
 				end
 				next if ! value
 				thread.runner.set_user_var(var_name, value)

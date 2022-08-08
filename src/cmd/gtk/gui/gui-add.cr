@@ -60,12 +60,24 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				widget = ::Gtk::CheckButton.new label: text
 				widget.active = true if opt["checked"]?
 				widget.connect "toggled", run_g_label
+			when "dropdownlist", "ddl"
+				widget = ::Gtk::ComboBoxText.new
+				text.split('|').each_with_index do |option, i|
+					if option.empty? && i > 0
+						widget.active = i - 1
+					else
+						widget.append_text option
+					end
+				end
+				widget.active = (opt["choose"][:n] || 1) - 1 if opt["choose"]?
+				widget.connect "changed", run_g_label
 			else
 				raise Run::RuntimeException.new "Unknown Gui control '#{type}'"
 			end
 
 			if opt["v"]?
-				gui.var_control_info[opt["v"][:v]] = Run::Gui::ControlInfo.new widget
+				alt_submit = !! opt["altsubmit"]?
+				gui.var_control_info[opt["v"][:v]] = Run::Gui::ControlInfo.new widget, alt_submit
 			end
 
 			gui.padding = 7 if gui.padding == 0 # TODO:

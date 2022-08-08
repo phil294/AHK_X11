@@ -53,7 +53,8 @@ module Run
 
 		class ControlInfo
 			getter control : Gtk::Widget
-			def initialize(@control)
+			getter alt_submit = false
+			def initialize(@control, @alt_submit)
 			end
 		end
 		private class GuiInfo
