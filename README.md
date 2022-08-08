@@ -20,7 +20,7 @@ Features:
 - [x] Send keys (complete)
 - [ ] Control mouse (TBD)
 - [x] File management (setup complete, but all commands are still missing)
-- [x] GUIs (windows, g-labels, variables; Text, Edit, Button; Submit)
+- [x] GUIs (windows, g-labels, variables; Text, Edit, Button, Checkbox; Submit)
 - [ ] Compile script to executable (TBD)
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy

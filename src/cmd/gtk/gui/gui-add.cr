@@ -56,6 +56,10 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					rescue
 					end
 				end
+			when "checkbox"
+				widget = ::Gtk::CheckButton.new label: text
+				widget.active = true if opt["checked"]?
+				widget.connect "toggled", run_g_label
 			else
 				raise Run::RuntimeException.new "Unknown Gui control '#{type}'"
 			end
