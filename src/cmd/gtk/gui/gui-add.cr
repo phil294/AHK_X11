@@ -34,7 +34,11 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			when "edit"
 				if opt["r"]?.try &.[:n].try &.> 1
 					widget = ::Gtk::ScrolledWindow.new vexpand: true, hexpand: false, shadow_type: ::Gtk::ShadowType::IN
-					text_view = ::Gtk::TextView.new buffer: ::Gtk::TextBuffer.new, accepts_tab: false, wrap_mode: ::Gtk::WrapMode::WORD_CHAR, margin: 5
+					buffer = ::Gtk::TextBuffer.new
+					text_view = ::Gtk::TextView.new_with_buffer buffer
+					text_view.accepts_tab = false
+					text_view.wrap_mode = ::Gtk::WrapMode::WORD_CHAR
+					text_view.margin = 5
 					widget.add text_view
 					text_view.buffer.set_text text, -1
 					text_view.buffer.connect "changed", run_g_label
