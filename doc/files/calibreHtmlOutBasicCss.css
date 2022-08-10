@@ -1,26 +1,27 @@
 body{
   margin:0px;
   padding: 0.5em;
+  width: 100vw;
+  height: 100vh;
   background-color:#F6F3E9;
   font-size:12px;
   font-family:Arial, Helvetica, sans-serif;
   word-break: break-word;
+  display: flex;
+  flex-direction: column;
+}
+* {
+  box-sizing: border-box;
 }
 
 .calibreMeta{
-  background-color:#39322B;
-  color:white;
+  /* background-color:#d9d9fd; */
   padding:10px;
-}
-
-.calibreMeta a, .calibreEbNav a, .calibreEbNavTop a, .calibreToc a{
-  color:white;
 }
 
 .calibreMeta h1{
   margin:0px;
   font-size:18px;
-  background-color:#39322B;
 }
 
 .calibreEbookContent{
@@ -29,8 +30,7 @@ body{
 
 .calibreEbNav, .calibreEbNavTop{
   clear:both;
-  background-color:#39322B;
-  color:white;
+  background-color:#0000ff20;
   padding:10px;
   text-align:center;
 }
@@ -43,18 +43,38 @@ body{
   padding:0px 5px;
 }
 
+.main {
+  flex: 1;
+  min-height: 0;
+}
+@media screen and (min-width: 770px) {
+  .main {
+    display: flex;
+    flex-direction: column;
+    flex-direction: row;
+  }
+}
 .calibreTocIndex{
-  line-height:18px;
+  --line-height: 18px;
+  line-height: var(--line-height);
+  width: 300px;
+  overflow: scroll;
+}
+.calibreTocIndex > div > ul > li a {
+  display: block;
+  background: #F6F3E9;
+  position: sticky;
+  top: calc(var(--line-height) * (var(--level) - 1));
+  z-index: calc(1000 - var(--level));
+}
+.calibreTocIndex > div > ul > li > a { --level: 1; }
+.calibreTocIndex > div > ul > li > ul > li > a { --level: 2; }
+.calibreTocIndex > div > ul > li > ul > li > ul > li > a { --level: 3; }
+.content {
+  flex: 1;
+  overflow: scroll;
 }
 
-.calibreToc{
-  float:left;
-  margin:20px;
-  width:300px;
-  background-color:#39322B;
-  color:white;
-  padding:10px;
-}
 @page {
     margin-bottom: 5pt;
     margin-top: 5pt
