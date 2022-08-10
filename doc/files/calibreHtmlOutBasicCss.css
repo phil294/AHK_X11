@@ -4,6 +4,7 @@ body{
   background-color:#F6F3E9;
   font-size:12px;
   font-family:Arial, Helvetica, sans-serif;
+  word-break: break-word;
 }
 
 .calibreMeta{
@@ -184,7 +185,7 @@ body{
     }
 .calibre15 {
     height: 4px;
-    width: 1024px
+    width: 100%;
     }
 .calibre16 {
     display: block;
@@ -228,7 +229,7 @@ body{
     margin-left: 0;
     margin-right: 0;
     margin-top: 1em;
-    white-space: pre-wrap
+    white-space: pre-wrap;
     }
 .calibre23 {
     font-size: 1.25926em;
@@ -425,7 +426,7 @@ body{
     margin-left: 0;
     margin-right: 0;
     margin-top: 1em;
-    white-space: pre-wrap
+    white-space: pre-wrap;
     }
 .calibre49 {
     background-color: rgb(0, 0, 153);
