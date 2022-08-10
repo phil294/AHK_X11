@@ -1111,7 +1111,7 @@ if MyVar &gt; MyVarLimit  ; Wrong because there should be percent signs around M
 if %MyVar% &gt; %MyVarLimit%  ; Wrong because MyVar should not have percent signs.</pre>
 <p class="calibre8">As seen in the examples above, the rule of thumb is to enclose a variable in percent signs whenever it is used on the right side of an assignment or comparison.</p>
 <p class="calibre8"> </p>
-<p class="calibre8"><u class="calibre20"><strong class="calibre14"/></u><u class="calibre20"><strong class="calibre14">Math</strong></u>:AutoHotkey is currently limited to one math operation per line. For example, an assignment that might be written as "x = y + 5" in another language would need to be done in two steps:<br class="calibre12"/>
+<p class="calibre8"><u class="calibre20"><strong class="calibre14">Math</strong></u>:AutoHotkey is currently limited to one math operation per line. For example, an assignment that might be written as "x = y + 5" in another language would need to be done in two steps:<br class="calibre12"/>
   x = %y%<br class="calibre12"/>
 x += 5 </p>
 <p class="calibre8">In the example above, the += symbol means "increase the variable on the left by the number at the right". In a similar way, subtraction, multiplication, and division are accomplished via -=, *=, and /=, respectively. Advanced math operations such as logarithms, trigonometry, raising a number to a power, and bitwise manipulations are possible via the <a href="#Transform.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Transform</a> command.</p>
