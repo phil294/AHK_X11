@@ -13,10 +13,32 @@ body{
 * {
   box-sizing: border-box;
 }
+.x11, .x11 * {
+  font-style: italic;
+  color:#005500 !important;
+}
+.rm, .rm * {
+  text-decoration: line-through;
+  color: #444444 !important;
+}
+.tbd, .tbd * {
+  text-decoration: line-through;
+  color: #550000 !important;
+}
 
 .calibreMeta{
   /* background-color:#d9d9fd; */
   padding:10px;
+  display: flex;
+  flex-direction: row;
+  min-width: 0;
+  gap: 5vw;
+  white-space: nowrap;
+  overflow: hidden;
+}
+aside.legend {
+  flex: 1;
+  text-overflow: ellipsis;
 }
 
 .calibreMeta h1{
@@ -154,8 +176,7 @@ body{
     text-decoration: none
     }
 .calibre6 {
-    height: 133px;
-    width: 228px
+    margin-right: 10px;
     }
 .calibre7 {
     display: block;
@@ -226,6 +247,8 @@ body{
     }
 .calibre17 {
     font-size: 1.41667em;
+    font-weight: normal;
+    display: inline-block;
     line-height: 1.2
     }
 .calibre18 {
