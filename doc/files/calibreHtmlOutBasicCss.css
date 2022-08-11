@@ -70,6 +70,19 @@ body{
 .calibreTocIndex > div > ul > li > a { --level: 1; }
 .calibreTocIndex > div > ul > li > ul > li > a { --level: 2; }
 .calibreTocIndex > div > ul > li > ul > li > ul > li > a { --level: 3; }
+.calibreTocIndex > div > ul > li a.current {
+  background-image: url(../blue_gradient_1024x24.jpg);
+  background-repeat: no-repeat;
+  color: white;
+  font-weight: bold;
+}
+.go-to-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  float: right;
+  background: #F6F3E9;
+}
 .content {
   flex: 1;
   overflow: scroll;
@@ -243,8 +256,8 @@ body{
     }
 .calibre22 {
     display: block;
-    font-family: Verdana, Arial, Helvetica, sans-serif, "MS sans serif";
-    font-size: 1em;
+    font-family: monospace;
+    font-size: 0.95em;
     margin-bottom: 1em;
     margin-left: 0;
     margin-right: 0;
