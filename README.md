@@ -9,7 +9,11 @@ AutoHotkey for Linux. (WORK IN PROGRESS)
 `MsgBox, AHK_X11` (*)
 </div>
 
-More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up in Crystal with the help of [x11-cr](https://github.com/TamasSzekeres/x11-cr/), [libxdo](https://github.com/jordansissel/xdotool)([bindings](https://github.com/woodruffw/x_do.cr)) and [crystal-gobject](https://github.com/jhass/crystal-gobject)(GTK), with the eventual goal of 80% feature parity, but most likely never full compatibility. More importantly, because of the old version of the spec (you can check the old manual by installing or extracting the old `.chm` manual from [here](https://www.autohotkey.com/download/1.0/AutoHotkey1024.exe)), many modern AHK features will be missing, especially expressions (`:=`, `% v`) and functions, so you probably can't just port your scripts from Windows. Maybe this will also be added some day, but it does not have high priority for me personally. This AHK will be shipped as a single executable native binary with very low resource overhead and fast execution time.
+[**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
+
+[**Direct download for Ubuntu**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_debian.zip) | for [**Arch Linux**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_archlinux.zip) | [**Installation instructions**](#installation)
+
+More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[crystal-gobject](https://github.com/jhass/crystal-gobject)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 30% of work is done. Note that because of the old version of the spec, many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. Maybe this will also be added some day, but it does not have high priority for me personally. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
 
 > Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
 
@@ -25,19 +29,19 @@ Features:
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy
 
-Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing.
+Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the [docs](https://phil294.github.io/AHK_X11).
 
 ```diff
-DONE      15% (31/214):
+DONE      15% (31/213):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox (incomplete), Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
 + FileAppend, Hotkey, Send, ControlSend, #Hotstring
 
-NEW       1% (2/214): (new Linux-specific commands)
+NEW       1% (2/213): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
 
-REMOVED   10% (21/214):
+REMOVED   10% (21/213):
 # ### Those that simply make no sense in Linux:
 # EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
 # #InstallMouseHook, #UseHook
@@ -50,7 +54,7 @@ REMOVED   10% (21/214):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     74% (159/214): alphabetically
+TO DO     74% (158/213): alphabetically
 - BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
 - FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
@@ -75,7 +79,7 @@ TO DO     74% (159/214): alphabetically
 - WinClose, WinGetActiveStats, WinGetActiveTitle, WinGetClass, WinGet, WinGetPos, WinGetText, 
 - WinGetTitle, WinHide, WinKill, WinMaximize, WinMenuSelectItem, WinMinimize, WinMinimizeAll, 
 - WinMinimizeAllUndo, WinMove, WinRestore, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 
-- WinWaitClose, WinWaitNotActive, #AllowSameLineComments, #CommentFlag, #ErrorStdOut, #EscapeChar, 
+- WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar, 
 - #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem, 
 - #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #SingleInstance, 
 - #WinActivateForce
@@ -190,7 +194,7 @@ If you feel like it, you are welcome to contribute. This program has a very modu
 Commands behave mostly autonomous. See for example `src/cmd/file/file-copy.cr`: All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
 Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `thread.runner.get_user_var`, `thread.get_var` and `thread.runner.set_user_var`.
 
-GUI: Most controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are be helpful.
+GUI: Most controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are helpful.
 
 A more general overview:
 - `src/build` does the parsing etc. and is mostly complete
