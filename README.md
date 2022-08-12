@@ -83,9 +83,9 @@ TO DO     74% (159/214): alphabetically
 
 ## Installation
 
-You need (?) to have `libxdo` installed, which is usually done by installing `xdotool` on your distribution. Only works with version 2016x currently, not with 2021x (will soon be fixed). This is the default in Ubuntu. Also required is a running X11 server and GTK installed, which you most likely already have.
+You need to be running X11 and have GTK installed. Both is the default on most systems.
 
-Then, you can download the latest binary from the release section at the top right or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
+Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases) or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
 
 **Please note that the current version is still barely usable** because most things are not implemented yet.
 
@@ -155,7 +155,7 @@ As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` c
 1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
 1. `git clone https://github.com/phil294/AHK_X11`
 1. `cd AHK_X11`
-1. Run these commands one by one (I haven't double them, so it's best to check the results manually)
+1. Run these commands one by one (I haven't double checked them, so it's best to go through them manually)
     ```bash
     shards install
     # populate cache
@@ -173,7 +173,9 @@ As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` c
     # delete conflicting c function binding by modifying the cache
     sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
     ```
-1. `shards build -Dpreview_mt --release`, then `bin/ahk_x11 "your ahk file.ahk"` or while in development, `shards run -Dpreview_mt -- "your ahk file.ahk"`
+1. `libxdo` is preferrably statically linked because it isn't backwards compatible (e.g. Ubuntu and Arch Linux versions are incompatible) and may introduce even more breaking changes in the future. So, clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there, run `make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
+1. In `lib/x_do/src/x_do/libxdo.cr`, add line `role : LibC::Char*` *after* `winname : LibC::Char*`
+1. Build with `shards build -Dpreview_mt --link-flags="$PWD/static/libxdo.a -lxkbcommon -lXinerama -lXtst -lXi -lX11"`. When not in development, increase optimizations and runtime speed by adding `--release`. Finally, run `bin/ahk_x11 "your ahk file.ahk"`.
 
 ## Performance
 

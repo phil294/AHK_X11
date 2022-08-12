@@ -1,4 +1,5 @@
 /lib/
+/static/
 /bin/
 /bin*
 /.shards/
