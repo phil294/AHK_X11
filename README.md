@@ -11,7 +11,7 @@ AutoHotkey for Linux. (WORK IN PROGRESS)
 
 [**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
 
-[**Direct download for Ubuntu**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_debian.zip) | for [**Arch Linux**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_archlinux.zip) | [**Installation instructions**](#installation)
+[**Direct download for Ubuntu**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_ubuntu.zip) | for [**Arch Linux**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_archlinux.zip) | [**Installation instructions**](#installation)
 
 More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[crystal-gobject](https://github.com/jhass/crystal-gobject)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 30% of work is done. Note that because of the old version of the spec, many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. Maybe this will also be added some day, but it does not have high priority for me personally. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
 
