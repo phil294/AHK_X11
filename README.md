@@ -87,7 +87,7 @@ TO DO     74% (158/213): alphabetically
 
 ## Installation
 
-You need to be running X11 and have GTK installed. Both is the default on most systems.
+Prerequisites on Ubuntu: Running a X11 display server (if you don't know what that means, you're already doing it) and installing `sudo apt-get install libxinerama1 libxkbcommon0 libxtst6 libgtk-3-0 libevent-pthreads-2.1-7 libevent-2.1-7`.
 
 Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases) or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
 
