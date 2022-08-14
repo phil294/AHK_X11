@@ -11,7 +11,7 @@ AutoHotkey for Linux. (WORK IN PROGRESS)
 
 [**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
 
-[**Direct download for Ubuntu**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_ubuntu.zip) | for [**Arch Linux**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11-x86_64_archlinux.zip) | [**Installation instructions**](#installation)
+[**Go to installation instructions**](#installation)
 
 More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[crystal-gobject](https://github.com/jhass/crystal-gobject)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 30% of work is done. Note that because of the old version of the spec, many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. Maybe this will also be added some day, but it does not have high priority for me personally. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
 
@@ -87,9 +87,20 @@ TO DO     74% (158/213): alphabetically
 
 ## Installation
 
-Prerequisites on Ubuntu: Running a X11 display server (if you don't know what that means, you're already doing it) and installing `sudo apt-get install libxinerama1 libxkbcommon0 libxtst6 libgtk-3-0 libevent-pthreads-2.1-7 libevent-2.1-7`.
-
-Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases) or build from source (see "Development" below). Make the downloaded file executable and you should be good to go.
+1. Be running a X display server (if you don't know what that means, you're already doing it)
+1. Prerequisites
+    1. Ubuntu 20.04 and up, Pop OS, etc.:
+        ```bash
+        sudo apt-get install libxinerama1 libxkbcommon0 libxtst6 libgtk-3-0 libevent-pthreads-2.1-7 libevent-2.1-7
+        ```
+    1. Arch Linux, Manjaro, etc.:
+        There's no AUR for this yet, so do this manually:
+        ```
+        sudo pacman -S libxkbcommon libxinerama libxtst gtk3 gc
+        ```
+    1. Other distributions:
+        There are no builds yet, please build from source (see [Development](#development) below).
+1. Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases). Make the downloaded file executable and you should be good to go.
 
 **Please note that the current version is still barely usable** because most things are not implemented yet.
 
@@ -153,13 +164,22 @@ return
 
 ## Development
 
-These are the steps required to build this project locally. Most of it is all WIP and temporary and only necessary so the different dependencies get along fine (x11 and gobject bindings).
-As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` calls) and thus reduce the overall compile time from ~6 to ~3 seconds.
+These are the steps required to build this project locally. Please open an issue if anything doesn't work.
 
-1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
+1. Install development versions of prerequisites.
+    1. Ubuntu 20.04 and up:
+        1. Dependencies
+            ```
+            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev
+            ```
+        1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
+    1. Arch Linux:
+        ```
+        sudo pacman -S crystal shards gcc libxkbcommon libxinerama libxtst gtk3 gc
+        ```
 1. `git clone https://github.com/phil294/AHK_X11`
 1. `cd AHK_X11`
-1. Run these commands one by one (I haven't double checked them, so it's best to go through them manually)
+1. Run these commands one by one (I haven't double checked them, so it's best to go through them manually). Most of it is all WIP and temporary and only necessary so the different dependencies get along fine (x11 and gobject bindings). As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` calls) and thus reduce the overall compile time from ~6 to ~3 seconds.
     ```bash
     shards install
     # populate cache
@@ -177,9 +197,9 @@ As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` c
     # delete conflicting c function binding by modifying the cache
     sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
     ```
-1. `libxdo` is preferrably statically linked because it isn't backwards compatible (e.g. Ubuntu and Arch Linux versions are incompatible) and may introduce even more breaking changes in the future. So, clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there, run `make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
+1. `libxdo` is preferrably statically linked because it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. So, clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there, run `make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
 1. In `lib/x_do/src/x_do/libxdo.cr`, add line `role : LibC::Char*` *after* `winname : LibC::Char*`
-1. Build with `shards build -Dpreview_mt --link-flags="$PWD/static/libxdo.a -lxkbcommon -lXinerama -lXtst -lXi -lX11"`. When not in development, increase optimizations and runtime speed by adding `--release`. Finally, run `bin/ahk_x11 "your ahk file.ahk"`.
+1. Build with `shards build -Dpreview_mt --link-flags="$PWD/static -lxdo -lxkbcommon -lXinerama -lXtst -lXi -lX11"`. When not in development, increase optimizations and runtime speed by adding `--release`. Finally, run `bin/ahk_x11 "your ahk file.ahk"`.
 
 ## Performance
 
@@ -191,7 +211,7 @@ TODO: speed measurements for `Send` and window operations
 
 If you feel like it, you are welcome to contribute. This program has a very modular structure due to its nature which should make it easier to add features. Most work pending is just implementing commands, as almost everything more complicated is now bootstrapped. Simply adhere to the 2004 spec chm linked above. There's documentation blocks all across the source.
 
-Commands behave mostly autonomous. See for example `src/cmd/file/file-copy.cr`: All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
+Commands behave mostly autonomous. See for example [`src/cmd/file/file-copy.cr`](https://github.com/phil294/AHK_X11/blob/master/src/cmd/file/file-copy.cr): All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
 Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `thread.runner.get_user_var`, `thread.get_var` and `thread.runner.set_user_var`.
 
 GUI: Most controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are helpful.
@@ -203,7 +223,7 @@ A more general overview:
 
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
-While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see `Run::Thread` docs).
+While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see [`Run::Thread`](https://github.com/phil294/AHK_X11/blob/master/src/run/thread.cr) docs).
 
 ## Issues
 
