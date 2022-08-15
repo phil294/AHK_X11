@@ -1113,7 +1113,7 @@ return
           <h3 class="calibre7"><br class="calibre12" /> My keypad has a special 000 key. Is it possible to turn it into a hotkey? </h3>
           <p class="calibre8"><span class="tbd">You can, but only if you're running Windows NT, 2000, XP, or beyond. This <a href="#Numpad000.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">example script</a> makes the 000 key into an equals key. You can change the action by replacing the "Send, =" line with line(s) of your choice. </span></p>
           <h3 class="calibre7"><br class="calibre12" /> How can the output of a command line operation be retrieved?</h3>
-          <p class="calibre8"><span class="tbd">A small freeware utility <a href="http://www.autohotkey.com/misc/cb.zip" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">cb.zip</a> captures up to 512 KB of output from a command or program. The text is captured to the clipboard, which a script can access via the <a href="#Clipboard.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">clipboard variable</a>. Example:<br class="calibre12" /> RunWait %comspec% /c dir | cb.exe<br class="calibre12" /> MsgBox %clipboard%</span></p>
+          <p class="calibre8"><span class="tbd"><span class="rm">A small freeware utility <a href="http://www.autohotkey.com/misc/cb.zip" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">cb.zip</a> captures up to 512 KB of output from a command or program. The text is captured to the clipboard, which a script can access via the <a href="#Clipboard.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">clipboard variable</a>. Example:<br class="calibre12" /> RunWait %comspec% /c dir | cb.exe<br class="calibre12" /> MsgBox %clipboard%</span></span> <span class="x11">This is possible with the optional option OutputVarStdout.</span></p>
           <div class="tbd">
             <h3 class="calibre7"> <br class="calibre12" /> How can Winamp be controlled even when it isn't active?</h3>
             <p class="calibre8">See <a href="#Winamp.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Automating Winamp</a>.</p>
@@ -10790,15 +10790,16 @@ else
 return</pre>
         </div>
       </div>
+</div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Run.htm" href="#Run.htm">#</a> <h2 class="calibre17">Run / RunWait</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Runs an external program. Unlike Run, RunWait will wait until the program finishes before continuing.</p>
+          <p class="calibre8">Runs an external program. Unlike Run, RunWait will wait until the program finishes before continuing. <span class="x11">RunWait only reliably waits when the program is an executable file or program.</span></p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">Run, Target [, WorkingDir, Max|Min|Hide|UseErrorLevel, OutputVarPID]</td>
+                <td height="48" class="calibre4">Run, Target [, WorkingDir, <span class="tbd">Max|Min|Hide</span>|UseErrorLevel, OutputVarPID<span class="x11">, OutputVarStdout, OutputVarStderr</span>]</td>
               </tr>
             </tbody>
           </table>
@@ -10809,7 +10810,7 @@ return</pre>
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Target</td>
                 <td width="85%" class="calibre4">
-                  <p class="calibre8">A document, URL, executable file (.exe, .com, .bat, etc.), shortcut (.lnk), or system verb to launch (see remarks). If <em class="calibre21">Target</em> is a local file and no path was specified with it, <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> will be searched first. If no matching file is found there, the system will search for and launch the file if it is integrated ("known"), e.g. by being contained in one of the PATH folders.</p>
+                  <p class="calibre8">A document, URL, executable file (<span class="rm">.exe, .com, .bat, etc.</span> <span class="x11">a file with executable rights</span>), shortcut (<span class="rm">.lnk</span> <span class="x11">soft link</span>), or system verb to launch (see remarks). If <em class="calibre21">Target</em> is a local file and no path was specified with it, <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> will be searched first. If no matching file is found there, the system will search for and launch the file if it is integrated ("known"), e.g. by being contained in one of the PATH folders.</p>
                   <p class="calibre8">To pass parameters, add them immediately after the program or document name. If a parameter contains spaces, it is safest to enclose it in double quotes (even though it may work without them in some cases).</p>
                 </td>
               </tr>
@@ -10821,16 +10822,26 @@ return</pre>
                 <td class="calibre4">Max|Min|Hide<br class="calibre12" /> UseErrorLevel</td>
                 <td class="calibre4">
                   <p class="calibre8">If omitted, <em class="calibre21">Target</em> will be launched normally. Alternatively, it can contain one or more of these words: </p>
-                  <p class="calibre8"><strong class="calibre14">Max</strong>: launch maximized</p>
-                  <p class="calibre8"><strong class="calibre14">Min</strong>: launch minimized</p>
-                  <p class="calibre8"><strong class="calibre14">Hide</strong>: launch hidden (cannot be used in combination with either of the above) </p>
-                  <p class="calibre8"><strong class="calibre14">UseErrorLevel</strong>: In v1.0.19+, this word can be specified alone or in addition to one of the above words (by separating it from the other word with a space). When present, if the launch succeeds for the Run command (not RunWait), <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 0. If the launch fails for either Run or RunWait, the following alternate behavior will occur: 1) No warning dialog will be displayed; 2) The current thread will <u class="calibre20">not</u> be terminated; 3) <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> will be set to the word ERROR.</p>
-                  <p class="calibre8">Some applications (e.g. Calc.exe) do not obey the requested startup state and thus Max/Min/Hide will have no effect.</p>
+                  <div class="tbd">
+                    <p class="calibre8"><strong class="calibre14">Max</strong>: launch maximized</p>
+                    <p class="calibre8"><strong class="calibre14">Min</strong>: launch minimized</p>
+                    <p class="calibre8"><strong class="calibre14">Hide</strong>: launch hidden (cannot be used in combination with either of the above) </p>
+                  </div>
+                  <p class="calibre8"><strong class="calibre14">UseErrorLevel</strong>: This word can be specified alone or in addition to one of the above words (by separating it from the other word with a space). When present, if the launch succeeds for the Run command (not RunWait), <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 0. If the launch fails for either Run or RunWait, the following alternate behavior will occur: 1) No warning dialog will be displayed; 2) The current thread will <u class="calibre20">not</u> be terminated; 3) <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> will be set to the word ERROR. <span class="x11">This only works when the target is a valid, executable command! So it doesn't work with text files or web urls etc.</span></p>
+                  <p class="calibre8"><span class="rm">Some applications (e.g. Calc.exe) do not obey the requested startup state and thus Max/Min/Hide will have no effect.</span></p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">OutputVarPID</td>
-                <td class="calibre4">For the Run command in v1.0.18+, this optional parameter is the name of the variable in which to store the newly launched program's unique <a href="#Process.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Process ID (PID)</a>. The variable will be made blank if the PID could not be determined, which usually happens if a system verb, document, or shortcut is launched rather than a direct executable file.</td>
+                <td class="calibre4">For the Run command, this optional parameter is the name of the variable in which to store the newly launched program's unique <a href="#Process.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Process ID (PID)</a>. The variable will be made blank if the PID could not be determined, which usually happens if a system verb, document, or shortcut is launched rather than a direct executable file.</td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4"><span class="x11">OutputVarStdout</span></td>
+                <td class="calibre4"><span class="x11">For the RunWait command, this optional parameter is the name of the variable in which to store the program's full text output. This only works when the target is a valid, executable command.</span></td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4"><span class="x11">OutputVarStderr</span></td>
+                <td class="calibre4"><span class="x11">For the RunWait command, this optional parameter is the name of the variable in which to store the program's full error output. This only works when the target is a valid, executable command.</span></td>
               </tr>
             </tbody>
           </table>
@@ -10838,33 +10849,33 @@ return</pre>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
           <p class="calibre8">Unlike Run, RunWait will wait until <em class="calibre21">Target</em> is closed or exits, at which time <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> will be set to the program's exit code (as a signed 32-bit value). Some programs will appear to return immediately even though they are still running; these programs spawn another process.</p>
           <p class="calibre8">If <em class="calibre21">Target</em> cannot be launched, an error window will be displayed, after which the script will behave as though an <a href="#Exit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Exit </a>command were encountered. To prevent this, include the string <strong class="calibre14">UseErrorLevel</strong> in the 3rd parameter.</p>
-          <p class="calibre8">Performance may be slightly improved if <em class="calibre21">Target</em> is an exact path, e.g. Run, C:\Windows\Notepad.exe "C:\My Documents\Test.txt" rather than Run, C:\My Documents\Test.txt</p>
+          <p class="calibre8">Performance may be slightly improved if <em class="calibre21">Target</em> is an exact path, e.g. Run, mousepad "/a/b/Test.txt" rather than Run, /a/b/Test.txt</p>
           <p class="calibre8">System verbs correspond to actions available in a file's right-click menu in the Explorer. If a file is launched without a verb, the default verb (usually "open") for that particular file type will be used. If specified, the verb should be followed by the name of the target file. The following verbs are currently supported:</p>
           <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td width="8%" class="calibre4">properties</td>
-                <td width="92%" class="calibre4">Displays the Explorer's properties window for the indicated file. Example: Run, properties C:\autoexec.bat<br class="calibre12" /> Note: The properties window will automatically close when the script terminates. To prevent this, use <a href="#WinWaitClose.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitClose</a> to have the script wait for the properties window to close.</td>
+                <td width="92%" class="calibre4"><span class="tbd">Displays the Explorer's properties window for the indicated file. Example: Run, properties C:\autoexec.bat<br class="calibre12" /> Note: The properties window will automatically close when the script terminates. To prevent this, use <a href="#WinWaitClose.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitClose</a> to have the script wait for the properties window to close.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">find</td>
-                <td class="calibre4">Opens an instance of the Explorer's Search Companion or Find File window at the indicated folder. Example: Run, find D:\ </td>
+                <td class="calibre4"><span class="tbd">Opens an instance of the Explorer's Search Companion or Find File window at the indicated folder. Example: Run, find D:\ </span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">explore</td>
-                <td class="calibre4">Opens an instance of Explorer at the indicated folder. Example: Run, explore %ProgramFiles%</td>
+                <td class="calibre4">Opens an instance of Explorer at the indicated folder. Example: Run, explore %ProgramFiles%. <ahk class="x11">You can do that, but folders are being opened just fine without this verb, so it's unnecessary.</ahk> </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">edit</td>
-                <td class="calibre4">Opens the indicated file for editing. It might not work if the indicated file's type does not have an "edit" action associated with it. Example: Run, edit "C:\My File.txt" </td>
+                <td class="calibre4">Opens the indicated file for editing. <span class="rm">It might not work if the indicated file's type does not have an "edit" action associated with it.</span> Example: Run, edit /a/b/My File.txt</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">open</td>
-                <td class="calibre4">Opens the indicated file (normally not needed because it is the default action for most file types). Example: Run, open "My File.txt"</td>
+                <td class="calibre4">Opens the indicated file (normally not needed because it is the default action for most file types). Example: Run, open My File.txt</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">print</td>
-                <td class="calibre4">Prints the indicated file with the associate application, if any. Example: Run, print "My File.txt" </td>
+                <td class="calibre4">Prints the indicated file with the associate application, if any. Example: Run, print My File.txt <span class="x11">This currently just sends the file to `lp` which expects you to have a default printer set up. Untested.</span></td>
               </tr>
             </tbody>
           </table>
@@ -10875,20 +10886,25 @@ return</pre>
           <p class="calibre8"><a href="#RunAs.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunAs</a>, <a href="#Process.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Process</a>, <a href="#Exit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Exit</a></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Examples</strong></p>
-          <pre class="calibre22">Run, Notepad.exe, C:\My Documents, max
+          <pre class="calibre22">Run, mousepad, /a/b, max
 
 Run, ReadMe.doc, , Max UseErrorLevel  ; Launch maximized and don't display dialog if it fails.
 if ErrorLevel = ERROR
 	MsgBox The document could not be launched.
 
-RunWait, %comspec% /c dir c:\ &gt;&gt;c:\DirTest.txt, , min
-Run, c:\DirTest.txt
-Run, properties c:\DirTest.txt
+RunWait, echo -n Text to stdout && echo -n Text to stderr >&2 && exit 5,,,, stdout, stderr
+Echo, Exit code: %errorlevel%`, stdout: %stdout%`, stderr: %stderr%
+
+RunWait, ls / &gt;&gt;/a/b/DirTest.txt, , min
+Run, /a/b/DirTest.txt
+RunWait, ls ~,,,, out
+MsgBox %out%
 
 Run, www.autohotkey.com ; i.e. any URL can be launched.
 Run, mailto:support@autohotkey.com  ; This should open the default e-mail application.</pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="RunAs.htm" href="#RunAs.htm">#</a> <h2 class="calibre17">RunAs</h2> [v1.0.08+]
@@ -18562,7 +18578,7 @@ Return
             <br class="calibre12" /> In the above example, the %comspec% <a href="#Variables.htm__env" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">environment variable</a> might resolve to C:\Windows\system32\cmd.exe on a typical system.<br class="calibre12" />
             <br class="calibre12" /> To pass parameters, add them immediately after the name of the program or document as in these examples:<br class="calibre12" /> Run, %comspec% /k dir, C:\My Documents <br class="calibre12" /> Run, Notepad.exe "C:\My Documents\Address List.txt"<br class="calibre12" /> Run, %ProgramFiles%\AutoHotkey\AutoHotkey.exe "C:\Scripts\Test Script.ahk" param1 "param2 with spaces" param3<br class="calibre12" />
             <br class="calibre12" /> In the 2nd and 3rd examples, parameters with spaces in them are enclosed in double quotes, which as a rule is the safest practice. By contrast, the working directory should not be enclosed in double quotes even if it contains spaces, such as in the 1st example above.<br class="calibre12" />
-            <br class="calibre12" /> Certain special words known as <em class="calibre21">system verbs</em> are also supported. The first example below opens the Explorer's properties dialog for the indicated file. The second example prints the specified document:<br class="calibre12" /> Run, properties "C:\Address List.txt"<br class="calibre12" /> Run, print "C:\Address List.txt"<br class="calibre12" />
+            <br class="calibre12" /> Certain special words known as <em class="calibre21">system verbs</em> are also supported. The first example below opens the Explorer's properties dialog for the indicated file. The second example prints the specified document:<br class="calibre12" /> Run, properties "C:\Address List.txt"<br class="calibre12" /> Run, print C:\Address List.txt<br class="calibre12" />
             <br class="calibre12" />
             <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a> sets the built-in <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> variable to the exit code of the program it ran. For example, the following will display a non-zero ErrorLevel because the comspec program is indicating that a problem occurred:<br class="calibre12" /> RunWait, %comspec% /c dir c:\NonExistent.txt, , hide<br class="calibre12" /> MsgBox, %ErrorLevel%<br class="calibre12" />
             <br class="calibre12" />

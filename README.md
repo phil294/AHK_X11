@@ -32,7 +32,7 @@ Features:
 Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the [docs](https://phil294.github.io/AHK_X11).
 
 ```diff
-DONE      15% (31/213):
+DONE      16% (33/213):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox (incomplete), Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -54,7 +54,7 @@ REMOVED   10% (21/213):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     74% (158/213): alphabetically
+TO DO     73% (156/213): alphabetically
 - BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
 - FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
@@ -68,7 +68,7 @@ TO DO     74% (158/213): alphabetically
 - InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
 - Loop (parse a string), Loop (read file contents), Loop (registry), Menu, MouseClick, 
 - MouseClickDrag, MouseGetPos, MouseMove, OnExit, Pause, PixelGetColor, PixelSearch, 
-- Process, Progress, Random, Reload, Run, RunAs, RunWait, SetBatchLines, 
+- Process, Progress, Random, Reload, RunAs, SetBatchLines, 
 - SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
 - SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 

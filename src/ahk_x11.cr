@@ -4,8 +4,8 @@ require "./run/runner"
 
 fun main(argc : Int32, argv : UInt8**) : Int32
 	# Enforce 4 threads because less than that break the program. For now, this is the
-	# only way to enforce it. (1 = main, 2 = x11, 3 = gui, 4 = ? probably timer)
-	LibC.setenv("CRYSTAL_WORKERS", "4", 1)
+	# only way to enforce it. (1 = main, 2 = x11, 3 = gui, 4 = ? probably timer, 5 = actually the amount is undefined because stdlib may use `spawn`s several times. TODO:)
+	LibC.setenv("CRYSTAL_WORKERS", "8", 1)
 	Crystal.main(argc, argv)
 end
 

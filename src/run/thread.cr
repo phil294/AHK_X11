@@ -72,7 +72,7 @@ module Run
 				@runner.gui.msgbox msg
 				STDERR.puts msg
 				@done = true
-				@exit_code = 2
+				@exit_code = 2 # TODO: ???
 				return @exit_code
 			end
 

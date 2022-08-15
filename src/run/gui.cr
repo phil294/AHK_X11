@@ -13,9 +13,10 @@ module Run
 			LibGtk.main # blocking!
 		end
 
-		# `idle_add` tells GTK to run the `block` in its free time (on its own worker thread),
+		# For running Gtk code on the Gtk worker thread (`idle_add` tells GTK to run
+		# the `block` in its free time),
 		# so perfect for Gui modifications, new window requests etc.
-		private def act(&block)
+		def act(&block)
 			channel = Channel(Exception?).new
 			GLib.idle_add do
 				begin
