@@ -3,9 +3,15 @@ require "./build/builder"
 require "./run/runner"
 
 fun main(argc : Int32, argv : UInt8**) : Int32
+	# It's also possible to run everything *without* `preview_mt` and spawn threads manually instead.
+	# This is mostly complete in the `gui-without-preview_mt` branch but because Channels don't work
+	# in MT, this needs suboptimal workarounds. Also, in that branch, gui glabel actions aren't
+	# working because the gui code is expected to modify the threads array from the main thread...
+	# It's all possible but rather ugly, so I went with MT for now.
+	#
 	# Enforce 4 threads because less than that break the program. For now, this is the
-	# only way to enforce it. (1 = main, 2 = x11, 3 = gui, 4 = ? probably timer, 5 = actually the amount is undefined because stdlib may use `spawn`s several times. TODO:)
-	LibC.setenv("CRYSTAL_WORKERS", "8", 1)
+	# only way to enforce it. (1 = main, 2 = x11, 3 = gui, 4 = ? probably timer)
+	LibC.setenv("CRYSTAL_WORKERS", "4", 1)
 	Crystal.main(argc, argv)
 end
 
