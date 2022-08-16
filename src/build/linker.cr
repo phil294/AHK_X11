@@ -133,6 +133,7 @@ module Build
 		getter labels = {} of String => Cmd::Base
 
 		def link!(cmds)
+			@start = nil
 			pending_labels = [] of String
 			last_normal = nil
 			conds = [] of Conditional

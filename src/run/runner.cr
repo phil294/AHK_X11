@@ -47,13 +47,15 @@ module Run
 		getter gui = Gui.new
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
+		@builder : Build::Builder
 
-		def initialize(*, @labels, escape_char, @settings)
-			@settings.escape_char = escape_char
+		def initialize(*, @builder)
+			@labels = @builder.labels
+			@settings = @builder.runner_settings
 		end
-		def run(*, hotkeys, hotstrings, auto_execute_section : Cmd::Base)
-			hotkeys.each { |h| add_hotkey h }
-			hotstrings.each { |h| add_hotstring h }
+		def run
+			@builder.hotkeys.each { |h| add_hotkey h }
+			@builder.hotstrings.each { |h| add_hotstring h }
 			# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
 			::Thread.new do
 				@x11.run self, @settings.hotstring_end_chars # separate worker thread because event loop is blocking
@@ -62,7 +64,11 @@ module Run
 				@gui.run # separate worker thread because gtk loop is blocking
 			end
 			spawn same_thread: true { clock }
-			@auto_execute_thread = add_thread auto_execute_section, 0
+			if (auto_execute_section = @builder.start)
+				@auto_execute_thread = add_thread auto_execute_section, 0
+			else
+				auto_execute_section_ended
+			end
 		end
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
@@ -101,7 +107,7 @@ module Run
 							@threads.pop
 							if thread == @auto_execute_thread
 								@default_thread_settings = thread.settings
-								exit_app @exit_code if ! @settings.persistent && @hotkeys.empty? && @hotstrings.empty?
+								auto_execute_section_ended
 							end
 						end
 					end
@@ -113,6 +119,31 @@ module Run
 
 		def exit_app(code)
 			::exit code
+		end
+
+		private def auto_execute_section_ended
+			exit_app @exit_code if ! @settings.persistent && @hotkeys.empty? && @hotstrings.empty?
+			repl
+		end
+		private def repl
+			spawn do
+				puts "Interactive AHK_X11 console (REPL). Type any command. Multi-line text not supported. Press {CTRL}+C to exit."
+				loop do
+					print "ahk_x11> "
+					begin
+						line = read_line
+					rescue e
+						abort e
+					end
+					begin
+						@builder.build [line]
+						add_thread @builder.start.not_nil!, 0 if @builder.start
+						Fiber.yield
+					rescue e
+						STDERR.puts e.message
+					end
+				end
+			end
 		end
 
 		# Do not use directly, use `Thread.get_var` instead.

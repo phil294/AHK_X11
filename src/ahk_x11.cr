@@ -17,10 +17,6 @@ fun main(argc : Int32, argv : UInt8**) : Int32
 	Crystal.main(argc, argv)
 end
 
-if ! ARGV[0]?
-	abort "Missing file argument.\nUsage:\n    ahk_x11 path/to/script.ahk"
-end
-
 def build_error(msg)
 	msg = "#{msg}\n\nThe program will exit."
 	gui = Run::Gui.new
@@ -30,12 +26,16 @@ def build_error(msg)
 end
 # TODO: fiber unhandled exception handler set to build_errow somehow?
 
-begin
-	ahk_str = File.read ARGV[0]
-rescue
-	build_error "File '#{ARGV[0]}' could not be read."
+if ARGV[0]?
+	begin
+		ahk_str = File.read ARGV[0]
+	rescue
+		build_error "File '#{ARGV[0]}' could not be read."
+	end
+	lines = ahk_str.split /\r?\n/
+else
+	lines = ["#Persistent"]
 end
-lines = ahk_str.split /\r?\n/
 
 begin
 	builder = Build::Builder.new
@@ -44,12 +44,9 @@ rescue e : Build::SyntaxException | Build::ParsingException
 	build_error e.message
 end
 
-start = builder.start
-exit if ! start
-
 begin
-	runner = Run::Runner.new labels: builder.labels, escape_char: builder.escape_char, settings: builder.runner_settings
-	runner.run hotkeys: builder.hotkeys, hotstrings: builder.hotstrings, auto_execute_section: start
+	runner = Run::Runner.new builder: builder
+	runner.run
 rescue e : Run::RuntimeException
 	build_error e.message
 end

@@ -18,13 +18,13 @@ module Build
 		getter hotkeys = [] of Run::Hotkey
 		getter hotstrings = [] of Run::Hotstring
 		getter comment_flag = ";"
-		getter escape_char = '`'
 		getter runner_settings = Run::RunnerSettings.new
 
 		@block_comment = false
 		@hotstring_default_options = ""
 
 		def parse_into_cmds!(lines : Array(String))
+			@cmds.clear
 			lines.each_with_index do |line, line_no|
 				begin
 					add_line line, line_no
@@ -89,7 +89,7 @@ module Build
 				@runner_settings.persistent = true
 			elsif first_word == "#hotstring"
 				if args[0..8].downcase == "endchars "
-					str = Util::AhkString.parse_string(args[8..].strip, @escape_char, no_variable_substitution: true){}
+					str = Util::AhkString.parse_string(args[8..].strip, @runner_settings.escape_char, no_variable_substitution: true){}
 					@runner_settings.hotstring_end_chars = str.chars
 				else
 					@hotstring_default_options = args.strip
@@ -113,7 +113,7 @@ module Build
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
 					hotstring = Run::Hotstring.new label.downcase, abbrev,
 						options: @hotstring_default_options + options,
-						escape_char: @escape_char
+						escape_char: @runner_settings.escape_char
 					@hotstrings << hotstring
 					if ! instant_action.empty?
 						end_char = hotstring.omit_ending_character ? "" : "%A_EndChar%"
@@ -182,8 +182,8 @@ module Build
 			if args.empty?
 				return [] of String
 			end
-		 	args.split(/(?<!#{@escape_char}),/, limit).map do |arg|
-				arg.strip.gsub(/(?<!#{@escape_char})#{@escape_char},/, ",")
+		 	args.split(/(?<!#{@runner_settings.escape_char}),/, limit).map do |arg|
+				arg.strip.gsub(/(?<!#{@runner_settings.escape_char})#{@runner_settings.escape_char},/, ",")
 			end
 		end
 
