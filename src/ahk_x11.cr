@@ -34,6 +34,7 @@ if ARGV[0]?
 	end
 	lines = ahk_str.split /\r?\n/
 else
+	puts "No script detected. To execute a .ahk script, pass it as an argument to this program, such as ./ahk_x11 \"path to your script.ahk\""
 	lines = ["#Persistent"]
 end
 

@@ -100,7 +100,7 @@ module Run
 
 		def gosub(label)
 			cmd = @runner.labels[label]?
-			raise RuntimeException.new "gosub: target label '#{label}' does not /st" if ! cmd
+			raise RuntimeException.new "gosub: target label '#{label}' does not exist" if ! cmd
 			@stack << cmd
 		end
 		def goto(label)

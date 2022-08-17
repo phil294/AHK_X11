@@ -29,6 +29,9 @@ Features:
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy
 
+Besides:
+- Interactive console (REPL)
+
 Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the [docs](https://phil294.github.io/AHK_X11).
 
 ```diff
@@ -108,7 +111,15 @@ TO DO     73% (156/213): alphabetically
 
 Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`.
 
-In the future, we'll also have proper Desktop integration so you can double click ahk files to run them.
+In the future, we'll also have proper installers and Desktop integration so you can double click ahk files to run them.
+
+Once your script is running, you can also execute arbitrary single line commands in the console. When you don't pass a script, you can still do that because `#Persistent` is implied.
+
+If you want to pass your command from stdin instead of file, do it like this:
+```shell
+echo "MsgBox, 1
+MsgBox, 2 " | ./ahk_x11 /dev/stdin
+```
 
 <details>
 <summary>Here's a working demo script showing several of the commands so far implemented.</summary>
