@@ -1199,13 +1199,14 @@ else
                 </td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4"><strong class="calibre14">$</strong></td>
+                <td class="calibre4"><strong class="calibre14"><span class="rm">$</span></strong></td>
                 <td class="calibre4">
-                  <div class="tbd">
+                  <div class="rm">
                     <p class="calibre8"><a id="Hotkeys.htm__prefixdollar" href="#Hotkeys.htm__prefixdollar" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> This is usually only necessary if the script uses the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command to send the keys that comprise the hotkey itself, which would otherwise cause it to fire unintentionally. The exact behavior of the $ prefix varies depending on operating system:</p>
                     <p class="calibre8">On Windows 95/98/Me and AutoHotkey v1.0.23+: The hotkey is disabled during the execution of its <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">thread</a> and re-enabled afterward. As a side-effect, if <a href="#h_MaxThreadsPerHotkey.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxThreadsPerHotkey</a> is set higher than 1, it will behave as though set to 1 for such hotkeys.</p>
                     <p class="calibre8">On other operating systems and for all versions of AutoHotkey: The $ prefix forces the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard hook</a> to be used to implement this hotkey, which as a side-effect prevents the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command from triggering it. The $ prefix is equivalent to having specified <a href="#h_UseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#UseHook</a> prior to the definition of this hotkey.</p>
                   </div>
+                  <div class="x11">This flag is the default and cannot be configured. Hotkeys can arbitrarily send their own or other grabbed keys because all hotkeys are disabled while any Send-like action takes place.</div>
                 </td>
               </tr>
             </tbody>

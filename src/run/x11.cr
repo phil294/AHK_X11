@@ -191,7 +191,12 @@ module Run
 		def pause
 			@pause_mutex.lock
 			@pause_counter += 1
-			@is_paused = true
+			if ! @is_paused
+				@hotkey_subscriptions.each do |sub|
+					unregister_hotkey sub[:hotkey], unsubscribe: false
+				end
+				@is_paused = true
+			end
 			@pause_mutex.unlock
 		end
 		# before resume, x11 will discard all events collected since it got paused
@@ -200,6 +205,9 @@ module Run
 			@pause_counter -= 1
 			if @pause_counter < 1
 				@pause_counter = 0
+				@hotkey_subscriptions.each do |sub|
+					register_hotkey sub[:hotkey], subscribe: false
+				end
 				@is_paused = false
 			end
 			@pause_mutex.unlock
@@ -213,25 +221,29 @@ module Run
 			@hotstrings << hotstring
 		end
 
-		def register_hotkey(hotkey)
+		def register_hotkey(hotkey, subscribe = true)
 			keycode = keysym_to_keycode(hotkey.keysym)
-			@hotkey_subscriptions << {
-				hotkey: hotkey,
-				keycode: keycode
-			}
+			if subscribe
+				@hotkey_subscriptions << {
+					hotkey: hotkey,
+					keycode: keycode
+				}
+			end
 			if ! hotkey.no_grab
 				hotkey.modifiers.each do |mod|
 					@display.grab_key(keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
 		end
-		def unregister_hotkey(hotkey)
+		def unregister_hotkey(hotkey, unsubscribe = true)
 			i = @hotkey_subscriptions.index! { |sub| sub.[:hotkey] == hotkey }
 			sub = @hotkey_subscriptions[i]
 			sub[:hotkey].modifiers.each do |mod|
 				@display.ungrab_key(sub[:keycode], mod, grab_window: @root_win)
 			end
-			@hotkey_subscriptions.delete i
+			if unsubscribe
+				@hotkey_subscriptions.delete i
+			end
 		end
 
 		# Not using `String` here because it's more convenient (and also faster) to just
