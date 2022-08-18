@@ -26,9 +26,11 @@ def build_error(msg)
 end
 # TODO: fiber unhandled exception handler set to build_errow somehow?
 
+script_file = nil
 if ARGV[0]?
+	script_file = File.expand_path(ARGV[0])
 	begin
-		ahk_str = File.read ARGV[0]
+		ahk_str = File.read(script_file)
 	rescue
 		build_error "File '#{ARGV[0]}' could not be read."
 	end
@@ -46,7 +48,7 @@ rescue e : Build::SyntaxException | Build::ParsingException
 end
 
 begin
-	runner = Run::Runner.new builder: builder
+	runner = Run::Runner.new builder: builder, script_file: script_file
 	runner.run
 rescue e : Run::RuntimeException
 	build_error e.message

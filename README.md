@@ -35,11 +35,11 @@ Besides:
 Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the [docs](https://phil294.github.io/AHK_X11).
 
 ```diff
-DONE      16% (33/213):
+DONE      16% (34/213):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox (incomplete), Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
-+ FileAppend, Hotkey, Send, ControlSend, #Hotstring
++ FileAppend, Hotkey, Send, ControlSend, #Hotstring, Menu
 
 NEW       1% (2/213): (new Linux-specific commands)
 @@ Echo, ahk_x11_print_vars @@
@@ -57,7 +57,7 @@ REMOVED   10% (21/213):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     73% (156/213): alphabetically
+TO DO     73% (155/213): alphabetically
 - BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
 - FileCopyDir, FileCreateDir, FileCreateShortcut, FileDelete, 
@@ -69,7 +69,7 @@ TO DO     73% (156/213): alphabetically
 - IfGreater/IfGreaterOrEqual, IfInString/IfNotInString, IfLess/IfLessOrEqual, IfMsgBox, 
 - IfWinActive/IfWinNotActive, IniDelete, IniRead, IniWrite, Input, 
 - InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
-- Loop (parse a string), Loop (read file contents), Loop (registry), Menu, MouseClick, 
+- Loop (parse a string), Loop (read file contents), Loop (registry), MouseClick, 
 - MouseClickDrag, MouseGetPos, MouseMove, OnExit, Pause, PixelGetColor, PixelSearch, 
 - Process, Progress, Random, Reload, RunAs, SetBatchLines, 
 - SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
@@ -109,16 +109,18 @@ TO DO     73% (156/213): alphabetically
 
 ## Usage
 
-Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`.
+Pass the script to execute as first parameter, e.g.
+```shell
+./ahk_x11 "path to your script.ahk"
+```
 
 In the future, we'll also have proper installers and Desktop integration so you can double click ahk files to run them.
 
-Once your script is running, you can also execute arbitrary single line commands in the console. When you don't pass a script, you can still do that because `#Persistent` is implied.
+Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. When you don't pass a script, you can still do that because `#Persistent` is implied.
 
 If you want to pass your command from stdin instead of file, do it like this:
 ```shell
-echo "MsgBox, 1
-MsgBox, 2 " | ./ahk_x11 /dev/stdin
+./ahk_x11 /dev/stdin <<< 'MsgBox'
 ```
 
 <details>

@@ -30,7 +30,9 @@ module Run
 			"a_space" => " ",
 			"a_index" => "0",
 			"a_workingdir" => Dir.current,
-			"a_endchar" => ""
+			"a_endchar" => "",
+			"a_iconfile" => "",
+			"a_icontip" => "",
 		}
 		protected getter labels : Hash(String, Cmd::Base)
 		@threads = [] of Thread
@@ -48,8 +50,9 @@ module Run
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 		@builder : Build::Builder
+		getter script_file : String?
 
-		def initialize(*, @builder)
+		def initialize(*, @builder, @script_file)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
 		end
@@ -63,6 +66,7 @@ module Run
 			::Thread.new do
 				@gui.run # separate worker thread because gtk loop is blocking
 			end
+			@gui.initialize_menu(self)
 			spawn same_thread: true { clock }
 			if (auto_execute_section = @builder.start)
 				@auto_execute_thread = add_thread auto_execute_section, 0
