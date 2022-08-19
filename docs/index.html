@@ -3405,6 +3405,7 @@ return
           <p class="calibre8">FileCreateShortcut, Notepad.exe, %HOMEDRIVE%%HOMEPATH%\Desktop\My Shortcut.lnk, C:\, "%A_ScriptFullPath%", My Description, C:\My Icon.ico, i</p>
         </div>
       </div>
+</div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="FileDelete.htm" href="#FileDelete.htm">#</a> <h2 class="calibre17">FileDelete</h2>
@@ -3423,7 +3424,7 @@ return
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td width="15%" class="calibre4">FilePattern</td>
-                <td width="85%" class="calibre4">The name of a single file or a wildcard pattern such as C:\Temp\*.tmp. <em class="calibre21">FilePattern </em>is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified.</td>
+                <td width="85%" class="calibre4">The name of a single file or a wildcard pattern such as /tmp/*.tmp. <em class="calibre21">FilePattern </em>is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified.</td>
               </tr>
             </tbody>
           </table>
@@ -3439,10 +3440,11 @@ return
           </p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <p class="calibre8"> FileDelete, C:\temp files\*.tmp <br class="calibre12" />
+          <p class="calibre8"> FileDelete, /a/b/*.tmp <br class="calibre12" />
           </p>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="FileGetAttrib.htm" href="#FileGetAttrib.htm">#</a> <h2 class="calibre17">FileGetAttrib</h2>
