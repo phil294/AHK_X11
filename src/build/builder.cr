@@ -11,7 +11,7 @@ module Build
 		getter hotstrings = [] of Run::Hotstring
 		getter runner_settings = Run::RunnerSettings.new
 
-		def build(lines : Array(String))
+		def build(lines : Indexable(String))
 			@parser.parse_into_cmds! lines
 			@hotkeys = @parser.hotkeys
 			@hotstrings = @parser.hotstrings

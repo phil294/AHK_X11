@@ -23,7 +23,7 @@ module Build
 		@block_comment = false
 		@hotstring_default_options = ""
 
-		def parse_into_cmds!(lines : Array(String))
+		def parse_into_cmds!(lines : Indexable(String))
 			@cmds.clear
 			lines.each_with_index do |line, line_no|
 				begin

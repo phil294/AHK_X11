@@ -32,6 +32,7 @@ Features:
 - [ ] Window Spy
 
 Besides:
+- Graphical installer (optional)
 - Interactive console (REPL)
 
 Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the [docs](https://phil294.github.io/AHK_X11).
@@ -102,8 +103,14 @@ Then, you can download the latest binary from the [release section](https://gith
 
 ## Usage
 
+There are different ways to use it.
 
-Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`. Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`). If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
+1. The Windows way: Running the program directly opens up the interactive installer.
+    - Once installed, all `.ahk` files are associated with AHK_X11, so you can simply double click them.
+2. Command line: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
+    - Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
+    - When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`).
+    - If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
 
 <details>
 <summary>Here's a working demo script showing several of the commands so far implemented.</summary>

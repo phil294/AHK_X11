@@ -1,6 +1,8 @@
 require "./global/*"
 require "./build/builder"
 require "./run/runner"
+require "./installer"
+require "./logo"
 
 fun main(argc : Int32, argv : UInt8**) : Int32
 	# It's also possible to run everything *without* `preview_mt` and spawn threads manually instead.
@@ -40,8 +42,10 @@ if ARGV[0]?
 		lines = ahk_str.split /\r?\n/
 	end
 else
-	build_error "No script detected. To execute a .ahk script, pass it as an argument to this program, such as ./ahk_x11 \"path to your script.ahk\""
+	lines = installer_lines
+	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
 end
+
 begin
 	builder = Build::Builder.new
 	builder.build lines
