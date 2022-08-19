@@ -9,6 +9,8 @@ AutoHotkey for Linux. (WORK IN PROGRESS)
 `MsgBox, AHK_X11` (*)
 </div>
 
+[**Direct download**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11.zip) (all Linux distributions, x86_64, single executable)
+
 [**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
 
 [**Go to installation instructions**](#installation)
@@ -90,38 +92,18 @@ TO DO     73% (155/213): alphabetically
 
 ## Installation
 
-1. Be running a X display server (if you don't know what that means, you're already doing it)
-1. Prerequisites
-    1. Ubuntu 20.04 and up, Pop OS, etc.:
-        ```bash
-        sudo apt-get install libxinerama1 libxkbcommon0 libxtst6 libgtk-3-0 libevent-pthreads-2.1-7 libevent-2.1-7
-        ```
-    1. Arch Linux, Manjaro, etc.:
-        There's no AUR for this yet, so do this manually:
-        ```
-        sudo pacman -S libxkbcommon libxinerama libxtst gtk3 gc
-        ```
-    1. Other distributions:
-        There are no builds yet, please build from source (see [Development](#development) below).
-1. Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases). Make the downloaded file executable and you should be good to go.
+Prerequisites:
+- X11 and GTK are the only dependencies. You most likely have them already.
+- Old distros like Debian *before* 10 (Buster) or Ubuntu *before* 18.04 are not supported ([reason](https://github.com/jhass/crystal-gobject/issues/73#issuecomment-661235729)). Otherwise, it should not matter what system you use.
 
-**Please note that the current version is still barely usable** because most things are not implemented yet.
+Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases). Make the downloaded file executable and you should be good to go.
+
+**Please note that the current version is not very usable yet** because many commands are missing.
 
 ## Usage
 
-Pass the script to execute as first parameter, e.g.
-```shell
-./ahk_x11 "path to your script.ahk"
-```
 
-In the future, we'll also have proper installers and Desktop integration so you can double click ahk files to run them.
-
-Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. When you don't pass a script, you can still do that because `#Persistent` is implied.
-
-If you want to pass your command from stdin instead of file, do it like this:
-```shell
-./ahk_x11 /dev/stdin <<< 'MsgBox'
-```
+Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`. Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`). If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
 
 <details>
 <summary>Here's a working demo script showing several of the commands so far implemented.</summary>
@@ -210,9 +192,19 @@ These are the steps required to build this project locally. Please open an issue
     # delete conflicting c function binding by modifying the cache
     sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
     ```
-1. `libxdo` is preferrably statically linked because it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. So, clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there, run `make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
+1. Now everything is ready for local use with `shards build -Dpreview_mt`, if you have `libxdo` (xdotool) version 2016x installed. Read on for a cross-distro compatible build.
 1. In `lib/x_do/src/x_do/libxdo.cr`, add line `role : LibC::Char*` *after* `winname : LibC::Char*`
-1. Build with `shards build -Dpreview_mt --link-flags="$PWD/static -lxdo -lxkbcommon -lXinerama -lXtst -lXi -lX11"`. When not in development, increase optimizations and runtime speed by adding `--release`. Finally, run `bin/ahk_x11 "your ahk file.ahk"`.
+1. To make AHK_X11 maximally portable, various dependencies should be statically linked. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04.
+    - Should be statically linked:
+        - `libxdo`. Additionally to the above reasons, it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. So, clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there, run `make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
+        - Dependencies of `libxdo`: `libxkbcommon`, `libXtst` and `libXi`. The static libraries should be available from your package manager dependencies installed above so normally there's nothing you need to do.
+        - More dependencies of `libxdo` which are also available from the packages, but their linking fails with obscure PIE errors: `libXinerama` and `libXext`. I solved this by getting the source for these two and building the `.a` files locally (but apparently no makefile changes were required). Not very sure if these aren't actually part of every standard `libx11` install anyway, so maybe they should be dynamic...
+        - Other (crystal dependencies?), also via package manager: `libevent_pthreads`, `libevent`, and `libpcre`
+        - `libgc` is currently shipped and linked automatically by Crystal itself so there is no need for it
+    - Stays dynamically linked:
+        - `libgtk-3` and its dependencies, because afaik Gtk is installed everywhere, even on Qt-based distros. If you know of any common distribution that does not include Gtk libs by default please let me know. Gtk does also not officially support static linking. `libgtk-3`, `libgd_pixbuf-2.0`, `libgio-2.0`, `libgobject-2.0`, `libglib-2.0`, `libgobject-2.0`
+        - glibc / unproblematic libraries according to [this list](https://github.com/AppImage/pkg2appimage/blob/master/excludelist): `libX11`, `libm`, `libpthread`, `librt`, `libdl`.
+1. All in all, once you have `libxdo.a`, `libXext.a` and `libXinerama.a` inside the folder `static`, the following builds the final binary which should be very portable: `shards build -Dpreview_mt --link-flags="-L$PWD/static -Wl,-Bstatic -lxdo -lxkbcommon -lXinerama -lXext -lXtst -lXi -levent_pthreads -levent -lpcre -Wl,-Bdynamic"`. When not in development, increase optimizations and runtime speed by adding `--release`. The resulting binary is about 3.6 MiB in size.
 
 ## Performance
 

@@ -28,18 +28,20 @@ end
 
 script_file = nil
 if ARGV[0]?
-	script_file = File.expand_path(ARGV[0])
-	begin
-		ahk_str = File.read(script_file)
-	rescue
-		build_error "File '#{ARGV[0]}' could not be read."
+	if ARGV[0] == "--repl"
+		lines = ["#Persistent"]
+	else
+		script_file = File.expand_path(ARGV[0])
+		begin
+			ahk_str = File.read(script_file)
+		rescue
+			build_error "File '#{ARGV[0]}' could not be read."
+		end
+		lines = ahk_str.split /\r?\n/
 	end
-	lines = ahk_str.split /\r?\n/
 else
-	puts "No script detected. To execute a .ahk script, pass it as an argument to this program, such as ./ahk_x11 \"path to your script.ahk\""
-	lines = ["#Persistent"]
+	build_error "No script detected. To execute a .ahk script, pass it as an argument to this program, such as ./ahk_x11 \"path to your script.ahk\""
 end
-
 begin
 	builder = Build::Builder.new
 	builder.build lines
