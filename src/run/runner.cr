@@ -145,7 +145,7 @@ module Run
 					begin
 						line = read_line
 					rescue e
-						abort e
+						break # i.e. there is no stdin, it was closed or never existed like when run via double click.
 					end
 					begin
 						@builder.build [line]
