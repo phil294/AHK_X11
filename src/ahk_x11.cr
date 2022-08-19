@@ -31,7 +31,7 @@ if ARGV[0]?
 	if ARGV[0] == "--repl"
 		lines = ["#Persistent"]
 	else
-		script_file = File.expand_path(ARGV[0])
+		script_file = Path[ARGV[0]].expand
 		begin
 			ahk_str = File.read(script_file)
 		rescue

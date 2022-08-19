@@ -33,6 +33,10 @@ module Run
 			"a_endchar" => "",
 			"a_iconfile" => "",
 			"a_icontip" => "",
+			"a_home" => Path.home.to_s,
+			"a_scriptdir" => "",
+			"a_scriptname" => "",
+			"a_scriptfullpath" => "",
 		}
 		protected getter labels : Hash(String, Cmd::Base)
 		@threads = [] of Thread
@@ -50,11 +54,15 @@ module Run
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 		@builder : Build::Builder
-		getter script_file : String?
+		getter script_file : Path?
 
 		def initialize(*, @builder, @script_file)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
+			script = @script_file ? @script_file.not_nil! : Path[PROGRAM_NAME].expand
+			set_global_built_in_static_var "A_ScriptDir", script.dirname
+			set_global_built_in_static_var "A_ScriptName", script.basename
+			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
 		end
 		def run
 			@builder.hotkeys.each { |h| add_hotkey h }

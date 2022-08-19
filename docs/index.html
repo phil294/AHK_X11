@@ -1519,21 +1519,19 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_ScriptDir</td>
-                <td class="calibre4"><a id="Variables.htm__ScriptDir" href="#Variables.htm__ScriptDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="tbd"> The full path of the directory where the current script is located. The final backslash is not included.</span></td>
+                <td class="calibre4"><a id="Variables.htm__ScriptDir" href="#Variables.htm__ScriptDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> The full path of the directory where the current script is located. The final backslash is not included.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_ScriptName</td>
                 <td class="calibre4">
-                  <p class="calibre8"><a id="Variables.htm__ScriptName" href="#Variables.htm__ScriptName" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="tbd">
-                     The file name of the current script, without its path, e.g. MyScript.ahk. If the script is <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">compiled</a>, the name will end in .exe instead. Thus, a good way for a script to detect whether it is running in compiled form is with the following:<br class="calibre12" />
-                      <a href="#SplitPath.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SplitPath</a>, A_ScriptName,,, FileExt<br class="calibre12" /> if FileExt = exe<br class="calibre12" />     MsgBox This script is running in compiled form.
-                  </span>
+                  <p class="calibre8"><a id="Variables.htm__ScriptName" href="#Variables.htm__ScriptName" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> The file name of the current script, without its path, e.g. MyScript.ahk. If the script is <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">compiled</a>, the name will <span class="rm">end in .exe</span> <span class="x11">usually have no file extension</span> instead. Thus, a <span class="rm">good</span> <span class="x11">questionable</span> way for a script to detect whether it is running in compiled form is with the following:<br class="calibre12" />
+                      <a href="#SplitPath.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SplitPath</a>, A_ScriptName,,, FileExt<br class="calibre12" /> if FileExt = ahk<br class="calibre12" />     MsgBox This script is NOT running in compiled form.
                   </p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_ScriptFullPath</td>
-                <td class="calibre4"><a id="Variables.htm__ScriptFullPath" href="#Variables.htm__ScriptFullPath" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="tbd"> The combination of the above two variables to give the complete file specification of the script, e.g. C:\My Documents\MyScript.ahk</span></td>
+                <td class="calibre4"><a id="Variables.htm__ScriptFullPath" href="#Variables.htm__ScriptFullPath" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> The combination of the above two variables to give the complete file specification of the script, e.g. /a/b/MyScript.ahk</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_AhkVersion</td>
