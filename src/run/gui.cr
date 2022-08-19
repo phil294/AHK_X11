@@ -83,7 +83,7 @@ module Run
 				item_edit.on_activate do
 					if runner.script_file
 						begin
-							Process.run "xdg-open", [runner.script_file.not_nil!.to_s]
+							Process.run "gtk-launch \"$(xdg-mime query default text/plain)\" '#{runner.script_file.not_nil!.to_s}'", shell: true
 						rescue e
 							STDERR.puts e # TODO:
 						end
