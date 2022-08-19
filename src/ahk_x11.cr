@@ -19,11 +19,15 @@ fun main(argc : Int32, argv : UInt8**) : Int32
 	Crystal.main(argc, argv)
 end
 
+HEADLESS = ! ENV["DISPLAY"]?
+
 def build_error(msg)
 	msg = "#{msg}\n\nThe program will exit."
-	gui = Run::Gui.new
-	spawn gui.run
-	gui.msgbox msg
+	if ! HEADLESS
+		gui = Run::Gui.new
+		spawn gui.run
+		gui.msgbox msg
+	end
 	abort msg
 end
 # TODO: fiber unhandled exception handler set to build_errow somehow?
@@ -41,9 +45,11 @@ if ARGV[0]?
 		end
 		lines = ahk_str.split /\r?\n/
 	end
-else
+elsif ! HEADLESS
 	lines = installer_lines
 	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
+else
+	abort "Argument missing."
 end
 
 begin
@@ -54,7 +60,7 @@ rescue e : Build::SyntaxException | Build::ParsingException
 end
 
 begin
-	runner = Run::Runner.new builder: builder, script_file: script_file
+	runner = Run::Runner.new builder: builder, script_file: script_file, headless: HEADLESS
 	runner.run
 rescue e : Run::RuntimeException
 	build_error e.message

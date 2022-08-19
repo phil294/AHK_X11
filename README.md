@@ -35,6 +35,8 @@ Besides:
 - Graphical installer (optional)
 - Interactive console (REPL)
 
+AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
+
 Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the [docs](https://phil294.github.io/AHK_X11).
 
 ```diff

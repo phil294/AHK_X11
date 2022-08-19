@@ -48,33 +48,48 @@ module Run
 		@default_thread_settings = ThreadSettings.new
 		@hotkeys = {} of String => Hotkey
 		@hotstrings = [] of Hotstring
-		getter x11 = X11.new
-		getter x_do = XDo.new
+		@x11 : X11?
+		def x11
+			raise "Cannot access X11 in headless mode" if !@x11
+			@x11.not_nil!
+		end
+		@x_do : XDo?
+		def x_do
+			raise "Cannot access X_DO in headless mode" if !@x_do
+			@x_do.not_nil!
+		end
 		getter gui = Gui.new
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 		@builder : Build::Builder
 		getter script_file : Path?
+		getter headless : Bool
 
-		def initialize(*, @builder, @script_file)
+		def initialize(*, @builder, @script_file, @headless)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
 			script = @script_file ? @script_file.not_nil! : Path[PROGRAM_NAME].expand
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
+			if ! @headless
+				@x_do = XDo.new
+				@x11 = X11.new
+			end
 		end
 		def run
-			@builder.hotkeys.each { |h| add_hotkey h }
-			@builder.hotstrings.each { |h| add_hotstring h }
-			# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
-			::Thread.new do
-				@x11.run self, @settings.hotstring_end_chars # separate worker thread because event loop is blocking
+			if ! @headless
+				@builder.hotkeys.each { |h| add_hotkey h }
+				@builder.hotstrings.each { |h| add_hotstring h }
+				# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
+				::Thread.new do
+					x11.run self, @settings.hotstring_end_chars # separate worker thread because event loop is blocking
+				end
+				::Thread.new do
+					@gui.run # separate worker thread because gtk loop is blocking
+				end
+				@gui.initialize_menu(self)
 			end
-			::Thread.new do
-				@gui.run # separate worker thread because gtk loop is blocking
-			end
-			@gui.initialize_menu(self)
 			spawn same_thread: true { clock }
 			if (auto_execute_section = @builder.start)
 				@auto_execute_thread = add_thread auto_execute_section, 0
@@ -207,7 +222,7 @@ module Run
 			hotkey.set_keysym
 			hotkey.cmd = @labels[hotkey.key_str]
 			@hotkeys[hotkey.key_str] = hotkey
-			@x11.register_hotkey hotkey
+			x11.register_hotkey hotkey
 			hotkey
 		end
 		def add_or_update_hotkey(*, key_str, label, priority, active_state = nil)
@@ -217,7 +232,7 @@ module Run
 			end
 			hotkey = @hotkeys[key_str]?
 			if hotkey
-				@x11.unregister_hotkey hotkey
+				x11.unregister_hotkey hotkey
 				active_state = hotkey.active if active_state.nil?
 			else
 				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{key_str}" if ! label
@@ -228,7 +243,7 @@ module Run
 			hotkey.cmd = cmd if cmd
 			hotkey.priority = priority if priority
 			if active_state
-				@x11.register_hotkey hotkey
+				x11.register_hotkey hotkey
 				hotkey.active = true
 			else
 				hotkey.active = false
@@ -240,7 +255,7 @@ module Run
 			hotstring.runner = self
 			hotstring.cmd = @labels[hotstring.label]
 			@hotstrings << hotstring
-			@x11.register_hotstring hotstring
+			x11.register_hotstring hotstring
 			hotstring
 		end
 	end
