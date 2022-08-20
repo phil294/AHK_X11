@@ -1,5 +1,3 @@
-require "../base"
-
 class Cmd::ControlFlow::Loop < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 1 end

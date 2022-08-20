@@ -1,5 +1,3 @@
-require "../base"
-
 class Cmd::Variable::EnvAdd < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 3 end

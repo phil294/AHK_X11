@@ -1,5 +1,3 @@
-require "../base"
-
 # TODO: INCOMPAT: incomplete
 class Cmd::Gtk::Msgbox < Cmd::Base
 	def self.min_args; 0 end

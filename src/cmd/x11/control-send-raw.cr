@@ -1,5 +1,3 @@
-require "../base"
-
 # INCOMPAT: control arg ignored
 # INCOMPAT: This may *sometimes* not work, as some windows seem to ignore the events sent. This problem is probably not fixable. Doing `WinActivate` and `Send` instead should always work.
 class Cmd::X11::ControlSendRaw < Cmd::Base
