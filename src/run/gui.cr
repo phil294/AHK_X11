@@ -80,19 +80,11 @@ module Run
 				tray_menu.append item_help
 				tray_menu.append Gtk::SeparatorMenuItem.new
 				item_edit = Gtk::MenuItem.new_with_label "Edit this script"
-				item_edit.on_activate do
-					if runner.script_file
-						begin
-							Process.run "gtk-launch \"$(xdg-mime query default text/plain)\" '#{runner.script_file.not_nil!.to_s}'", shell: true
-						rescue e
-							STDERR.puts e # TODO:
-						end
-					end
-				end
+				item_edit.on_activate { open_edit(runner) }
 				tray_menu.append item_edit
 				tray_menu.append Gtk::SeparatorMenuItem.new
 				item_exit = Gtk::MenuItem.new_with_label "Exit"
-				item_exit.on_activate { runner.exit_app 0 }
+				item_exit.on_activate { runner.exit_app(0) }
 				tray_menu.append item_exit
 				tray_menu.append Gtk::SeparatorMenuItem.new
 
@@ -104,6 +96,16 @@ module Run
 		end
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!
+		end
+
+		def open_edit(runner)
+			if runner.script_file
+				begin
+					Process.run "gtk-launch \"$(xdg-mime query default text/plain)\" '#{runner.script_file.not_nil!.to_s}'", shell: true
+				rescue e
+					STDERR.puts e # TODO:
+				end
+			end
 		end
 
 		class ControlInfo
