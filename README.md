@@ -27,12 +27,13 @@ Features:
 - [ ] Control mouse (TBD)
 - [x] File management (setup complete, but all commands are still missing)
 - [x] GUIs (windows, g-labels, variables; Text, Edit, Button, Checkbox, DropDownList; Submit)
-- [ ] Compile script to executable (TBD)
+- [x] One-click compile script to stand-alone executable (complete and portable)
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy
 
 Besides:
 - Graphical installer (optional)
+- Context menu and compilation just like on Windows
 - Interactive console (REPL)
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
@@ -109,10 +110,12 @@ There are different ways to use it.
 
 1. The Windows way: Running the program directly opens up the interactive installer.
     - Once installed, all `.ahk` files are associated with AHK_X11, so you can simply double click them.
+    - Also adds the Compiler into `Open as...` Menus.
 2. Command line: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
     - Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
     - When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`).
     - If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
+    - Compile scripts with `./ahk_x11 --compile "path/script.ahk"
 
 <details>
 <summary>Here's a working demo script showing several of the commands so far implemented.</summary>
@@ -203,7 +206,7 @@ These are the steps required to build this project locally. Please open an issue
     ```
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, if you have `libxdo` (xdotool) version 2016x installed. Read on for a cross-distro compatible build.
 1. In `lib/x_do/src/x_do/libxdo.cr`, add line `role : LibC::Char*` *after* `winname : LibC::Char*`
-1. To make AHK_X11 maximally portable, various dependencies should be statically linked. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04.
+1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04.
     - Should be statically linked:
         - `libxdo`. Additionally to the above reasons, it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. So, clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there, run `make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
         - Dependencies of `libxdo`: `libxkbcommon`, `libXtst` and `libXi`. The static libraries should be available from your package manager dependencies installed above so normally there's nothing you need to do.
@@ -214,6 +217,7 @@ These are the steps required to build this project locally. Please open an issue
         - `libgtk-3` and its dependencies, because afaik Gtk is installed everywhere, even on Qt-based distros. If you know of any common distribution that does not include Gtk libs by default please let me know. Gtk does also not officially support static linking. `libgtk-3`, `libgd_pixbuf-2.0`, `libgio-2.0`, `libgobject-2.0`, `libglib-2.0`, `libgobject-2.0`
         - glibc / unproblematic libraries according to [this list](https://github.com/AppImage/pkg2appimage/blob/master/excludelist): `libX11`, `libm`, `libpthread`, `librt`, `libdl`.
 1. All in all, once you have `libxdo.a`, `libXext.a` and `libXinerama.a` inside the folder `static`, the following builds the final binary which should be very portable: `shards build -Dpreview_mt --link-flags="-L$PWD/static -Wl,-Bstatic -lxdo -lxkbcommon -lXinerama -lXext -lXtst -lXi -levent_pthreads -levent -lpcre -Wl,-Bdynamic"`. When not in development, increase optimizations and runtime speed by adding `--release`. The resulting binary is about 3.6 MiB in size.
+1. Attach the installer with `bin/ahk_x11 --compile installer.ahk tmp && mv tmp bin/ahk_x11`. Explanation: The installer is not shipped separately and instead bundled with the binary by doing this. Bundling is the same thing as compiling a script as a user. As you can see, it is possible to repeatedly compile a binary, with each script being appended at the end each time. Only the last one actually executed - and only if no params are passed to the program. There's no point in compiling multiple times, but it allows us to ship a default script (the installer) for when no arguments are passed. In other words, this is possible for a user: `ahk_x11 --compile script1.ahk && ./script1 --compile script2.ahk && ./script2` but no one will ever do that.
 
 ## Performance
 

@@ -1,7 +1,7 @@
 require "./global/*"
 require "./build/builder"
 require "./run/runner"
-require "./installer"
+require "./compiler"
 require "./logo"
 
 fun main(argc : Int32, argv : UInt8**) : Int32
@@ -36,6 +36,10 @@ script_file = nil
 if ARGV[0]?
 	if ARGV[0] == "--repl"
 		lines = ["#Persistent"]
+	elsif ARGV[0] == "--compile"
+		build_error "Syntax: ahk_x11 --compile FILE_NAME [OUTPUT_FILENAME]" if ARGV.size < 2
+		Compiler.new.compile(ARGV[1], ARGV[2]?)
+		::exit
 	else
 		script_file = Path[ARGV[0]].expand
 		begin
@@ -43,13 +47,13 @@ if ARGV[0]?
 		rescue
 			build_error "File '#{ARGV[0]}' could not be read."
 		end
-		lines = ahk_str.split /\r?\n/
+		lines = ahk_str.split(/\r?\n/)
 	end
-elsif ! HEADLESS
-	lines = installer_lines
-	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
 else
-	abort "Argument missing."
+	lines = Compiler.new.extract.try &.split('\n')
+	abort "Argument missing." if ! lines
+	# Only needed for installer script, this can't (yet) really be part of ahk code. TODO: rm on exit
+	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
 end
 
 begin

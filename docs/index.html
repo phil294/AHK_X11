@@ -848,7 +848,7 @@
             <li class="calibre11">Free &amp; open source (<a href="https://github.com/phil294/AHK_X11/blob/master/LICENSE" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">GNU General Public License</a>).</li>
             <li class="calibre11">A simple yet powerful hotkey (shortcut key) scripting language, supporting both mouse and keyboard macros (if you're new to scripting, it might be easier than you think; check out the <a href="#TutorialHelp.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">quick-start tutorial</a>).</li>
             <li class="calibre11">A <a href="#Hotstrings.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">word recognition engine</a> that expands abbreviations as you type them (auto-replace). </li>
-            <li class="calibre11">A regular scripting language. <span class="tbd">The program includes a <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script compiler</a> that converts a script to an EXE. It also includes AutoScriptWriter, a macro recorder written by Larry Keys.</span><br class="calibre12" />
+            <li class="calibre11">A regular scripting language. The program includes a <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script compiler</a> that converts a script to an <span class="rm">EXE</span> <span class="x11">executable</span>. <span class="tbd">It also includes AutoScriptWriter, a macro recorder written by Larry Keys.</span><br class="calibre12" />
             <li class="calibre11">A keyboard, joystick, and mouse <a href="#Remap.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">remapper</a>.</li>
             <li class="x11">AHK_X11 is a complete reimplementation of AutoHotkey for X11-based systems such as most Linux systems. It is still in development as of 2022/08. A lot of work is done but most commands are still missing. You can find more details, installation instructions etc. on the GitHub page linked above.</li>
             <li class="x11">These docs are based on the <a href="https://www.autohotkey.com/download/1.0/AutoHotkey1024.exe">original AHK docs from December 2004</a>, complemented by annotations (see Legend above - not super accurate though). Black text was not changed. AHK_X11 only aims at implementing the spec from that time, namely the command syntax (legacy syntax). More modern features such as expressions or functions are not supported.</li>
@@ -1391,40 +1391,38 @@ else
             <br class="calibre12" /> In addition, the /* and */ symbols can be used to comment out an entire section, but only if the symbols appear at the beginning of a line as in this example: <br class="calibre12" /> /*<br class="calibre12" /> MsgBox, This line is commented out (disabled).<br class="calibre12" /> MsgBox, This one too. <br class="calibre12" /> */<br class="calibre12" />
             <br class="calibre12" /> Tip: The first comma of any command may be omitted. Example:<br class="calibre12" /> MsgBox This is ok.<br class="calibre12" /> MsgBox, This is ok too.
           </p>
-          <div class="tbd">
             <h3 class="calibre7"><br class="calibre12" />
-              <a id="Scripts.htm__ahk2exe" href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Convert a Script to an EXE (ahk2exe)
+              <a id="Scripts.htm__ahk2exe" href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Convert a Script to an <span class="rm">EXE</span> <span class="x11">executable</span> (ahk2exe)
             </h3>
             <p class="calibre8">A script compiler is included with the program.</p>
-            <p class="calibre8"> Once a script is compiled, it becomes a standalone executable, meaning that it can be used even on machines where AutoHotkey isn't present (and such EXEs can be distributed or sold with no restrictions). The compilation process compresses and encrypts all of the following: the script, any files it <a href="#h_Include.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">includes</a>, and any files it has incorporated via the <a href="#FileInstall.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileInstall</a> command.</p>
+            <p class="calibre8"> Once a script is compiled, it becomes a standalone executable, meaning that it can be used even on machines where AutoHotkey isn't present (and such <span class="rm">EXE</span><span class="x11">executable</span>s can be distributed or sold with no restrictions). <span class="rm">The compilation process compresses and encrypts all of the following: the script, any files it <a href="#h_Include.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">includes</a>, and any files it has incorporated via the <a href="#FileInstall.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileInstall</a> command.</span></p>
             <p class="calibre8">Ahk2Exe can be used in the following ways:</p>
             <ol class="calibre19">
-              <li class="calibre11">
+              <li class="calibre11 tbd">
                 <p class="calibre8"><strong class="calibre14">GUI Interface</strong>: Run the "Convert .ahk to .exe" item in the Start Menu.</p>
               </li>
               <li class="calibre11">
-                <p class="calibre8"><strong class="calibre14">Right-click</strong>: Within an open Explorer window, you can right-click any .ahk file and select "Compile Script" (only available if the script compiler option was chosen when AutoHotkey was installed). This will create an EXE file of the same base filename as the script, which will appear after a short time in the same directory. Note: The EXE file will be produced using the same custom icon and compression level that was last used by Method #1 above <u class="calibre20">and it will not have a password</u>.</p>
+                <p class="calibre8"><strong class="calibre14">Right-click</strong>: Within an open Explorer window, you can right-click any .ahk file and select <span class="rm">"Compile Script"</span> <span class="x11">"Compile with ahk_x11"</span> <span class="rm">(only available if the script compiler option was chosen when AutoHotkey was installed)</span>. This will create an <span class="rm">EXE</span><span class="x11">executable (same filename, but without the .ahk)</span> file of the same base filename as the script, which will appear after a short time in the same directory. <span class="rm">Note: The EXE file will be produced using the same custom icon and compression level that was last used by Method #1 above <u class="calibre20">and it will not have a password</u>.</span> <span class="x11">Portable binaries have no icons on Linux.</span></p>
               </li>
               <li class="calibre11">
-                <p class="calibre8"><strong class="calibre14">Command Line</strong>: The compiler can be run from the command line with the following parameters:<br class="calibre12" /> Ahk2exe.exe /in MyScript.ahk [/out MyScript.exe][/icon MyIcon.ico][/pass password]<br class="calibre12" /> Parameters containing spaces should be enclosed in double quotes. If the "out" file is omitted, the EXE will have the same base filename as the script itself.</p>
+                <p class="calibre8"><strong class="calibre14">Command Line</strong>: The compiler can be run from the command line with the following parameters:<br class="calibre12" /> <span class="rm">Ahk2exe.exe /in MyScript.ahk [/out MyScript.exe][/icon MyIcon.ico][/pass password]</span> <span class="x11">ahk_x11 --compile MyScript.ahk [MyBinary]</span><br class="calibre12" /> Parameters containing spaces should be enclosed in double quotes. If the "out" file is omitted, the EXE will have the same base filename as the script itself.</p>
               </li>
             </ol>
             <p class="calibre8">Important Notes:</p>
             <ul class="calibre10">
               <li class="calibre11">
-                <p class="calibre8">A password should be specified if you plan to distribute your EXE and don't want anyone to be able to view the source code of your script.</p>
+                <p class="calibre8"><span class="rm">A password should be specified if you plan to distribute your EXE and don't want anyone to be able to view the source code of your script.</span></p>
               </li>
               <li class="calibre11">
                 <p class="calibre8">The commands <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> and "<a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Menu, Tray, ShowMainWindow</a>" affect the behavior of compiled scripts.</p>
               </li>
               <li class="calibre11">
-                <p class="calibre8">An EXE can be "decompiled" to retrieve the original script by downloading <a href="http://www.autohotkey.com/download/Exe2Ahk.exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Exe2Ahk</a> (this utility should be run from the command prompt). However, any comments (semicolon'd lines) originally present will be lost. </p>
+                <p class="calibre8">An EXE can be "decompiled" to retrieve the original script <span class="rm">by downloading <a href="http://www.autohotkey.com/download/Exe2Ahk.exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Exe2Ahk</a> (this utility should be run from the command prompt). However, any comments (semicolon'd lines) originally present will be lost. </span></p>
               </li>
-              <li class="calibre11">Custom version info (as seen in Explorer's file-properties dialog) can be added to your compiled scripts by using a utility such as Resource Hacker (freeware) to edit the file "AutoHotkeySC.bin". This file is contained in the compiler subfolder where AutoHotkey was installed. Note: ResHacker will corrupt compiled scripts, which is why only the AutoHotkeySC.bin file should be edited.
+              <li class="calibre11"><span class="rm">Custom version info (as seen in Explorer's file-properties dialog) can be added to your compiled scripts by using a utility such as Resource Hacker (freeware) to edit the file "AutoHotkeySC.bin". This file is contained in the compiler subfolder where AutoHotkey was installed. Note: ResHacker will corrupt compiled scripts, which is why only the AutoHotkeySC.bin file should be edited.</span>
                 <p class="calibre8" />
               </li>
             </ul>
-          </div>
           <div class="tbd">
             <h3 class="calibre7"><br class="calibre12" />
               <a id="Scripts.htm__cmd" href="#Scripts.htm__cmd" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Passing Command Line Parameters to a Script
