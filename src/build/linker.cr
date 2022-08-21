@@ -89,11 +89,11 @@ module Build
 		private def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
 			@if_section.cmd.je = @if_section.first_child || next_cmd
 			@if_section.last_child.try &.next = next_cmd
-			@if_section.cmd.jne = @if_else_sections.first?.try &.first_child || @else_section.try &.first_child || next_cmd
-			@if_else_sections.each_with_index do | if_else_section, i |
+			@if_section.cmd.jne = @if_else_sections.first?.try &.cmd || @else_section.try &.first_child || next_cmd
+			@if_else_sections.each_with_index do |if_else_section, i|
 				if_else_section.cmd.je = if_else_section.first_child || next_cmd
 				if_else_section.last_child.try &.next = next_cmd
-				if_else_section.cmd.jne = @if_else_sections[i+1]?.try &.first_child || @else_section.try &.first_child || next_cmd
+				if_else_section.cmd.jne = @if_else_sections[i+1]?.try &.cmd || @else_section.try &.first_child || next_cmd
 			end
 			@else_section.try &.last_child.try &.next = next_cmd
 			next_cmd
