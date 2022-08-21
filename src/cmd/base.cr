@@ -1,8 +1,8 @@
 module Cmd
 	abstract class Base
-		# For example, for `Cmd::File::FileCopy` it's `"filecopy"` and `DirectivePersistent` becomes `#persistent`.
+		# For example, for `Cmd::File::FileCopy` it's `"filecopy"`
 		def self.name
-			{{ @type.name(generic_args: false).stringify.downcase.split("::").last.gsub(/^directive/, "#") }}
+			{{ @type.name(generic_args: false).stringify.downcase.split("::").last }}
 		end
 		def self.min_args; 0 end
 		# anything above max_args will not be split or stripped anymore, instead either combined
