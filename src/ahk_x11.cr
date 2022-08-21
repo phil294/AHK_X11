@@ -19,12 +19,17 @@ fun main(argc : Int32, argv : UInt8**) : Int32
 	Crystal.main(argc, argv)
 end
 
+Signal::HUP.trap do
+	STDERR.puts "Received SIGHUB signal (probably from another ahkx11 script). Exit."
+	::exit 129
+end
+
 HEADLESS = ! ENV["DISPLAY"]?
 
 def build_error(msg)
 	msg = "#{msg}\n\nThe program will exit."
 	if ! HEADLESS
-		gui = Run::Gui.new
+		gui = Run::Gui.new "AHK_X11"
 		spawn gui.run
 		gui.msgbox msg
 	end

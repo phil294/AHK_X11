@@ -7,6 +7,13 @@ require "./x11"
 require "x_do"
 
 module Run
+	enum SingleInstance
+		Prompt
+		Force
+		Ignore
+		Off
+	end
+
 	# see `Thread.settings` for scope explanation.
 	# Some RunnerSettings are constant (never changed) because they are set in parser only.
 	struct RunnerSettings
@@ -14,6 +21,7 @@ module Run
 		property escape_char = '`'
 		# INCOMPAT: Pressing return is a \r, not sure if \n even ever fires
 		property hotstring_end_chars = ['-', '(', ')', '[', ']', '{', '}', ':', ';', '\'', '"', '/', '\\', ',', '.', '?', '!', '\n', ' ', '\t', '\r']
+		property single_instance : SingleInstance?
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -79,6 +87,7 @@ module Run
 			end
 		end
 		def run
+			@settings.persistent ||= (! @builder.hotkeys.empty? || ! @builder.hotstrings.empty?)
 			if ! @headless
 				@builder.hotkeys.each { |h| add_hotkey h }
 				@builder.hotstrings.each { |h| add_hotstring h }
@@ -89,6 +98,10 @@ module Run
 				::Thread.new do
 					@gui.run # separate worker thread because gtk loop is blocking
 				end
+				if ! @settings.single_instance
+					@settings.single_instance = @settings.persistent ? SingleInstance::Prompt : SingleInstance::Off
+				end
+				handle_single_instance
 				@gui.initialize_menu(self)
 			end
 			spawn same_thread: true { clock }
@@ -150,7 +163,7 @@ module Run
 		end
 
 		private def auto_execute_section_ended
-			exit_app @exit_code if ! @settings.persistent && @hotkeys.empty? && @hotstrings.empty?
+			exit_app @exit_code if ! @settings.persistent
 			repl
 		end
 		private def repl
@@ -258,6 +271,29 @@ module Run
 			@hotstrings << hotstring
 			x11.register_hotstring hotstring
 			hotstring
+		end
+
+		def handle_single_instance
+			return if @settings.single_instance == SingleInstance::Off
+			search_for = PROGRAM_NAME + " " + ARGV.join(" ")
+			result = IO::Memory.new
+			Process.run("pgrep", ["--full", "--exact", search_for], output: result)
+			already_running = result.to_s.chomp
+				.split('\n')
+				.select{|p| p != Process.pid.to_s }
+				.first?.try &.to_i
+			return if ! already_running
+			case @settings.single_instance
+			when SingleInstance::Force
+				Process.signal(Signal::HUP, already_running)
+			when SingleInstance::Ignore
+				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
+				::exit
+			when SingleInstance::Prompt
+				response = @gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
+				::exit if response != Gui::MsgBoxButton::Yes
+				Process.signal(Signal::HUP, already_running)
+			end
 		end
 	end
 

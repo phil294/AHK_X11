@@ -87,6 +87,9 @@ module Build
 				end
 			elsif first_word == "#persistent"
 				@runner_settings.persistent = true
+			elsif first_word == "#singleinstance"
+				param = args.strip.downcase
+				@runner_settings.single_instance = param == "force" ? Run::SingleInstance::Force : param == "ignore" ? Run::SingleInstance::Ignore : param == "off" ? Run::SingleInstance::Off : param == "prompt" ? Run::SingleInstance::Prompt : nil
 			elsif first_word == "#hotstring"
 				if args[0..8].downcase == "endchars "
 					str = Util::AhkString.parse_string(args[8..].strip, @runner_settings.escape_char, no_variable_substitution: true){}
