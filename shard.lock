@@ -25,6 +25,6 @@ shards:
     version: 1.0.1
 
   x_do:
-    git: https://github.com/woodruffw/x_do.cr.git
-    version: 0.8.3
+    git: https://github.com/phil294/x_do.cr.git
+    version: 0.8.3+git.commit.db3af0cb15cafc8784fd72decfc4b268db32222c
 

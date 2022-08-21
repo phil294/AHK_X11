@@ -18,7 +18,8 @@ dependencies:
   x11:
     github: TamasSzekeres/x11-cr
   x_do:
-    github: woodruffw/x_do.cr
+    github: phil294/x_do.cr
+    commit: db3af0cb15cafc8784fd72decfc4b268db32222c
   gobject:
     github: jhass/crystal-gobject
   malloc_pthread_shim:
