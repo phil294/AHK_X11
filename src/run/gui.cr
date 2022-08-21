@@ -7,6 +7,10 @@ module Run
 	# because anything else can result in undefined behavior (in fact, it just doesn't work).
 	# That's why all GUI commands need to somehow pass through `Gui.act`.
 	class Gui
+		@default_title : String
+		def initialize(@default_title)
+		end
+
 		def run
 			_argc = 0
 			# taken from "gobject/gtk/autorun". There's probably a better way.
@@ -34,23 +38,92 @@ module Run
 			nil
 		end
 
-		@@default_title = ARGV[0]? || PROGRAM_NAME
+		# This logic is tempting to be solved with a `@[Flags]` enum but the spec is too messy and inconsistent for that.
+		# Gtk::ButtonsType/ResponseType is also way too patchy, it is much more concise to write custom ids.
+		private enum MsgBoxOptions
+			OK = 0
+			OK_Cancel
+			Abort_Retry_Ignore
+			Yes_No_Cancel
+			Yes_No
+			Retry_Cancel
+			Icon_Stop = 16
+			Icon_Question = 32
+			Icon_Exclamation = 48
+			Icon_Info = 64
+			Button_2_Default = 256
+			Button_3_Default = 512
+			Always_On_Top = 4096
+			Task_Modal = 8192 # ?
+		end
+		enum MsgBoxButton
+			OK = 1
+			Cancel
+			Abort
+			Retry
+			Ignore
+			Yes
+			No
+			Timeout
+		end 
 
 		# Only run this after `run` has started, as it depends on a running gtk main.
 		# If you don't see the popup, it may be because of focus stealing prevention from the
 		# window manager, please see the README.
-		def msgbox(txt, *, title = @@default_title)
-			channel = Channel(Nil).new
+		def msgbox(text, options = 0, title = nil, timeout = nil)
+			buttons = case
+			when options & MsgBoxOptions::OK_Cancel.value == MsgBoxOptions::OK_Cancel.value
+				[MsgBoxButton::OK, MsgBoxButton::Cancel]
+			when options & MsgBoxOptions::Abort_Retry_Ignore.value == MsgBoxOptions::Abort_Retry_Ignore.value
+				[MsgBoxButton::Abort, MsgBoxButton::Retry, MsgBoxButton::Ignore]
+			when options & MsgBoxOptions::Yes_No_Cancel.value == MsgBoxOptions::Yes_No_Cancel.value
+				[MsgBoxButton::Yes, MsgBoxButton::No, MsgBoxButton::Cancel]
+			when options & MsgBoxOptions::Yes_No.value == MsgBoxOptions::Yes_No.value
+				[MsgBoxButton::Yes, MsgBoxButton::No]
+			when options & MsgBoxOptions::Retry_Cancel.value == MsgBoxOptions::Retry_Cancel.value
+				[MsgBoxButton::Retry, MsgBoxButton::Cancel]
+			else [MsgBoxButton::OK]
+			end
+			# TODO: Deletable=false removes the x button but pressing Escape still works and returns delete(cancel) event response... wasn't easily fixable when I researched this.
+			deletable = buttons.includes?(MsgBoxButton::Cancel)
+			# TODO: Setting message_type does not show an image on many distros, only on Ubuntu: https://discourse.gnome.org/t/gtk3-message-dialog-created-with-gtk-message-dialog-new-shows-no-icon-on-fedora/8607
+			# Setting dialog.image does not work either. The only solution appears to be to switch to Gtk::Dialog and add text and image manually (refer to Ubuntu patch from link).
+			message_type = case
+			when options & MsgBoxOptions::Icon_Stop.value == MsgBoxOptions::Icon_Stop.value
+				Gtk::MessageType::ERROR
+			when options & MsgBoxOptions::Icon_Question.value == MsgBoxOptions::Icon_Question.value
+				Gtk::MessageType::QUESTION
+			when options & MsgBoxOptions::Icon_Exclamation.value == MsgBoxOptions::Icon_Exclamation.value
+				Gtk::MessageType::WARNING
+			when options & MsgBoxOptions::Icon_Info.value == MsgBoxOptions::Icon_Info.value
+				Gtk::MessageType::INFO
+			else nil
+			end
+			channel = Channel(MsgBoxButton).new
+			gtk_dialog : Gtk::MessageDialog? = nil
 			act do
-				dialog = Gtk::MessageDialog.new text: txt || "Press OK to continue.", title: title, message_type: :info, buttons: :ok, urgency_hint: true, icon: @icon_pixbuf
+				dialog = Gtk::MessageDialog.new text: text, title: title || @default_title, urgency_hint: true, icon: @icon_pixbuf, buttons: Gtk::ButtonsType::NONE, message_type: message_type, deletable: deletable
+				buttons.each do |btn|
+					dialog.add_button btn.to_s, btn.value
+				end
 				dialog.on_response do |_, response_id|
-					response = Gtk::ResponseType.new(response_id)
-					channel.send(nil)
+					if response_id <= 0 # i.e. DELETE_EVENT
+						response_id = MsgBoxButton::Cancel.value
+					end
+					btn = MsgBoxButton.new(response_id)
+					channel.send(btn)
 					dialog.destroy
 				end
 				dialog.show
+				gtk_dialog = dialog
 			end
-			channel.receive
+			! timeout ? channel.receive : select
+			when response = channel.receive
+				response
+			when timeout(timeout ? timeout.seconds : Time::Span::MAX)
+				act { gtk_dialog.not_nil!.destroy } if gtk_dialog
+				MsgBoxButton::Timeout
+			end
 		end
 
 		@tray_menu : Gtk::Menu? = nil
@@ -135,7 +208,7 @@ module Run
 			gui_info = @guis[gui_id]?
 			if ! gui_info
 				act do
-					window = Gtk::Window.new title: @@default_title, window_position: Gtk::WindowPosition::CENTER, icon: @icon_pixbuf
+					window = Gtk::Window.new title: @default_title, window_position: Gtk::WindowPosition::CENTER, icon: @icon_pixbuf
 					# , border_width: 20
 					fixed = Gtk::Fixed.new
 					window.add fixed

@@ -43,7 +43,7 @@ Implementation details follow below; note however that this is not very represen
 ```diff
 DONE      16% (34/213):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
-+ SetTimer, WinActivate, MsgBox (incomplete), Gui, SendRaw, #Persistent, ExitApp,
++ SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
 + FileAppend, Hotkey, Send, ControlSend, #Hotstring, Menu
 

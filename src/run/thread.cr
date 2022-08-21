@@ -4,6 +4,7 @@ module Run
 	# see Thread.settings
 	private struct ThreadSettings
 		property last_found_window : XDo::Window?
+		property msgbox_response : Gui::MsgBoxButton?
 	end
 
 	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,

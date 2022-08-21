@@ -58,7 +58,7 @@ module Run
 			raise "Cannot access X_DO in headless mode" if !@x_do
 			@x_do.not_nil!
 		end
-		getter gui = Gui.new
+		getter gui : Gui
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 		@builder : Build::Builder
@@ -72,6 +72,7 @@ module Run
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
+			@gui = Gui.new default_title: script.basename
 			if ! @headless
 				@x_do = XDo.new
 				@x11 = X11.new
