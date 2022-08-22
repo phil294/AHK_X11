@@ -310,7 +310,13 @@ module Run
 		def suspend(mode)
 			mode = ! @suspension if mode == nil
 			@suspension = mode.as(Bool)
-			x11.suspend mode.as(Bool)
+			if mode
+				x11.suspend
+				gui.suspend
+			else
+				x11.unsuspend
+				gui.unsuspend
+			end
 		end
 	end
 

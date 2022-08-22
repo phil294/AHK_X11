@@ -173,6 +173,12 @@ module Run
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!
 		end
+		def suspend
+			act { @tray.not_nil!.from_icon_name = "input-keyboard" }
+		end
+		def unsuspend
+			act { @tray.not_nil!.from_pixbuf = @icon_pixbuf }
+		end
 
 		def open_edit(runner)
 			if runner.script_file

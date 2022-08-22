@@ -232,16 +232,16 @@ module Run
 			@pause_mutex.unlock
 		end
 		@suspended = false
-		def suspend(mode)
-			@suspended = mode
-			if mode
-				@hotkey_subscriptions.each do |sub|
-					unregister_hotkey sub[:hotkey], unsubscribe: false if ! sub[:hotkey].exempt_from_suspension
-				end
-			else
-				@hotkey_subscriptions.each do |sub|
-					register_hotkey sub[:hotkey], subscribe: false if ! sub[:hotkey].exempt_from_suspension
-				end
+		def suspend
+			@suspended = true
+			@hotkey_subscriptions.each do |sub|
+				unregister_hotkey sub[:hotkey], unsubscribe: false if ! sub[:hotkey].exempt_from_suspension
+			end
+		end
+		def unsuspend
+			@suspended = false
+			@hotkey_subscriptions.each do |sub|
+				register_hotkey sub[:hotkey], subscribe: false if ! sub[:hotkey].exempt_from_suspension
 			end
 		end
 
