@@ -152,6 +152,9 @@ module Run
 				end
 				tray_menu.append item_help
 				tray_menu.append Gtk::SeparatorMenuItem.new
+				item_reload = Gtk::MenuItem.new_with_label "Reload this script"
+				item_reload.on_activate { runner.reload }
+				tray_menu.append item_reload
 				item_edit = Gtk::MenuItem.new_with_label "Edit this script"
 				item_edit.on_activate { open_edit(runner) }
 				tray_menu.append item_edit

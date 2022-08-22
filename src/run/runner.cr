@@ -46,6 +46,7 @@ module Run
 			"a_scriptname" => "",
 			"a_scriptfullpath" => "",
 		}
+		@initial_working_dir = Dir.current
 		protected getter labels : Hash(String, Cmd::Base)
 		@threads = [] of Thread
 		@auto_execute_thread : Thread?
@@ -160,6 +161,12 @@ module Run
 
 		def exit_app(code)
 			::exit code
+		end
+
+		def reload
+			STDERR.puts "Reloading..."
+			p = Process.new PROGRAM_NAME, ARGV, chdir: @initial_working_dir
+			exit_app 0
 		end
 
 		private def auto_execute_section_ended

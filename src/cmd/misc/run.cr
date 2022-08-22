@@ -1,4 +1,4 @@
-class Cmd::Unix::Run < Cmd::Base
+class Cmd::Misc::Run < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 6 end
 	@wait = false

@@ -1,5 +1,5 @@
 require "./run"
 
-class Cmd::Unix::RunWait < Cmd::Unix::Run
+class Cmd::Misc::RunWait < Cmd::Misc::Run
 	@wait = true
 end
