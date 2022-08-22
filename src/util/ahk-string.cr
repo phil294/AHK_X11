@@ -115,13 +115,13 @@ class Util::AhkString
 			when ' ' then next
 			# TODO: better syntax without having to resort back to elsif?
 			when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-				n += char.as(Char)
+				n += char
 			else
 				if letter
 					yield letter.downcase, n.to_i?(strict: true)
 				end
 				n = ""
-				letter = char.as(Char)
+				letter = char
 			end
 		end
 		if letter
