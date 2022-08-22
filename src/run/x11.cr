@@ -231,6 +231,19 @@ module Run
 			end
 			@pause_mutex.unlock
 		end
+		@suspended = false
+		def suspend(mode)
+			@suspended = mode
+			if mode
+				@hotkey_subscriptions.each do |sub|
+					unregister_hotkey sub[:hotkey], unsubscribe: false if ! sub[:hotkey].exempt_from_suspension
+				end
+			else
+				@hotkey_subscriptions.each do |sub|
+					register_hotkey sub[:hotkey], subscribe: false if ! sub[:hotkey].exempt_from_suspension
+				end
+			end
+		end
 
 		# apparently keycodes are display-dependent so they can't be determined at build time
 		@hotkey_subscriptions = [] of NamedTuple(hotkey: Hotkey, keycode: UInt8)
@@ -280,7 +293,8 @@ module Run
 			sub = @hotkey_subscriptions.find do |sub|
 				sub[:hotkey].active &&
 				sub[:keycode] == event.keycode &&
-				sub[:hotkey].modifiers.any? &.== event.state
+				(sub[:hotkey].modifiers.any? &.== event.state) &&
+				(! @suspended || sub[:hotkey].exempt_from_suspension)
 			end
 			sub[:hotkey].trigger if sub
 			

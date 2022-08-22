@@ -9,6 +9,7 @@ module Run
 		@key_name = ""
 		getter keysym = 0_u64
 		getter no_grab = false
+		property exempt_from_suspension = false
 		def initialize(@key_str, *, @priority)
 			init
 		end

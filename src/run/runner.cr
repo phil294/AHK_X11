@@ -242,6 +242,7 @@ module Run
 			hotkey.runner = self
 			hotkey.set_keysym
 			hotkey.cmd = @labels[hotkey.key_str]
+			hotkey.exempt_from_suspension = hotkey.cmd.is_a?(Cmd::Misc::Suspend)
 			@hotkeys[hotkey.key_str] = hotkey
 			x11.register_hotkey hotkey
 			hotkey
@@ -301,6 +302,13 @@ module Run
 				::exit if response != Gui::MsgBoxButton::Yes
 				Process.signal(Signal::HUP, already_running)
 			end
+		end
+
+		@suspension = false
+		def suspend(mode)
+			mode = ! @suspension if mode == nil
+			@suspension = mode.as(Bool)
+			x11.suspend mode.as(Bool)
 		end
 	end
 
