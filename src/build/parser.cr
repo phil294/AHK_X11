@@ -107,6 +107,7 @@ module Build
 				when ">=" then cmd_class = Cmd::ControlFlow::IfGreaterOrEqual
 				when "<" then cmd_class = Cmd::ControlFlow::IfLess
 				when "<=" then cmd_class = Cmd::ControlFlow::IfLessOrEqual
+				when "between" then cmd_class = Cmd::ControlFlow::IfBetween
 				else
 					raise "If condition '#{split[1]?}' is unknown"
 				end
