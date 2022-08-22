@@ -21,6 +21,15 @@ module Build
 			@start = @linker.start
 			@labels = @linker.labels
 
+			# This can only really be done once the linker has finished
+			@hotkeys.each do |hotkey|
+				hotkey.cmd = @labels[hotkey.key_str]
+				hotkey.exempt_from_suspension = hotkey.cmd.is_a?(Cmd::Misc::Suspend)
+			end
+			@hotstrings.each do |hotstring|
+				hotstring.cmd = @labels[hotstring.label]
+			end
+
 			nil
 		end
 	end

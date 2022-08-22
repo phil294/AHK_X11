@@ -241,8 +241,6 @@ module Run
 		def add_hotkey(hotkey)
 			hotkey.runner = self
 			hotkey.set_keysym
-			hotkey.cmd = @labels[hotkey.key_str]
-			hotkey.exempt_from_suspension = hotkey.cmd.is_a?(Cmd::Misc::Suspend)
 			@hotkeys[hotkey.key_str] = hotkey
 			x11.register_hotkey hotkey
 			hotkey
@@ -275,7 +273,6 @@ module Run
 
 		def add_hotstring(hotstring)
 			hotstring.runner = self
-			hotstring.cmd = @labels[hotstring.label]
 			@hotstrings << hotstring
 			x11.register_hotstring hotstring
 			hotstring
