@@ -101,8 +101,12 @@ module Build
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				case split[1]?
-				when "="
-					cmd_class = Cmd::ControlFlow::IfEqual
+				when "=" then cmd_class = Cmd::ControlFlow::IfEqual
+				when "<>" then cmd_class = Cmd::ControlFlow::IfNotEqual
+				when ">" then cmd_class = Cmd::ControlFlow::IfGreater
+				when ">=" then cmd_class = Cmd::ControlFlow::IfGreaterOrEqual
+				when "<" then cmd_class = Cmd::ControlFlow::IfLess
+				when "<=" then cmd_class = Cmd::ControlFlow::IfLessOrEqual
 				else
 					raise "If condition '#{split[1]?}' is unknown"
 				end
