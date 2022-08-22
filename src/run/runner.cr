@@ -59,6 +59,7 @@ module Run
 		@hotstrings = [] of Hotstring
 		@x11 : X11?
 		def x11
+			# TODO: log? abort?
 			raise "Cannot access X11 in headless mode" if !@x11
 			@x11.not_nil!
 		end
@@ -67,7 +68,11 @@ module Run
 			raise "Cannot access X_DO in headless mode" if !@x_do
 			@x_do.not_nil!
 		end
-		getter gui : Gui
+		@gui : Gui?
+		def gui
+			raise "Cannot access GUI in headless mode" if !@gui
+			@gui.not_nil!
+		end
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 		@builder : Build::Builder
@@ -81,8 +86,8 @@ module Run
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
-			@gui = Gui.new default_title: script.basename
 			if ! @headless
+				@gui = Gui.new default_title: script.basename
 				@x_do = XDo.new
 				@x11 = X11.new
 			end
@@ -97,13 +102,13 @@ module Run
 					x11.run self, @settings.hotstring_end_chars # separate worker thread because event loop is blocking
 				end
 				::Thread.new do
-					@gui.run # separate worker thread because gtk loop is blocking
+					gui.run # separate worker thread because gtk loop is blocking
 				end
 				if ! @settings.single_instance
 					@settings.single_instance = @settings.persistent ? SingleInstance::Prompt : SingleInstance::Off
 				end
 				handle_single_instance
-				@gui.initialize_menu(self)
+				gui.initialize_menu(self)
 			end
 			spawn same_thread: true { clock }
 			if (auto_execute_section = @builder.start)
@@ -295,7 +300,7 @@ module Run
 				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
 				::exit
 			when SingleInstance::Prompt
-				response = @gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
+				response = gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
 				::exit if response != Gui::MsgBoxButton::Yes
 				Process.signal(Signal::HUP, already_running)
 			end
