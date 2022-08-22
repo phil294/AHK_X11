@@ -5,12 +5,12 @@ class Cmd::Gtk::Msgbox < Cmd::Base
 	def run(thread, args)
 		text = "Press OK to continue."
 		if args[0]?
-			options = args[0].to_i?(strict: true) # TODO: where is strict necessary?
+			options = args[0].to_i? # TODO: where is strict necessary?
 			if options
 				title = args[1]? ? args[1].empty? ? nil : args[1] : nil
 				text = args[2] if args[2]?
 				if args[3]?
-					timeout = args[3].to_f?(strict: true)
+					timeout = args[3].to_f?
 					if ! timeout
 						text += ", #{args[3]}" # TODO: uncool and potentially wrong (happens somewhere in parser too)
 					end

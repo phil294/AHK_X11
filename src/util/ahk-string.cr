@@ -75,7 +75,7 @@ class Util::AhkString
 							when "up" then up = true
 							when "down" then down = true
 							else
-								repeat = what.to_i?(strict: true)
+								repeat = what.to_i?
 								raise Run::RuntimeException.new "key name '#{key_name}' not understood" if ! repeat
 							end
 							key_name = split[0]
@@ -118,14 +118,14 @@ class Util::AhkString
 				n += char
 			else
 				if letter
-					yield letter.downcase, n.to_i?(strict: true)
+					yield letter.downcase, n.to_i?
 				end
 				n = ""
 				letter = char
 			end
 		end
 		if letter
-			yield letter.downcase, n.to_i?(strict: true)
+			yield letter.downcase, n.to_i?
 		end
 	end
 
@@ -153,7 +153,7 @@ class Util::AhkString
 			end
 			down = word.downcase
 			ret[down] = ret[part[0].downcase.to_s] = {
-				n: n.to_i?(strict: true) || nil,
+				n: n.to_i? || nil,
 				v: part[1..]? || "",
 				minus: minus,
 				plus: plus

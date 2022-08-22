@@ -4,7 +4,7 @@ class Cmd::ControlFlow::SetTimer < Cmd::Base
 	def run(thread, args)
 		label = args[0]
 		action = (args[1]? || "").downcase
-		priority = (args[2]? || "").to_i?(strict: true) || 0
+		priority = (args[2]? || "").to_i? || 0
 		timer = thread.runner.get_timer label
 		case action
 		when "on", ""
@@ -17,7 +17,7 @@ class Cmd::ControlFlow::SetTimer < Cmd::Base
 			timer = thread.runner.add_timer label, 250.milliseconds, priority if ! timer
 			timer.cancel
 		else
-			period = action.to_i?(strict: true)
+			period = action.to_i?
 			raise Run::RuntimeException.new "invalid timer period" if ! period
 			if ! timer
 				timer = thread.runner.add_timer label, period.milliseconds, priority

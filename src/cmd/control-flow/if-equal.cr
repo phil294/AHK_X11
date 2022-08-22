@@ -6,8 +6,8 @@ class Cmd::ControlFlow::IfEqual < Cmd::Base
 	def run(thread, args)
 		a = thread.get_var(args[0]) || ""
 		b = args[1]? || ""
-		a_f = a.to_f?(strict: true)
-		b_f = b.to_f?(strict: true)
+		a_f = a.to_f?
+		b_f = b.to_f?
 		if a_f && b_f
 			a_f == b_f
 		else
