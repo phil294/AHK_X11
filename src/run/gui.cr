@@ -159,6 +159,9 @@ module Run
 				item_edit.on_activate { open_edit(runner) }
 				tray_menu.append item_edit
 				tray_menu.append Gtk::SeparatorMenuItem.new
+				item_suspend = Gtk::MenuItem.new_with_label "Suspend Hotkeys"
+				item_suspend.on_activate { spawn { runner.suspend } }
+				tray_menu.append item_suspend
 				item_exit = Gtk::MenuItem.new_with_label "Exit"
 				item_exit.on_activate { runner.exit_app(0) }
 				tray_menu.append item_exit

@@ -307,7 +307,7 @@ module Run
 		end
 
 		@suspension = false
-		def suspend(mode)
+		def suspend(mode = nil)
 			mode = ! @suspension if mode == nil
 			@suspension = mode.as(Bool)
 			if mode
