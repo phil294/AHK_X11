@@ -202,7 +202,9 @@ These are the steps required to build this project locally. Please open an issue
     echo 'require "./gobject-cache-xlib--modified"' > tmp.txt; echo 'require "./gobject-cache-gtk-other-deps"' >> tmp.txt; cat lib/gobject/src/gtk/gobject-cache-gtk.cr >> tmp.txt; mv tmp.txt lib/gobject/src/gtk/gobject-cache-gtk.cr
     echo 'macro require_gobject(namespace, version = nil) end' >> lib/gobject/src/gobject.cr
     # delete conflicting c function binding by modifying the cache
-    sed -i -E 's/  fun open_display = XOpenDisplay : Void$//'  lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
+    sed -i -E 's/  fun open_display = XOpenDisplay : Void$//' lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
+    # https://github.com/jhass/crystal-gobject/issues/103
+    sed -i -E 's/(def self.new_from_stream.+: self)$/\1?/g' lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
     ```
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, if you have `libxdo` (xdotool) version 2016x installed. Read on for a cross-distro compatible build.
 1. In `lib/x_do/src/x_do/libxdo.cr`, add line `role : LibC::Char*` *after* `winname : LibC::Char*`
