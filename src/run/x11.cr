@@ -164,9 +164,28 @@ module Run
 			@display.select_input @focussed_win, ::X11::KeyReleaseMask | ::X11::FocusChangeMask # ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | FocusChangeMask
 		end
 
+		# Makes sure the program doesn't exit when a Hotkey is not free for grabbing
+		private def set_error_handler
+			# Cannot use *any* outside variables here because any closure somehow makes set_error_handler never return, even with uninitialized (?why?), so we cannot set variables, show popup, nothing
+			::X11.set_error_handler ->(display : ::X11::C::X::PDisplay, error_event : ::X11::C::X::PErrorEvent) do
+				buffer = Array(UInt8).new 1024
+				::X11::C::X.get_error_text display, error_event.value.error_code, buffer.to_unsafe, 1024
+				error_message = String.new buffer.to_unsafe
+				if error_event.value.error_code == 10
+					STDERR.puts "Display server failed with 'BadAccess'. This most likely means that you are trying to register a Hotkey that is already grabbed by another application. The script will continue but your Hotkey will not work."
+				else
+					STDERR.puts "Display server unexpectedly failed with the following error message:\n\n#{error_message}\n\nThe script will exit."
+					::exit 5
+				end
+				1
+			end
+		end
+
+		@bad_access = false
 		def run(runner : Runner, hotstring_end_chars)
-			@hotstring_end_chars = hotstring_end_chars
+			set_error_handler
 			refresh_focus
+			@hotstring_end_chars = hotstring_end_chars
 			loop do
 				event = @display.next_event # blocking!
 				# Currently, hotkeys are always based on key release event. Trigger on press introduced
