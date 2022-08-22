@@ -97,6 +97,7 @@ module Build
 				else
 					@hotstring_default_options = args.strip
 				end
+			elsif first_word == "#requires" # noop for ahk discord bot. Command is v1.1.33+. TODO: Hashbang?
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				case split[1]?
