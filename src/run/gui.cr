@@ -102,7 +102,7 @@ module Run
 			channel = Channel(MsgBoxButton).new
 			gtk_dialog : Gtk::MessageDialog? = nil
 			act do
-				dialog = Gtk::MessageDialog.new text: text, title: title || @default_title, urgency_hint: true, icon: @icon_pixbuf, buttons: Gtk::ButtonsType::NONE, message_type: message_type, deletable: deletable
+				dialog = Gtk::MessageDialog.new text: text, title: title || @default_title, urgency_hint: true, icon: @icon_pixbuf, buttons: Gtk::ButtonsType::NONE, message_type: message_type, deletable: deletable, skip_taskbar_hint: false
 				buttons.each do |btn|
 					dialog.add_button btn.to_s, btn.value
 				end
