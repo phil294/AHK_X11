@@ -33,6 +33,8 @@ module Run
 		@exit_code = 0
 		getter done = false
 		@result_channel : Channel(Int32?)?
+		@unpause_channel = Channel(Nil).new
+		getter paused = false
 		def initialize(@runner, start, @priority, @settings)
 			@stack << start
 		end
@@ -44,12 +46,21 @@ module Run
 			result_channel = @result_channel = Channel(Int32?).new
 			spawn same_thread: true do
 				result = do_next
+				@unpause_channel.receive if @paused
 				result_channel.send(result)
 				result_channel.close
 				@result_channel = nil
 				result
 			end
 			result_channel
+		end
+		def pause
+			@paused = true
+		end
+		def unpause
+			return if ! @paused
+			@paused = false
+			@unpause_channel.send nil
 		end
 		# returns exit code or nil if this thread isn't done yet
 		private def do_next

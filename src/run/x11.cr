@@ -200,13 +200,14 @@ module Run
 			end
 		end
 		
-		# multiple threads may request a pause. x11 will only resume after all have called
-		# `resume_x11` again.
-		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
-		# from triggering themselves (or others)
 		@pause_counter = 0
 		@is_paused = false
 		@pause_mutex = Mutex.new
+		# multiple threads may request a pause. x11 will only resume after all have called
+		# `resume_x11` again.
+		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
+		# from triggering themselves (or others).
+		# Please note that this `x11.pause` has nothing to do with `thread.pause`.
 		def pause
 			@pause_mutex.lock
 			@pause_counter += 1

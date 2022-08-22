@@ -143,6 +143,11 @@ module Run
 		private def clock
 			loop do
 				while thread = @threads.last?
+					if thread.paused
+						gui.thread_pause
+					else
+						gui.thread_unpause
+					end
 					select
 					when @run_thread_channel.receive
 						# current command may finish in the background, but its result handling and thread continuation
@@ -316,6 +321,18 @@ module Run
 			else
 				x11.unsuspend
 				gui.unsuspend
+			end
+		end
+		def pause_thread(mode = nil, *, self_is_thread = true)
+			underlying_thread = @threads[@threads.size - (self_is_thread ? 2 : 1)]?
+			if mode == nil
+				mode = ! underlying_thread || ! underlying_thread.paused
+			end
+			if mode
+				@threads.last.pause
+				gui.thread_pause
+			else
+				underlying_thread.unpause if underlying_thread
 			end
 		end
 	end

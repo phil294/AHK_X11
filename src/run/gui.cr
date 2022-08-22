@@ -162,6 +162,9 @@ module Run
 				item_suspend = Gtk::MenuItem.new_with_label "Suspend Hotkeys"
 				item_suspend.on_activate { spawn { runner.suspend } }
 				tray_menu.append item_suspend
+				item_pause = Gtk::MenuItem.new_with_label "Pause script"
+				item_pause.on_activate { spawn { runner.pause_thread(self_is_thread: false) } }
+				tray_menu.append item_pause
 				item_exit = Gtk::MenuItem.new_with_label "Exit"
 				item_exit.on_activate { runner.exit_app(0) }
 				tray_menu.append item_exit
@@ -176,11 +179,31 @@ module Run
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!
 		end
+		# Instead of showing both Suspension and ThreadPause state simultaneously, only one is showed dynamically, with Pause taking precedence.
+		@is_suspend = false
+		@is_pause = false
 		def suspend
+			@is_suspend = true
+			return if @is_pause
 			act { @tray.not_nil!.from_icon_name = "input-keyboard" }
 		end
 		def unsuspend
+			@is_suspend = false
+			return if @is_pause
 			act { @tray.not_nil!.from_pixbuf = @icon_pixbuf }
+		end
+		def thread_pause
+			return if @is_pause
+			@is_pause = true
+			act { @tray.not_nil!.from_icon_name = "content-loading-symbolic" }
+		end
+		def thread_unpause
+			@is_pause = false
+			if @is_suspend
+				suspend
+			else
+				unsuspend
+			end
 		end
 
 		def open_edit(runner)
