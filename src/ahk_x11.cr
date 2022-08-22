@@ -20,7 +20,7 @@ fun main(argc : Int32, argv : UInt8**) : Int32
 end
 
 Signal::HUP.trap do
-	STDERR.puts "Received SIGHUB signal (probably from another ahkx11 script). Exit."
+	STDERR.puts "Received SIGHUB signal (probably by #SingleInstance from another ahkx11 script). Exit."
 	::exit 129
 end
 
