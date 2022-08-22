@@ -6498,6 +6498,7 @@ ExitApp</pre>
           <p class="calibre8">GuiControlGet, MyEdit<br class="calibre12" /> GuiControlGet, CtrlContents,, MyEdit ; Same as the above except uses a non-default output variable.<br class="calibre12" /> GuiControlGet, MyCheckbox1 ; Retrieves 1 if it is checked, 0 if it is unchecked.<br class="calibre12" /> GuiControlGet, MyCheckbox1,,, Text ; Retrieves the caption/text of the checkbox. <br class="calibre12" /> GuiControlGet, Pic, Pos, Static4 ; The position/size will be stored in PicX, PicY, PicW, and PicH</p>
         </div>
       </div>
+</div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="IfMsgBox.htm" href="#IfMsgBox.htm">#</a> <h2 class="calibre17">IfMsgBox</h2>
@@ -6536,6 +6537,7 @@ IfMsgBox, Timeout, Return ; i.e. Assume "No" if it timed out.
 </pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="InputBox.htm" href="#InputBox.htm">#</a> <h2 class="calibre17">InputBox</h2>
@@ -6632,7 +6634,7 @@ else
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">MsgBox, Text<br class="calibre12" /><span class="tbd"> MsgBox [, Options, Title, Text, Timeout]</span></td>
+                <td height="48" class="calibre4">MsgBox, Text<br class="calibre12" />MsgBox [, Options, Title, Text, Timeout]</td>
               </tr>
             </tbody>
           </table>
@@ -6650,21 +6652,20 @@ else
               <tr class="calibre3">
                 <td class="calibre4">Options</td>
                 <td class="calibre4">
-                  <p class="calibre8"><span class="tbd">Indicates the type of message box and the possible button combinations.  If blank or omitted, it defaults to 0. See remarks for other allowed values</span>.</p>
-                  <p class="calibre8"><span class="tbd">This parameter will not be recognized if it is contained in a variable reference such as %option%. Instead, use a literal numeric value.</span> </p>
+                  <p class="calibre8">Indicates the type of message box and the possible button combinations.  If blank or omitted, it defaults to 0. See remarks for other allowed values.</p>
+                  <p class="calibre8"><span class="rm">This parameter will not be recognized if it is contained in a variable reference such as %option%. Instead, use a literal numeric value.</span> </p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Title</td>
-                <td class="calibre4"><span class="tbd">The title of the message box window. If omitted or blank, it defaults to the name of the script (without path). </span></td>
+                <td class="calibre4">The title of the message box window. If omitted or blank, it defaults to the name of the script (without path). </td>
               </tr>
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Timeout</td>
-                <td width="85%" class="calibre4"><span class="tbd">(optional) Timeout in seconds (can contain a decimal point).  If this value exceeds 2147483 (24.8 days), it will be set to 2147483.  After the timeout has elapsed the message box will be automatically closed and the <a href="#IfMsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfMsgBox</a> command will see the value TIMEOUT.</span></td>
+                <td width="85%" class="calibre4">(optional) Timeout in seconds (can contain a decimal point).  <span class="tbd">If this value exceeds 2147483 (24.8 days), it will be set to 2147483.</span>  After the timeout has elapsed the message box will be automatically closed and the <a href="#IfMsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfMsgBox</a> command will see the value TIMEOUT.</td>
               </tr>
             </tbody>
           </table>
-<div class="tbd">
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
           <p class="calibre8">This command has smart comma handling, so it is usually not necessary to <a href="#h_EscapeChar.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">escape</a> commas in the <em class="calibre21">Text</em> parameter.</p>
@@ -6724,11 +6725,11 @@ else
                 <td class="calibre31"> </td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">Make 2nd button the default </td>
+                <td class="calibre4"><span class="tbd">Make 2nd button the default </span></td>
                 <td class="calibre31">256</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">Make 3rd button the default </td>
+                <td class="calibre4"><span class="tbd">Make 3rd button the default </span></td>
                 <td class="calibre31">512</td>
               </tr>
               <tr class="calibre3">
@@ -6736,20 +6737,21 @@ else
                 <td class="calibre31"> </td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">System Modal (always on top) </td>
+                <td class="calibre4"><span class="tbd">System Modal (always on top) </span></td>
                 <td class="calibre31">4096</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">Task Modal </td>
+                <td class="calibre4"><span class="tbd">Task Modal </span></td>
                 <td class="calibre31">8192</td>
               </tr>
             </tbody>
           </table>
           <p class="calibre8">For example, to specify a SYSTEMMODAL box with the YES/NO buttons the <em class="calibre21">Options</em> value would be 4096+4 (4100).</p>
+          <p class="calibre8 x11">The icon options change the actual icon only on Ubuntu-based systems. On other distros, there is never any image on MsgBox.</p>
           <p class="calibre8">To determine which button the user pressed in the most recent MsgBox, use the <a href="#IfMsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfMsgBox</a> command.</p>
           <p class="calibre8">The text on the buttons can be changed by following <a href="#MsgBoxButtonNames.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">this example</a>.</p>
-          <p class="calibre8"> The windows shown by this command are a built-in feature of Windows. As such, the X button (close) in the title bar is enabled only when certain buttons are present in the dialog: If there is only an OK button, clicking the X button is the same as pressing OK. Otherwise, the X button is disabled unless there is a Cancel button, in which case clicking the X is the same as pressing Cancel.</p>
-          <p class="calibre8">Pressing Control-C while a MsgBox dialog is active will copy its text to the clipboard. This applies to all MsgBoxes, not just those produced by AutoHotkey.</p>
+          <p class="calibre8"> <span class="rm">The windows shown by this command are a built-in feature of Windows.</span> As such, the X button (close) in the title bar is enabled only when certain buttons are present in the dialog: If there is only an OK button, clicking the X button is the same as pressing OK. Otherwise, the X button is disabled  unless there is a Cancel button, in which case clicking the X is the same as pressing Cancel. <span class="x11">Pressing Escape on a window without a X still closes the window as if a fictional Cancel button were pressed.</span></p>
+          <p class="calibre8"><span class="tbd">Pressing Control-C while a MsgBox dialog is active will copy its text to the clipboard.</span> <span class="rm">This applies to all MsgBoxes, not just those produced by AutoHotkey.</span></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#IfMsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfMsgBox</a>, <a href="#InputBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">InputBox</a>, <a href="#FileSelectFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFile</a>, <a href="#FileSelectFolder.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFolder</a>, <a href="#ToolTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ToolTip</a></p>
@@ -6765,7 +6767,6 @@ IfMsgBox, Timeout
 else IfMsgBox, No
 	return
 </pre>
-</div>
         </div>
       </div>
 <div class="tbd">
@@ -9360,6 +9361,7 @@ if var is time
           <p class="calibre8">#NoTrayIcon</p>
         </div>
       </div>
+</div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="h_SingleInstance.htm" href="#h_SingleInstance.htm">#</a> <h2 class="calibre17">#SingleInstance</h2>
@@ -9368,7 +9370,7 @@ if var is time
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">#SingleInstance [force|ignore|off]</td>
+                <td height="48" class="calibre4">#SingleInstance [force|ignore|off|prompt]</td>
               </tr>
             </tbody>
           </table>
@@ -9377,18 +9379,18 @@ if var is time
           <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td width="15%" class="calibre4">force|ignore|off</td>
+                <td width="15%" class="calibre4">force|ignore|off|prompt</td>
                 <td width="85%" class="calibre4">
-                  <p class="calibre8">In v1.0.09+, the word FORCE causes the program to skip the dialog box that is normally shown whenever a running script is launched a second time. Instead, the old instance will be automatically replaced, which is similar in effect to the <a href="#Reload.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Reload</a> command. </p>
-                  <p class="calibre8">In v1.0.10+, the word IGNORE skips the dialog box as above, but leaves the old instance running. In other words, attempts to launch an already-running script are ignored.</p>
-                  <p class="calibre8">In v1.0.16+, the word OFF allows the running of multiple instances of a script that is <a href="#h_Persistent.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">persistent</a> or contains <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkeys</a>.</p>
+                  <p class="calibre8">The word FORCE causes the program to skip the dialog box that is normally shown whenever a running script is launched a second time. Instead, the old instance will be automatically replaced, which is similar in effect to the <a href="#Reload.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Reload</a> command. </p>
+                  <p class="calibre8">The word IGNORE skips the dialog box as above, but leaves the old instance running. In other words, attempts to launch an already-running script are ignored.</p>
+                  <p class="calibre8">The word OFF allows the running of multiple instances of a script. This is the default for scripts that are neither <a href="#h_Persistent.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">persistent</a> nor contain <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkeys</a>.</p>
+                  <p class="calibre8 x11">The word PROMPT asks the user on what to do. This is the default for scripts that are persistent or contain Hotkeys etc.</p>
                 </td>
               </tr>
             </tbody>
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8"> If #SingleInstance is in effect without the <em class="calibre21">force</em> or <em class="calibre21">ignore</em> option, attempts to launch the script while it is already running will display a dialog box that prompts for whether to keep the original (old) instance or replace it with the new instance.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#Reload.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Reload</a></p>
@@ -9397,6 +9399,7 @@ if var is time
           <p class="calibre8">#SingleInstance force<br class="calibre12" /> #SingleInstance ignore<br class="calibre12" /> #SingleInstance off </p>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="AutoTrim.htm" href="#AutoTrim.htm">#</a> <h2 class="calibre17">AutoTrim</h2>
