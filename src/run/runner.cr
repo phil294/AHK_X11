@@ -143,10 +143,12 @@ module Run
 		private def clock
 			loop do
 				while thread = @threads.last?
-					if thread.paused
-						gui.thread_pause
-					else
-						gui.thread_unpause
+					if ! @headless
+						if thread.paused
+							gui.thread_pause
+						else
+							gui.thread_unpause
+						end
 					end
 					select
 					when @run_thread_channel.receive
@@ -330,7 +332,7 @@ module Run
 			end
 			if mode
 				@threads.last.pause
-				gui.thread_pause
+				gui.thread_pause if ! @headless
 			else
 				underlying_thread.unpause if underlying_thread
 			end
