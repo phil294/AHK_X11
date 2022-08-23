@@ -17,7 +17,7 @@ module Cmd
 		def self.sets_error_level; false end
 
 		getter line_no = -1
-		getter args : Array(String)
+		getter args : Array(::String)
 
 		def initialize(@line_no, @args)
 		end
