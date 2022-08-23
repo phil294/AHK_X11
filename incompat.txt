@@ -3,3 +3,4 @@ most are noted with an `INCOMPAT` keyword at their respective code position.
 Others, e.g. missing features, are listed below.
 
 #NoEnv is the default
+Instructions are (except MsgBox) at build time split into command and arguments, and all arguments are always evaluated only at runtime. The latter is different on Windows, where the options of some commands are already evaluated at build time, sometimes leading to slightly different behavior when variables are involved.
