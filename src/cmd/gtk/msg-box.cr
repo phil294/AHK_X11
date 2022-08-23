@@ -21,7 +21,11 @@ class Cmd::Gtk::Msgbox < Cmd::Base
 			end
 		end
 		options ||= 0
-		response = thread.runner.gui.msgbox(text, options: options, title: title, timeout: timeout)
+		if thread.runner.headless
+			puts text
+		else
+			response = thread.runner.gui.msgbox(text, options: options, title: title, timeout: timeout)
+		end
 		thread.settings.msgbox_response = response
 	end
 end
