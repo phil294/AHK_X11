@@ -164,23 +164,23 @@ module Build
 				@cmds << Cmd::Variable::EnvSub.new line_no, [first_word[2..], "1"]
 			else
 				split = args.split(2)
-				second_word, more_args = split[0]?, split[1]? || ""
-				csv_args = [first_word, *split_args(more_args)]
+				second_word, other_arg = split[0]?, split[1]?
+				csv_args = [first_word, other_arg || ""]
 				case second_word
 				when "="
 					cmd_class = Cmd::Variable::SetEnv
 				when "+="
 					cmd_class = Cmd::Variable::EnvAdd
-					raise "Add value missing for '+=' expression" if ! csv_args[1]?
+					raise "Add value missing for '+=' expression" if ! other_arg
 				when "-="
 					cmd_class = Cmd::Variable::EnvSub
-					raise "Sub value missing for '-=' expression" if ! csv_args[1]?
+					raise "Sub value missing for '-=' expression" if ! other_arg
 				when "*="
 					cmd_class = Cmd::Variable::EnvMult
-					raise "Mult value missing for '*=' expression" if ! csv_args[1]?
+					raise "Mult value missing for '*=' expression" if ! other_arg
 				when "/="
 					cmd_class = Cmd::Variable::EnvDiv
-					raise "Div value missing for '/=' expression" if ! csv_args[1]?
+					raise "Div value missing for '/=' expression" if ! other_arg
 				else
 					raise "Command '#{first_word}' not found"
 				end
