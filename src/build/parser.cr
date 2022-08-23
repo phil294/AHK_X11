@@ -155,31 +155,31 @@ module Build
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
 			elsif first_word.ends_with?("++")
-				@cmds << Cmd::Variable::EnvAdd.new line_no, [first_word[...-2], "1"]
+				@cmds << Cmd::Math::EnvAdd.new line_no, [first_word[...-2], "1"]
 			elsif first_word.starts_with?("++")
-				@cmds << Cmd::Variable::EnvAdd.new line_no, [first_word[2..], "1"]
+				@cmds << Cmd::Math::EnvAdd.new line_no, [first_word[2..], "1"]
 			elsif first_word.ends_with?("--")
-				@cmds << Cmd::Variable::EnvSub.new line_no, [first_word[...-2], "1"]
+				@cmds << Cmd::Math::EnvSub.new line_no, [first_word[...-2], "1"]
 			elsif first_word.starts_with?("--")
-				@cmds << Cmd::Variable::EnvSub.new line_no, [first_word[2..], "1"]
+				@cmds << Cmd::Math::EnvSub.new line_no, [first_word[2..], "1"]
 			else
 				split = args.split(2)
 				second_word, other_arg = split[0]?, split[1]?
 				csv_args = [first_word, other_arg || ""]
 				case second_word
 				when "="
-					cmd_class = Cmd::Variable::SetEnv
+					cmd_class = Cmd::Math::SetEnv
 				when "+="
-					cmd_class = Cmd::Variable::EnvAdd
+					cmd_class = Cmd::Math::EnvAdd
 					raise "Add value missing for '+=' expression" if ! other_arg
 				when "-="
-					cmd_class = Cmd::Variable::EnvSub
+					cmd_class = Cmd::Math::EnvSub
 					raise "Sub value missing for '-=' expression" if ! other_arg
 				when "*="
-					cmd_class = Cmd::Variable::EnvMult
+					cmd_class = Cmd::Math::EnvMult
 					raise "Mult value missing for '*=' expression" if ! other_arg
 				when "/="
-					cmd_class = Cmd::Variable::EnvDiv
+					cmd_class = Cmd::Math::EnvDiv
 					raise "Div value missing for '/=' expression" if ! other_arg
 				else
 					raise "Command '#{first_word}' not found"
