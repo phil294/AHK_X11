@@ -4,8 +4,8 @@ class Cmd::ControlFlow::IfWinNotExist < Cmd::Base
 	def self.multi_command; true end
 	def self.conditional; true end
 	def run(thread, args)
-		win = Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: false)
-		thread.settings.last_found_window = win if win
-		! win
+		! Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: false) do |win|
+			thread.settings.last_found_window = win
+		end
 	end
 end

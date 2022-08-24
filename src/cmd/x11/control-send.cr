@@ -5,12 +5,12 @@ class Cmd::X11::ControlSend < Cmd::Base
 	def self.max_args; 6 end
 	def run(thread, args)
 		_control, keys, *match_conditions = args
-		win = Cmd::X11::Window::Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true)
-		return if ! win
-		thread.runner.x11.pause
-		thread.parse_keys(keys) do |key_map, pressed|
-			win.keys_raw key_map, pressed: pressed, delay: 0
+		Cmd::X11::Window::Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true) do |win|
+			thread.runner.x11.pause
+			thread.parse_keys(keys) do |key_map, pressed|
+				win.keys_raw key_map, pressed: pressed, delay: 0
+			end
+			thread.runner.x11.resume
 		end
-		thread.runner.x11.resume
 	end
 end

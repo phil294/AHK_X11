@@ -7,11 +7,11 @@ class Cmd::X11::Window::Util
 	def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
 		title = match_conditions[0]? || ""
 		if match_conditions.size == 0
-			return thread.settings.last_found_window if empty_is_last_found
-			raise Run::RuntimeException.new "expected window matching arguments as 'last found window' cannot be inferred here"
+			raise Run::RuntimeException.new "expected window matching arguments as 'last found window' cannot be inferred here" if ! empty_is_last_found
+			win = thread.settings.last_found_window
 		elsif title == "A" && match_conditions.size == 1
-			return thread.runner.x_do.active_window if a_is_active
-			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here"
+			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here" if ! a_is_active
+			win = thread.runner.x_do.active_window
 		else
 			exclude_title = match_conditions[2]? || ""
 
@@ -32,11 +32,18 @@ class Cmd::X11::Window::Util
 				end
 			end.reject &.name.nil?
 
-			return wins.find { |win| win.window == wid } if ! wid.nil?
+			if ! wid.nil?
+				win = wins.find { |win| win.window == wid }
+			else
+				wins.reject! &.name.not_nil!.includes? exclude_title if ! exclude_title.empty?
+				win = wins.first?
+			end
 
-			wins.reject! &.name.not_nil!.includes? exclude_title if ! exclude_title.empty?
-
-			return wins.first?
+			if win
+				yield win
+				thread.runner.x_do.focused_window sane: false # TODO: Somehow, most (all?) window manager commands like close! or minimize! fail unless there is some other, arbitrary x11 request being sent after... no idea why, also independent of libxdo version. This call works around it.
+			end
+			!!win
 		end
 	end
 end

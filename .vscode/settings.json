@@ -11,6 +11,7 @@
         "keycodes",
         "keysym",
         "keysyms",
+        "libxdo",
         "msgbox",
         "Tasker",
         "ungrab"
