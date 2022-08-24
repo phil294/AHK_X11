@@ -14,6 +14,7 @@ class Cmd::X11::Window::Util
 			win = thread.runner.x_do.active_window
 		else
 			exclude_title = match_conditions[2]? || ""
+			current_desktop = thread.runner.x_do.desktop.to_i32
 
 			wid = nil
 			# broken: https://github.com/woodruffw/x_do.cr/issues/10
@@ -21,6 +22,8 @@ class Cmd::X11::Window::Util
 				require_all
 				only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
 				# TODO: INCOMPAT: these should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
+				# ^ link also explains the need for specifying desktop:
+				desktop current_desktop
 				if title.starts_with?("ahk_class ")
 					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
 				elsif title.starts_with?("ahk_id ")
