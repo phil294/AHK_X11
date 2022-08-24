@@ -4,6 +4,7 @@ class Cmd::String::StringGetPos < Cmd::Base
 	def self.sets_error_level; true end
 	def run(thread, args)
 		out_var, in_var, search_text = args
+		search_text = Regex.new(Regex.escape(search_text), Regex::Options::IGNORE_CASE)
 		opt = (args[3]? || "").downcase
 		text = thread.runner.get_user_var(in_var)
 		if opt == "1" || opt == "r"
