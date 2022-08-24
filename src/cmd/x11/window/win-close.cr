@@ -1,4 +1,3 @@
-require "../../base"
 require "./win-util"
 
 class Cmd::X11::Window::WinClose < Cmd::Base
