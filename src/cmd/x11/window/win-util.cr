@@ -9,7 +9,7 @@ class Cmd::X11::Window::Util
 		if match_conditions.size == 0
 			raise Run::RuntimeException.new "expected window matching arguments as 'last found window' cannot be inferred here" if ! empty_is_last_found
 			win = thread.settings.last_found_window
-		elsif title == "A" && match_conditions.size == 1
+		elsif title.downcase == "a" && match_conditions.size == 1
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here" if ! a_is_active
 			win = thread.runner.x_do.active_window
 		else
@@ -41,12 +41,11 @@ class Cmd::X11::Window::Util
 				wins.reject! &.name.not_nil!.includes? exclude_title if ! exclude_title.empty?
 				win = wins.first?
 			end
-
-			if win
-				yield win
-				thread.runner.x_do.focused_window sane: false # TODO: Somehow, most (all?) window manager commands like close! or minimize! fail unless there is some other, arbitrary x11 request being sent after... no idea why, also independent of libxdo version. This call works around it.
-			end
-			!!win
 		end
+		if win
+			yield win
+			thread.runner.x_do.focused_window sane: false # TODO: Somehow, most (all?) window manager commands like close! or minimize! fail unless there is some other, arbitrary x11 request being sent after... no idea why, also independent of libxdo version. This call works around it.
+		end
+		!!win
 	end
 end
