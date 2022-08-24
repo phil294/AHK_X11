@@ -12,8 +12,8 @@ class Cmd::X11::Window::WinActivate < Cmd::Base
 		# TODO: incompat: "Six attempts will be made to activate the target window over the course of 60ms. Thus, it is usually unnecessary to follow it with the WinWaitActive"
 
 		# TODO: this seems to be a bit window manager dependent unfortunately, so for now just bruteforce
-		win.raise!
 		win.activate!
 		win.focus!
+		win.raise!
 	end
 end
