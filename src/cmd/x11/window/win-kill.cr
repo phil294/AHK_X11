@@ -7,7 +7,7 @@ class Cmd::X11::Window::WinKill < Cmd::Base
 		match_conditions = args
 		match_conditions.delete_at(2) if args.size >= 3
 		Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true) do |win|
-		win.kill!
+			win.kill!
 		end
 	end
 end
