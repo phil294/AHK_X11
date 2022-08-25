@@ -82,7 +82,7 @@ module Run
 		def initialize(*, @builder, @script_file, @headless)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
-			script = @script_file ? @script_file.not_nil! : Path[PROGRAM_NAME].expand
+			script = @script_file ? @script_file.not_nil! : Path[Process.executable_path || ""].expand
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
@@ -177,7 +177,9 @@ module Run
 
 		def reload
 			STDERR.puts "Reloading..."
-			p = Process.new PROGRAM_NAME, ARGV, chdir: @initial_working_dir
+			bin_path = Process.executable_path
+			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
+			p = Process.new bin_path, ARGV, chdir: @initial_working_dir
 			exit_app 0
 		end
 
