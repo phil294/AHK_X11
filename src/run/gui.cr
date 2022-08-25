@@ -79,16 +79,16 @@ module Run
 			msg_box_option_retry_cancel = MsgBoxOptions::OK_Cancel.value | MsgBoxOptions::Yes_No.value
 			msg_box_option_icon_exclamation = MsgBoxOptions::Icon_Stop.value | MsgBoxOptions::Icon_Question.value
 			buttons = case
-			when options & MsgBoxOptions::OK_Cancel.value == MsgBoxOptions::OK_Cancel.value
-				[MsgBoxButton::OK, MsgBoxButton::Cancel]
-			when options & MsgBoxOptions::Abort_Retry_Ignore.value == MsgBoxOptions::Abort_Retry_Ignore.value
-				[MsgBoxButton::Abort, MsgBoxButton::Retry, MsgBoxButton::Ignore]
-			when options & msg_box_option_yes_no_cancel == msg_box_option_yes_no_cancel
-				[MsgBoxButton::Yes, MsgBoxButton::No, MsgBoxButton::Cancel]
-			when options & MsgBoxOptions::Yes_No.value == MsgBoxOptions::Yes_No.value
-				[MsgBoxButton::Yes, MsgBoxButton::No]
 			when options & msg_box_option_retry_cancel == msg_box_option_retry_cancel
 				[MsgBoxButton::Retry, MsgBoxButton::Cancel]
+			when options & MsgBoxOptions::Yes_No.value == MsgBoxOptions::Yes_No.value
+				[MsgBoxButton::Yes, MsgBoxButton::No]
+			when options & msg_box_option_yes_no_cancel == msg_box_option_yes_no_cancel
+				[MsgBoxButton::Yes, MsgBoxButton::No, MsgBoxButton::Cancel]
+			when options & MsgBoxOptions::Abort_Retry_Ignore.value == MsgBoxOptions::Abort_Retry_Ignore.value
+				[MsgBoxButton::Abort, MsgBoxButton::Retry, MsgBoxButton::Ignore]
+			when options & MsgBoxOptions::OK_Cancel.value == MsgBoxOptions::OK_Cancel.value
+				[MsgBoxButton::OK, MsgBoxButton::Cancel]
 			else [MsgBoxButton::OK]
 			end
 			# TODO: Deletable=false removes the x button but pressing Escape still works and returns delete(cancel) event response... wasn't easily fixable when I researched this.
@@ -96,14 +96,14 @@ module Run
 			# TODO: Setting message_type does not show an image on many distros, only on Ubuntu: https://discourse.gnome.org/t/gtk3-message-dialog-created-with-gtk-message-dialog-new-shows-no-icon-on-fedora/8607
 			# Setting dialog.image does not work either. The only solution appears to be to switch to Gtk::Dialog and add text and image manually (refer to Ubuntu patch from link).
 			message_type = case
-			when options & MsgBoxOptions::Icon_Stop.value == MsgBoxOptions::Icon_Stop.value
-				Gtk::MessageType::ERROR
-			when options & MsgBoxOptions::Icon_Question.value == MsgBoxOptions::Icon_Question.value
-				Gtk::MessageType::QUESTION
-			when options & msg_box_option_icon_exclamation == msg_box_option_icon_exclamation
-				Gtk::MessageType::WARNING
 			when options & MsgBoxOptions::Icon_Info.value == MsgBoxOptions::Icon_Info.value
 				Gtk::MessageType::INFO
+			when options & msg_box_option_icon_exclamation == msg_box_option_icon_exclamation
+				Gtk::MessageType::WARNING
+			when options & MsgBoxOptions::Icon_Question.value == MsgBoxOptions::Icon_Question.value
+				Gtk::MessageType::QUESTION
+			when options & MsgBoxOptions::Icon_Stop.value == MsgBoxOptions::Icon_Stop.value
+				Gtk::MessageType::ERROR
 			else nil
 			end
 			always_on_top = options & MsgBoxOptions::Always_On_Top.value == MsgBoxOptions::Always_On_Top.value
