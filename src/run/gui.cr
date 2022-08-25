@@ -99,10 +99,12 @@ module Run
 				Gtk::MessageType::INFO
 			else nil
 			end
+			always_on_top = options & MsgBoxOptions::Always_On_Top.value == MsgBoxOptions::Always_On_Top.value
 			channel = Channel(MsgBoxButton).new
 			gtk_dialog : Gtk::MessageDialog? = nil
 			act do
 				dialog = Gtk::MessageDialog.new text: text, title: title || @default_title, urgency_hint: true, icon: @icon_pixbuf, buttons: Gtk::ButtonsType::NONE, message_type: message_type, deletable: deletable, skip_taskbar_hint: false
+				dialog.keep_above = always_on_top
 				buttons.each do |btn|
 					dialog.add_button btn.to_s, btn.value
 				end
