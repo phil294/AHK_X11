@@ -15,7 +15,14 @@ binary_path = %binary_dir%/ahk_x11
 app_logo = /tmp/tmp_ahk_x11_logo.png
 
 FileCreateDir, %binary_dir%
-FileCopy, %A_ScriptFullPath%, %binary_path%, 1
+if binary_path = %A_ScriptFullPath%
+{
+    MsgBox, 4,, It looks like you are trying to install the very same version that is already running. Are you sure you want to continue?
+    IfMsgBox, No
+        ExitApp
+} else {
+    FileCopy, %A_ScriptFullPath%, %binary_path%, 1
+}
 
 RunWait, xdg-icon-resource install --context mimetypes --size 48 %app_logo% application-x-%app_name%
 
