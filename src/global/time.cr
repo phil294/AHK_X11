@@ -1,6 +1,6 @@
 struct Time # extending because this is ahk std lib
 	def to_YYYYMMDDHH24MISS
-		to_s("%Y%m%d%H%M%S")
+		to_local.to_s("%Y%m%d%H%M%S")
 	end
 	def self.parse_YYYYMMDDHH24MISS?(str)
 		int = str.to_i?
