@@ -22,6 +22,7 @@ module Build
 		end
 
 		getter child_conditionals = [] of Conditional
+		property parent_conditional : Conditional? = nil
 		@resolved = false
 
 		abstract def initialize(conditional_cmd : Cmd::Base)
@@ -41,6 +42,16 @@ module Build
 			raise "" if ! active_section.open?
 			active_section.first_child ||= cmd
 			active_section.last_child = cmd
+			self.break cmd if cmd.is_a?(Break)
+			self.continue cmd if cmd.is_a?(Continue)
+		end
+		def break(cmd : Break)
+			raise "" if ! @parent_conditional
+			@parent_conditional.not_nil!.break cmd
+		end
+		def continue(cmd : Continue)
+			raise "" if ! @parent_conditional
+			@parent_conditional.not_nil!.continue cmd
 		end
 
 		# does not need any more child cmds, good to resolve and destroy. Doesn't mean it immediately has to though
@@ -110,10 +121,11 @@ module Build
 
 		@breaks = [] of Break
 		@continues = [] of Continue
-		def add_cmd(cmd : Cmd::Base)
-			super(cmd)
-			@breaks << cmd if cmd.is_a?(Break)
-			@continues << cmd if cmd.is_a?(Continue)
+		def break(cmd : Break)
+			@breaks << cmd
+		end
+		def continue(cmd : Continue)
+			@continues << cmd
 		end
 		private def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
 			@section.cmd.je = @section.first_child || next_cmd
@@ -191,7 +203,10 @@ module Build
 								else
 									new_condition = IfConditional.new cmd
 								end
-								conds.last.child_conditionals << new_condition if conds.last?
+								if conds.last?
+									conds.last.child_conditionals << new_condition
+									new_condition.parent_conditional = conds.last
+								end
 								conds << new_condition
 							end
 						end
