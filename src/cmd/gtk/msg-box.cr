@@ -6,6 +6,7 @@ class Cmd::Gtk::Msgbox < Cmd::Base
 		text = "Press OK to continue."
 		if args[0]?
 			maybe_options = args[0].to_i? # TODO: where is strict necessary?
+			maybe_options = 0 if maybe_options == nil
 			if maybe_options && args[1]?
 				options = maybe_options
 				title = args[1].empty? ? nil : args[1]
