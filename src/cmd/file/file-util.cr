@@ -9,20 +9,19 @@ class Cmd::File::Util
 		operate_on_folders = (match_conditions[1]?.try &.to_i?) || 0
 		recurse = (match_conditions[2]?.try &.to_i?) || 0
 		return 0 if ! pattern
+		pattern = Path[pattern]
+		if recurse == 1
+			pattern = Path[pattern.dirname, "**", pattern.basename]
+		end
+		pp! pattern
 		files = [] of ::String
 		Dir.glob(pattern).each do |match|
-			if ::File.directory?(match)
-				next if operate_on_folders == 0
-				if recurse == 1
-					files.concat(Dir.glob(match + "/**/*"))
-				end
-			elsif ::File.file?(match)
-				next if operate_on_folders == 2
+			if operate_on_folders == 0
+				next if ::File.directory?(match)
+			elsif operate_on_folders == 2
+				next if ::File.file?(match)
 			end
-			files << match
-		end
-		files.each do |file|
-			yield file
+			yield match
 		end
 		files.size
 	end
