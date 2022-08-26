@@ -164,7 +164,9 @@ return
 
 #### Focus stealing prevention
 
-`MsgBox` (which currently only accepts 0 or 1 arguments) should always work fine, but some Linux distros apply some form of focus stealing prevention. If you have enabled that, it is very likely that those msgbox popups will be created hidden behind all other open windows. This is even more problematic because popups do not appear in the task bar, so they are essentially invisible. (Only?) solution: Disable focus stealing prevention.
+Some Linux distros offer a configurable setting for focus stealing prevention. Usually, it's default off. But if you have activated it, window focus changing actions like `MsgBox` or `WinActivate` will not work as expected: A `MsgBox` will appear hidden *behind* the active window. This can be useful to prevent accidental popup dismissal but when you don't like that, you have two options:
+- disable said setting
+- TODO: impl in cr/msgbox option: force being on top
 
 #### Appearance
 
@@ -222,7 +224,7 @@ These are the steps required to build this project locally. Please open an issue
         - `libgtk-3` and its dependencies, because afaik Gtk is installed everywhere, even on Qt-based distros. If you know of any common distribution that does not include Gtk libs by default please let me know. Gtk does also not officially support static linking. `libgtk-3`, `libgd_pixbuf-2.0`, `libgio-2.0`, `libgobject-2.0`, `libglib-2.0`, `libgobject-2.0`
         - glibc / unproblematic libraries according to [this list](https://github.com/AppImage/pkg2appimage/blob/master/excludelist): `libX11`, `libm`, `libpthread`, `librt`, `libdl`.
 1. All in all, once you have `libxdo.a`, `libXext.a` and `libXinerama.a` inside the folder `static`, the following builds the final binary which should be very portable: `shards build -Dpreview_mt --link-flags="-L$PWD/static -Wl,-Bstatic -lxdo -lxkbcommon -lXinerama -lXext -lXtst -lXi -levent_pthreads -levent -lpcre -Wl,-Bdynamic"`. When not in development, increase optimizations and runtime speed by adding `--release`. The resulting binary is about 3.6 MiB in size.
-1. Attach the installer with `bin/ahk_x11 --compile installer.ahk tmp && mv tmp bin/ahk_x11`. Explanation: The installer is not shipped separately and instead bundled with the binary by doing this. Bundling is the same thing as compiling a script as a user. As you can see, it is possible to repeatedly compile a binary, with each script being appended at the end each time. Only the last one actually executed - and only if no params are passed to the program. There's no point in compiling multiple times, but it allows us to ship a default script (the installer) for when no arguments are passed. In other words, this is possible for a user: `ahk_x11 --compile script1.ahk && ./script1 --compile script2.ahk && ./script2` but no one will ever do that.
+1. Attach the installer with `bin/ahk_x11 --compile src/installer.ahk tmp && mv tmp bin/ahk_x11`. Explanation: The installer is not shipped separately and instead bundled with the binary by doing this. Bundling is the same thing as compiling a script as a user. As you can see, it is possible to repeatedly compile a binary, with each script being appended at the end each time. Only the last one actually executed - and only if no params are passed to the program. There's no point in compiling multiple times, but it allows us to ship a default script (the installer) for when no arguments are passed. In other words, this is possible for a user: `ahk_x11 --compile script1.ahk && ./script1 --compile script2.ahk && ./script2` but no one will ever do that.
 
 ## Performance
 
