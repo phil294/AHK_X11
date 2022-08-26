@@ -43,12 +43,12 @@ module Run
 			runner = @runner.not_nil!
 
 			if @automatic_backspacing
-				runner.x11.pause
-				(@abbrev.size + (@immediate ? 0 : 1)).times do
-					runner.x_do.keys "BackSpace", delay: 0
-					sleep @delay.milliseconds if @delay != -1
+				runner.x11.pause do
+					(@abbrev.size + (@immediate ? 0 : 1)).times do
+						runner.x_do.keys "BackSpace", delay: 0
+						sleep @delay.milliseconds if @delay != -1
+					end
 				end
-				runner.x11.resume
 			end
 			
 			runner.add_thread @cmd.not_nil!, @priority

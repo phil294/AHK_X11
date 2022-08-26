@@ -232,6 +232,11 @@ module Run
 			end
 			@pause_mutex.unlock
 		end
+		def pause(&block)
+			pause
+			yield
+			resume
+		end
 		@suspended = false
 		def suspend
 			@suspended = true
