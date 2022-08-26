@@ -103,7 +103,7 @@ module Build
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				case split[1]?
 				when "=" then cmd_class = Cmd::ControlFlow::IfEqual
-				when "<>" then cmd_class = Cmd::ControlFlow::IfNotEqual
+				when "<>", "!=" then cmd_class = Cmd::ControlFlow::IfNotEqual
 				when ">" then cmd_class = Cmd::ControlFlow::IfGreater
 				when ">=" then cmd_class = Cmd::ControlFlow::IfGreaterOrEqual
 				when "<" then cmd_class = Cmd::ControlFlow::IfLess
