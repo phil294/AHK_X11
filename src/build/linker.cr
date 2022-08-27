@@ -59,20 +59,23 @@ module Build
 			! active_section.open?
 		end
 		# link all collected cmds appropriately to each other, with the final ones pointing to
-		# *next_cmd* if given (if omitted, this will mean this conditional element is the end of the file)
-		def resolve(next_cmd : Cmd::Base? = nil)
+		# *next_cmd_outside* if given (if omitted, this will mean this conditional element is the end of the file)
+		def resolve(next_cmd_outside : Cmd::Base? = nil)
 			raise "" if ! resolvable?
 			return if @resolved
-			link_children_to_cmd = link_all next_cmd
 			while @child_conditionals.last?
-				@child_conditionals.last.resolve link_children_to_cmd
+				@child_conditionals.last.resolve next_cmd_at_end(next_cmd_outside)
 				@child_conditionals.pop
 			end
+			link_all next_cmd_outside
 			@resolved = true
 		end
 
-		# return the cmd where child control flaws should redirect to at their end(s)
-		private abstract def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
+		private abstract def link_all(next_cmd_outside : Cmd::Base? = nil)
+
+		# return the cmd where commands should go to next at the very bottom of this conditional.
+		# If they are expected to just jump out and continue, return *next_cmd_outside* itself.
+		private abstract def next_cmd_at_end(next_cmd_outside : Cmd::Base? = nil) : Cmd::Base?
 	end
 
 	class IfConditional < Conditional
@@ -97,17 +100,19 @@ module Build
 			@else_section = ConditionalSection.new Else.new(0, [] of String)
 		end
 		
-		private def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
-			@if_section.cmd.je = @if_section.first_child || next_cmd
-			@if_section.last_child.try &.next = next_cmd
-			@if_section.cmd.jne = @if_else_sections.first?.try &.cmd || @else_section.try &.first_child || next_cmd
+		private def link_all(next_cmd_outside : Cmd::Base? = nil)
+			@if_section.cmd.je = @if_section.first_child || next_cmd_outside
+			@if_section.last_child.try &.next = next_cmd_outside
+			@if_section.cmd.jne = @if_else_sections.first?.try &.cmd || @else_section.try &.first_child || next_cmd_outside
 			@if_else_sections.each_with_index do |if_else_section, i|
-				if_else_section.cmd.je = if_else_section.first_child || next_cmd
-				if_else_section.last_child.try &.next = next_cmd
-				if_else_section.cmd.jne = @if_else_sections[i+1]?.try &.cmd || @else_section.try &.first_child || next_cmd
+				if_else_section.cmd.je = if_else_section.first_child || next_cmd_outside
+				if_else_section.last_child.try &.next = next_cmd_outside
+				if_else_section.cmd.jne = @if_else_sections[i+1]?.try &.cmd || @else_section.try &.first_child || next_cmd_outside
 			end
-			@else_section.try &.last_child.try &.next = next_cmd
-			next_cmd
+			@else_section.try &.last_child.try &.next = next_cmd_outside
+		end
+		private def next_cmd_at_end(next_cmd_outside : Cmd::Base? = nil) : Cmd::Base?
+			next_cmd_outside
 		end
 	end
 
@@ -127,12 +132,15 @@ module Build
 		def continue(cmd : Continue)
 			@continues << cmd
 		end
-		private def link_all(next_cmd : Cmd::Base? = nil) : Cmd::Base?
-			@section.cmd.je = @section.first_child || next_cmd
-			@section.last_child.try &.next = @section.cmd
-			@breaks.each &.next = next_cmd
-			@continues.each &.next = @section.cmd
-			@section.cmd.jne = next_cmd
+		private def link_all(next_cmd_outside : Cmd::Base? = nil)
+			@section.cmd.je = @section.first_child || next_cmd_outside
+			@section.last_child.try &.next = next_cmd_at_end
+			@breaks.each &.next = next_cmd_outside
+			@continues.each &.next = next_cmd_at_end
+			@section.cmd.jne = next_cmd_outside
+		end
+		private def next_cmd_at_end(next_cmd_outside : Cmd::Base? = nil) : Cmd::Base?
+			# Go top start of loop again
 			@section.cmd
 		end
 	end
