@@ -63,11 +63,11 @@ module Build
 		def resolve(next_cmd_outside : Cmd::Base? = nil)
 			raise "" if ! resolvable?
 			return if @resolved
-			link_all next_cmd_outside
 			while @child_conditionals.last?
 				@child_conditionals.last.resolve next_cmd_at_end(next_cmd_outside)
 				@child_conditionals.pop
 			end
+			link_all next_cmd_outside
 			@resolved = true
 		end
 
