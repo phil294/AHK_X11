@@ -13,7 +13,6 @@ class Cmd::File::Util
 		if recurse == 1
 			pattern = Path[pattern.dirname, "**", pattern.basename]
 		end
-		pp! pattern
 		files = [] of ::String
 		Dir.glob(pattern).each do |match|
 			if operate_on_folders == 0
