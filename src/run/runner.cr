@@ -36,7 +36,6 @@ module Run
 		# These are only changed by the program. See also `get_global_built_in_computed_var`
 		@built_in_static_vars = {
 			"a_space" => " ",
-			"a_index" => "0",
 			"a_workingdir" => Dir.current,
 			"a_endchar" => "",
 			"a_iconfile" => "",
@@ -234,8 +233,8 @@ module Run
 		# `var` is case insensitive
 		private def get_global_built_in_computed_var(var)
 			case var.downcase
-			when "a_now"
-				"123" # TODO
+			# when "a_now"
+			# 	"123" # TODO
 			else
 				nil
 			end

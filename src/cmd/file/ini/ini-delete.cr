@@ -1,4 +1,5 @@
-class Cmd::File::IniWrite < Cmd::Base
+require "ini"
+class Cmd::File::IniDelete < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 3 end
 	def self.sets_error_level; true end
@@ -6,7 +7,7 @@ class Cmd::File::IniWrite < Cmd::Base
 		filename, section = args
 		key = args[2]?
 		begin
-			ini = INI.parse(filename)
+			ini = INI.parse(::File.new(filename))
 		rescue
 			return "1"
 		end
@@ -17,14 +18,14 @@ class Cmd::File::IniWrite < Cmd::Base
 			if ! ini[section][key]?
 				return "1"
 			end
-			ini[section].delete_at(key) # TODO: !/? ?
+			ini[section].delete(key)
 		else
-			ini.delete_at(section) # TODO:
+			ini.delete(section)
 		end
 		begin
-			INI.build(filename, ini, space: true)
+			INI.build(::File.new(filename, "w"), ini, space: true)
 			return "0"
-		rescue
+		rescue e
 			return "1"
 		end
 	end

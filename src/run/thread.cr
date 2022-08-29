@@ -35,6 +35,7 @@ module Run
 		@result_channel : Channel(Int32?)?
 		@unpause_channel = Channel(Nil).new
 		getter paused = false
+		getter loop_stack = [] of Cmd::ControlFlow::Loop
 		def initialize(@runner, start, @priority, @settings)
 			@stack << start
 		end
@@ -133,11 +134,20 @@ module Run
 		# Case insensitive
 		def get_var(var)
 			down = var.downcase
-			@built_in_static_vars[down]? || @runner.get_global_var(down) || ""
+			@runner.get_global_var(down) || @built_in_static_vars[down]? || get_thread_built_in_computed_var(down) || ""
 		end
 		# `var` is case insensitive
 		def set_thread_built_in_static_var(var, value)
 			@built_in_static_vars[var.downcase] = value
+		end
+		# `var` is case sensitive
+		private def get_thread_built_in_computed_var(var)
+			case var
+			when "a_index"
+				(@loop_stack.last?.try &.index || 0).to_s
+			else
+				nil
+			end
 		end
 
 		def parse_keys(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> _)
