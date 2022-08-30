@@ -55,6 +55,9 @@ class Cmd::Misc::Run < Cmd::Base
 
 		thread.runner.gui.act do
 			begin
+				if target.starts_with?("www.")
+					target = "http://#{target}"
+				end
 				# works for uris etc., but not for local files
 				success = ::Gio.app_info_launch_default_for_uri(target, nil)
 			rescue
