@@ -1,6 +1,6 @@
 # AHK_X11
 
-AutoHotkey for Linux. (WORK IN PROGRESS)
+AutoHotkey for Linux.
 
 <div align="center">
 
@@ -15,46 +15,56 @@ AutoHotkey for Linux. (WORK IN PROGRESS)
 
 [**Go to installation instructions**](#installation)
 
-More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[crystal-gobject](https://github.com/jhass/crystal-gobject)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 30% of work is done. Note that because of the old version of the spec, many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. Maybe this will also be added some day, but it does not have high priority for me personally. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
+More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[crystal-gobject](https://github.com/jhass/crystal-gobject)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 60% of work is done. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
 
-> Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
+Note that because of the old version of the spec, many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. 
+
+You can use AHK_X11 to create stand-alone binaries with no dependencies, including full functionality like Hotkeys and GUIs. (just like on Windows)
+
+Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a WIP fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
 
 Features:
-- [x] Hotkeys (complete)
+- [x] Hotkeys
 - [x] Hotstrings (complete, but does not work *in some windows*: help needed)
-- [x] Window management (setup complete, but many commands are still missing)
-- [x] Send keys (complete)
-- [ ] Control mouse (TBD)
-- [x] File management (setup complete, but all commands are still missing)
-- [x] GUIs (windows, g-labels, variables; Text, Edit, Button, Checkbox, DropDownList; Submit)
-- [x] One-click compile script to stand-alone executable (complete and portable)
+- [x] Window management (but some commands are still missing)
+- [x] Send keys
+- [x] Control mouse (only clicks so far)
+- [x] File management (but some commands are still missing)
+- [x] GUIs (some controls are still missing)
+- [x] One-click compile script to portable stand-alone executable
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy
+- [x] Graphical installer (optional)
+- [x] Context menu and compilation just like on Windows
 
 Besides:
-- Graphical installer (optional)
-- Context menu and compilation just like on Windows
 - Interactive console (REPL)
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
 
-Implementation details follow below; note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the [docs](https://phil294.github.io/AHK_X11).
+<details><summary>Click to see which commands are implemented and which are missing. Note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
-DONE      17% (36/213):
+DONE      34% (74/216):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
 + FileAppend, Hotkey, Send, ControlSend, #Hotstring, Menu, FileCreateDir, FileDelete, IfMsgBox,
-+ #SingleInstance
++ #SingleInstance, Edit, FileReadLine, FileSelectFile, FileSelectFolder, FileSetAttrib, FileSetTime,
++ IfNotEqual, If var [not] between, IfExist/IfNotExist, IfGreater/IfGreaterOrEqual,
++ IfInString/IfNotInString, IfLess/IfLessOrEqual, IfWinActive/IfWinNotActive, IniDelete, IniRead,
++ IniWrite, Loop (files & folders), Loop (read file contents), MouseClick, Pause, Reload,
++ StringGetPos, StringLeft, StringLen, StringLower, StringMid, StringReplace, StringRight,
++ StringUpper, Suspend, URLDownloadToFile, WinClose, WinGetPos, WinKill, WinMaximize, WinMinimize,
++ WinMove, WinRestore
 
-NEW       1% (2/213): (new Linux-specific commands)
-@@ Echo, ahk_x11_print_vars @@
+NEW       2% (5/216): (not part of spec)
+@@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace @@
 
-REMOVED   10% (21/213):
+REMOVED   10% (22/216):
 # ### Those that simply make no sense in Linux:
 # EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
-# #InstallMouseHook, #UseHook
+# #InstallMouseHook, #UseHook, Loop (registry)
 #
 # ### "Control" commands are impossible with X11, I *think*?
 # Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
@@ -64,36 +74,32 @@ REMOVED   10% (21/213):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     71% (151/213): alphabetically
+TO DO     216% (113/216): alphabetically
 - BlockInput, ClipWait, CoordMode, 
-- DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree, Edit, 
-- FileCopyDir, FileCreateShortcut, 
-- FileInstall, FileReadLine, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion, 
-- FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir, FileSelectFile, 
-- FileSelectFolder, FileSetAttrib, FileSetTime, FormatTime, GetKeyState, GroupActivate, GroupAdd, 
-- GroupClose, GroupDeactivate, GuiControl, GuiControlGet, If var [not] between,
-- If var [not] in/contains MatchList, If var is [not] type, IfNotEqual, IfExist/IfNotExist, 
-- IfGreater/IfGreaterOrEqual, IfInString/IfNotInString, IfLess/IfLessOrEqual, 
-- IfWinActive/IfWinNotActive, IniDelete, IniRead, IniWrite, Input, 
-- InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (files & folders),
-- Loop (parse a string), Loop (read file contents), Loop (registry), MouseClick, 
-- MouseClickDrag, MouseGetPos, MouseMove, OnExit, Pause, PixelGetColor, PixelSearch, 
-- Process, Progress, Random, Reload, RunAs, SetBatchLines, 
+- DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
+- FileCopyDir, FileCreateShortcut,
+- FileInstall, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion,
+- FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir,
+- FormatTime, GetKeyState, GroupActivate, GroupAdd,
+- GroupClose, GroupDeactivate, GuiControl, GuiControlGet,
+- If var [not] in/contains MatchList, If var is [not] type, Input, 
+- InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (parse a string),
+- MouseClickDrag, MouseGetPos, MouseMove, OnExit, PixelGetColor, PixelSearch, 
+- Process, Progress, Random, RunAs, SetBatchLines, 
 - SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
 - SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
 - SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, 
-- StatusBarWait, StringCaseSense, StringGetPos, StringLeft, StringLen, StringLower, StringMid, 
-- StringReplace, StringRight, StringSplit, StringTrimLeft, StringTrimRight, StringUpper, Suspend, 
-- SysGet, Thread, ToolTip, Transform, TrayTip, URLDownloadToFile, WinActivateBottom, 
-- WinClose, WinGetActiveStats, WinGetActiveTitle, WinGetClass, WinGet, WinGetPos, WinGetText, 
-- WinGetTitle, WinHide, WinKill, WinMaximize, WinMenuSelectItem, WinMinimize, WinMinimizeAll, 
-- WinMinimizeAllUndo, WinMove, WinRestore, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 
+- StatusBarWait, StringCaseSense, StringSplit, StringTrimLeft, StringTrimRight,
+- SysGet, Thread, ToolTip, Transform, TrayTip, WinActivateBottom,
+- WinGetActiveStats, WinGetActiveTitle, WinGetClass, WinGet, WinGetText,
+- WinGetTitle, WinHide, WinMenuSelectItem, WinMinimizeAll,
+- WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 
 - WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar, 
 - #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem, 
-- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon,
-- #WinActivateForce
+- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #WinActivateForce
 ```
+</details>
 
 ## Installation
 
@@ -103,13 +109,13 @@ Prerequisites:
 
 Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases). Make the downloaded file executable and you should be good to go.
 
-**Please note that the current version is not very usable yet** because many commands are missing.
+There is no auto updater yet! (but planned) You will probably want to get the latest version then and again.
 
 ## Usage
 
 There are different ways to use it.
 
-1. The Windows way: Running the program directly opens up the interactive installer.
+1. The graphical way, like on Windows: Running the program directly opens up the interactive installer.
     - Once installed, all `.ahk` files are associated with AHK_X11, so you can simply double click them.
     - Also adds the Compiler into `Open as...` Menus.
 2. Command line: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
@@ -117,48 +123,7 @@ There are different ways to use it.
     - When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`).
     - If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
     - Compile scripts with `./ahk_x11 --compile "path/script.ahk"
-
-<details>
-<summary>Here's a working demo script showing several of the commands so far implemented.</summary>
-
-```AutoHotkey
-#Persistent
-IfWinExist, ahk_class firefox
-    WinActivate
-tomorrow += 1, days
-FileAppend, %tomorrow%, tomorrow.txt
-GoSub greet
-return ; some comment
-
-greet:
-my_var = 1234
-sleep 0.001
-IfEqual, my_var, 1234, MsgBox, %my_var%!. Try writing "btw" or pressing ctrl+shift+A.
-else, msgbox ??
-return
-
-:*:btw::
-SendRaw by the way
-return
-
-^+a::
-msgbox You pressed ctrl shift A. If you press ctrl+shift+B, ahk_x11 should type something for you.
-return
-
-^+b::
-SetTimer, my_timer, %myvar%
-loop, 3
-{
-	sendraw, loop no %A_Index% `; ...
-}
-return
-
-my_timer:
-settimer, my_timer, off
-msgbox, A timer was triggered!
-return
-```
-</details>
+    - Hashbang supported if first line starts with `#!`
 
 ### Caveats
 
@@ -187,7 +152,9 @@ Some Linux distros offer a configurable setting for focus stealing prevention. U
 
 ## Development
 
-These are the steps required to build this project locally. Please open an issue if anything doesn't work.
+These are the steps required to build this project locally, such as if you want to contribute to the project. Please open an issue if anything doesn't work.
+
+You don't need to follow this steps to *use* AHK_X11, for that, please see Installation above.
 
 1. Install development versions of prerequisites.
     1. Ubuntu 20.04 and up:
@@ -255,12 +222,13 @@ If you feel like it, you are welcome to contribute. This program has a very modu
 Commands behave mostly autonomous. See for example [`src/cmd/file/file-copy.cr`](https://github.com/phil294/AHK_X11/blob/master/src/cmd/file/file-copy.cr): All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
 Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `thread.runner.get_user_var`, `thread.get_var` and `thread.runner.set_user_var`.
 
-GUI: Most controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are helpful.
+GUI: Several controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are helpful.
 
 A more general overview:
 - `src/build` does the parsing etc. and is mostly complete
 - `src/run/runner` and `src/run/thread` are worth looking into, this is the heart of the application and where global and thread state is stored
 - `src/cmd` contains all commands exposed to the user.
+- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse) as `runner.x_do`, `crystal-gobject` for Gtk (`Gui`, `MsgBox`) as `runner.gui` (`gui.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings) as `runner.x11` (`x11.cr`).
 
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
