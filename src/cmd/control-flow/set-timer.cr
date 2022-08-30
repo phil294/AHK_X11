@@ -2,7 +2,7 @@ class Cmd::ControlFlow::SetTimer < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 3 end
 	def run(thread, args)
-		label = args[0]
+		label = args[0].downcase
 		action = (args[1]? || "").downcase
 		priority = (args[2]? || "").to_i? || 0
 		timer = thread.runner.get_timer label
