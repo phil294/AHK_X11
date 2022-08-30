@@ -112,6 +112,7 @@ module Run
 				handle_single_instance
 				gui.initialize_menu(self)
 			end
+			Fiber.yield
 			spawn same_thread: true { clock }
 			if (auto_execute_section = @builder.start)
 				@auto_execute_thread = add_thread auto_execute_section, 0
