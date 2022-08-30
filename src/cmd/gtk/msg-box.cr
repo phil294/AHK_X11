@@ -1,11 +1,10 @@
-# TODO: INCOMPAT: incomplete
 class Cmd::Gtk::Msgbox < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end
 	def run(thread, args)
 		text = "Press OK to continue."
 		if args[0]?
-			maybe_options = args[0].to_i? # TODO: where is strict necessary?
+			maybe_options = args[0].to_i?
 			maybe_options = 0 if maybe_options == nil
 			if maybe_options && args[1]?
 				options = maybe_options
