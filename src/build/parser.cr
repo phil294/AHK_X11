@@ -109,9 +109,13 @@ module Build
 				when "<" then cmd_class = Cmd::ControlFlow::IfLess
 				when "<=" then cmd_class = Cmd::ControlFlow::IfLessOrEqual
 				when "between" then cmd_class = Cmd::ControlFlow::IfBetween
-				else
-					raise "If condition '#{split[1]?}' is unknown"
+				when "not"
+					if (split[2]? || "").starts_with?("between ")
+						split[2] = split[2][8..]
+						cmd_class = Cmd::ControlFlow::IfNotBetween
+					end
 				end
+				raise "If condition '#{split[1]?}' is unknown" if ! cmd_class
 				csv_args = [split[0], split[2]? || ""]
 				@cmds << cmd_class.new line_no, csv_args
 			elsif first_word.includes?("::")
