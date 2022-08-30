@@ -224,8 +224,8 @@ These are the steps required to build this project locally. Please open an issue
     ```
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, if you have `libxdo` (xdotool) version 2016x installed. Read on for a cross-distro compatible build.
 1. In `lib/x_do/src/x_do/libxdo.cr`, add line `role : LibC::Char*` *after* `winname : LibC::Char*`
-1. add `xdo_quit_window` (TODO: ...)
-1. add `xdo_set_state` (TODO: ...)
+1. add `xdo_quit_window` TODO: Waiting for a PR on `x_do.cr`, so for now, probably best just comment out the failing lines later on in `win-close` and `win-maximize` and `win-restore`
+1. add `xdo_set_state` TODO: same as above
 1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04.
     - Should be statically linked:
         - `libxdo`. Additionally to the above reasons, it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. Also, we fix a rarely occurring fatal error here (probably Crystal-specific?). So,
