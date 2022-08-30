@@ -164,9 +164,22 @@ return
 
 #### Focus stealing prevention
 
-Some Linux distros offer a configurable setting for focus stealing prevention. Usually, it's default off. But if you have activated it, window focus changing actions like `MsgBox` or `WinActivate` will not work as expected: A `MsgBox` will appear hidden *behind* the active window. This can be useful to prevent accidental popup dismissal but when you don't like that, you have two options:
+Some Linux distros offer a configurable setting for focus stealing prevention. Usually, it's default off. But if you have activated it, window focus changing actions like `MsgBox` or `WinActivate` will not work as expected: A `MsgBox` will appear hidden *behind* the active window. This can be useful to prevent accidental popup dismissal but when you don't like that, you have three options:
 - disable said setting
-- TODO: impl in cr/msgbox option: force being on top
+- use the `always on top` setting of MsgBox
+- <details><summary>hack around it with code</summary>
+
+    ```AutoHotkey
+    SetTimer, MsgBoxToFront, 1
+    MsgBox, Hello
+    Return
+
+    MsgBoxToFront:
+    SetTimer, MsgBoxToFront, off
+    ; You might want to adjust the matching criteria, especially for compiled scripts
+    WinActivate ahk_class ahk_x11
+    return
+    ```
 
 #### Appearance
 
