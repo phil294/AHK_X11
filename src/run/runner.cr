@@ -36,6 +36,7 @@ module Run
 		# These are only changed by the program. See also `get_global_built_in_computed_var`
 		@built_in_static_vars = {
 			"a_space" => " ",
+			"a_tab" => "\t",
 			"a_workingdir" => Dir.current,
 			"a_endchar" => "",
 			"a_iconfile" => "",
@@ -44,6 +45,8 @@ module Run
 			"a_scriptdir" => "",
 			"a_scriptname" => "",
 			"a_scriptfullpath" => "",
+			"a_ahkversion" => "1.0.24",
+			"a_ostype" => "Linux",
 		}
 		@initial_working_dir = Dir.current
 		protected getter labels : Hash(String, Cmd::Base)
