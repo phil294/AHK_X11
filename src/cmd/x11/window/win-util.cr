@@ -27,7 +27,7 @@ class Cmd::X11::Window::Util
 				if title.starts_with?("ahk_class ")
 					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
 				elsif title.starts_with?("ahk_id ")
-					wid = title[7..].to_u64?(strict: true)
+					wid = title[7..].to_u64?
 					raise Run::RuntimeException.new "ahk_id must be a number" if ! wid
 					# No way to search by ID currently, so get all and filter below
 				else
