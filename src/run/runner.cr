@@ -227,8 +227,17 @@ module Run
 		# `var` is case insensitive
 		def set_user_var(var, value)
 			down = var.downcase
-			return if @built_in_static_vars[down]? || get_global_built_in_computed_var(down)
-			@user_vars[down] = value
+			case down
+			when "clipboard"
+				gui.act do
+					clip = Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", true))
+					clip.set_text(value, -1)
+					clip.store
+				end
+			else
+				return if @built_in_static_vars[down]? || get_global_built_in_computed_var(down)
+				@user_vars[down] = value
+			end
 		end
 		# `var` is case insensitive
 		def set_global_built_in_static_var(var, value)
@@ -251,6 +260,12 @@ module Run
 			when "a_now" then Time.local.to_YYYYMMDDHH24MISS
 			when "a_nowutc" then Time.utc.to_s("%Y%m%d%H%M%S")
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
+			when "clipboard"
+				txt = ""
+				gui.act do
+					txt = Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", false)).wait_for_text
+				end
+				txt
 			else
 				nil
 			end

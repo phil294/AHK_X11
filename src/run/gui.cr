@@ -21,6 +21,7 @@ module Run
 		# For running Gtk code on the Gtk worker thread (`idle_add` tells GTK to run
 		# the `block` in its free time),
 		# so perfect for Gui modifications, new window requests etc.
+		# TODO: make generic and return the block's return value directly so callers don't need wrapping variables
 		def act(&block)
 			channel = Channel(Exception?).new
 			GLib.idle_add do
