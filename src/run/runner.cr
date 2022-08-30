@@ -233,8 +233,20 @@ module Run
 		# `var` is case insensitive
 		private def get_global_built_in_computed_var(var)
 			case var.downcase
-			# when "a_now"
-			# 	"123" # TODO
+			when "a_yyyy", "a_year" then Time.local.year.to_s
+			when "a_mm", "a_mon" then Time.local.month.to_s(precision: 2)
+			when "a_dd", "a_mday" then Time.local.day.to_s(precision: 2)
+			when "a_wday" then (Time.local.day_of_week.value % 7 + 1).to_s
+			when "a_yday" then Time.local.day_of_year.to_s
+			when "a_yweek"
+				year, week = Time.local.calendar_week
+				"#{year}#{week}"
+			when "a_hour" then Time.local.hour.to_s(precision: 2)
+			when "a_min" then Time.local.minute.to_s(precision: 2)
+			when "a_sec" then Time.local.second.to_s(precision: 2)
+			when "a_now" then Time.local.to_YYYYMMDDHH24MISS
+			when "a_nowutc" then Time.utc.to_s("%Y%m%d%H%M%S")
+			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
 			else
 				nil
 			end
