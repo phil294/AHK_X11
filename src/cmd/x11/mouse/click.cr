@@ -1,4 +1,4 @@
-class Cmd::X11::MouseClick < Cmd::Base
+class Cmd::X11::Mouse::MouseClick < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 3 end
 	def run(thread, args)

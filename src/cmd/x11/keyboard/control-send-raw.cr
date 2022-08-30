@@ -1,6 +1,6 @@
 # INCOMPAT: control arg ignored
 # INCOMPAT: This may *sometimes* not work, as some windows seem to ignore the events sent. This problem is probably not fixable. Doing `WinActivate` and `Send` instead should always work.
-class Cmd::X11::ControlSendRaw < Cmd::Base
+class Cmd::X11::Keyboard::ControlSendRaw < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 6 end
 	def run(thread, args)
