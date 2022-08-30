@@ -253,7 +253,6 @@ module Run
 
 		def add_hotkey(hotkey)
 			hotkey.runner = self
-			hotkey.set_keysym
 			@hotkeys[hotkey.key_str] = hotkey
 			x11.register_hotkey hotkey
 			hotkey
@@ -276,7 +275,6 @@ module Run
 			hotkey.cmd = cmd if cmd
 			hotkey.priority = priority if priority
 			if active_state
-				hotkey.set_keysym
 				x11.register_hotkey hotkey
 				hotkey.active = true
 			else

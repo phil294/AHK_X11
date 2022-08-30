@@ -181,7 +181,6 @@ module Run
 			end
 		end
 
-		@bad_access = false
 		def run(runner : Runner, hotstring_end_chars)
 			set_error_handler
 			refresh_focus
@@ -212,8 +211,8 @@ module Run
 			@pause_mutex.lock
 			@pause_counter += 1
 			if ! @is_paused
-				@hotkey_subscriptions.each do |sub|
-					unregister_hotkey sub[:hotkey], unsubscribe: false
+				@hotkeys.each do |hotkey|
+					unregister_hotkey hotkey, unsubscribe: false
 				end
 				@is_paused = true
 			end
@@ -225,8 +224,8 @@ module Run
 			@pause_counter -= 1
 			if @pause_counter < 1
 				@pause_counter = 0
-				@hotkey_subscriptions.each do |sub|
-					register_hotkey sub[:hotkey], subscribe: false
+				@hotkeys.each do |hotkey|
+					register_hotkey hotkey, subscribe: false
 				end
 				@is_paused = false
 			end
@@ -240,19 +239,18 @@ module Run
 		@suspended = false
 		def suspend
 			@suspended = true
-			@hotkey_subscriptions.each do |sub|
-				unregister_hotkey sub[:hotkey], unsubscribe: false if ! sub[:hotkey].exempt_from_suspension
+			@hotkeys.each do |hotkey|
+				unregister_hotkey hotkey, unsubscribe: false if ! hotkey.exempt_from_suspension
 			end
 		end
 		def unsuspend
 			@suspended = false
-			@hotkey_subscriptions.each do |sub|
-				register_hotkey sub[:hotkey], subscribe: false if ! sub[:hotkey].exempt_from_suspension
+			@hotkeys.each do |hotkey|
+				register_hotkey hotkey, subscribe: false if ! hotkey.exempt_from_suspension
 			end
 		end
 
-		# apparently keycodes are display-dependent so they can't be determined at build time
-		@hotkey_subscriptions = [] of NamedTuple(hotkey: Hotkey, keycode: UInt8)
+		@hotkeys = [] of Hotkey
 		@hotstrings = [] of Hotstring
 
 		def register_hotstring(hotstring)
@@ -260,27 +258,25 @@ module Run
 		end
 
 		def register_hotkey(hotkey, subscribe = true)
-			keycode = keysym_to_keycode(hotkey.keysym)
+			# apparently keycodes are display-dependent so they can't be determined at build time
+			keysym = ahk_key_name_to_keysym(hotkey.key_name)
+			raise RuntimeException.new "Hotkey key name '#{hotkey.key_name}' not found." if ! keysym || ! keysym.is_a?(Int32)
+			hotkey.keycode = keysym_to_keycode(keysym.to_u64)
 			if subscribe
-				@hotkey_subscriptions << {
-					hotkey: hotkey,
-					keycode: keycode
-				}
+				@hotkeys << hotkey
 			end
 			if ! hotkey.no_grab
 				hotkey.modifiers.each do |mod|
-					@display.grab_key(keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
+					@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
 		end
 		def unregister_hotkey(hotkey, unsubscribe = true)
-			i = @hotkey_subscriptions.index! { |sub| sub.[:hotkey] == hotkey }
-			sub = @hotkey_subscriptions[i]
-			sub[:hotkey].modifiers.each do |mod|
-				@display.ungrab_key(sub[:keycode], mod, grab_window: @root_win)
+			hotkey.modifiers.each do |mod|
+				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
 			end
 			if unsubscribe
-				@hotkey_subscriptions.delete i
+				@hotkeys.delete hotkey
 			end
 		end
 
@@ -296,13 +292,13 @@ module Run
 
 		private def handle_key_event(event, runner)
 			##### 1. Hotkeys
-			sub = @hotkey_subscriptions.find do |sub|
-				sub[:hotkey].active &&
-				sub[:keycode] == event.keycode &&
-				(sub[:hotkey].modifiers.any? &.== event.state) &&
-				(! @suspended || sub[:hotkey].exempt_from_suspension)
+			hotkey = @hotkeys.find do |hotkey|
+				hotkey.active &&
+				hotkey.keycode == event.keycode &&
+				(hotkey.modifiers.any? &.== event.state) &&
+				(! @suspended || hotkey.exempt_from_suspension)
 			end
-			sub[:hotkey].trigger if sub
+			hotkey.trigger if hotkey
 			
 			##### 2. Hotstrings
 			lookup = event.lookup_string

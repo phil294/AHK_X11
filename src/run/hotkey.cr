@@ -6,8 +6,8 @@ module Run
 		property priority : Int32
 		property active = true
 		getter modifiers = [] of UInt32
-		@key_name = ""
-		getter keysym = 0_u64
+		getter key_name = ""
+		property keycode = 0_u8
 		getter no_grab = false
 		property exempt_from_suspension = false
 		def initialize(@key_str, *, @priority)
@@ -57,11 +57,6 @@ module Run
 					end
 				end
 			end
-		end
-		def set_keysym
-			keysym = @runner.not_nil!.x11.ahk_key_name_to_keysym(@key_name)
-			raise RuntimeException.new "Hotkey key name '#{@key_name}' not found." if ! keysym || ! keysym.is_a?(Int32)
-			@keysym = keysym.to_u64
 		end
 		def trigger
 			@runner.not_nil!.add_thread @cmd.not_nil!, @priority
