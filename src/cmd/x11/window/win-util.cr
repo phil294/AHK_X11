@@ -6,10 +6,10 @@ class Cmd::X11::Window::Util
 	# INCOMPAT: text/excludetext is ignored
 	def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
 		title = match_conditions[0]? || ""
-		if match_conditions.size == 0
+		if match_conditions.size == 0 || match_conditions.all? &.empty?
 			raise Run::RuntimeException.new "expected window matching arguments as 'last found window' cannot be inferred here" if ! empty_is_last_found
 			win = thread.settings.last_found_window
-		elsif title.downcase == "a" && match_conditions.size == 1
+		elsif title.downcase == "a"
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here" if ! a_is_active
 			win = thread.runner.x_do.active_window
 		else
