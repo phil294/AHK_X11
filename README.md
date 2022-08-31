@@ -101,6 +101,10 @@ TO DO     216% (113/216): alphabetically
 - WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar, 
 - #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem, 
 - #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #WinActivateForce
+
+Also planned, even though it's not part of 1.0.24 spec:
+ImageSearch
+Maybe some kind of OCR command
 ```
 </details>
 
