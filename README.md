@@ -15,6 +15,8 @@ AutoHotkey for Linux.
 
 [**Go to installation instructions**](#installation)
 
+[**DEMO VIDEO**](https://raw.githubusercontent.com/phil294/AHK_X11/master/demo.mp4): Installation, script creation, compilation
+
 
 [AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux.
 
