@@ -325,7 +325,12 @@ module Run
 			return if @settings.single_instance == SingleInstance::Off
 			search_for = (PROGRAM_NAME + " " + ARGV.join(" ")).strip
 			result = IO::Memory.new
-			Process.run("pgrep", ["--full", "--exact", search_for], output: result)
+			begin
+				Process.run("pgrep", ["--full", "--exact", search_for], output: result)
+			rescue e : IO::Error
+				STDERR.puts "Warning: Could not determine previously running instance because pgrep is not installed. Using SingleInstance OFF."
+				return
+			end
 			already_running = result.to_s.chomp
 				.split('\n')
 				.select{|p| p != Process.pid.to_s }
