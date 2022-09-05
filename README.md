@@ -45,7 +45,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary>Click to see which commands are implemented and which are missing. Note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
-DONE      34% (74/216):
+DONE      34% (74/217):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -58,10 +58,10 @@ DONE      34% (74/216):
 + StringUpper, Suspend, URLDownloadToFile, WinClose, WinGetPos, WinKill, WinMaximize, WinMinimize,
 + WinMove, WinRestore
 
-NEW       2% (5/216): (not part of spec)
-@@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace @@
+NEW       3% (6/217): (not part of spec or from a more recent version)
+@@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet @@
 
-REMOVED   10% (22/216):
+REMOVED   10% (22/217):
 # ### Those that simply make no sense in Linux:
 # EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
 # #InstallMouseHook, #UseHook, Loop (registry)
@@ -74,7 +74,7 @@ REMOVED   10% (22/216):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     216% (113/216): alphabetically
+TO DO     52% (113/217): alphabetically
 - BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
 - FileCopyDir, FileCreateShortcut,

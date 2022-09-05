@@ -443,6 +443,9 @@
               <li>
                 <a class="tbd" href="#ListVars.htm">ListVars</a>
               </li>
+              <li class="x11">
+                <a href="#EnvGet.htm">EnvGet</a>
+              </li>
               <li>
                 <a href="#Menu.htm">Menu</a>
               </li>
@@ -860,7 +863,7 @@
             <li class="calibre11">A regular scripting language. The program includes a <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script compiler</a> that converts a script to an <span class="rm">EXE</span> <span class="x11">executable</span>. <span class="tbd">It also includes AutoScriptWriter, a macro recorder written by Larry Keys.</span><br class="calibre12" />
             <li class="calibre11">A keyboard, joystick, and mouse <a href="#Remap.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">remapper</a>.</li>
             <li class="x11">AHK_X11 is a complete reimplementation of AutoHotkey for X11-based systems such as most Linux systems. It is still in development as of 2022/08. A lot of work is done but several commands are still missing. You can find installation details below and/or on the GitHub page linked above.</li>
-            <li class="x11">These docs are based on the <a href="https://www.autohotkey.com/download/1.0/AutoHotkey1024.exe">original AHK docs from December 2004</a>, complemented by annotations (see Legend above - not super accurate though). Black text was not changed and should work (except some code samples). AHK_X11 only aims at implementing the spec from that time, namely the command syntax (legacy syntax). More modern features such as expressions or functions are not supported.</li>
+            <li class="x11">These docs are based on the <a href="https://www.autohotkey.com/download/1.0/AutoHotkey1024.exe">original AHK docs from December 2004</a>, complemented by annotations (see Legend above - not super accurate though). Black text was not changed and should work (except some code samples). AHK_X11 only aims at implementing the spec from that time. This "Classic AHK" approach means that more modern features such as expressions or functions are not supported.</li>
             <li class="x11">In short, this doc file should be accurate and tell you everything you need.</li>
           </ul>
           <h2 class="calibre9">Who might benefit?</h2>
@@ -2360,6 +2363,10 @@ else
               <tr class="calibre3">
                 <td height="16" class="tbd calibre4"><a href="#ListVars.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ListVars</a></td>
                 <td height="16" class="calibre4">Displays the script's <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variables</a>: their names and current contents.</td>
+              </tr>
+              <tr class="calibre3">
+                <td height="16" class="x11 calibre4"><a href="#EnvGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvGet</a></td>
+                <td height="16" class="calibre4">Retrieves an environment variable.</td>
               </tr>
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#Loop.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Loop (normal) </a></td>
@@ -8305,12 +8312,12 @@ return</pre>
                 <td width="65%" class="calibre4">^</td>
               </tr>
               <tr class="calibre3">
-                <td width="35%" class="calibre31">{{}</td>
-                <td width="65%" class="calibre4">{</td>
+                <td width="35%" class="calibre31">&#123;&#123;&#125;</td>
+                <td width="65%" class="calibre4">&#123;</td>
               </tr>
               <tr class="calibre3">
-                <td width="35%" class="calibre31">{}}</td>
-                <td width="65%" class="calibre4">}</td>
+                <td width="35%" class="calibre31">&#123;&#125;&#125;</td>
+                <td width="65%" class="calibre4">&#125;</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre31">{ENTER}</td>
@@ -9632,6 +9639,20 @@ if var is time
         </div>
       </div>
 </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="EnvGet.htm" href="#EnvGet.htm">#</a> <h2 class="calibre17">EnvGet</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Retrieves an environment variable.</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">EnvGet, OutputVar, EnvVarName </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Menu.htm" href="#Menu.htm">#</a> <h2 class="calibre17">Menu</h2> [v1.0.07+]
