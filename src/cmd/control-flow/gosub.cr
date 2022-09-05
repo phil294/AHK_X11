@@ -4,6 +4,6 @@ class Cmd::ControlFlow::Gosub < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 1 end
 	def run(thread, args)
-		thread.gosub(args[0])
+		thread.gosub(args[0].downcase)
 	end
 end
