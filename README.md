@@ -9,6 +9,12 @@ AutoHotkey for Linux.
 `MsgBox, AHK_X11` (*)
 </div>
 
+This project is usable, but WORK IN PROGRESS.
+
+**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://discord.com/invite/autohotkey-115993023636176902)'s #ahk_x11 channel.
+
+**Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
+
 [**Direct download**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11.zip) (all Linux distributions, x86_64, single executable)
 
 [**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
@@ -17,12 +23,11 @@ AutoHotkey for Linux.
 
 [**DEMO VIDEO**](https://raw.githubusercontent.com/phil294/AHK_X11/master/demo.mp4): Installation, script creation, compilation
 
-
 [AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux.
 
 More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[crystal-gobject](https://github.com/jhass/crystal-gobject)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 60% of work is done. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
 
-Note that because of the old version of the spec, many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. 
+Note that because of the old version of the spec (at least for now), many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. 
 
 You can use AHK_X11 to create stand-alone binaries with no dependencies, including full functionality like Hotkeys and GUIs. (just like on Windows)
 
@@ -47,7 +52,7 @@ Besides:
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
 
-<details><summary>Click to see which commands are implemented and which are missing. Note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
+<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
 DONE      34% (74/217):
@@ -164,7 +169,7 @@ Some Linux distros offer a configurable setting for focus stealing prevention. U
 
 These are the steps required to build this project locally, such as if you want to contribute to the project. Please open an issue if anything doesn't work.
 
-You don't need to follow this steps to *use* AHK_X11, for that, please see Installation above.
+You don't need to follow this procedure to *use* AHK_X11, for that, please see Installation above.
 
 1. Install development versions of prerequisites.
     1. Ubuntu 20.04 and up:
@@ -179,26 +184,8 @@ You don't need to follow this steps to *use* AHK_X11, for that, please see Insta
         ```
 1. `git clone https://github.com/phil294/AHK_X11`
 1. `cd AHK_X11`
-1. Run these commands one by one (I haven't double checked them, so it's best to go through them manually). Most of it is all WIP and temporary and only necessary so the different dependencies get along fine (x11 and gobject bindings). As a bonus, the `build_namespace` invocations cache the GIR (`require_gobject` calls) and thus reduce the overall compile time from ~6 to ~3 seconds.
-    ```bash
-    shards install
-    # populate cache
-    crystal run lib/gobject/src/generator/build_namespace.cr -- Gtk 3.0 > lib/gobject/src/gtk/gobject-cache-gtk.cr
-    crystal run lib/gobject/src/generator/build_namespace.cr -- xlib 2.0 > lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
-    for lib in "GObject 2.0" "GLib 2.0" "Gio 2.0" "GModule 2.0" "Atk 1.0" "freetype2" "HarfBuzz 0.0" "GdkPixbuf 2.0" "cairo 1.0" "Pango 1.0" "Gdk 3.0"; do
-        echo "### $lib" >> lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
-        crystal run lib/gobject/src/generator/build_namespace.cr -- $lib >> lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
-    done
-    # update lib to use cache
-    sed -i -E 's/^(require_gobject)/# \1/g' lib/gobject/src/gtk/gobject-cache-gtk.cr lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
-    sed -i -E 's/^require_gobject "Gtk", "3.0"$/require ".\/gobject-cache-gtk"/' lib/gobject/src/gtk/gtk.cr
-    echo 'require "./gobject-cache-xlib--modified"' > tmp.txt; echo 'require "./gobject-cache-gtk-other-deps"' >> tmp.txt; cat lib/gobject/src/gtk/gobject-cache-gtk.cr >> tmp.txt; mv tmp.txt lib/gobject/src/gtk/gobject-cache-gtk.cr
-    echo 'macro require_gobject(namespace, version = nil) end' >> lib/gobject/src/gobject.cr
-    # delete conflicting c function binding by modifying the cache
-    sed -i -E 's/  fun open_display = XOpenDisplay : Void$//' lib/gobject/src/gtk/gobject-cache-xlib--modified.cr
-    # https://github.com/jhass/crystal-gobject/issues/103
-    sed -i -E 's/(def self.new_from_stream.+: self)$/\1?/g' lib/gobject/src/gtk/gobject-cache-gtk-other-deps.cr
-    ```
+1. `shards install`
+1. Run various library tweaks with `./setup_dependencies.sh`. This is mostly WIP and hacked together, so if anything doesn't work, please open an issue.
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, if you have `libxdo` (xdotool) version 2016x installed. Read on for a cross-distro compatible build.
 1. In `lib/x_do/src/x_do/libxdo.cr`, add line `role : LibC::Char*` *after* `winname : LibC::Char*`
 1. add `xdo_quit_window` TODO: Waiting for a PR on `x_do.cr`, so for now, probably best just comment out the failing lines later on in `win-close` and `win-maximize` and `win-restore`
@@ -210,7 +197,7 @@ You don't need to follow this steps to *use* AHK_X11, for that, please see Insta
             - in `xdo.c`, after `data = xdo_get_window_property_by_atom(xdo, wid, request, &nitems, &type, &size);`, add another `if(data == NULL) return XDO_ERROR;`
             - run `make clean && make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
         - Dependencies of `libxdo`: `libxkbcommon`, `libXtst` and `libXi`. The static libraries should be available from your package manager dependencies installed above so normally there's nothing you need to do.
-        - More dependencies of `libxdo` which are also available from the packages, but their linking fails with obscure PIE errors: `libXinerama` and `libXext`. I solved this by getting the source for these two and building the `.a` files locally (but apparently no makefile changes were required). Not very sure if these aren't actually part of every standard `libx11` install anyway, so maybe they should be dynamic...
+        - More dependencies of `libxdo` which are also available from the packages, but their linking fails with obscure PIE errors: `libXinerama` and `libXext`. I solved this by getting the source for these two and building the `.a` files locally (but apparently no makefile changes were required). Not sure if these aren't actually part of every standard `libx11` install anyway, so maybe they should be dynamic...
         - Other (crystal dependencies?), also via package manager: `libevent_pthreads`, `libevent`, and `libpcre`
         - `libgc` is currently shipped and linked automatically by Crystal itself so there is no need for it
     - Stays dynamically linked:
@@ -227,7 +214,9 @@ TODO: speed measurements for `Send` and window operations
 
 ## Contributing
 
-If you feel like it, you are welcome to contribute. This program has a very modular structure due to its nature which should make it easier to add features. Most work pending is just implementing commands, as almost everything more complicated is now bootstrapped. Simply adhere to the 2004 spec chm linked above. There's documentation blocks all across the source.
+If you feel like it, you are welcome to contribute! The language in use, Crystal, is resembling Ruby syntax also great for beginners.
+
+This program has a very modular structure due to its nature which should make it easier to add features. Most work pending is just implementing commands, as almost everything more complicated is now bootstrapped. Simply adhere to the 2004 spec chm linked above. There's documentation blocks all across the source.
 
 Commands behave mostly autonomous. See for example [`src/cmd/file/file-copy.cr`](https://github.com/phil294/AHK_X11/blob/master/src/cmd/file/file-copy.cr): All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
 Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `thread.runner.get_user_var`, `thread.get_var` and `thread.runner.set_user_var`.
@@ -246,7 +235,7 @@ While Crystal brings its own hidden `::Thread` class, any reference to `Thread` 
 
 ## Issues
 
-For bugs and feature requests, please open up an issue. I am also available on the AHK Discord server or the [forum](https://www.autohotkey.com/boards/viewtopic.php?f=81&t=106640).
+For bugs and feature requests, please open up an issue, or check the Discord or [Forum](https://www.autohotkey.com/boards/viewtopic.php?f=81&t=106640).
 
 ## License
 
