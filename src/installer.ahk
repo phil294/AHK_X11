@@ -1,4 +1,14 @@
 #Persistent
+
+ExitApp ; DO NOT RUN THIS SCRIPT AS ROOT, IT WILL BRICK YOUR SYSTEM
+
+EnvGet, noninteractive, AHK_X11_INSTALL_NONINTERACTIVE
+if noninteractive <>
+{
+    GoSub Install
+    ExitApp
+}
+
 Gui, Add, Text, x180, AHK_X11`nAutoHotkey for Linux
 Gui, Add, Text, xm0 y100, Installer`n`nNo script specified to execute. You can use AHK_X11 from command line if you want.`nOtherwise, click INSTALL below (recommended). This will install the binary and associate`nall .ahk files with it,so you can double click your scripts for execution.
 Gui, Add, Button, x180 y210 gInstall, %A_Space%%A_Space%%A_Space%->  INSTALL  <-%A_Space%%A_Space%%A_Space%
@@ -10,7 +20,9 @@ Install:
 app_name = ahk_x11
 app_ext = ahk
 app_comment = AutoHotkey for Linux
-binary_dir = %A_Home%/.local/bin
+EnvGet, binary_dir, DESTDIR
+if binary_dir =
+    binary_dir = %A_Home%/.local/bin
 binary_path = %binary_dir%/ahk_x11
 app_logo = /tmp/tmp_ahk_x11_logo.png
 
@@ -58,5 +70,6 @@ FileDelete, %app_name%-compiler.desktop
 RunWait, update-desktop-database %A_Home%/.local/share/applications
 RunWait, xdg-mime default %app_name%.desktop application/x-%app_name%
 
-MsgBox, Installation complete. Program will exit.
-ExitApp
+if noninteractive =
+    MsgBox, Installation complete. Program will exit.
+ExitApp 

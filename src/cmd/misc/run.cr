@@ -53,14 +53,16 @@ class Cmd::Misc::Run < Cmd::Base
 		#		success = ...
 		# 	end
 
-		thread.runner.gui.act do
-			begin
-				if target.starts_with?("www.")
-					target = "http://#{target}"
+		if ! thread.runner.headless
+			thread.runner.gui.act do
+				begin
+					if target.starts_with?("www.")
+						target = "http://#{target}"
+					end
+					# works for uris etc., but not for local files
+					success = ::Gio.app_info_launch_default_for_uri(target, nil)
+				rescue
 				end
-				# works for uris etc., but not for local files
-				success = ::Gio.app_info_launch_default_for_uri(target, nil)
-			rescue
 			end
 		end
 		

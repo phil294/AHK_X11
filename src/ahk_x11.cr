@@ -57,6 +57,7 @@ if ARGV[0]?
 else
 	lines = Compiler.new.extract.try &.split('\n')
 	abort "Argument missing." if ! lines
+	File.delete?("/tmp/tmp_ahk_x11_logo.png") # ensure the right permission
 	# Only needed for installer script, this can't (yet) really be part of ahk code. TODO: rm on exit
 	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
 end
