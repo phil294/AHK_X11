@@ -99,10 +99,10 @@ module Run
 			if ! @headless
 				@builder.hotkeys.each { |h| add_hotkey h }
 				@builder.hotstrings.each { |h| add_hotstring h }
-				# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
-				::Thread.new do
-					x11.run self, @settings.hotstring_end_chars # separate worker thread because event loop is blocking
+				spawn same_thread: true do
+					x11.run self, @settings.hotstring_end_chars
 				end
+				# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
 				::Thread.new do
 					gui.run # separate worker thread because gtk loop is blocking
 				end

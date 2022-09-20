@@ -16,7 +16,8 @@ dependencies:
   tasker:
       github: spider-gazelle/tasker
   x11:
-    github: TamasSzekeres/x11-cr
+    github: phil294/x11-cr
+    commit: a4214281dcfe41552990443b7ba8895d0fbadccf
   x_do:
     github: phil294/x_do.cr
     commit: db3af0cb15cafc8784fd72decfc4b268db32222c

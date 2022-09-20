@@ -119,21 +119,29 @@ module X11::C
 end
 
 module Run
-	# Responsible for registering hotkeys to the X11 server and calling threads on trigger.
-	# Parts of the grab_key stuff is adopted from https://stackoverflow.com/q/4037230.
-	# For a non-grabbing alternative that could also be used to implemented Hotstrings,
-	# check the `x11-follow-focus` branch (broken) and https://stackoverflow.com/q/22749444
+	# Responsible for registering hotkeys to the X11 server,
+	# listening to all events and calling threads on hotkey or hotstring trigger.
 	class X11
 		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else 
 
 		@root_win = 0_u64
-		@focussed_win = 0_u64
+		@record_context : ::X11::C::X::RecordContext
 		def initialize
+			set_error_handler
+
 			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
+			
+			@record = ::X11::RecordExtension.new
+			record_range = @record.create_range
+			record_range.device_events.first = ::X11::KeyPress
+			record_range.device_events.last = ::X11::ButtonRelease
+			@record_context = @record.create_context(record_range)
 		end
+
 		def finalize
 			@display.close
+			@record.close
 		end
 
 		def keysym_to_keycode(sym : UInt64)
@@ -151,17 +159,6 @@ module Run
 			# This fallback may fail but it's very likely this is the correct match now.
 			# This is the normal path for special chars like . @ $ etc.
 			char.ord
-		end
-
-		private def refresh_focus
-			if @focussed_win != 0_u64 && @focussed_win != @root_win
-				@display.select_input @focussed_win, 0 # unsubscribe
-			end
-			@focussed_win = @display.input_focus[:focus]
-			if @focussed_win == ::X11::PointerRoot
-				@focussed_win = @root_win
-			end
-			@display.select_input @focussed_win, ::X11::KeyReleaseMask | ::X11::FocusChangeMask # ButtonPressMask | ButtonReleaseMask | KeyPressMask | KeyReleaseMask | FocusChangeMask
 		end
 
 		# Makes sure the program doesn't exit when a Hotkey is not free for grabbing
@@ -182,20 +179,52 @@ module Run
 		end
 
 		def run(runner : Runner, hotstring_end_chars)
-			set_error_handler
-			refresh_focus
 			@hotstring_end_chars = hotstring_end_chars
+			
+			@record.enable_context_async(@record_context) do |record_data|
+				handle_record_event(record_data, runner)
+			end
+			record_fd = IO::FileDescriptor.new @record.data_display.connection_number
 			loop do
-				event = @display.next_event # blocking!
-				# Currently, hotkeys are always based on key release event. Trigger on press introduced
-				# repetition and trigger loop bugs that I couldn't resolve. (TODO:)
-				case event
-				when ::X11::KeyEvent
-					next if @is_paused || ! event.release?
-					handle_key_event event, runner
-				when ::X11::FocusChangeEvent
-					refresh_focus if event.out?
+				loop do
+					break if @display.pending == 0
+					# Although events from next_event aren't used anymore (it's just not
+					# necessary thanks to record ext), this queue apparently still must
+					# always be empty. If not, the hotkeys aren't even grabbed.
+					event = @display.next_event
 				end
+				record_fd.wait_readable
+				@record.process_replies
+			end
+		end
+
+		private def handle_record_event(record_data, runner)
+			return if record_data.category != ::X11::X::RecordInterceptDataCategory::FromServer.value
+			xevent = record_data.data
+			repeat = xevent[2] == 1
+			return if repeat
+			key_event = ::X11::KeyEvent.new
+			key_event.display = @display
+			key_event.type = xevent[0]
+			key_event.keycode = xevent[1]
+			# These are somehow wrong
+			# key_event.root = xevent[8].unsafe_as(UInt32) # or @root_window ?
+			# key_event.window = xevent[12].unsafe_as(UInt32)
+			# key_event.sub_window = xevent[16].unsafe_as(UInt32) # or None ?
+			key_event.state = xevent[28]
+			handle_event(key_event, runner)
+		end
+
+		private def handle_event(event, runner)
+			# Currently, hotkeys are always based on key release event. Trigger on press introduced
+			# repetition and trigger loop bugs that I couldn't resolve. TODO: should be doable now,  also mouse buttons
+			case event
+			when ::X11::KeyEvent
+				return if @is_paused || ! event.release?
+				handle_key_event event, runner
+			else
+				pp! event # TODO: MouseEvents aren't captured??
+				raise "x11 returned unexpected event type" # TODO:
 			end
 		end
 		

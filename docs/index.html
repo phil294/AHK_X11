@@ -1216,7 +1216,7 @@ else
                 <td class="calibre4"><strong class="calibre14">~</strong></td>
                 <td class="calibre4">
                   <p class="calibre8">This hotkey's native function shouldn't be suppressed (hidden from the system) when the hotkey fires. For example, in the below, the mouse button click will be sent to the active window when it normally wouldn't be:<br class="calibre12" /> ~RButton::Sleep, 1<br class="calibre12" /> ~RButton &amp; C::Run, Calc</p>
-                  <p class="calibre8"><span class="tbd">Note: Special hotkeys that are substitutes for <a href="#Hotkeys.htm__AltTab" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">alt-tab</a> always ignore this setting.</span> <span class="x11">Adding ~ makes X11 not "grab" the key but merely listen to events on all windows. This is less reliable and will fail to detect hotkey presses in some applications (help needed!). It is recommended to not use this flag, and instead use some workaround along these lines:<br>$A::<br>Send, A<br>; ...<br>Return</span></p>
+                  <p class="calibre8"><span class="tbd">Note: Special hotkeys that are substitutes for <a href="#Hotkeys.htm__AltTab" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">alt-tab</a> always ignore this setting.</span></p>
                 </td>
               </tr>
               <tr class="calibre3">
@@ -1273,7 +1273,6 @@ else
           </p>
           <p class="calibre8">The "by the way" example above is known as an auto-replace hotstring because the typed text is automatically erased and replaced by the string specified after the second pair of colons. By contrast, a hotstring may also be defined to perform any custom action as in this example:<br class="calibre12" /> ::btw::<br class="calibre12" /> MsgBox You typed "btw".<br class="calibre12" /> return</p>
           <p class="calibre8">Even though the above is not an auto-replace hotstring, the abbreviation typed by the user is erased by default. This is done via automatic backspacing, which can be disabled as described in the options below.</p>
-          <p class="calibre8"><span class="x11">Hotstrings don't work in some applications. Not sure if this is fixable (help needed!). The only reliable alternative is using Hotkeys.</span></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><span class="calibre17">Options</span></p>
           <p class="calibre8">A hotstring's default behavior can be changed in two possible ways:</p>

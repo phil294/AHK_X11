@@ -35,7 +35,7 @@ Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a W
 
 Features:
 - [x] Hotkeys
-- [x] Hotstrings (complete, but does not work *in some windows*: help needed)
+- [x] Hotstrings
 - [x] Window management (but some commands are still missing)
 - [x] Send keys
 - [x] Control mouse (only clicks so far)
