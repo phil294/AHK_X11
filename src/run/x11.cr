@@ -1,4 +1,5 @@
 require "x11"
+require "xtst"
 
 at_exit { GC.collect }
 
@@ -125,14 +126,14 @@ module Run
 		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else 
 
 		@root_win = 0_u64
-		@record_context : ::X11::C::X::RecordContext
+		@record_context : ::Xtst::LibXtst::RecordContext
 		def initialize
 			set_error_handler
 
 			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
 			
-			@record = ::X11::RecordExtension.new
+			@record = ::Xtst::RecordExtension.new
 			record_range = @record.create_range
 			record_range.device_events.first = ::X11::KeyPress
 			record_range.device_events.last = ::X11::ButtonRelease
@@ -199,7 +200,7 @@ module Run
 		end
 
 		private def handle_record_event(record_data, runner)
-			return if record_data.category != ::X11::X::RecordInterceptDataCategory::FromServer.value
+			return if record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
 			xevent = record_data.data
 			repeat = xevent[2] == 1
 			return if repeat

@@ -18,13 +18,17 @@ shards:
 
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
-    version: 2.0.5
+    version: 2.0.7
 
   x11:
-    git: https://github.com/phil294/x11-cr.git
-    version: 1.0.0+git.commit.a4214281dcfe41552990443b7ba8895d0fbadccf
+    git: https://github.com/tamasszekeres/x11-cr.git
+    version: 1.1.0
 
   x_do:
     git: https://github.com/phil294/x_do.cr.git
-    version: 0.8.3+git.commit.db3af0cb15cafc8784fd72decfc4b268db32222c
+    version: 0.8.3+git.commit.3cf5e419a207e896f85d539a49ee13eccbfa05c5
+
+  xtst:
+    git: https://github.com/phil294/xtst-cr.git
+    version: 1.0.0+git.commit.202d2aefd912355c78378789ca6ada082d835111
 
