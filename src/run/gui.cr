@@ -39,6 +39,15 @@ module Run
 			nil
 		end
 
+		def clipboard(&block : Gtk::Clipboard -> _)
+			v = ""
+			act do
+				clip = Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", true))
+				v = block.call(clip)
+			end
+			v
+		end
+
 		@[Flags]
 		private enum MsgBoxOptions
 			OK_Cancel
@@ -70,7 +79,7 @@ module Run
 			Yes
 			No
 			Timeout
-		end 
+		end
 
 		# Only run this after `run` has started, as it depends on a running gtk main.
 		# If you don't see the popup, it may be because of focus stealing prevention from the

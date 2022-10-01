@@ -228,8 +228,7 @@ module Run
 			down = var.downcase
 			case down
 			when "clipboard"
-				gui.act do
-					clip = Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", true))
+				gui.clipboard do |clip|
 					clip.set_text(value, -1)
 					clip.store
 				end
@@ -260,11 +259,7 @@ module Run
 			when "a_nowutc" then Time.utc.to_s("%Y%m%d%H%M%S")
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
 			when "clipboard"
-				txt = ""
-				gui.act do
-					txt = Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", false)).wait_for_text
-				end
-				txt
+				gui.clipboard &.wait_for_text
 			else
 				nil
 			end
