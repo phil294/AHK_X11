@@ -36,6 +36,7 @@ module Run
 			@key_name = key_combos[0].key_name
 			@keysym = key_combos[0].keysym
 			@modifiers = key_combos[0].modifiers
+			@up = key_combos[0].up
 
 			@no_grab = true if @key_str.includes? '~'
 			@modifier_variants << @modifiers

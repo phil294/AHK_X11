@@ -293,10 +293,7 @@ module Run
 			type, keycode, repeat = record_data.data
 			state = record_data.data[28]
 			return if repeat == 1
-			
-			# Currently, hotkeys are always based on key release event. Trigger on press introduced
-			# repetition and trigger loop bugs that I couldn't resolve. TODO: should be doable now
-			return if type != ::X11::KeyRelease && type != ::X11::ButtonRelease
+			up = type == ::X11::KeyRelease || type == ::X11::ButtonRelease
 
 			if keycode < 10 # mouse button
 				keysym = keycode
@@ -316,42 +313,45 @@ module Run
 			hotkey = @hotkeys.find do |hotkey|
 				hotkey.active &&
 				hotkey.keysym == keysym &&
+				hotkey.up == up &&
 				(hotkey.modifier_variants.any? &.== state) &&
 				(! @suspended || hotkey.exempt_from_suspension)
 			end
 			hotkey.trigger if hotkey
 
 			##### 2. Hotstrings
-			prev_hotstring_candidate = @hotstring_candidate
-			@hotstring_candidate = nil
-			if ! char
-				if @modifier_keysyms.includes? keysym
-					# left/right buttons etc. should cancel current buffer but modifiers not: keep
-					@hotstring_candidate = prev_hotstring_candidate
-				else
-					@key_buff_i = 0_u8
-				end
-			else
-				if char == '\b' # ::X11::XK_BackSpace
-					@key_buff_i -= 1 if @key_buff_i > 0
-				elsif @hotstring_end_chars.includes?(char)
-					@key_buff_i = 0_u8
-					if ! prev_hotstring_candidate.nil?
-						runner.set_global_built_in_static_var("A_EndChar", char.to_s)
-						prev_hotstring_candidate.trigger
+			if up
+				prev_hotstring_candidate = @hotstring_candidate
+				@hotstring_candidate = nil
+				if ! char
+					if @modifier_keysyms.includes? keysym
+						# left/right buttons etc. should cancel current buffer but modifiers not: keep
+						@hotstring_candidate = prev_hotstring_candidate
+					else
+						@key_buff_i = 0_u8
 					end
 				else
-					@key_buff_i = 0_u8 if @key_buff_i > 29
-					@key_buff[@key_buff_i] = char
-					@key_buff_i += 1
-					match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
-					if match
-						if match.immediate
-							@key_buff_i = 0_u8
-							runner.set_global_built_in_static_var("A_EndChar", "")
-							match.trigger
-						else
-							@hotstring_candidate = match
+					if char == '\b' # ::X11::XK_BackSpace
+						@key_buff_i -= 1 if @key_buff_i > 0
+					elsif @hotstring_end_chars.includes?(char)
+						@key_buff_i = 0_u8
+						if ! prev_hotstring_candidate.nil?
+							runner.set_global_built_in_static_var("A_EndChar", char.to_s)
+							prev_hotstring_candidate.trigger
+						end
+					else
+						@key_buff_i = 0_u8 if @key_buff_i > 29
+						@key_buff[@key_buff_i] = char
+						@key_buff_i += 1
+						match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
+						if match
+							if match.immediate
+								@key_buff_i = 0_u8
+								runner.set_global_built_in_static_var("A_EndChar", "")
+								match.trigger
+							else
+								@hotstring_candidate = match
+							end
 						end
 					end
 				end
