@@ -3205,12 +3205,11 @@ MsgBox All Drives: %list%`nSelected Drive: %folder%`nDrive Type: %type%`nStatus:
           <p class="calibre8">FileAppend, Another line.`n, c:\My Documents\Test.txt</p>
         </div>
       </div>
-<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="FileCopy.htm" href="#FileCopy.htm">#</a> <h2 class="calibre17">FileCopy</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Copies one or more files.</p>
+          <p class="calibre8">Copies one or more files. <span class="x11">File modification date is not preserved, file name matching is case sensitive.</span></p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
@@ -3224,11 +3223,11 @@ MsgBox All Drives: %list%`nSelected Drive: %folder%`nDrive Type: %type%`nStatus:
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td class="calibre4">SourcePattern</td>
-                <td class="calibre4">The name of a single file or folder, or a wildcard pattern such as C:\Temp\*.tmp. <em class="calibre21">SourcePattern </em>is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified.</td>
+                <td class="calibre4">The name of a single file or folder, or a wildcard pattern such as /tmp/*.tmp. <em class="calibre21">SourcePattern </em>is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">DestPattern</td>
-                <td class="calibre4">The name or pattern of the destination, which is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified. To perform a simple copy -- retaining the existing file name(s) -- specify only the folder name as shown in these functionally identical examples:<br class="calibre12" /> FileCopy, C:\*.txt, C:\My Folder<br class="calibre12" /> FileCopy, C:\*.txt, C:\My Folder\*.*</td>
+                <td class="calibre4">The name or pattern of the destination, which is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified. To perform a simple copy -- retaining the existing file name(s) -- specify only the folder name as shown in these functionally identical examples:<br class="calibre12" /> FileCopy, %A_Home%/*.txt, %A_Home%/My Folder<br class="calibre12" /> <span class="rm">FileCopy, %A_Home%/*.txt, %A_Home%/My Folder/*.*</span></td>
               </tr>
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Flag</td>
@@ -3258,6 +3257,7 @@ FileCopy, C:\My File.txt, C:\My File New.txt  ; Copy a file into the same folder
 FileCopy, C:\Folder1\*.txt, D:\New Folder\*.bkp    ; Copy to new location and give new extension.</pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="FileCopyDir.htm" href="#FileCopyDir.htm">#</a> <h2 class="calibre17">FileCopyDir</h2>
@@ -7381,11 +7381,12 @@ return
                 <td class="calibre4">EndChars NewChars</td>
                 <td class="calibre4">
                   <p class="calibre8">Specify the word EndChars followed a single space and then the new ending characters. For example:<br class="calibre12" />
-                    <em class="calibre21">#Hotstring EndChars -()[]{}':;"/\,.?!`n `t</em>
+                    <em class="calibre21">#Hotstring EndChars -()[]{}':;"/\,.?!`n `t`r</em>
                   </p>
                   <p class="calibre8">Since the new ending characters are in effect globally for the entire script -- regardless of where the EndChars command appears -- there is no need to specify EndChars more than once.</p>
                   <p class="calibre8"><span class="tbd">The maximum number of ending characters is 100. Characters beyond this length are ignored. </span></p>
                   <p class="calibre8">To make tab an ending character, include `t in the list. To make space an ending character, include it between two other characters in the list (or at the beginning if the list contains less than 2 other characters).</p>
+                  <p class="calibre8 x11">Return key is identified by \r here</p>
                 </td>
               </tr>
               <tr class="calibre3">
@@ -7819,7 +7820,7 @@ BlockInput, off</pre>
         <div class="calibreEbookContent">
           <a id="ControlSend.htm" href="#ControlSend.htm">#</a> <h2 class="calibre17">ControlSend / ControlSendRaw </h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Sends simulated keystrokes to a window or control.</p>
+          <p class="calibre8">Sends simulated keystrokes to a window or control. <span class="x11">This does not work on some windows. Probably not fixable. Doing `WinActivate` and `Send` instead should always work regardless of the program.</span></p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
@@ -13513,7 +13514,7 @@ return</pre>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">IfWinExist [, WinTitle, WinText, ExcludeTitle, ExcludeText]<br class="calibre12" /> IfWinNotExist [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
+                <td height="48" class="calibre4">IfWinExist [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]<br class="calibre12" /> IfWinNotExist [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
               </tr>
             </tbody>
           </table>
@@ -13526,16 +13527,16 @@ return</pre>
                 <td width="85%" class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the other 3 parameters are all omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used (i.e. that specific window is checked to see whether it still exists). To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4 tbd">WinText</td>
+                <td class="calibre4 tbd">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4 tbd">ExcludeText</td>
+                <td class="calibre4 tbd">Windows whose text include this value will not be considered.</td>
               </tr>
             </tbody>
           </table>
@@ -13813,7 +13814,7 @@ else
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinActivate [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
+                <td height="48" class="calibre4">WinActivate [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
               </tr>
             </tbody>
           </table>
@@ -13826,22 +13827,22 @@ else
                 <td width="85%" class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If all parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be activated. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4 tbd">WinText</td>
+                <td class="tbd calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4 tbd">ExcludeText</td>
+                <td class="calibre4 tbd">Windows whose text include this value will not be considered.</td>
               </tr>
             </tbody>
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">Six attempts will be made to activate the target window over the course of 60ms. Thus, it is usually unnecessary to follow it with the <a href="#WinWaitActive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitActive</a> command.</p>
+          <p class="calibre8 tbd">Six attempts will be made to activate the target window over the course of 60ms. Thus, it is usually unnecessary to follow it with the <a href="#WinWaitActive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitActive</a> command.</p>
           <p class="calibre8">If a matching window is already active, that window will be kept active rather than activating any other matching window beneath it. In general, if more than one window matches, the uppermost (most recently used) will be activated. You can activate the bottommost (least recently used) via <a href="#WinActivateBottom.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinActivateBottom</a>. </p>
           <p class="calibre8">When a window is activated immediately after another window was activated, task bar buttons might start flashing on some systems (depending on OS and settings). To prevent this, use <a href="#h_WinActivateForce.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#WinActivateForce</a>.</p>
           <p class="calibre8">Window titles and text are always case sensitive. Hidden windows are not detected unless <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> has been turned on.</p>
@@ -13916,7 +13917,7 @@ else
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinClose [, WinTitle, <span class="tbd">WinText</span>, <span class="tbd">SecondsToWait</span>, ExcludeTitle, ExcludeText]</td>
+                <td height="48" class="calibre4">WinClose [, WinTitle, <span class="tbd">WinText</span>, <span class="tbd">SecondsToWait</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
               </tr>
             </tbody>
           </table>
