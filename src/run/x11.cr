@@ -264,13 +264,13 @@ module Run
 				@hotkeys << hotkey
 			end
 			if ! hotkey.no_grab
-				hotkey.modifiers.each do |mod|
+				hotkey.modifier_variants.each do |mod|
 					@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
 		end
 		def unregister_hotkey(hotkey, unsubscribe = true)
-			hotkey.modifiers.each do |mod|
+			hotkey.modifier_variants.each do |mod|
 				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
 			end
 			if unsubscribe
@@ -316,7 +316,7 @@ module Run
 			hotkey = @hotkeys.find do |hotkey|
 				hotkey.active &&
 				hotkey.keysym == keysym &&
-				(hotkey.modifiers.any? &.== state) &&
+				(hotkey.modifier_variants.any? &.== state) &&
 				(! @suspended || hotkey.exempt_from_suspension)
 			end
 			hotkey.trigger if hotkey

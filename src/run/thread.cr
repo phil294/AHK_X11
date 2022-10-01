@@ -150,8 +150,8 @@ module Run
 			end
 		end
 
-		def parse_keys(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> _)
-			Util::AhkString.parse_keys(str, @runner.settings.escape_char, @runner.x11, &block)
+		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> _)
+			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.x11, &block)
 		end
 
 		def parse_letter_options(str, &block : Char, Int32? -> _)

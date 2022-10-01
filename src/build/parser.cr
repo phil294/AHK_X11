@@ -42,8 +42,9 @@ module Build
 			{% if ! flag?(:release) %}
 				puts "[debug] #{line_no}: #{line}" # TODO: externalize / use logger
 			{% end %}
-			match = line.strip
+			line_content = line.strip
 				.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
+			match = line_content
 				.match(/^\s*([^\s,]*)(\s*,?)(.*)$/).not_nil!
 			first_word_case_sensitive = match[1]
 			first_word = first_word_case_sensitive.downcase
@@ -118,8 +119,8 @@ module Build
 				raise "If condition '#{split[1]?}' is unknown" if ! cmd_class
 				csv_args = [split[0], split[2]? || ""]
 				@cmds << cmd_class.new line_no, csv_args
-			elsif first_word.includes?("::")
-				label, instant_action = first_word_case_sensitive.split(/(?<=.)::/, limit: 2)
+			elsif line_content.includes?("::")
+				label, instant_action = line_content.split(/(?<=.)::/, limit: 2)
 				if label.starts_with?(":") # Hotstring
 					match = label.match(/^:([^:]*):([^:]+)$/)
 					raise "Hotstring definition invalid or too complicated " if match.nil?
@@ -132,14 +133,14 @@ module Build
 					if ! instant_action.empty?
 						end_char = hotstring.omit_ending_character ? "" : "%A_EndChar%"
 						send = hotstring.auto_send_raw ? "SendRaw" : "Send"
-						add_line "#{send}, #{instant_action}#{first_word_glue}#{args}#{end_char}", line_no
+						add_line "#{send}, #{instant_action}#{end_char}", line_no
 						add_line "Return", line_no
 					end
 				else # Hotkey
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					@hotkeys << Run::Hotkey.new label.downcase, priority: 0
+					@hotkeys << Run::Hotkey.new label.downcase, priority: 0, escape_char: @runner_settings.escape_char
 					if ! instant_action.empty?
-						add_line "#{instant_action}#{first_word_glue}#{args}", line_no
+						add_line "#{instant_action}", line_no
 						add_line "Return", line_no
 					end
 				end

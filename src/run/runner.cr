@@ -299,7 +299,7 @@ module Run
 				active_state = hotkey.active if active_state.nil?
 			else
 				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{key_str}" if ! label
-				hotkey = Hotkey.new(self, cmd.not_nil!, key_str, priority: priority)
+				hotkey = Hotkey.new(self, cmd.not_nil!, key_str, priority: priority, escape_char: @settings.escape_char)
 				@hotkeys[hotkey.key_str] = hotkey
 				active_state = true if active_state.nil?
 			end
