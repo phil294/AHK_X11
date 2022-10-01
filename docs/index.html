@@ -1068,7 +1068,7 @@ if %MyVar% &gt; %MyVarLimit%  ; Wrong because MyVar should not have percent sign
           <h3 class="calibre7"> Why is the <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> command unable to launch my game or program?</h3>
           <p class="calibre8">Some programs need to be started in their own directories (when in doubt, it is usually best to do so). Example:<br class="calibre12" /> Run, /opt/app/bin, /opt/app</p>
           <h3 class="calibre7"><br class="calibre12" /> I'm having trouble getting my mouse buttons working as hotkeys. Any advice?</h3>
-          <p class="calibre8"><span class="tbd">The left and right mouse buttons should be assignable normally (for example, "#LButton::" is the Win+LeftButton hotkey). Similarly, the middle button and the turning of the <a href="#KeyList.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">mouse wheel</a> should be assignable normally except on mice whose drivers directly control those buttons.</span></p>
+          <p class="calibre8">The left and right mouse buttons should be assignable normally (for example, "#LButton::" is the Win+LeftButton hotkey). Similarly, the middle button and the turning of the <a href="#KeyList.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">mouse wheel</a> should be assignable normally except on mice whose drivers directly control those buttons.</p>
           <p class="calibre8"><span class="tbd"> The fourth button (XButton1) and the fifth button (XButton2) might be assignable if your mouse driver allows their clicks to be <a href="#KeyHistory.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">seen</a> by the system.</span> If they cannot be seen -- or if your mouse has more than five buttons -- you can try configuring the software that came with the mouse (sometimes accessible in the Control Panel or Start Menu) to send a keystroke whenever you press one of these buttons. Such a keystroke can then be defined as a hotkey in a script. For example, if you configure the fourth button to send Control+F12, you can then indirectly configure that button as a hotkey by using <em class="calibre21">^F12::</em> in the script.</p>
           <p class="calibre8">If you have a five-button mouse whose fourth and fifth buttons cannot be <a href="#KeyHistory.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">seen</a>, you can try changing your mouse driver to the default driver included with the OS. This assumes there is such a driver for your particular mouse and that you can live without the features provided by your mouse's custom software.</p>
           <h3 class="calibre7"><br class="calibre12" /> How can symbols and punctuation marks be defined as hotkeys?</h3>
@@ -1230,6 +1230,18 @@ else
                   <div class="x11">This flag is the default and cannot be configured. Hotkeys can arbitrarily send their own or other grabbed keys because all hotkeys are disabled while any Send-like action takes place.</div>
                 </td>
               </tr>
+              <tr class="calibre3">
+                <td class="calibre4"><strong class="calibre14"><span class="x11">UP</span></strong></td>
+                <td class="calibre4">
+                  <div class="x11">
+                    <p class="calibre8">The word UP may follow the name of a hotkey to cause the  hotkey to fire upon release of the key rather than when the key is pressed down. The following example remaps the left Win to become the left Ctrl:<br><br>
+*LWin::Send {LControl down}<br>
+*LWin Up::Send {LControl up}<br><br>
+Please note: This only works unreliably, and in the above example, LControl will be properly emulated, however, the CTRL effect will not be active. It is unsure if this is possible at all with X11 requests; help needed. In other words, you can currently only somewhat remap non-modifier keys such as A or Tab.<br>
+"Up" can also be used with normal hotkeys as in this example: ^!r Up::MsgBox You pressed and released Ctrl+Alt+R.</p>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
           <p class="calibre8"><strong class="calibre14">(See the <a href="#KeyList.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Key List</a> for a complete list of key and mouse/joystick button names)</strong></p>
@@ -1324,11 +1336,11 @@ else
           <a id="KeyList.htm" href="#KeyList.htm">#</a>
           <h2 class="calibre9"><span class="calibre23">List of Keys and Mouse/Joystick Buttons</span></h2>
           <hr size="2" class="calibre24" />
-          <div class="tbd">
             <h4 class="calibre25">Mouse</h4>
             <p class="calibre8">LButton - the left mouse button <br class="calibre12" /> RButton - the right mouse button <br class="calibre12" /> MButton - the middle or wheel mouse button</p>
             <p class="calibre8"> WheelDown - this is equivalent to rotating the mouse wheel down (toward you) <br class="calibre12" /> WheelUp - the opposite of the above</p>
-            <p class="calibre8">Supported only in Windows XP/2000+:<br class="calibre12" /> XButton1 - a button that appears only on certain mice <br class="calibre12" /> XButton2 - a button that appears only on certain mice</p>
+            <p class="calibre8"> XButton1 - a button that appears only on certain mice <br class="calibre12" /> XButton2 - a button that appears only on certain mice</p>
+          <div class="tbd">
             <h4 class="calibre25"><br class="calibre12" /> Joystick <span class="style2">(requires v1.0.10+)</span></h4>
             <p class="calibre8"><strong class="calibre14">Joy1 through Joy32</strong>: The buttons of the joystick. To help determine the button numbers for a particular joystick, use this <a href="#JoystickTest.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">test script</a>. Note that <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkey prefix symbols</a> such as ^ (control) and + (shift) are not supported. Also note that the pressing of joystick buttons always "passes through" to the active window if that window is designed to detect the pressing of joystick buttons.</p>
             <p class="calibre8">Although the following Joystick control names cannot be used as hotkeys, they can be used with <a href="#GetKeyState.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">GetKeyState</a>:<br class="calibre12" />
