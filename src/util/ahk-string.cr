@@ -86,7 +86,7 @@ class Util::AhkString
 				end
 				escape = false
 				if key_name
-					keysym = x11.ahk_key_name_to_keysym(key_name)
+					keysym = Run::X11.ahk_key_name_to_keysym(key_name)
 					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
 					key_map = XDo::LibXDo::Charcodemap.new
 					key_map.code = x11.keysym_to_keycode(keysym.to_u64)

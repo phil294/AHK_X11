@@ -30,19 +30,18 @@ module X11::C
 			"pgdown" => XK_Page_Down,
 			"printscreen" => XK_Print,
 
-			# TODO:
-			# I tried so catch mouse events too by adding ButtonReleaseMask and then adding some
-			# fake keysyms here for manual mapping (see WIP-add-mouse-hotkey-support branch).
-			# This should mostly work but mouse events are almost never reported :(
-			# LButton - the left mouse button 
-			# RButton - the right mouse button 
-			# MButton - the middle or wheel mouse button 
-			# WheelDown - this is equivalent to rotating the mouse wheel down (toward you) 
-			# WheelUp - the opposite of the above 
-			# Supported only in Windows XP/2000+:
-			# XButton1 - a button that appears only on certain mice 
-			# XButton2 - a button that appears only on certain mice 
-			# ...all joystick buttons
+			# Could not find the constants for these
+			"lbutton" => 1,
+			"rbutton" => 3,
+			"mbutton" => 2,
+			"wheeldown" => 5,
+			"wheelup" => 4,
+			"wheelleft" => 6, # [v1.0.48+]
+			"wheelright" => 7, # [v1.0.48+]
+			"xbutton1" => 8,
+			"xbutton2" => 9,
+
+			# TODO: Joystick buttons
 
 			# The following special keys were determined either using `xev` or with https://github.com/qtile/qtile/blob/master/libqtile/backend/x11/xkeysyms.py (x11 must have them somewhere too??). TODO: These are mostly untested out of a loack of fitting keyboard.
 			"volume_mute" => 0x1008ff12, # XF86AudioMute
@@ -107,6 +106,7 @@ module X11::C
 			"alt" => XK_Alt_L,
 			"lalt" => XK_Alt_L,
 			"ralt" => XK_Alt_R,
+			# TODO: capslock?
 
 			# Printable non-letters, symbols ;%@ etc.: Often their unicode ord is equal
 			# to the keysym so the fallback should work. Below are only known exceptions
@@ -149,7 +149,7 @@ module Run
 			@display.keysym_to_keycode(sym)
 		end
 
-		def ahk_key_name_to_keysym(key_name)
+		def self.ahk_key_name_to_keysym(key_name)
 			return nil if key_name.empty?
 			down = key_name.downcase
 			lookup = ::X11::C.ahk_key_name_to_keysym_generic[down]? ||
@@ -183,7 +183,7 @@ module Run
 			@hotstring_end_chars = hotstring_end_chars
 			
 			@record.enable_context_async(@record_context) do |record_data|
-				handle_record_event(record_data, runner)
+				handle_event(record_data, runner)
 			end
 			record_fd = IO::FileDescriptor.new @record.data_display.connection_number
 			loop do
@@ -199,36 +199,6 @@ module Run
 			end
 		end
 
-		private def handle_record_event(record_data, runner)
-			return if record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
-			xevent = record_data.data
-			repeat = xevent[2] == 1
-			return if repeat
-			key_event = ::X11::KeyEvent.new
-			key_event.display = @display
-			key_event.type = xevent[0]
-			key_event.keycode = xevent[1]
-			# These are somehow wrong
-			# key_event.root = xevent[8].unsafe_as(UInt32) # or @root_window ?
-			# key_event.window = xevent[12].unsafe_as(UInt32)
-			# key_event.sub_window = xevent[16].unsafe_as(UInt32) # or None ?
-			key_event.state = xevent[28]
-			handle_event(key_event, runner)
-		end
-
-		private def handle_event(event, runner)
-			# Currently, hotkeys are always based on key release event. Trigger on press introduced
-			# repetition and trigger loop bugs that I couldn't resolve. TODO: should be doable now,  also mouse buttons
-			case event
-			when ::X11::KeyEvent
-				return if @is_paused || ! event.release?
-				handle_key_event event, runner
-			else
-				pp! event # TODO: MouseEvents aren't captured??
-				raise "x11 returned unexpected event type" # TODO:
-			end
-		end
-		
 		@pause_counter = 0
 		@is_paused = false
 		@pause_mutex = Mutex.new
@@ -289,9 +259,7 @@ module Run
 
 		def register_hotkey(hotkey, subscribe = true)
 			# apparently keycodes are display-dependent so they can't be determined at build time
-			keysym = ahk_key_name_to_keysym(hotkey.key_name)
-			raise RuntimeException.new "Hotkey key name '#{hotkey.key_name}' not found." if ! keysym || ! keysym.is_a?(Int32)
-			hotkey.keycode = keysym_to_keycode(keysym.to_u64)
+			hotkey.keycode = keysym_to_keycode(hotkey.keysym)
 			if subscribe
 				@hotkeys << hotkey
 			end
@@ -320,24 +288,44 @@ module Run
 		@modifier_keysyms : StaticArray(Int32, 13)
 		@modifier_keysyms = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
 
-		private def handle_key_event(event, runner)
+		private def handle_event(record_data, runner)
+			return if @is_paused || record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
+			type, keycode, repeat = record_data.data
+			state = record_data.data[28]
+			return if repeat == 1
+			
+			# Currently, hotkeys are always based on key release event. Trigger on press introduced
+			# repetition and trigger loop bugs that I couldn't resolve. TODO: should be doable now
+			return if type != ::X11::KeyRelease && type != ::X11::ButtonRelease
+
+			if keycode < 10 # mouse button
+				keysym = keycode
+				char = nil
+			else
+				_key_event = ::X11::KeyEvent.new
+				_key_event.display = @display
+				_key_event.type = type
+				_key_event.keycode = keycode
+				_key_event.state = state
+				lookup = _key_event.lookup_string
+				char = lookup[:string][0]?
+				keysym = lookup[:keysym]
+			end
+
 			##### 1. Hotkeys
 			hotkey = @hotkeys.find do |hotkey|
 				hotkey.active &&
-				hotkey.keycode == event.keycode &&
-				(hotkey.modifiers.any? &.== event.state) &&
+				hotkey.keysym == keysym &&
+				(hotkey.modifiers.any? &.== state) &&
 				(! @suspended || hotkey.exempt_from_suspension)
 			end
 			hotkey.trigger if hotkey
-			
-			##### 2. Hotstrings
-			lookup = event.lookup_string
-			char = lookup[:string][0]?
 
+			##### 2. Hotstrings
 			prev_hotstring_candidate = @hotstring_candidate
 			@hotstring_candidate = nil
 			if ! char
-				if @modifier_keysyms.includes? lookup[:keysym]
+				if @modifier_keysyms.includes? keysym
 					# left/right buttons etc. should cancel current buffer but modifiers not: keep
 					@hotstring_candidate = prev_hotstring_candidate
 				else

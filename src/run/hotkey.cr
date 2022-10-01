@@ -7,6 +7,7 @@ module Run
 		property active = true
 		getter modifiers = [] of UInt32
 		getter key_name = ""
+		getter keysym = 0_u64
 		property keycode = 0_u8
 		getter no_grab = false
 		property exempt_from_suspension = false
@@ -57,6 +58,10 @@ module Run
 					end
 				end
 			end
+
+			keysym = X11.ahk_key_name_to_keysym(@key_name)
+			raise RuntimeException.new "Hotkey key name '#{@key_name}' not found." if ! keysym || ! keysym.is_a?(Int32)
+			@keysym = keysym.to_u64
 		end
 		def trigger
 			@runner.not_nil!.add_thread @cmd.not_nil!, @priority
