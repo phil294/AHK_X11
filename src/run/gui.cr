@@ -21,31 +21,28 @@ module Run
 		# For running Gtk code on the Gtk worker thread (`idle_add` tells GTK to run
 		# the `block` in its free time),
 		# so perfect for Gui modifications, new window requests etc.
-		# TODO: make generic and return the block's return value directly so callers don't need wrapping variables
-		def act(&block)
-			channel = Channel(Exception?).new
+		def act(&block : -> T) forall T
+			channel = Channel(T | Exception).new
 			GLib.idle_add do
 				begin
-					block.call
+					result = block.call
 				rescue e
 					channel.send(e)
 					next false
 				end
-				channel.send(nil)
+				channel.send(result)
 				false
 			end
-			error = channel.receive
-			raise RuntimeException.new error.message, error.cause if error
-			nil
+			result = channel.receive
+			raise RuntimeException.new result.message, result.cause if result.is_a?(Exception)
+			result
 		end
 
 		def clipboard(&block : Gtk::Clipboard -> _)
-			v = ""
 			act do
 				clip = Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", true))
-				v = block.call(clip)
+				block.call(clip)
 			end
-			v
 		end
 
 		@[Flags]
@@ -118,8 +115,7 @@ module Run
 			end
 			always_on_top = options & MsgBoxOptions::Always_On_Top.value == MsgBoxOptions::Always_On_Top.value
 			channel = Channel(MsgBoxButton).new
-			gtk_dialog : Gtk::MessageDialog? = nil
-			act do
+			gtk_dialog = act do
 				dialog = Gtk::MessageDialog.new text: text, title: title || @default_title, urgency_hint: true, icon: @icon_pixbuf, buttons: Gtk::ButtonsType::NONE, message_type: message_type, deletable: deletable, skip_taskbar_hint: false
 				dialog.keep_above = always_on_top
 				buttons.each do |btn|
@@ -134,13 +130,13 @@ module Run
 					dialog.destroy
 				end
 				dialog.show
-				gtk_dialog = dialog
+				dialog
 			end
 			! timeout ? channel.receive : select
 			when response = channel.receive
 				response
 			when timeout(timeout ? timeout.seconds : Time::Span::MAX)
-				act { gtk_dialog.not_nil!.destroy } if gtk_dialog
+				act { gtk_dialog.destroy }
 				MsgBoxButton::Timeout
 			end
 		end
