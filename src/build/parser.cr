@@ -120,6 +120,7 @@ module Build
 				csv_args = [split[0], split[2]? || ""]
 				@cmds << cmd_class.new line_no, csv_args
 			elsif line_content.includes?("::")
+				add_line "Return", line_no if @hotstrings.empty? && @hotkeys.empty?
 				label, instant_action = line_content.split(/(?<=.)::/, limit: 2)
 				if label.starts_with?(":") # Hotstring
 					match = label.match(/^:([^:]*):([^:]+)$/)
