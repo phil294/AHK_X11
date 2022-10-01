@@ -165,6 +165,15 @@ Some Linux distros offer a configurable setting for focus stealing prevention. U
 
 (*) The `MsgBox` picture at the top was taken on a XFCE system with [Chicago95](https://github.com/grassmunk/Chicago95) installed, a theme that resembles Win95 look&feel. On your system, it will look like whatever GTK popups always look like.
 
+#### Incompatibilities with Windows versions
+
+Like covered above, AHK_X11 is vastly different to modern Windows-AutoHotkey because it is 1. *missing its more recent features* and 2. there are *still several features missing*. Apart from that, there are a few minor *incompatibilities* between AHK_X11 and the then-Windows-AutoHotkey 1.0.24:
+- `#NoEnv` is the default, this means, to access environment variables, you'll have to use `EnvGet`.
+- All arguments are always evaluated only at runtime, even if they are static. This can lead to slightly different behavior or error messages at runtime vs. build time.
+- Several more small subtle differences highlighted in green throughout the docs page
+
+Besides, it should be noted that un[documented](https://phil294.github.io/AHK_X11) == undefined.
+
 ## Development
 
 These are the steps required to build this project locally, such as if you want to contribute to the project. Please open an issue if anything doesn't work.
