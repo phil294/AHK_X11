@@ -19,7 +19,6 @@ module Run
 	struct RunnerSettings
 		property persistent = false
 		property escape_char = '`'
-		# INCOMPAT: Pressing return is a \r, not sure if \n even ever fires
 		property hotstring_end_chars = ['-', '(', ')', '[', ']', '{', '}', ':', ';', '\'', '"', '/', '\\', ',', '.', '?', '!', '\n', ' ', '\t', '\r']
 		property single_instance : SingleInstance?
 	end
@@ -367,8 +366,10 @@ module Run
 				mode = ! underlying_thread || ! underlying_thread.paused
 			end
 			if mode
-				@threads.last.pause
-				gui.thread_pause if ! @headless
+				if underlying_thread
+					underlying_thread.pause
+					gui.thread_pause if ! @headless
+				end
 			else
 				underlying_thread.unpause if underlying_thread
 			end
