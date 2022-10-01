@@ -1,4 +1,3 @@
-# INCOMPAT: file mod date is not preserved (seems better this way tho), glob is case sensitive
 class Cmd::File::FileCopy < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 3 end

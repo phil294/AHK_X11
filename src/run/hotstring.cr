@@ -12,7 +12,7 @@ module Run
 		@automatic_backspacing = true
 		@case_sensitive = false
 		@conform_case = true # TODO not implemented
-		@delay = 0 # INCOMPAT: only applies to BS, not typing (use setkeydelay for that)
+		@delay = 0
 		getter omit_ending_character = false
 		@priority = 0
 		getter auto_send_raw = false

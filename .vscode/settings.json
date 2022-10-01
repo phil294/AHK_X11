@@ -7,7 +7,6 @@
         "gsub",
         "Hotstring",
         "Hotstrings",
-        "INCOMPAT",
         "keycodes",
         "keysym",
         "keysyms",

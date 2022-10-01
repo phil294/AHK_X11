@@ -36,7 +36,6 @@ class Util::AhkString
 					escape = false
 				end
 			end
-			# INCOMPAT: only raises at runtime, on ahk it's build time
 			raise Run::RuntimeException.new "missing ending percent sign. Line content: '#{str}'" if var_start
 		end
 	end
