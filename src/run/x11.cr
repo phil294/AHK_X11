@@ -331,28 +331,33 @@ module Run
 						@key_buff_i = 0_u8
 					end
 				else
-					if char == '\b' # ::X11::XK_BackSpace
-						@key_buff_i -= 1 if @key_buff_i > 0
-					elsif @hotstring_end_chars.includes?(char)
-						@key_buff_i = 0_u8
-						if ! prev_hotstring_candidate.nil?
-							runner.set_global_built_in_static_var("A_EndChar", char.to_s)
-							prev_hotstring_candidate.trigger
-						end
-					else
-						@key_buff_i = 0_u8 if @key_buff_i > 29
-						@key_buff[@key_buff_i] = char
-						@key_buff_i += 1
-						match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
-						if match
-							if match.immediate
-								@key_buff_i = 0_u8
-								runner.set_global_built_in_static_var("A_EndChar", "")
-								match.trigger
-							else
-								@hotstring_candidate = match
+					normal_keypress = (::X11::ControlMask | ::X11::Mod1Mask | ::X11::Mod4Mask | ::X11::Mod5Mask) & state == 0
+					if normal_keypress
+						if char == '\b' # ::X11::XK_BackSpace
+							@key_buff_i -= 1 if @key_buff_i > 0
+						elsif @hotstring_end_chars.includes?(char)
+							@key_buff_i = 0_u8
+							if ! prev_hotstring_candidate.nil?
+								runner.set_global_built_in_static_var("A_EndChar", char.to_s)
+								prev_hotstring_candidate.trigger
+							end
+						else
+							@key_buff_i = 0_u8 if @key_buff_i > 29
+							@key_buff[@key_buff_i] = char
+							@key_buff_i += 1
+							match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
+							if match
+								if match.immediate
+									@key_buff_i = 0_u8
+									runner.set_global_built_in_static_var("A_EndChar", "")
+									match.trigger
+								else
+									@hotstring_candidate = match
+								end
 							end
 						end
+					else
+						@key_buff_i = 0_u8
 					end
 				end
 			end
