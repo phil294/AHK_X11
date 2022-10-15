@@ -39,7 +39,11 @@ end
 
 script_file = nil
 if ARGV[0]?
-	if ARGV[0] == "--repl"
+	if ARGV[0] == "-v" || ARGV[0] == "--version"
+		version = {{ read_file("./shard.yml").split("\n")[1][9..] }}
+		puts "AHK_X11 version: #{version}\nTargets to partially implement Classic Windows AutoHotkey specification: v1.0.24 (2004)"
+		::exit
+	elsif ARGV[0] == "--repl"
 		lines = ["#Persistent"]
 	elsif ARGV[0] == "--compile"
 		build_error "Syntax: ahk_x11 --compile FILE_NAME [OUTPUT_FILENAME]" if ARGV.size < 2
