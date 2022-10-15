@@ -497,7 +497,7 @@
                 <a href="#MouseGetPos.htm">MouseGetPos</a>
               </li>
               <li>
-                <a class="tbd" href="#MouseMove.htm">MouseMove</a>
+                <a href="#MouseMove.htm">MouseMove</a>
               </li>
               <li>
                 <a class="tbd" href="#SetDefaultMouseSpeed.htm">SetDefaultMouseSpeed</a>
@@ -965,7 +965,7 @@
             <li class="calibre11">Move the mouse cursor to the desired position in the target window and write down the mouse coordinates displayed by Window Spy (or press Shift-Alt-Tab to activate Window Spy so that the "frozen" coordinates can be copied and pasted).</li>
             <li class="calibre11">Use the coordinates discovered above with the <a href="#MouseClick.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"><span class="">MouseClick</span></a> command as in this example, which clicks the left mouse button:<br class="calibre12" /> MouseClick, left, 112, 223 </li>
           </ol>
-          <p class="calibre8">To move the mouse without clicking, use <a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"><span class="tbd">MouseMove</span></a>. To drag the mouse, use <a href="#MouseClickDrag.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"><span class="tbd">MouseClickDrag</span></a>. </p>
+          <p class="calibre8">To move the mouse without clicking, use <a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a>. To drag the mouse, use <a href="#MouseClickDrag.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"><span class="tbd">MouseClickDrag</span></a>. </p>
           <p class="calibre8"> </p>
           <p class="style1"><a id="TutorialHelp.htm__Activate" href="#TutorialHelp.htm__Activate" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Activating and manipulating windows</p>
           <p class="calibre8">To activate a window (make it foremost), use <a href="#WinActivate.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinActivate</a>. To detect whether a window exists, use <a href="#IfWinExist.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfWinExist</a> or <a href="#WinWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"><span class="tbd">WinWait</span></a>. The following example illustrates these commands:</p>
@@ -2416,7 +2416,7 @@ else
                 <td height="16" class="calibre4">Retrieves the current position of the mouse cursor, and optionally which window and control it is hovering over.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a></td>
+                <td height="16" class="calibre4"><a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a></td>
                 <td height="16" class="calibre4">Moves the mouse cursor.</td>
               </tr>
               <tr class="calibre3">
@@ -10683,7 +10683,6 @@ return
 </pre>
         </div>
       </div>
-<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="MouseMove.htm" href="#MouseMove.htm">#</a> <h2 class="calibre17">MouseMove</h2>
@@ -10692,7 +10691,7 @@ return
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">MouseMove, X, Y [, Speed, R]</td>
+                <td height="48" class="calibre4">MouseMove, X, Y [, <span class="tbd">Speed</span>, R]</td>
               </tr>
             </tbody>
           </table>
@@ -10710,7 +10709,7 @@ return
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">R</td>
-                <td class="calibre4">In v1.0.11+, if this parameter is the letter R, the X and Y coordinates will be treated as offsets from the current mouse position. In other words, the cursor will be moved from its current position by X pixels to the right (left if negative) and Y pixels down (up if negative).</td>
+                <td class="calibre4">If this parameter is the letter R, the X and Y coordinates will be treated as offsets from the current mouse position. In other words, the cursor will be moved from its current position by X pixels to the right (left if negative) and Y pixels down (up if negative).</td>
               </tr>
             </tbody>
           </table>
@@ -10732,6 +10731,7 @@ MouseMove, 200, 100
 MouseMove, 20, 30, 50, R</pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="SetDefaultMouseSpeed.htm" href="#SetDefaultMouseSpeed.htm">#</a> <h2 class="calibre17">SetDefaultMouseSpeed</h2>

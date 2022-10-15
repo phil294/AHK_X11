@@ -55,7 +55,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
-DONE      35% (75/217):
+DONE      35% (76/217):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -66,7 +66,7 @@ DONE      35% (75/217):
 + IniWrite, Loop (files & folders), Loop (read file contents), MouseClick, Pause, Reload,
 + StringGetPos, StringLeft, StringLen, StringLower, StringMid, StringReplace, StringRight,
 + StringUpper, Suspend, URLDownloadToFile, WinClose, WinGetPos, WinKill, WinMaximize, WinMinimize,
-+ WinMove, WinRestore, MouseGetPos
++ WinMove, WinRestore, MouseGetPos, MouseMove
 
 NEW       3% (6/217): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet @@
@@ -84,7 +84,7 @@ REMOVED   10% (22/217):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     52% (112/217): alphabetically
+TO DO     51% (111/217): alphabetically
 - BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
 - FileCopyDir, FileCreateShortcut,
@@ -94,7 +94,7 @@ TO DO     52% (112/217): alphabetically
 - GroupClose, GroupDeactivate, GuiControl, GuiControlGet,
 - If var [not] in/contains MatchList, If var is [not] type, Input, 
 - InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (parse a string),
-- MouseClickDrag, MouseMove, OnExit, PixelGetColor, PixelSearch, 
+- MouseClickDrag, OnExit, PixelGetColor, PixelSearch, 
 - Process, Progress, Random, RunAs, SetBatchLines, 
 - SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
