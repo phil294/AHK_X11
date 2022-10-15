@@ -1,5 +1,5 @@
 name: ahk_x11
-version: 0.0.2
+version: 0.2.0
 
 authors:
   - Philip Waritschlager <philip@waritschlager.de>
@@ -8,7 +8,7 @@ targets:
   ahk_x11:
     main: src/ahk_x11.cr
 
-crystal: 1.4.1
+crystal: 1.5.1
 
 license: MIT
 
