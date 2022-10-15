@@ -317,7 +317,17 @@ module Run
 				(hotkey.modifier_variants.any? &.== state) &&
 				(! @suspended || hotkey.exempt_from_suspension)
 			end
-			hotkey.trigger if hotkey
+			if hotkey
+				if ! hotkey.up && ! hotkey.no_grab
+					# Right now, the key is still pressed down. Any `Send`-like commands that
+					# would now follow would not succeed (not sure why, seems X11-specific).
+					# Fix by sending key up:
+					key_map = XDo::LibXDo::Charcodemap.new
+					key_map.code = hotkey.keycode
+					runner.x_do.keys_raw [key_map], pressed: false, delay: 0
+				end
+				hotkey.trigger
+			end
 
 			##### 2. Hotstrings
 			if up
