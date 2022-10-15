@@ -5,9 +5,12 @@ class Cmd::X11::Keyboard::ControlSend < Cmd::Base
 		_control, keys, *match_conditions = args
 		Cmd::X11::Window::Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true) do |win|
 			thread.runner.x11.pause do
+				modifiers_before = thread.runner.x_do.active_modifiers
+				win.clear_active_modifiers modifiers_before
 				thread.parse_key_combinations_to_charcodemap(keys) do |key_map, pressed|
 					win.keys_raw key_map, pressed: pressed, delay: 0
 				end
+				win.set_active_modifiers modifiers_before
 			end
 		end
 	end
