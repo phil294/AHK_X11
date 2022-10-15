@@ -10485,11 +10485,11 @@ Loop, %MonitorCount%
         <div class="calibreEbookContent">
           <a id="MouseClick.htm" href="#MouseClick.htm">#</a> <h2 class="calibre17">MouseClick</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Clicks or holds a mouse button, or turns the mouse wheel. <span class="x11">Can only do basic left click for now</span></p>
+          <p class="calibre8">Clicks or holds a mouse button, or turns the mouse wheel.</p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">MouseClick, <span class="tbd">WhichButton</span> [, X, Y<span class="tbd">, ClickCount, Speed, D|U, R]</span></td>
+                <td height="48" class="calibre4">MouseClick, WhichButton [, X, Y, ClickCount, <span class="tbd">Speed</span>, D|U, R]</td>
               </tr>
             </tbody>
           </table>
@@ -10500,9 +10500,9 @@ Loop, %MonitorCount%
               <tr class="calibre3">
                 <td class="calibre4">WhichButton</td>
                 <td class="calibre4">
-                  <p class="calibre8">The button to click: LEFT, RIGHT, or MIDDLE, or (in v1.0.09+) just the first letter of each of these.</p>
-                  <p class="calibre8">In v1.0.10+, WheelUp (or WU) and WheelDown (or WU) are also supported on Windows NT/2000/XP+. In this case, <em class="calibre21">ClickCount</em> is the number of notches to turn the wheel.</p>
-                  <p class="calibre8">In v1.0.10+, X1 (XButton1, the 4th mouse button) and X2 (XButton2, the 5th mouse button) are also supported on Windows 2000/XP+. For example: MouseClick, X1 </p>
+                  <p class="calibre8">The button to click: LEFT, RIGHT, or MIDDLE, or just the first letter of each of these.</p>
+                  <p class="calibre8">WheelUp (or WU) and WheelDown (or WU) are also supported on Windows NT/2000/XP+. In this case, <em class="calibre21">ClickCount</em> is the number of notches to turn the wheel.</p>
+                  <p class="calibre8">X1 (XButton1, the 4th mouse button) and X2 (XButton2, the 5th mouse button) are also supported. For example: MouseClick, X1 </p>
                 </td>
               </tr>
               <tr class="calibre3">
@@ -10513,7 +10513,7 @@ Loop, %MonitorCount%
                 <td class="calibre4">ClickCount</td>
                 <td class="calibre4">The number of times to click the mouse.  If omitted, the button is clicked once. </td>
               </tr>
-              <tr class="calibre3">
+              <tr class="calibre3 tbd">
                 <td width="15%" class="calibre4">Speed</td>
                 <td width="85%" class="calibre4">The speed to move the mouse in the range 0 (fastest) to 100 (slowest).  Note: a speed of 0 will move the mouse instantly.  If omitted, the default speed (as set by <a href="#SetDefaultMouseSpeed.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetDefaultMouseSpeed</a> or 2 otherwise) will be used.</td>
               </tr>
@@ -10525,7 +10525,7 @@ Loop, %MonitorCount%
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">R</td>
-                <td class="calibre4">In v1.0.11+, if this parameter is the letter R, the X and Y coordinates will be treated as offsets from the current mouse position. In other words, the cursor will be moved from its current position by X pixels to the right (left if negative) and Y pixels down (up if negative).</td>
+                <td class="calibre4">If this parameter is the letter R, the X and Y coordinates will be treated as offsets from the current mouse position. In other words, the cursor will be moved from its current position by X pixels to the right (left if negative) and Y pixels down (up if negative).</td>
               </tr>
             </tbody>
           </table>
@@ -10535,9 +10535,9 @@ Loop, %MonitorCount%
           <p class="calibre8">; Example #1: <br class="calibre12" /> Send, {Control down}<br class="calibre12" /> MouseClick, left, 55, 233<br class="calibre12" /> Send, {Control up}</p>
           <p class="calibre8">; Example #2:<br class="calibre12" /> Send, {Shift down}<br class="calibre12" /> MouseClick, left, 55, 233<br class="calibre12" /> Send, {Shift up} </p>
           <p class="calibre8">Some applications such as certain full-screen games may have trouble tracking the mouse if it moves too quickly. The <em class="calibre21">speed</em> parameter or <a href="#SetDefaultMouseSpeed.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetDefaultMouseSpeed</a> can be used to reduce the speed.</p>
-          <p class="calibre8">Not all applications obey a <em class="calibre21">ClickCount</em> higher than 1 for turning the mouse wheel. For those applications, use a Loop to turn the wheel more than one notch as in this example, which turns it 5 notches:<br class="calibre12" /> Loop, 5<br class="calibre12" />      MouseClick, WheelUp</p>
+          <p class="calibre8 rm">Not all applications obey a <em class="calibre21">ClickCount</em> higher than 1 for turning the mouse wheel. For those applications, use a Loop to turn the wheel more than one notch as in this example, which turns it 5 notches:<br class="calibre12" /> Loop, 5<br class="calibre12" />      MouseClick, WheelUp</p>
           <p class="calibre8">The <a href="#BlockInput.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">BlockInput</a> command can be used to prevent any physical mouse activity by the user from disrupting the simulated mouse events produced by the mouse commands.</p>
-          <p class="calibre8">There is an automatic delay after every click-down and click-up of the mouse. Use <a href="#SetMouseDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetMouseDelay</a> to change the length of the delay.</p>
+          <p class="calibre8 tbd">There is an automatic delay after every click-down and click-up of the mouse. Use <a href="#SetMouseDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetMouseDelay</a> to change the length of the delay.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a>, <a href="#SetDefaultMouseSpeed.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetDefaultMouseSpeed</a>,<a href="#SetMouseDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"> SetMouseDelay</a>, <a href="#MouseClickDrag.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClickDrag</a>, <a href="#MouseGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseGetPos</a>, <a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a>, <a href="#BlockInput.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">BlockInput</a></p>
