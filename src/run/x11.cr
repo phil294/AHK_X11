@@ -319,9 +319,7 @@ module Run
 			end
 			if hotkey
 				if ! hotkey.up && ! hotkey.no_grab
-					# Right now, the key is still pressed down. Any `Send`-like commands that
-					# would now follow would not succeed (not sure why, seems X11-specific).
-					# Fix by sending key up:
+					# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
 					key_map = XDo::LibXDo::Charcodemap.new
 					key_map.code = hotkey.keycode
 					runner.x_do.keys_raw [key_map], pressed: false, delay: 0
