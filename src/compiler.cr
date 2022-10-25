@@ -11,7 +11,7 @@ class Compiler
 	end
 	def compile(script_path, out_path)
 		script = File.read(script_path)
-		out_path = Path[script_path].stem if ! out_path
+		out_path = script_path.stem if ! out_path
 		out_file = File.new(out_path, "w")
 		IO.copy(@bin_file, out_file)
 		out_file.write_string(script.to_slice)

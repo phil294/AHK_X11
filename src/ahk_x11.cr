@@ -37,6 +37,11 @@ def build_error(msg)
 end
 # TODO: fiber unhandled exception handler set to build_errow somehow?
 
+def filename_to_path(filename)
+	filename = filename[7..] if filename.starts_with?("file://")
+	Path[filename].expand
+end
+
 script_file = nil
 if ARGV[0]?
 	if ARGV[0] == "-v" || ARGV[0] == "--version"
@@ -47,10 +52,10 @@ if ARGV[0]?
 		lines = ["#Persistent"]
 	elsif ARGV[0] == "--compile"
 		build_error "Syntax: ahk_x11 --compile FILE_NAME [OUTPUT_FILENAME]" if ARGV.size < 2
-		Compiler.new.compile(ARGV[1], ARGV[2]?)
+		Compiler.new.compile(filename_to_path(ARGV[1]), ARGV[2]? ? filename_to_path(ARGV[2]) : nil)
 		::exit
 	else
-		script_file = Path[ARGV[0]].expand
+		script_file = filename_to_path(ARGV[0])
 		begin
 			ahk_str = File.read(script_file)
 		rescue
