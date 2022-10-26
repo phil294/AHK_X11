@@ -38,7 +38,7 @@ Features:
 - [x] Hotstrings
 - [x] Window management (but some commands are still missing)
 - [x] Send keys
-- [x] Control mouse (only clicks so far)
+- [x] Control mouse
 - [x] File management (but some commands are still missing)
 - [x] GUIs (some controls are still missing)
 - [x] One-click compile script to portable stand-alone executable
@@ -52,7 +52,7 @@ Besides:
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
 
-<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
+<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
 DONE      35% (76/217):
@@ -237,6 +237,8 @@ A more general overview:
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
 While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see [`Run::Thread`](https://github.com/phil294/AHK_X11/blob/master/src/run/thread.cr) docs).
+
+Current commits are collected in the `development` branch and then merged into `master` for each release.
 
 ## Issues
 
