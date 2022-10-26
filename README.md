@@ -40,7 +40,7 @@ Features:
 - [x] Send keys
 - [x] Control mouse
 - [x] File management (but some commands are still missing)
-- [x] GUIs (some controls are still missing)
+- [x] GUIs (partially done)
 - [x] One-click compile script to portable stand-alone executable
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy
