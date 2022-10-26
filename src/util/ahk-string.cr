@@ -142,18 +142,18 @@ class Util::AhkString
 			case char
 			when ' ' then next
 			# TODO: better syntax without having to resort back to elsif?
-			when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+			when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'
 				n += char
 			else
 				if letter
-					yield letter.downcase, n.to_i?
+					yield letter.downcase, n.to_f?
 				end
 				n = ""
 				letter = char
 			end
 		end
 		if letter
-			yield letter.downcase, n.to_i?
+			yield letter.downcase, n.to_f?
 		end
 	end
 
