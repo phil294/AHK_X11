@@ -283,10 +283,11 @@ module Run
 		@key_buff = HotstringAbbrevKeysyms.new('0')
 		@key_buff_i = 0_u8
 
+		@pressed_down_keysyms : StaticArray(UInt64, 8) = StaticArray[0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64]
+
 		@hotstring_end_chars = [] of Char
 		@hotstring_candidate : Hotstring? = nil
-		@modifier_keysyms : StaticArray(Int32, 13)
-		@modifier_keysyms = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
+		@modifier_keysyms : StaticArray(Int32, 13) = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
 
 		private def handle_event(record_data, runner)
 			return if @is_paused || record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
@@ -296,7 +297,7 @@ module Run
 			up = type == ::X11::KeyRelease || type == ::X11::ButtonRelease
 
 			if keycode < 10 # mouse button
-				keysym = keycode
+				keysym = keycode.to_u64
 				char = nil
 			else
 				_key_event = ::X11::KeyEvent.new
@@ -309,6 +310,14 @@ module Run
 				keysym = lookup[:keysym]
 			end
 
+			if ! up
+				free_slot = @pressed_down_keysyms.index(keysym) || @pressed_down_keysyms.index(0)
+				@pressed_down_keysyms[free_slot] = keysym if free_slot
+			else
+				pressed_slot = @pressed_down_keysyms.index(keysym)
+				@pressed_down_keysyms[pressed_slot] = 0_u64 if pressed_slot
+			end
+
 			##### 1. Hotkeys
 			hotkey = @hotkeys.find do |hotkey|
 				hotkey.active &&
@@ -317,7 +326,15 @@ module Run
 				(hotkey.modifier_variants.any? &.== state) &&
 				(! @suspended || hotkey.exempt_from_suspension)
 			end
-			hotkey.trigger if hotkey
+			if hotkey
+				if ! hotkey.up && ! hotkey.no_grab
+					# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
+					key_map = XDo::LibXDo::Charcodemap.new
+					key_map.code = hotkey.keycode
+					runner.x_do.keys_raw [key_map], pressed: false, delay: 0
+				end
+				hotkey.trigger
+			end
 
 			##### 2. Hotstrings
 			if up
@@ -331,31 +348,40 @@ module Run
 						@key_buff_i = 0_u8
 					end
 				else
-					if char == '\b' # ::X11::XK_BackSpace
-						@key_buff_i -= 1 if @key_buff_i > 0
-					elsif @hotstring_end_chars.includes?(char)
-						@key_buff_i = 0_u8
-						if ! prev_hotstring_candidate.nil?
-							runner.set_global_built_in_static_var("A_EndChar", char.to_s)
-							prev_hotstring_candidate.trigger
-						end
-					else
-						@key_buff_i = 0_u8 if @key_buff_i > 29
-						@key_buff[@key_buff_i] = char
-						@key_buff_i += 1
-						match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
-						if match
-							if match.immediate
-								@key_buff_i = 0_u8
-								runner.set_global_built_in_static_var("A_EndChar", "")
-								match.trigger
-							else
-								@hotstring_candidate = match
+					normal_keypress = (::X11::ControlMask | ::X11::Mod1Mask | ::X11::Mod4Mask | ::X11::Mod5Mask) & state == 0
+					if normal_keypress
+						if char == '\b' # ::X11::XK_BackSpace
+							@key_buff_i -= 1 if @key_buff_i > 0
+						elsif @hotstring_end_chars.includes?(char)
+							@key_buff_i = 0_u8
+							if ! prev_hotstring_candidate.nil?
+								runner.set_global_built_in_static_var("A_EndChar", char.to_s)
+								prev_hotstring_candidate.trigger
+							end
+						else
+							@key_buff_i = 0_u8 if @key_buff_i > 29
+							@key_buff[@key_buff_i] = char
+							@key_buff_i += 1
+							match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
+							if match
+								if match.immediate
+									@key_buff_i = 0_u8
+									runner.set_global_built_in_static_var("A_EndChar", "")
+									match.trigger
+								else
+									@hotstring_candidate = match
+								end
 							end
 						end
+					else
+						@key_buff_i = 0_u8
 					end
 				end
 			end
 		end
+
+		def keysym_pressed_down?(keysym)
+			!! @pressed_down_keysyms.index(keysym)
+		end 
 	end
 end

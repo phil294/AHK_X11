@@ -110,6 +110,9 @@ class Util::AhkString
 					keysym = Run::X11.ahk_key_name_to_keysym(key_name)
 					# TODO: why the typecheck / why not in x11.cr?
 					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
+					if key_name.upcase == key_name
+						modifiers |= ::X11::ShiftMask
+					end
 
 					{% if ! flag?(:release) %}
 						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
@@ -139,18 +142,18 @@ class Util::AhkString
 			case char
 			when ' ' then next
 			# TODO: better syntax without having to resort back to elsif?
-			when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+			when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'
 				n += char
 			else
 				if letter
-					yield letter.downcase, n.to_i?
+					yield letter.downcase, n.to_f?
 				end
 				n = ""
 				letter = char
 			end
 		end
 		if letter
-			yield letter.downcase, n.to_i?
+			yield letter.downcase, n.to_f?
 		end
 	end
 

@@ -23,7 +23,7 @@ class Cmd::ControlFlow::Hotkey < Cmd::Base
 		thread.parse_letter_options options do |char, n|
 			case char
 			when 'B' then buffer = n == 0
-			when 'P' then priority = n || 0
+			when 'P' then priority = n ? n.to_i : 0
 			when 'T' then max_threads = n
 			end
 		end

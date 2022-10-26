@@ -1,5 +1,5 @@
 name: ahk_x11
-version: 0.0.2
+version: 0.3.0
 
 authors:
   - Philip Waritschlager <philip@waritschlager.de>
@@ -8,7 +8,7 @@ targets:
   ahk_x11:
     main: src/ahk_x11.cr
 
-crystal: 1.4.1
+crystal: 1.5.1
 
 license: MIT
 
@@ -22,7 +22,7 @@ dependencies:
     github: phil294/xtst-cr
   x_do:
     github: phil294/x_do.cr
-    commit: 3cf5e419a207e896f85d539a49ee13eccbfa05c5
+    commit: 659ab684722c2fc0b4b89c0011ce98b3b01a420c
   gobject:
     github: jhass/crystal-gobject
   malloc_pthread_shim:

@@ -12,7 +12,7 @@ module Run
 		@automatic_backspacing = true
 		@case_sensitive = false
 		@conform_case = true # TODO not implemented
-		@delay = 0
+		@delay = 0_f64
 		getter omit_ending_character = false
 		@priority = 0
 		getter auto_send_raw = false
@@ -26,7 +26,7 @@ module Run
 					@conform_case = n != 1
 				when 'k' then @delay = n || 0
 				when 'o' then @omit_ending_character = n != 0
-				when 'p' then @priority = n || 0
+				when 'p' then @priority = n ? n.to_i : 0
 				when 'r' then @auto_send_raw = n != 0
 				end
 			end

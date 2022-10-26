@@ -38,9 +38,9 @@ Features:
 - [x] Hotstrings
 - [x] Window management (but some commands are still missing)
 - [x] Send keys
-- [x] Control mouse (only clicks so far)
+- [x] Control mouse
 - [x] File management (but some commands are still missing)
-- [x] GUIs (some controls are still missing)
+- [x] GUIs (partially done)
 - [x] One-click compile script to portable stand-alone executable
 - [x] Scripting: labels, flow control: If/Else, Loop
 - [ ] Window Spy
@@ -52,10 +52,10 @@ Besides:
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
 
-<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, all `Gui` sub commands are missing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
+<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
-DONE      34% (74/217):
+DONE      36% (76/217):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -66,7 +66,7 @@ DONE      34% (74/217):
 + IniWrite, Loop (files & folders), Loop (read file contents), MouseClick, Pause, Reload,
 + StringGetPos, StringLeft, StringLen, StringLower, StringMid, StringReplace, StringRight,
 + StringUpper, Suspend, URLDownloadToFile, WinClose, WinGetPos, WinKill, WinMaximize, WinMinimize,
-+ WinMove, WinRestore
++ WinMove, WinRestore, MouseGetPos, MouseMove, GetKeyState, KeyWait
 
 NEW       3% (6/217): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet @@
@@ -84,17 +84,17 @@ REMOVED   10% (22/217):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     52% (113/217): alphabetically
+TO DO     50% (109/217): alphabetically
 - BlockInput, ClipWait, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
 - FileCopyDir, FileCreateShortcut,
 - FileInstall, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion,
 - FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir,
-- FormatTime, GetKeyState, GroupActivate, GroupAdd,
+- FormatTime, GroupActivate, GroupAdd,
 - GroupClose, GroupDeactivate, GuiControl, GuiControlGet,
 - If var [not] in/contains MatchList, If var is [not] type, Input, 
-- InputBox, KeyHistory, KeyWait, ListHotkeys, ListLines, ListVars, Loop (parse a string),
-- MouseClickDrag, MouseGetPos, MouseMove, OnExit, PixelGetColor, PixelSearch, 
+- InputBox, KeyHistory, ListHotkeys, ListLines, ListVars, Loop (parse a string),
+- MouseClickDrag, OnExit, PixelGetColor, PixelSearch, 
 - Process, Progress, Random, RunAs, SetBatchLines, 
 - SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
@@ -195,7 +195,7 @@ You don't need to follow this procedure to *use* AHK_X11, for that, please see I
 1. `cd AHK_X11`
 1. `shards install`
 1. Run various library tweaks with `./setup_dependencies.sh`. This is mostly WIP and hacked together, so if anything doesn't work, please open an issue.
-1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have  `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.<br>Read on for a cross-distro compatible build.
+1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.<br>Read on for a cross-distro compatible build.
 1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04.
     - Should be statically linked:
         - `libxdo`. Additionally to the above reasons, it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. Also, we fix a rarely occurring fatal error here (probably Crystal-specific?). So,
@@ -237,6 +237,8 @@ A more general overview:
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
 While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see [`Run::Thread`](https://github.com/phil294/AHK_X11/blob/master/src/run/thread.cr) docs).
+
+Current commits are collected in the `development` branch and then merged into `master` for each release.
 
 ## Issues
 
