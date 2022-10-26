@@ -350,7 +350,7 @@
                 <a href="#ControlSend.htm">ControlSend/ControlSendRaw</a>
               </li>
               <li>
-                <a class="tbd" href="#GetKeyState.htm">GetKeyState</a>
+                <a href="#GetKeyState.htm">GetKeyState</a>
               </li>
               <li>
                 <a href="#KeyList.htm">Key List (Keyboard, Mouse, Joystick)</a>
@@ -359,7 +359,7 @@
                 <a class="tbd" href="#KeyHistory.htm">KeyHistory</a>
               </li>
               <li>
-                <a class="tbd" href="#KeyWait.htm">KeyWait</a>
+                <a href="#KeyWait.htm">KeyWait</a>
               </li>
               <li>
                 <a class="tbd" href="#Input.htm">Input</a>
@@ -2235,7 +2235,7 @@ else
                 <td height="16" class="calibre4">Transforms a <a href="#FileSetTime.htm__YYYYMMDD" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">YYYYMMDDHH24MISS</a> timestamp into the specified date/time format.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#GetKeyState.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">GetKeyState</a></td>
+                <td height="16" class="calibre4"><a href="#GetKeyState.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">GetKeyState</a></td>
                 <td height="16" class="calibre4">Checks if a keyboard key or mouse/joystick button is down or up. Also retrieves joystick status.</td>
               </tr>
               <tr class="calibre3">
@@ -2352,7 +2352,7 @@ else
                 <td height="16" class="calibre4">Displays script info and a history of the 20 most recent keystrokes and mouse clicks.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#KeyWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyWait</a></td>
+                <td height="16" class="calibre4"><a href="#KeyWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyWait</a></td>
                 <td height="16" class="calibre4">Waits for a key or mouse/joystick button to be released or pressed down.</td>
               </tr>
               <tr class="calibre3 rm">
@@ -7889,7 +7889,6 @@ BlockInput, off</pre>
           <p class="calibre8">SetTitleMatchMode, 2<br class="calibre12" /> ControlSend, , abc, cmd.exe ; Send directly to a command prompt window.</p>
         </div>
       </div>
-<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="GetKeyState.htm" href="#GetKeyState.htm">#</a> <h2 class="calibre17">GetKeyState</h2>
@@ -7910,23 +7909,23 @@ BlockInput, off</pre>
                 <td width="15%" class="calibre4">OutputVar</td>
                 <td width="85%" class="calibre4">
                   <p class="calibre8">The name of the variable in which to store the retrieved key state, which is either D for down or U for up. The variable will be empty (blank) if the state of the key could not be determined.</p>
-                  <p class="calibre8">The items below apply only to joysticks:</p>
-                  <p class="calibre8">1) For joystick axes such as JoyX [v1.0.10+], <em class="calibre21">OutputVar</em> will be set to a floating point number between 0 and 100 to indicate the joystick's position as a percentage of that axis's range of motion. The format of the number can be changed via <a href="#SetFormat.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetFormat</a>. This <a href="#JoystickTest.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">test script</a> can be used to analyze your joystick(s).</p>
-                  <p class="calibre8">2) When <em class="calibre21">KeyName</em> is JoyPOV [v1.0.10+], the retrieved value will be between 0 and 35900. The following approximate POV values are used by many joysticks:<br class="calibre12" /> -1: no angle to report<br class="calibre12" /> 0: forward POV<br class="calibre12" /> 9000 (i.e. 90 degrees): right POV <br class="calibre12" /> 27000 (i.e. 270 degrees): left POV<br class="calibre12" /> 18000 (i.e. 180 degrees): backward POV</p>
+                  <p class="calibre8 tbd">The items below apply only to joysticks:</p>
+                  <p class="calibre8 tbd">1) For joystick axes such as JoyX [v1.0.10+], <em class="calibre21">OutputVar</em> will be set to a floating point number between 0 and 100 to indicate the joystick's position as a percentage of that axis's range of motion. The format of the number can be changed via <a href="#SetFormat.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetFormat</a>. This <a href="#JoystickTest.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">test script</a> can be used to analyze your joystick(s).</p>
+                  <p class="calibre8 tbd">2) When <em class="calibre21">KeyName</em> is JoyPOV [v1.0.10+], the retrieved value will be between 0 and 35900. The following approximate POV values are used by many joysticks:<br class="calibre12" /> -1: no angle to report<br class="calibre12" /> 0: forward POV<br class="calibre12" /> 9000 (i.e. 90 degrees): right POV <br class="calibre12" /> 27000 (i.e. 270 degrees): left POV<br class="calibre12" /> 18000 (i.e. 180 degrees): backward POV</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">KeyName</td>
                 <td class="calibre4">
                   <p class="calibre8">This can be just about any single character from the keyboard or one of the key names from the <a href="#KeyList.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list</a>, such as a mouse/joystick button. Examples: B, 5, LWin, RControl, Alt, Enter, Escape, LButton, MButton, Joy1.</p>
-                  <p class="calibre8">In v1.0.22+, an explicit virtual key code such as vkFF may also be specified. This is useful in the rare case where a key has no name and produces no visible character when pressed. Its virtual key code can be determined by following the steps at the bottom fo the <a href="#KeyList.htm__SpecialKeys" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list page</a>.</p>
+                  <p class="calibre8 tbd">In v1.0.22+, an explicit virtual key code such as vkFF may also be specified. This is useful in the rare case where a key has no name and produces no visible character when pressed. Its virtual key code can be determined by following the steps at the bottom fo the <a href="#KeyList.htm__SpecialKeys" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list page</a>.</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Mode</td>
                 <td class="calibre4">
                   <p class="calibre8">If omitted, the mode will default to that which retrieves the logical state of the key. This is the state that the OS and the active window believe the key to be in, but is not necessarily the same as the physical state.</p>
-                  <p class="calibre8">Alternatively, one of these letters may be specified:<br class="calibre12" /> P = Retrieve the physical state (i.e. whether the user is physically holding it down) <br class="calibre12" /> T = Retrieve the <em class="calibre21">toggle</em> state (only valid for keys that can be toggled such as Capslock, Numlock, and Scrolllock). A retrieved value of D means the key is "on", while U means it's "off". Retrieving the <em class="calibre21">toggle</em> state might be less reliable on Windows 9x. For example, immediately after the key is pressed, its new state might not be retrieved correctly until after a the display of a window that's associated with the script, such as a <a href="#MsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MsgBox</a>.</p>
+                  <p class="calibre8 tbd">Alternatively, one of these letters may be specified:<br class="calibre12" /> P = Retrieve the physical state (i.e. whether the user is physically holding it down) <br class="calibre12" /> T = Retrieve the <em class="calibre21">toggle</em> state (only valid for keys that can be toggled such as Capslock, Numlock, and Scrolllock). A retrieved value of D means the key is "on", while U means it's "off". Retrieving the <em class="calibre21">toggle</em> state might be less reliable on Windows 9x. For example, immediately after the key is pressed, its new state might not be retrieved correctly until after a the display of a window that's associated with the script, such as a <a href="#MsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MsgBox</a>.</p>
                   <p class="calibre8">This parameter is ignored when retrieving joystick status.</p>
                 </td>
               </tr>
@@ -7934,10 +7933,10 @@ BlockInput, off</pre>
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8 x11">Keys are only detected as pressed down when you did press them after the script started. In other words, GetKeyState does not work as expected at the very beginning of a script.</p>
           <p class="calibre8">To wait for a key or mouse/joystick button to achieve a new state, it is usually easier to use <a href="#KeyWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyWait</a> instead of a GetKeyState loop.</p>
-          <p class="calibre8"> Under Windows Me/98/95, the physical state (<em class="calibre21">Mode</em> = P) of a key will likely always be the same as its logical state.</p>
-          <p class="calibre8">Under Windows NT/2k/XP and beyond, the physical state of a key or mouse button will usually be the same as the logical state unless the keyboard and/or mouse hooks are installed, in which case it will accurately reflect whether or not the user is physically holding down the key or button. You can determine if your script is using the hooks via the <a href="#KeyHistory.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyHistory</a> command or menu item. You can force either or both of the hooks to be installed by adding the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallKeybdHook</a> and <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallMouseHook</a> directives to the script. </p>
-          <p class="calibre8">The following script demonstrates how to use GetKeyState to convert a joystick into a two-button mouse by remapping its buttons and axis control: <a href="#JoystickMouse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">JoystickMouse Script</a></p>
+          <p class="calibre8 tbd">The physical state of a key or mouse button will usually be the same as the logical state unless the keyboard and/or mouse hooks are installed, in which case it will accurately reflect whether or not the user is physically holding down the key or button. You can determine if your script is using the hooks via the <a href="#KeyHistory.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyHistory</a> command or menu item. You can force either or both of the hooks to be installed by adding the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallKeybdHook</a> and <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallMouseHook</a> directives to the script. </p>
+          <p class="calibre8 tbd">The following script demonstrates how to use GetKeyState to convert a joystick into a two-button mouse by remapping its buttons and axis control: <a href="#JoystickMouse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">JoystickMouse Script</a></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#KeyWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyWait</a>, <a href="#KeyList.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Key List</a>, <a href="#KeyHistory.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyHistory</a>, <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallKeybdHook</a>, <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallMouseHook</a></p>
@@ -7976,6 +7975,7 @@ return
 ; See the <a href="#JoystickMouse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Joystick-To-Mouse</a> script for a more elaborate example.</pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="KeyHistory.htm" href="#KeyHistory.htm">#</a> <h2 class="calibre17">KeyHistory</h2>
@@ -8008,9 +8008,10 @@ return
 </pre>
         </div>
       </div>
+</div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="KeyWait.htm" href="#KeyWait.htm">#</a> <h2 class="calibre17">KeyWait</h2> [v1.0.19+]
+          <a id="KeyWait.htm" href="#KeyWait.htm">#</a> <h2 class="calibre17">KeyWait</h2>
           <hr size="2" class="calibre24" />
           <p class="calibre8">Waits for a key or mouse/joystick button to be released or pressed down. </p>
           <table cellspacing="5" width="100%" class="calibre28">
@@ -8028,16 +8029,16 @@ return
                 <td width="15%" class="calibre4">KeyName</td>
                 <td width="85%" class="calibre4">
                   <p class="calibre8">This can be just about any single character from the keyboard or one of the key names from the <a href="#KeyList.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list</a>, such as a mouse/joystick button. Joystick attributes other than buttons are not supported.</p>
-                  <p class="calibre8">An explicit virtual key code such as vkFF may also be specified. This is useful in the rare case where a key has no name and produces no visible character when pressed. Its virtual key code can be determined by following the steps at the bottom fo the <a href="#KeyList.htm__SpecialKeys" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list page</a>.</p>
+                  <p class="calibre8 tbd">An explicit virtual key code such as vkFF may also be specified. This is useful in the rare case where a key has no name and produces no visible character when pressed. Its virtual key code can be determined by following the steps at the bottom fo the <a href="#KeyList.htm__SpecialKeys" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list page</a>.</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Options</td>
                 <td class="calibre4">
-                  <p class="calibre8">If this parameter is blank, the command will wait indefinitely for the specified key or mouse/joystick button to be physically released by the user. However, if the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard hook</a> is not installed and <em class="calibre21">KeyName</em> is a keyboard key released artificially by means such as the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command, the key will be seen as having been physically released. The same is true for mouse buttons when the <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">mouse hook </a>is not installed.</p>
+                  <p class="calibre8">If this parameter is blank, the command will wait indefinitely for the specified key or mouse/joystick button to be physically released by the user. <span class="rm">However, if the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard hook</a> is not installed and <em class="calibre21">KeyName</em> is a keyboard key released artificially by means such as the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command, the key will be seen as having been physically released. The same is true for mouse buttons when the <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">mouse hook </a>is not installed.</span></p>
                   <p class="calibre8">Options: A string of one or more of the following letters (in any order, with optional spaces in between):</p>
                   <p class="calibre8"><strong class="calibre14">D</strong>: Wait for the key to be pushed down.</p>
-                  <p class="calibre8"><strong class="calibre14">L</strong>: Check the logical state of the key, which is the state that the OS and the active window believe the key to be in (not necessarily the same as the physical state). This parameter is ignored for joystick buttons.</p>
+                  <p class="calibre8 rm"><strong class="calibre14">L</strong>: Check the logical state of the key, which is the state that the OS and the active window believe the key to be in (not necessarily the same as the physical state). This parameter is ignored for joystick buttons.</p>
                   <p class="calibre8"><strong class="calibre14">T</strong>: Timeout (e.g. T3). The number of seconds to wait before timing out and setting <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> to 1. This value can be a floating point number such as 2.5, but it should not be a hexadecimal value such as 0x03. </p>
                 </td>
               </tr>
@@ -8048,8 +8049,7 @@ return
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if the command timed out or 0 otherwise. </p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">Under Windows Me/98/95, the physical state of a key or mouse button will likely always be the same as its logical state.</p>
-          <p class="calibre8">Under Windows NT/2k/XP and beyond, the physical state of a key or mouse button will usually be the same as the logical state unless the keyboard and/or mouse hooks are installed, in which case it will accurately reflect whether or not the user is physically holding down the key. You can determine if your script is using the hooks via the <a href="#KeyHistory.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyHistory</a> command or menu item. You can force either or both of the hooks to be installed by adding the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallKeybdHook</a> and <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallMouseHook</a> directives to the script.</p>
+          <p class="calibre8 rm">The physical state of a key or mouse button will usually be the same as the logical state unless the keyboard and/or mouse hooks are installed, in which case it will accurately reflect whether or not the user is physically holding down the key. You can determine if your script is using the hooks via the <a href="#KeyHistory.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">KeyHistory</a> command or menu item. You can force either or both of the hooks to be installed by adding the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallKeybdHook</a> and <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#InstallMouseHook</a> directives to the script.</p>
           <p class="calibre8">If the key or button achieves the specified state, the command will not wait for the timeout (if any) to expire. Instead, it will immediately set <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> to 0 and the script will continue executing.</p>
           <p class="calibre8">While the command is in a waiting state, new <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">threads</a> can be launched via <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkey</a>, <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">custom menu item</a>, or <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">timer</a>.</p>
           <p class="calibre8"> </p>
@@ -8106,6 +8106,7 @@ MsgBox You double-pressed the right control key.
 return</pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Input.htm" href="#Input.htm">#</a> <h2 class="calibre17">Input</h2> [v1.0.10+]
