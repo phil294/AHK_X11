@@ -15529,6 +15529,33 @@ else
 	MsgBox, The window exists.</pre>
         </div>
       </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="Accessibility.htm" href="#Accessibility.htm">#</a>
+          <h2 class="calibre9"><span class="calibre23">Commands based on Accessibility</span></h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Some commands, such as ControlSend or the ExcludeText of window matching options, can only work if accessibility information (AT-SPI) is available. This is the only way to make them work. This means that <b>on the computer where the script is run</b>, 1. at-spi2 needs to be installed, 2. assistive technologies need to be enabled (distribution setting), 3. several applications such as Chrome need special configuration flags. You can verify if a window properly works with at-spi with Window Spy ("Control Under Mouse Position"). To solve these problems at runtime, every time the respective command is run on a window where no at-spi integration could be detected, the prompt below is shown to the user. When you're using AHK_X11 for personal use, you may want to pre-empt some of these following steps, so you can also see it as a guide or your local setup:</p>
+          <pre>
+Could not determine Control Info for window '#{window_name}'!
+
+Some things may not work as expected. You can press OK and the script will continue, or read on below on how to fix this:
+
+The window '#{window_name}' has no control children, according the AT-SPI information it exposes. Usually, this means one of the following:
+- You haven't enabled the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you need to reboot.
+- If the window is a Chromium-based browser such as Chrome or Brave or an Electron-based application such as VSCode, Slack, Spotify, Discord and many more (www.electronjs.org/apps), it needs to be launched with two tweaks:
+    1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer.
+    2. Add argument --force-renderer-accessibility. You can do so by editing the program's \"Desktop file\", or starting it from command line and passing it there.
+  Example for Chrome:
+    export ACCESSIBILITY_ENABLED=1
+    chrome --force-renderer-accessibility
+- If the window is a Java application, you need to install the ATK bridge: For Debian-based applications, this is libatk-wrapper-java. For Arch Linux based ones, it's java-atk-wrapper-openjdk8 (depending on the Java version)
+- In the rare case that the window is an exotic, old application built with Qt4, such as some programs that haven't been maintained since 2015, you need to install qt-at-spi.
+- According to the internet, these following environment variables may also help: GNOME_ACCESSIBILITY=1, QT_ACCESSIBILITY=1, GTK_MODULES=gail:atk-bridge and QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1. This is probably only relevant for outdated programs too, if ever.
+- If you tried all of that and it still doesn't work, this program may not support control access at all. Please consider opening up an issue at github.com/phil294/ahk_x11 so we can investigate. Almost every program out there will work some way or another!
+- Programs built with Tk (rare) usually never work.
+          </pre>
+        </div>
+      </div>
 <div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
