@@ -2,7 +2,7 @@ require "./win-util"
 
 class Cmd::X11::Window::WinGetPos < Cmd::Base
 	def self.min_args; 0 end
-	def self.max_args; 5 end
+	def self.max_args; 8 end
 	def run(thread, args)
 		match_conditions = args[4..]? || [] of ::String
 		out_x = args[0]?
