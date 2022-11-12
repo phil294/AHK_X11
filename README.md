@@ -181,7 +181,7 @@ You don't need to follow this procedure to *use* AHK_X11, for that, please see I
     1. Ubuntu 20.04 and up:
         1. Dependencies
             ```
-            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev
+            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev
             ```
         1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
     1. Arch Linux:
