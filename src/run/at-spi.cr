@@ -267,9 +267,12 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			text = text.gsub('￼', "").strip()
 			text.empty? ? nil : text
 		end
-		def get_all_texts(accessible, *, include_hidden, max_children)
+		# returns an array of recursive text strings, no duplication present.
+		# only 1,000 descendant nodes are queried each to not kill performance completely
+		# with windows very large lists (e.g. Gtk tables: each cell is a child of the table)
+		def get_all_texts(accessible, *, include_hidden)
 			strings = [] of ::String
-			each_descendant(accessible, include_hidden: include_hidden, max_children: max_children) do |descendant, class_NN|
+			each_descendant(accessible, include_hidden: include_hidden, max_children: 1000) do |descendant, class_NN|
 				text = get_text(descendant)
 				strings << text if text
 				true
