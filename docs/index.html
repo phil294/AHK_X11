@@ -737,7 +737,7 @@
                 <a href="#WinGetPos.htm">WinGetPos</a>
               </li>
               <li>
-                <a class="tbd" href="#WinGetText.htm">WinGetText</a>
+                <a href="#WinGetText.htm">WinGetText</a>
               </li>
               <li>
                 <a class="tbd" href="#WinGetTitle.htm">WinGetTitle</a>
@@ -2720,7 +2720,7 @@ else
                 <td height="16" class="calibre4">Retrieves the position and size of a given window.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#WinGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGetText</a></td>
+                <td height="16" class="calibre4"><a href="#WinGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGetText</a></td>
                 <td height="16" class="calibre4">Retrieves the text from a window.</td>
               </tr>
               <tr class="calibre3">
@@ -14284,7 +14284,6 @@ IfWinExist, Untitled - Notepad
 </pre>
         </div>
       </div>
-<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="WinGetText.htm" href="#WinGetText.htm">#</a> <h2 class="calibre17">WinGetText</h2>
@@ -14293,7 +14292,7 @@ IfWinExist, Untitled - Notepad
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinGetText, OutputVar [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
+                <td height="48" class="calibre4">WinGetText, OutputVar [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
               </tr>
             </tbody>
           </table>
@@ -14307,7 +14306,7 @@ IfWinExist, Untitled - Notepad
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinTitle</td>
-                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
+                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
@@ -14329,22 +14328,24 @@ IfWinExist, Untitled - Notepad
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
           <p class="calibre8">The text retrieved is generally the same as what Window Spy shows for that window.</p>
-          <p class="calibre8">Each text element ends with a carriage return and linefeed (CR+LF), which can be represented in the script as `r`n</p>
-          <p class="calibre8">The amount of text retrieved is limited to a variable's maximum capacity (which can be changed via the <a href="#h_MaxMem.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxMem</a> directive). As a result, this command might use a large amount of RAM if the target window (e.g. an editor with a large document open) contains a large quantity of text. To avoid this, it might be possible to retrieve only portions of the window's text by using <a href="#ControlGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetText</a> instead. However, a variable's memory can be freed after use by assigning it to nothing, i.e. OutputVar =</p>
-          <p class="calibre8">Windows 95/98/ME may be limited to 64K for some text elements of certain windows.</p>
+          <p class="calibre8">Each text element ends with a <span class="rm">carriage return and</span> linefeed (<span class="rm">CR+</span>LF), which can be represented in the script as <span class="rm">`r</span>`n</p>
+          <p class="calibre8 tbd">The amount of text retrieved is limited to a variable's maximum capacity (which can be changed via the <a href="#h_MaxMem.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxMem</a> directive). As a result, this command might use a large amount of RAM if the target window (e.g. an editor with a large document open) contains a large quantity of text. To avoid this, it might be possible to retrieve only portions of the window's text by using <a href="#ControlGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetText</a> instead. However, a variable's memory can be freed after use by assigning it to nothing, i.e. OutputVar =</p>
+          <p class="calibre8 rm">Windows 95/98/ME may be limited to 64K for some text elements of certain windows.</p>
           <p class="calibre8">To retrieve a list of all controls in a window, use <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGet</a>.</p>
           <p class="calibre8">Window titles and text are always case sensitive. Hidden windows are not detected unless <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> has been turned on.</p>
+          <p class="calibre8 x11">at-spi children are only iterated over 1,000 children per node max (both in/visible) to prevent too long execution time. This means that for windows with lists of many elements, this command may not return all of them, even if the ones visible are but few.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#WinGetActiveStats.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGetActiveStats</a>, <a href="#WinGetActiveTitle.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGetActiveTitle</a>, <a href="#WinGetTitle.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGetTitle</a>, <a href="#ControlGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetText</a>, <a href="#WinGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGetPos</a>, <a href="#h_MaxMem.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxMem</a></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <pre class="calibre22">Run, Calc.exe
+          <pre class="calibre22">Run, calc
 WinWait, Calculator
 WinGetText, text  ; The window found above will be used.
 MsgBox, The text is:`n%text%</pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="WinGetTitle.htm" href="#WinGetTitle.htm">#</a> <h2 class="calibre17">WinGetTitle</h2>

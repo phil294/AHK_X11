@@ -16,7 +16,7 @@ module Run
 			return if @is_init
 			atspi_status = ::Atspi.init
 			# TODO: test this out, does it show the actual command that failed to the user?
-			raise Run::RuntimeException.new "Cannot access ATSPI (window control info bus). Maybe you need to install libatspi2. Init error code: #{atspi_status.to_s}" if atspi_status != 0
+			raise Run::RuntimeException.new "Cannot access ATSPI (window control info bus). Maybe you need to install libatspi2.0. Init error code: #{atspi_status.to_s}" if atspi_status != 0
 			@is_init = true
 		end
 
@@ -189,8 +189,9 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 				yield app
 			end
 		end
-		def each_child(accessible, *, include_hidden = false)
+		def each_child(accessible, *, max = nil, include_hidden = false)
 			accessible.child_count.times do |i|
+				break if max && i > max
 				child = accessible.child_at_index(i)
 				if ! include_hidden
 					next if hidden?(child)
@@ -203,12 +204,12 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		# `false`: Continue but skip the children of this accessible, so continue on
 		#     to the next sibling or parent;
 		# `nil`: Stop.
-		def each_descendant(accessible, *, include_hidden = false, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
-			iter_descendants(accessible, include_hidden) do |desc, path, class_NN, nest_level|
+		def each_descendant(accessible, *, include_hidden = false, max_children = nil, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
+			iter_descendants(accessible, max_children, include_hidden) do |desc, path, class_NN, nest_level|
 				block.call desc, path, class_NN, nest_level
 			end
 		end
-		private def iter_descendants(accessible, include_hidden, nest_level = 0, path = [] of Int32, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
+		private def iter_descendants(accessible, max_children, include_hidden, nest_level = 0, path = [] of Int32, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
 			# Elements would actually expose a `.accessibility_id` property, but it's
 			# usually empty :-( So we forge an artificial, unique path for each element and
 			# just pretend it's an actual ahk-like ClassNN: e.g. `push_button_0_1_0`
@@ -216,8 +217,8 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			response = yield accessible, path, class_NN, nest_level
 			return nil if response == nil
 			if response
-				each_child(accessible, include_hidden: include_hidden) do |child, i|
-					response = iter_descendants(child, include_hidden, nest_level + 1, path + [i], &block)
+				each_child(accessible, max: max_children, include_hidden: include_hidden) do |child, i|
+					response = iter_descendants(child, max_children, include_hidden, nest_level + 1, path + [i], &block)
 					break if response == nil
 				end
 			end
@@ -265,6 +266,15 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			end
 			text = text.gsub('￼', "").strip()
 			text.empty? ? nil : text
+		end
+		def get_all_texts(accessible, *, include_hidden, max_children)
+			strings = [] of ::String
+			each_descendant(accessible, include_hidden: include_hidden, max_children: max_children) do |descendant, class_NN|
+				text = get_text(descendant)
+				strings << text if text
+				true
+			end
+			strings
 		end
 		# Less of an action click, more of a general "interact" in the best possible compatible way.
 		# Find the best selection or action, going upwards the parent chain if necessary.
