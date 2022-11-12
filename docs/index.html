@@ -485,7 +485,7 @@
             <a href="#">Mouse Control</a>
             <ul>
               <li>
-                <a class="tbd" href="#ControlClick.htm">ControlClick</a>
+                <a href="#ControlClick.htm">ControlClick</a>
               </li>
               <li>
                 <a href="#MouseClick.htm">MouseClick</a>
@@ -631,7 +631,7 @@
                     <a class="tbd" href="#Control.htm">Control</a>
                   </li>
                   <li>
-                    <a class="tbd" href="#ControlClick.htm">ControlClick</a>
+                    <a href="#ControlClick.htm">ControlClick</a>
                   </li>
                   <li>
                     <a class="tbd" href="#ControlFocus.htm">ControlFocus</a>
@@ -2045,7 +2045,7 @@ else
                 <td height="16" class="calibre4">Makes a variety of changes to a control.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#ControlClick.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlClick</a></td>
+                <td height="16" class="calibre4"><a href="#ControlClick.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlClick</a></td>
                 <td height="16" class="calibre4">Sends a mouse button or mouse wheel event to a control. </td>
               </tr>
               <tr class="calibre3">
@@ -10395,16 +10395,15 @@ Loop, %MonitorCount%
           <p class="calibre8">URLDownloadToFile, http://someorg.org/archive.zip, /tmp/SomeOrg's Archive.zip</p>
         </div>
       </div>
-<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="ControlClick.htm" href="#ControlClick.htm">#</a> <h2 class="calibre17">ControlClick</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Sends a mouse button or mouse wheel event to a control. </p>
+          <p class="calibre8"><span class="rm">Sends a mouse button or mouse wheel event to</span><span class="x11"> Interacts with</span> a control. </p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">ControlClick [, Control-or-Pos, WinTitle, WinText, WhichButton, ClickCount, Options, ExcludeTitle, ExcludeText]</td>
+                <td height="48" class="calibre4">ControlClick, Control<span class="rm">-or-Pos</span> [, WinTitle, <span class="tbd">WinText</span>, <span class="rm">WhichButton</span>, ClickCount, <span class="rm">Options</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
               </tr>
             </tbody>
           </table>
@@ -10415,33 +10414,33 @@ Loop, %MonitorCount%
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Control-or-Pos</td>
                 <td width="85%" class="calibre4">
-                  <p class="calibre8">If this parameter is blank or omitted, the target window's topmost control will be used. Otherwise, one of the two modes below will be used.</p>
-                  <p class="calibre8">Mode 1 (Position): In v1.0.24+, this parameter may optionally specify X and Y coordinates relative to the target window's upper left corner. The X coordinate must precede the Y coordinate and there must be at least one space or tab between them. Example: X55 Y33. If there is a control at the specified coordinates, it will be sent the click-event at those exact coordinates. If there is no control, the target window itself will be sent the event (which might have no effect depending on the nature of the window). Note: In this mode, the X and Y option letters of the <em class="calibre21">Options</em> parameter are ignored.</p>
-                  <p class="calibre8">Mode 2 (ClassNN or Text): Specify either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>.</p>
-                  <p class="calibre8">By default, mode 2 takes precedence over mode 1. For example, in the unlikely event that there is a control whose text or ClassNN has the format "Xnnn Ynnn", it would be acted upon by Mode 2. To override this and use mode 1 unconditionally, specify the word Pos in Options as in the following example: ControlClick, x255 y152, WinTitle,,,, Pos</p>
+                  <p class="calibre8 tbd">If this parameter is blank or omitted, the target window's topmost control will be used. Otherwise, one of the two modes below will be used.</p>
+                  <p class="calibre8 rm">Mode 1 (Position): In v1.0.24+, this parameter may optionally specify X and Y coordinates relative to the target window's upper left corner. The X coordinate must precede the Y coordinate and there must be at least one space or tab between them. Example: X55 Y33. If there is a control at the specified coordinates, it will be sent the click-event at those exact coordinates. If there is no control, the target window itself will be sent the event (which might have no effect depending on the nature of the window). Note: In this mode, the X and Y option letters of the <em class="calibre21">Options</em> parameter are ignored.</p>
+                  <p class="calibre8">Mode 2 (ClassNN or Text): Specify either ClassNN (the classname and instance number of the control <span class="x11">(recommended)</span>) or the name/text of the control <span class="x11">(can be slow)</span>, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>.</p>
+                  <p class="calibre8 rm">By default, mode 2 takes precedence over mode 1. For example, in the unlikely event that there is a control whose text or ClassNN has the format "Xnnn Ynnn", it would be acted upon by Mode 2. To override this and use mode 1 unconditionally, specify the word Pos in Options as in the following example: ControlClick, x255 y152, WinTitle,,,, Pos</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinTitle</td>
-                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
+                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
-              <tr class="calibre3">
+              <tr class="calibre3 tbd">
                 <td class="calibre4">WinText</td>
                 <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
               </tr>
-              <tr class="calibre3">
+              <tr class="calibre3 rm">
                 <td class="calibre4">WhichButton</td>
                 <td class="calibre4">
                   <p class="calibre8">The button to click: LEFT, RIGHT, MIDDLE, or (in v1.0.09+) just the first letter of each of these. If omitted or blank, the LEFT button will be used.</p>
-                  <p class="calibre8">In v1.0.10+, WheelUp (or WU) and WheelDown (or WD) are also supported on Windows NT/2000/XP+. In this case, <em class="calibre21">ClickCount</em> is the number of notches to turn the wheel.</p>
-                  <p class="calibre8">In v1.0.10+, X1 (XButton1, the 4th mouse button) and X2 (XButton2, the 5th mouse button) are also supported on Windows 2000/XP+.</p>
+                  <p class="calibre8">WheelUp (or WU) and WheelDown (or WD) are also supported. In this case, <em class="calibre21">ClickCount</em> is the number of notches to turn the wheel.</p>
+                  <p class="calibre8">X1 (XButton1, the 4th mouse button) and X2 (XButton2, the 5th mouse button) are also supported.</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ClickCount</td>
                 <td class="calibre4">The number of clicks to send. If omitted or blank, 1 click is sent. </td>
               </tr>
-              <tr class="calibre3">
+              <tr class="calibre3 rm">
                 <td class="calibre4">Options</td>
                 <td class="calibre4">
                   <p class="calibre8">A series of zero or more of the following option letters. Example: d x50 y25</p>
@@ -10457,7 +10456,7 @@ Loop, %MonitorCount%
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3">
+              <tr class="calibre3 tbd">
                 <td class="calibre4">ExcludeText</td>
                 <td class="calibre4">Windows whose text include this value will not be considered.</td>
               </tr>
@@ -10468,9 +10467,11 @@ Loop, %MonitorCount%
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">Not all applications obey a <em class="calibre21">ClickCount</em> higher than 1 for turning the mouse wheel. For those applications, use a Loop to turn the wheel more than one notch as in this example, which turns it 5 notches:<br class="calibre12" /> Loop, 5<br class="calibre12" />      ControlClick, <em class="calibre21">Control</em>, <em class="calibre21">WinTitle</em>, <em class="calibre21">WinText</em>, WheelUp</p>
+          <p class="x11">This command relies on accessibility support. <a href="#Accessibility.htm">Please read this section</a> to avoid problems.</p>
+          <p class="calibre8 x11">Button- or position related options are not supported because control interactions are based on atspi accessible actions, not specific buttons. This command always tries to find the action that best resembles a "Click" and executes it. If you encounter an application where ControlClick doesn't work as expected, this may be a bug - please consider opening an issue at <a href="https://github.com/phil294/ahk_x11">https://github.com/phil294/ahk_x11</a>.</p>
+          <p class="calibre8 rm">Not all applications obey a <em class="calibre21">ClickCount</em> higher than 1 for turning the mouse wheel. For those applications, use a Loop to turn the wheel more than one notch as in this example, which turns it 5 notches:<br class="calibre12 rm" /> Loop, 5<br class="calibre12" />      ControlClick, <em class="calibre21 rm">Control</em>, <em class="calibre21">WinTitle</em>, <em class="calibre21 rm">WinText</em>, WheelUp</p>
           <p class="calibre8" />
-          <p class="calibre8">To improve reliability, a short delay is done automatically after every use of this command. That delay can be changed via <a href="#SetControlDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetControlDelay</a>.</p>
+          <p class="calibre8 rm">To improve reliability, a short delay is done automatically after every use of this command. That delay can be changed via <a href="#SetControlDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetControlDelay</a>.</p>
           <p class="calibre8">Window titles and text are always case sensitive. Hidden windows are not detected unless <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> has been turned on.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
@@ -10478,11 +10479,11 @@ Loop, %MonitorCount%
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Examples</strong></p>
           <p class="calibre8"> ControlClick, OK, Some Window Title ; Clicks the OK button</p>
-          <p class="calibre8">ControlClick, x55 y77, WinTitle ; Clicks at a set of coordinates. Note the lack of a comma between X and Y.<br class="calibre12" />
+          <p class="calibre8"> ControlClick, push_button_0_1_1, Some Window Title ; Clicks the OK button based on its ClassNN which is usually faster</p>
+          <p class="calibre8 rm">ControlClick, x55 y77, WinTitle ; Clicks at a set of coordinates. Note the lack of a comma between X and Y.<br class="calibre12" />
           </p>
         </div>
       </div>
-</div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="MouseClick.htm" href="#MouseClick.htm">#</a> <h2 class="calibre17">MouseClick</h2>
