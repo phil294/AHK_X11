@@ -10630,7 +10630,7 @@ MouseClick, right, 200, 300
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">MouseGetPos, [OutputVarX, OutputVarY, OutputVarWin, <span class="tbd">OutputVarControl</span>] </td>
+                <td height="48" class="calibre4">MouseGetPos, [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl] </td>
               </tr>
             </tbody>
           </table>
@@ -10641,21 +10641,22 @@ MouseClick, right, 200, 300
               <tr class="calibre3">
                 <td width="15%" class="calibre4">OutputVarX/Y</td>
                 <td width="85%" class="calibre4">
-                  <p class="calibre8">The names of the variables in which to store the X and Y coordinates. The retrieved coordinates are relative to the active window unless <a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a> was used to change to screen coordinates.</p>
+                  <p class="calibre8">The names of the variables in which to store the X and Y coordinates. <span class="tbd">The retrieved coordinates are relative to the active window unless <a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a> was used to change to screen coordinates.</span><span class="x11">currently always screen wide</span></p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">OutputVarWin</td>
                 <td class="calibre4">
-                  <p class="calibre8">In v1.0.12+, this optional parameter is the name of the variable in which to store the <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a> of the window under the mouse cursor. If the window cannot be determined, this variable will be made blank.</p>
+                  <p class="calibre8">This optional parameter is the name of the variable in which to store the <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a> of the window under the mouse cursor. If the window cannot be determined, this variable will be made blank.</p>
                   <p class="calibre8">The window does not have to be active to be detected. Hidden windows cannot be detected.</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">OutputVarControl</td>
                 <td class="calibre4">
-                  <p class="calibre8">In v1.0.14+, this optional parameter is the name of the variable in which to store the name of the control under the mouse cursor. If the control cannot be determined, this variable will be made blank.</p>
-                  <p class="calibre8">The names of controls should always match those shown by the version of Window Spy distributed with v1.0.14+ (but not necessarily older versions of Window Spy). However, unlike Window Spy, the window under the mouse cursor does not have to be active for a control to be detected. </p>
+                  <p class="calibre8">This optional parameter is the name of the variable in which to store the name of the control under the mouse cursor. If the control cannot be determined, this variable will be made blank.</p>
+                  <p class="calibre8">The names of controls should always match those shown by the version of Window Spy. However, unlike Window Spy, the window under the mouse cursor does not have to be active for a control to be detected. </p>
+                  <p class="calibre8 x11">This option relies on accessibility support. <a href="#Accessibility.htm">Please read this section</a> to avoid problems.</p>
                 </td>
               </tr>
             </tbody>
