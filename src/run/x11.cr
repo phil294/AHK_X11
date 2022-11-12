@@ -126,23 +126,30 @@ module Run
 		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else 
 
 		@root_win = 0_u64
-		@record_context : ::Xtst::LibXtst::RecordContext
+		@record_context : ::Xtst::LibXtst::RecordContext?
+		@record : ::Xtst::RecordExtension?
 		def initialize
 			set_error_handler
 
 			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
 			
-			@record = ::Xtst::RecordExtension.new
-			record_range = @record.create_range
-			record_range.device_events.first = ::X11::KeyPress
-			record_range.device_events.last = ::X11::ButtonRelease
-			@record_context = @record.create_context(record_range)
+			begin
+				@record = record = ::Xtst::RecordExtension.new
+				record_range = record.create_range
+				record_range.device_events.first = ::X11::KeyPress
+				record_range.device_events.last = ::X11::ButtonRelease
+				@record_context = record.create_context(record_range)
+			rescue e
+				# TODO: msgbox?
+				STDERR.puts e
+				STDERR.puts "The script will continue but some features (esp. Hotstrings) may not work. Please also consider opening an issue at github.com/phil294/ahk_x11 and tell us about your system details."
+			end
 		end
 
 		def finalize
 			@display.close
-			@record.close
+			@record.not_nil!.close if @record
 		end
 
 		def keysym_to_keycode(sym : UInt64)
@@ -181,21 +188,31 @@ module Run
 
 		def run(runner : Runner, hotstring_end_chars)
 			@hotstring_end_chars = hotstring_end_chars
-			
-			@record.enable_context_async(@record_context) do |record_data|
-				handle_event(record_data, runner)
-			end
-			record_fd = IO::FileDescriptor.new @record.data_display.connection_number
-			loop do
-				loop do
-					break if @display.pending == 0
-					# Although events from next_event aren't used anymore (it's just not
-					# necessary thanks to record ext), this queue apparently still must
-					# always be empty. If not, the hotkeys aren't even grabbed.
-					event = @display.next_event
+
+			if record = @record
+				record.enable_context_async(@record_context.not_nil!) do |record_data|
+					handle_record_event(runner, record_data)
 				end
-				record_fd.wait_readable
-				@record.process_replies
+				record_fd = IO::FileDescriptor.new record.data_display.connection_number
+				loop do
+					loop do
+						break if @display.pending == 0
+						# Although events from next_event aren't used in this case, this queue apparently
+						# still must always be empty. If not, the hotkeys aren't even grabbed.
+						@display.next_event
+					end
+					record_fd.not_nil!.wait_readable
+					record.process_replies
+				end
+			else
+				# Misses non-grabbed keys and mouse events. It could also be done this way
+				# (see old commits), but only unreliably and not worth the effort.
+				loop do
+					event = @display.next_event # Blocking!
+					if event.is_a? ::X11::KeyEvent
+						handle_key_event(runner, event)
+					end
+				end
 			end
 		end
 
@@ -293,26 +310,34 @@ module Run
 		@hotstring_candidate : Hotstring? = nil
 		@modifier_keysyms : StaticArray(Int32, 13) = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
 
-		private def handle_event(record_data, runner)
-			return if @is_paused || record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
+		private def handle_record_event(runner, record_data)
+			return if record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
 			type, keycode, repeat = record_data.data
 			state = record_data.data[28]
 			return if repeat == 1
-			up = type == ::X11::KeyRelease || type == ::X11::ButtonRelease
-
+			_key_event = ::X11::KeyEvent.new
+			_key_event.display = @display
+			_key_event.type = type
+			_key_event.keycode = keycode
+			_key_event.state = state
 			if keycode < 10 # mouse button
-				keysym = keycode.to_u64
-				char = nil
+				# pretend that keysym = keycode
+				handle_event(runner, _key_event, keycode.to_u64, nil)
 			else
-				_key_event = ::X11::KeyEvent.new
-				_key_event.display = @display
-				_key_event.type = type
-				_key_event.keycode = keycode
-				_key_event.state = state
-				lookup = _key_event.lookup_string
-				char = lookup[:string][0]?
-				keysym = lookup[:keysym]
+				handle_key_event(runner, _key_event)
 			end
+		end
+
+		private def handle_key_event(runner, key_event)
+			lookup = key_event.lookup_string
+			char = lookup[:string][0]?
+			keysym = lookup[:keysym]
+			handle_event(runner, key_event, keysym, char)
+		end
+
+		private def handle_event(runner, key_event, keysym, char)
+			return if @is_paused
+			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
 
 			if ! up
 				free_slot = @pressed_down_keysyms.index(keysym) || @pressed_down_keysyms.index(0)
@@ -327,7 +352,7 @@ module Run
 				hotkey.active &&
 				hotkey.keysym == keysym &&
 				hotkey.up == up &&
-				(hotkey.modifier_variants.any? &.== state) &&
+				(hotkey.modifier_variants.any? &.== key_event.state) &&
 				(! @suspended || hotkey.exempt_from_suspension)
 			end
 			if hotkey
@@ -352,7 +377,7 @@ module Run
 						@key_buff_i = 0_u8
 					end
 				else
-					normal_keypress = (::X11::ControlMask | ::X11::Mod1Mask | ::X11::Mod4Mask | ::X11::Mod5Mask) & state == 0
+					normal_keypress = (::X11::ControlMask | ::X11::Mod1Mask | ::X11::Mod4Mask | ::X11::Mod5Mask) & key_event.state == 0
 					if normal_keypress
 						if char == '\b' # ::X11::XK_BackSpace
 							@key_buff_i -= 1 if @key_buff_i > 0

@@ -105,7 +105,7 @@ module Run
 			if ! @headless
 				@builder.hotkeys.each { |h| add_hotkey h }
 				@builder.hotstrings.each { |h| add_hotstring h }
-				spawn same_thread: true do
+				spawn do
 					x11.run self, @settings.hotstring_end_chars
 				end
 				# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
