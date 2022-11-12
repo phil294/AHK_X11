@@ -3,6 +3,7 @@ require "./timer"
 require "./hotkey"
 require "../cmd/base"
 require "./gui"
+require "./at-spi"
 require "./x11"
 require "x_do"
 
@@ -61,18 +62,23 @@ module Run
 		@x11 : X11?
 		def x11
 			# TODO: log? abort?
-			raise "Cannot access X11 in headless mode" if !@x11
+			raise "Cannot access X11 in headless mode" if @headless
 			@x11.not_nil!
 		end
 		@x_do : XDo?
 		def x_do
-			raise "Cannot access X_DO in headless mode" if !@x_do
+			raise "Cannot access X_DO in headless mode" if @headless
 			@x_do.not_nil!
 		end
 		@gui : Gui?
 		def gui
-			raise "Cannot access GUI in headless mode" if !@gui
+			raise "Cannot access GUI in headless mode" if @headless
 			@gui.not_nil!
+		end
+		@at_spi : AtSpi?
+		def at_spi
+			raise "Cannot access ATSPI (window control info) in headless mode" if @headless
+			@at_spi.not_nil!
 		end
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
@@ -89,6 +95,7 @@ module Run
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
 			if ! @headless
 				@gui = Gui.new default_title: script.basename
+				@at_spi = AtSpi.new
 				@x_do = XDo.new
 				@x11 = X11.new
 			end

@@ -71,21 +71,18 @@ DONE      36% (76/217):
 NEW       3% (6/217): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet @@
 
-REMOVED   10% (22/217):
+REMOVED   6% (12/217):
 # ### Those that simply make no sense in Linux:
 # EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
 # #InstallMouseHook, #UseHook, Loop (registry)
-#
-# ### "Control" commands are impossible with X11, I *think*?
-# Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
-# ControlGetPos, ControlGetText, ControlMove, ControlSetText, SetControlDelay
 #
 # ### Skipped for other reasons:
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     50% (109/217): alphabetically
-- BlockInput, ClipWait, CoordMode, 
+TO DO     55% (119/217): alphabetically
+- BlockInput, ClipWait, Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
+- ControlGetPos, ControlGetText, ControlMove, ControlSetText, CoordMode, 
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
 - FileCopyDir, FileCreateShortcut,
 - FileInstall, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion,
@@ -96,7 +93,7 @@ TO DO     50% (109/217): alphabetically
 - InputBox, KeyHistory, ListHotkeys, ListLines, ListVars, Loop (parse a string),
 - MouseClickDrag, OnExit, PixelGetColor, PixelSearch, 
 - Process, Progress, Random, RunAs, SetBatchLines, 
-- SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
+- SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
 - SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
 - SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
 - SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, 
@@ -232,7 +229,7 @@ A more general overview:
 - `src/build` does the parsing etc. and is mostly complete
 - `src/run/runner` and `src/run/thread` are worth looking into, this is the heart of the application and where global and thread state is stored
 - `src/cmd` contains all commands exposed to the user.
-- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse) as `runner.x_do`, `crystal-gobject` for Gtk (`Gui`, `MsgBox`) as `runner.gui` (`gui.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings) as `runner.x11` (`x11.cr`).
+- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse) as `runner.x_do`, `crystal-gobject` for Gtk (`Gui`, `MsgBox`) as `runner.gui` (`gui.cr`) and Atspi (control handling) as `runner.at_spi` (`at-spi.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings) as `runner.x11` (`x11.cr`).
 
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
