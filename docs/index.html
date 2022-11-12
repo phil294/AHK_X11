@@ -7852,7 +7852,7 @@ BlockInput, off</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -7860,7 +7860,7 @@ BlockInput, off</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -10403,7 +10403,7 @@ Loop, %MonitorCount%
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">ControlClick, Control<span class="rm">-or-Pos</span> [, WinTitle, <span class="tbd">WinText</span>, <span class="rm">WhichButton</span>, ClickCount, <span class="rm">Options</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">ControlClick, Control<span class="rm">-or-Pos</span> [, WinTitle, WinText, <span class="rm">WhichButton</span>, ClickCount, <span class="rm">Options</span>, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -10424,9 +10424,9 @@ Loop, %MonitorCount%
                 <td class="calibre4">WinTitle</td>
                 <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3 rm">
                 <td class="calibre4">WhichButton</td>
@@ -10456,9 +10456,9 @@ Loop, %MonitorCount%
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12530,7 +12530,7 @@ Loop, %ColorArray0%
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12538,7 +12538,7 @@ Loop, %ColorArray0%
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12585,7 +12585,7 @@ Loop, %ColorArray0%
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12593,7 +12593,7 @@ Loop, %ColorArray0%
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12648,7 +12648,7 @@ Loop, %ColorArray0%
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12656,7 +12656,7 @@ Loop, %ColorArray0%
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12730,7 +12730,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12738,7 +12738,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12801,7 +12801,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12809,7 +12809,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12868,7 +12868,7 @@ Loop
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12876,7 +12876,7 @@ Loop
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12931,7 +12931,7 @@ Loop
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12939,7 +12939,7 @@ Loop
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -12998,7 +12998,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -13006,7 +13006,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13108,7 +13108,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Menu</td>
@@ -13144,7 +13144,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13248,7 +13248,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13467,7 +13467,7 @@ return</pre>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">IfWinActive [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]<br class="calibre12" /> IfWinNotActive [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">IfWinActive [, WinTitle, WinText, ExcludeTitle, ExcludeText]<br class="calibre12" /> IfWinNotActive [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -13479,17 +13479,17 @@ return</pre>
                 <td width="15%" class="calibre4">WinTitle</td>
                 <td width="85%" class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the other 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13520,7 +13520,7 @@ return</pre>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">IfWinExist [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]<br class="calibre12" /> IfWinNotExist [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">IfWinExist [, WinTitle, WinText, ExcludeTitle, ExcludeText]<br class="calibre12" /> IfWinNotExist [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -13533,16 +13533,16 @@ return</pre>
                 <td width="85%" class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the other 3 parameters are all omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used (i.e. that specific window is checked to see whether it still exists). To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4 tbd">WinText</td>
-                <td class="calibre4 tbd">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">WinText</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4 tbd">ExcludeText</td>
-                <td class="calibre4 tbd">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">ExcludeText</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13706,7 +13706,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -13714,7 +13714,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13768,7 +13768,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Interval</td>
@@ -13780,7 +13780,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13820,7 +13820,7 @@ else
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinActivate [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinActivate [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -13833,16 +13833,16 @@ else
                 <td width="85%" class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If all parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be activated. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4 tbd">WinText</td>
-                <td class="tbd calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">WinText</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4 tbd">ExcludeText</td>
-                <td class="calibre4 tbd">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">ExcludeText</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13886,7 +13886,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -13894,7 +13894,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -13923,7 +13923,7 @@ else
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinClose [, WinTitle, <span class="tbd">WinText</span>, <span class="tbd">SecondsToWait</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinClose [, WinTitle, WinText, <span class="tbd">SecondsToWait</span>, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -13939,7 +13939,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4"><span class="tbd">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</span></td>
+                <td class="calibre4"><span class="">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">SecondsToWait</td>
@@ -13949,9 +13949,9 @@ else
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14005,7 +14005,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14013,7 +14013,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14190,7 +14190,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14198,7 +14198,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14224,7 +14224,7 @@ MsgBox, The active window's class is "%class%".</pre>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinGetPos [, X, Y, Width, Height, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>] </td>
+                <td height="48" class="calibre4">WinGetPos [, X, Y, Width, Height, WinTitle, WinText, ExcludeTitle, ExcludeText] </td>
               </tr>
             </tbody>
           </table>
@@ -14244,17 +14244,17 @@ MsgBox, The active window's class is "%class%".</pre>
                 <td class="calibre4">WinTitle</td>
                 <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14292,7 +14292,7 @@ IfWinExist, Untitled - Notepad
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinGetText, OutputVar [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinGetText, OutputVar [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -14310,7 +14310,7 @@ IfWinExist, Untitled - Notepad
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14318,7 +14318,7 @@ IfWinExist, Untitled - Notepad
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14372,7 +14372,7 @@ MsgBox, The text is:`n%text%</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14380,7 +14380,7 @@ MsgBox, The text is:`n%text%</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14421,7 +14421,7 @@ MsgBox, The active window is "%Title%".</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14429,7 +14429,7 @@ MsgBox, The active window is "%Title%".</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14459,7 +14459,7 @@ WinShow
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinKill [, WinTitle, <span class="tbd">WinText</span>, SecondsToWait, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinKill [, WinTitle, WinText, SecondsToWait, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -14471,9 +14471,9 @@ WinShow
                 <td width="15%" class="calibre4">WinTitle</td>
                 <td width="85%" class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the other 3 window parameters are blank or omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the other 3 window parameters are blank or omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3 tbd">
                 <td class="calibre4">SecondsToWait</td>
@@ -14483,9 +14483,9 @@ WinShow
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14513,7 +14513,7 @@ else
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinMaximize [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinMaximize [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -14527,17 +14527,17 @@ else
                   <p class="calibre8">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</p>
                 </td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14569,7 +14569,7 @@ WinMaximize ; use the window found above
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinMinimize [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinMinimize [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -14583,17 +14583,17 @@ WinMaximize ; use the window found above
                   <p class="calibre8">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</p>
                 </td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14652,7 +14652,7 @@ WinMinimize ; use the window found above
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinMove, X, Y <br class="calibre12" /> WinMove, WinTitle, <span class="tbd">WinText</span>, X, Y [, Width, Height, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinMove, X, Y <br class="calibre12" /> WinMove, WinTitle, WinText, X, Y [, Width, Height, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -14670,9 +14670,9 @@ WinMinimize ; use the window found above
                   <p class="calibre8">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the other 3 window parameters are blank or omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the other 3 window parameters are blank or omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</p>
                 </td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Width, Height</td>
@@ -14682,9 +14682,9 @@ WinMinimize ; use the window found above
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14712,7 +14712,7 @@ WinMinimize ; use the window found above
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">WinRestore [, WinTitle, <span class="tbd">WinText</span>, ExcludeTitle, <span class="tbd">ExcludeText</span>]</td>
+                <td height="48" class="calibre4">WinRestore [, WinTitle, WinText, ExcludeTitle, ExcludeText]</td>
               </tr>
             </tbody>
           </table>
@@ -14726,17 +14726,17 @@ WinMinimize ; use the window found above
                   <p class="calibre8">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</p>
                 </td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
                 <td class="calibre4">Windows whose titles include this value will not be considered.</td>
               </tr>
-              <tr class="calibre3 tbd">
+              <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14780,7 +14780,7 @@ WinMinimize ; use the window found above
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14788,7 +14788,7 @@ WinMinimize ; use the window found above
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14849,7 +14849,7 @@ return
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14857,7 +14857,7 @@ return
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14898,7 +14898,7 @@ return
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -14906,7 +14906,7 @@ return
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -14949,7 +14949,7 @@ WinShow
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Seconds</td>
@@ -14961,7 +14961,7 @@ WinShow
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -15013,7 +15013,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Seconds</td>
@@ -15025,7 +15025,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -15079,7 +15079,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Seconds</td>
@@ -15091,7 +15091,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered.</td>
+                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
               </tr>
             </tbody>
           </table>
@@ -15537,7 +15537,7 @@ else
           <a id="Accessibility.htm" href="#Accessibility.htm">#</a>
           <h2 class="calibre9"><span class="calibre23">Commands based on Accessibility</span></h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Some commands, such as ControlSend or the ExcludeText of window matching options, can only work if accessibility information (AT-SPI) is available. This is the only way to make them work. This means that <b>on the computer where the script is run</b>, 1. at-spi2 needs to be installed, 2. assistive technologies need to be enabled (distribution setting), 3. several applications such as Chrome need special configuration flags. You can verify if a window properly works with at-spi with Window Spy ("Control Under Mouse Position"). To solve these problems at runtime, every time the respective command is run on a window where no at-spi integration could be detected, the prompt below is shown to the user. When you're using AHK_X11 for personal use, you may want to pre-empt some of these following steps, so you can also see it as a guide or your local setup:</p>
+          <p class="calibre8">Some commands, such as ControlSend or the ExcludeText of window matching options, can only work if accessibility information (AT-SPI) is available. This is the only way to make them work. This means that <b>on the computer where the script is run</b>, 1. at-spi2 needs to be installed, 2. assistive technologies need to be enabled (distribution setting), 3. several applications such as Chrome need special configuration flags. You can verify if a window properly works with at-spi with Window Spy ("Control Under Mouse Position"). To solve these problems at runtime, every time the respective command is run on a window where no at-spi integration could be detected, the prompt below is shown to the user. When you're using AHK_X11 for personal use, you may want to pre-empt some of these following steps, so you can also see it as a guide for your local setup:</p>
           <pre>
 Could not determine Control Info for window '#{window_name}'!
 
