@@ -26,7 +26,7 @@ class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 				when ::Gtk::ScrolledWindow
 					text_buffer = ctrl.children.next.unsafe_as(::Gtk::TextView).buffer
 					text_buffer.set_text(value, -1)
-				when ::Gtk::Button
+				when ::Gtk::Button, ::Gtk::Label
 					ctrl.label = value
 				when ::Gtk::Entry
 					ctrl.text = value
