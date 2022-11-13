@@ -19,7 +19,7 @@ class Cmd::Misc::PixelGetColor < Cmd::Base
 					color = slice
 					break
 				end
-				color = color.reverse if rgb
+				color = color.reverse if ! rgb
 				color_s = color.map { |c| c.to_s(16, upcase:true, precision:2) }.join
 				thread.runner.set_user_var(out_var, color_s)
 				next "0"
