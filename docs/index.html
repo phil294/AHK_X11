@@ -646,7 +646,7 @@
                     <a href="#ControlGetPos.htm">ControlGetPos</a>
                   </li>
                   <li>
-                    <a class="tbd" href="#ControlGetText.htm">ControlGetText</a>
+                    <a href="#ControlGetText.htm">ControlGetText</a>
                   </li>
                   <li>
                     <a class="tbd" href="#ControlMove.htm">ControlMove</a>
@@ -2065,7 +2065,7 @@ else
                 <td height="16" class="calibre4">Retrieves the position and size of a control.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#ControlGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetText</a></td>
+                <td height="16" class="calibre4"><a href="#ControlGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetText</a></td>
                 <td height="16" class="calibre4">Retrieves text from a control.</td>
               </tr>
               <tr class="calibre3">
@@ -12728,7 +12728,7 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Control</td>
-                <td class="calibre4">Can be either ClassNN (the classname and instance number of the control) (<span class="x11">recommended</span>) or the name/text of the control (<span class="x11">can be slow</span>), both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. If this parameter is blank, the target window's topmost control will be used.</td>
+                <td class="calibre4">Can be either ClassNN (the classname and instance number of the control) (<span class="x11">recommended</span>) or the name/text of the control (<span class="x11">can be slow</span>), both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. <span class="tbd">If this parameter is blank, the target window's topmost control will be used.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinTitle</td>
@@ -12772,7 +12772,7 @@ Loop
 </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="ControlGetText.htm" href="#ControlGetText.htm">#</a> <h2 class="calibre17">ControlGetText</h2>
           <hr size="2" class="calibre24" />
@@ -12796,15 +12796,15 @@ Loop
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Control</td>
-                <td class="calibre4">Can be either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. If this parameter is blank or omitted, the target window's topmost control will be used.</td>
+                <td class="calibre4">Can be either ClassNN (the classname and instance number of the control (<span class="x11">recommended</span>)) or the name/text of the control (<span class="x11">can be slow</span>), both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. <span class="tbd">If this parameter is blank or omitted, the target window's topmost control will be used.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinTitle</td>
-                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
+                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12812,7 +12812,7 @@ Loop
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
+                <td class="calibre4">Windows whose text include this value will not be considered.</td>
               </tr>
             </tbody>
           </table>
@@ -12821,7 +12821,8 @@ Loop
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">The amount of text retrieved is limited to a variable's maximum capacity (which can be changed via the <a href="#h_MaxMem.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxMem</a> directive). As a result, this command might use a large amount RAM if the target control (e.g. an editor with a large document open) contains a large quantity of text. However, a variable's memory can be freed after use by assigning it to nothing, i.e. OutputVar =</p>
+          <p class="x11">This command relies on accessibility support. <a href="#Accessibility.htm">Please read this section</a> to avoid problems.</p>
+          <p class="calibre8 tbd">The amount of text retrieved is limited to a variable's maximum capacity (which can be changed via the <a href="#h_MaxMem.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxMem</a> directive). As a result, this command might use a large amount RAM if the target control (e.g. an editor with a large document open) contains a large quantity of text. However, a variable's memory can be freed after use by assigning it to nothing, i.e. OutputVar =</p>
           <p class="calibre8">To retrieve a list of all controls in a window, use <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGet</a>.</p>
           <p class="calibre8">Window titles and text are always case sensitive. Hidden windows are not detected unless <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> has been turned on.</p>
           <p class="calibre8"> </p>
