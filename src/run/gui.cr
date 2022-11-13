@@ -254,7 +254,7 @@ module Run
 		# Yields (and if not yet exists, creates) the gui info referring to *gui_id*,
 		# including the `window`, and passes the block on to the GTK idle thread so
 		# you can run GTK code with it.
-		def gui(gui_id, &block : GuiInfo -> _)
+		def gui(thread, gui_id, &block : GuiInfo -> _)
 			gui_info = @guis[gui_id]?
 			if ! gui_info
 				act do
@@ -262,6 +262,15 @@ module Run
 					# , border_width: 20
 					fixed = Gtk::Fixed.new
 					window.add fixed
+					window.connect "destroy" do
+						close_label_id = gui_id == "1" ? "" : gui_id
+						close_label = "#{close_label_id}GuiClose".downcase
+						begin thread.runner.add_thread close_label, 0
+						rescue e
+							# TODO: ...
+							STDERR.puts e
+						end
+					end
 					gui_info = GuiInfo.new(window, fixed)
 				end
 				@guis[gui_id] = gui_info.not_nil!

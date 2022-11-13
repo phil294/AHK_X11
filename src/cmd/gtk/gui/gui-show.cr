@@ -5,7 +5,7 @@ class Cmd::Gtk::Gui::GuiShow < Cmd::Base
 		gui_id = args[0]
 		options = args[1]? || ""
 		title = args[2]?
-		thread.runner.gui.gui(gui_id) do |gui|
+		thread.runner.gui.gui(thread, gui_id) do |gui|
 			gui.window.title = title if title
 			gui.window.show_all
 			w, h = gui.window.size
