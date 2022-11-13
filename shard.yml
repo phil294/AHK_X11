@@ -22,7 +22,7 @@ dependencies:
     github: phil294/xtst-cr
   x_do:
     github: phil294/x_do.cr
-    commit: 659ab684722c2fc0b4b89c0011ce98b3b01a420c
+    commit: 94f755a4f18a9a9820e9738b371cbe6b49731926
   gobject:
     github: jhass/crystal-gobject
   malloc_pthread_shim:
