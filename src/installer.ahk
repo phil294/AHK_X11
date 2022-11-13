@@ -57,6 +57,17 @@ FileAppend, Comment=%app_comment% - this is the compiler to create stand-alone b
 RunWait, desktop-file-install --dir=%A_Home%/.local/share/applications %app_name%-compiler.desktop
 FileDelete, %app_name%-compiler.desktop
 
+FileAppend, [Desktop Entry]`n, %app_name%-windowspy.desktop
+FileAppend, Name=Window Spy`n, %app_name%-windowspy.desktop
+FileAppend, Exec=%binary_path% --windowspy`n, %app_name%-windowspy.desktop
+FileAppend, Icon=application-x-%app_name%`n, %app_name%-windowspy.desktop
+FileAppend, Terminal=false`n, %app_name%-windowspy.desktop
+FileAppend, Type=Application`n, %app_name%-windowspy.desktop
+FileAppend, Categories=`n, %app_name%-windowspy.desktop
+FileAppend, Comment=%app_comment% - tool to help with %app_name% scripting.`n, %app_name%-windowspy.desktop
+RunWait, desktop-file-install --dir=%A_Home%/.local/share/applications %app_name%-windowspy.desktop
+FileDelete, %app_name%-windowspy.desktop
+
 RunWait, update-desktop-database %A_Home%/.local/share/applications
 RunWait, xdg-mime default %app_name%.desktop application/x-%app_name%
 

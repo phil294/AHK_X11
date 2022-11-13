@@ -43,7 +43,7 @@ Features:
 - [x] GUIs (partially done)
 - [x] One-click compile script to portable stand-alone executable
 - [x] Scripting: labels, flow control: If/Else, Loop
-- [ ] Window Spy
+- [x] Window Spy
 - [x] Graphical installer (optional)
 - [x] Context menu and compilation just like on Windows
 
@@ -132,11 +132,13 @@ There are different ways to use it.
 1. The graphical way, like on Windows: Running the program directly opens up the interactive installer.
     - Once installed, all `.ahk` files are associated with AHK_X11, so you can simply double click them.
     - Also adds the Compiler into `Open as...` Menus.
+    - Also adds Window Spy to your applications.
 2. Command line: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
     - Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
     - When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`).
     - If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
-    - Compile scripts with `./ahk_x11 --compile "path/script.ahk"
+    - Compile scripts with `./ahk_x11 --compile "path/script.ahk"`
+    - Run Window Spy with `./ahk_x11 --windowspy`
     - Hashbang supported if first line starts with `#!`
 
 ### Caveats
