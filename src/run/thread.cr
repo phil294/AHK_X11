@@ -88,6 +88,10 @@ module Run
 				end
 			end
 
+			{% if ! flag?(:release) %}
+				puts "[debug] run: #{cmd.class.name} #{parsed_args.to_s}"
+			{% end %}
+
 			begin
 				result = cmd.run(self, parsed_args)
 			rescue e : RuntimeException
@@ -109,6 +113,9 @@ module Run
 			elsif cmd.class.sets_error_level
 				raise "Result should be String for ErrorLevel command??" if ! result.is_a?(String)
 				set_thread_built_in_static_var("ErrorLevel", result)
+				{% if ! flag?(:release) %}
+					puts "[debug] ErrorLevel: #{result}"
+				{% end %}
 			end
 			# current stack el may have been altered by prev cmd.run(), in which case disregard the normal flow
 			if @stack[stack_i]? == cmd # not altered
