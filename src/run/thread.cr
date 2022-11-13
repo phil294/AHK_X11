@@ -1,10 +1,20 @@
 require "../util/ahk-string"
 
 module Run
+	enum CoordMode
+		SCREEN
+		RELATIVE
+	end
+
 	# see Thread.settings
 	private struct ThreadSettings
 		property last_found_window : XDo::Window?
 		property msgbox_response : Gui::MsgBoxButton?
+		property coord_mode_tooltip = CoordMode::RELATIVE
+		property coord_mode_pixel = CoordMode::RELATIVE
+		property coord_mode_mouse = CoordMode::RELATIVE
+		property coord_mode_caret = CoordMode::RELATIVE
+		property coord_mode_menu = CoordMode::RELATIVE
 	end
 
 	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,

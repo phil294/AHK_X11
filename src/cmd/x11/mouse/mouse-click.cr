@@ -26,6 +26,9 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 				if relative
 					thread.runner.x_do.move_mouse x, y
 				else
+					if thread.settings.coord_mode_mouse == ::Run::CoordMode::RELATIVE
+						x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
+					end
 					thread.runner.x_do.move_mouse x, y, screen
 				end
 				thread.runner.x_do.mouse_down button if ! up

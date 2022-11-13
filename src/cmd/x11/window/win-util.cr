@@ -70,4 +70,12 @@ class Cmd::X11::Window::Util
 		end
 		!!win
 	end
+	def self.coord_relative_to_screen(thread, x, y)
+		loc = thread.runner.x_do.active_window.location
+		return x + loc[0], y + loc[1]
+	end
+	def self.coord_screen_to_relative(thread, x, y)
+		loc = thread.runner.x_do.active_window.location
+		return x - loc[0], y - loc[1]
+	end
 end

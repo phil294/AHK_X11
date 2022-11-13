@@ -6,6 +6,9 @@ class Cmd::Misc::PixelGetColor < Cmd::Base
 		out_var = args[0]
 		x = args[1].to_i? || 0
 		y = args[2].to_i? || 0
+		if thread.settings.coord_mode_pixel == ::Run::CoordMode::RELATIVE
+			x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
+		end
 		rgb = ((args[3]?.try &.downcase) || "") == "rgb"
 		thread.runner.gui.act do
 			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x, y, 1, 1)
@@ -19,9 +22,9 @@ class Cmd::Misc::PixelGetColor < Cmd::Base
 				color = color.reverse if rgb
 				color_s = color.map { |c| c.to_s(16, upcase:true, precision:2) }.join
 				thread.runner.set_user_var(out_var, color_s)
-				return "0"
+				next "0"
 			end
+			"1"
 		end
-		"1"
 	end
 end
