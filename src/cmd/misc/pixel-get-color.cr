@@ -1,0 +1,27 @@
+class Cmd::Misc::PixelGetColor < Cmd::Base
+	def self.min_args; 3 end
+	def self.max_args; 4 end
+	def self.sets_error_level; true end
+	def run(thread, args)
+		out_var = args[0]
+		x = args[1].to_i? || 0
+		y = args[2].to_i? || 0
+		rgb = ((args[3]?.try &.downcase) || "") == "rgb"
+		thread.runner.gui.act do
+			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x, y, 1, 1)
+			if pixbuf
+				color = [] of UInt8
+				# limit/length is missing? need to cap manually
+				pixbuf.pixels[0].each_slice(3) do |slice|
+					color = slice
+					break
+				end
+				color = color.reverse if rgb
+				color_s = color.map { |c| c.to_s(16, upcase:true, precision:2) }.join
+				thread.runner.set_user_var(out_var, color_s)
+				return "0"
+			end
+		end
+		"1"
+	end
+end
