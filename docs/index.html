@@ -643,7 +643,7 @@
                     <a class="tbd" href="#ControlGetFocus.htm">ControlGetFocus</a>
                   </li>
                   <li>
-                    <a class="tbd" href="#ControlGetPos.htm">ControlGetPos</a>
+                    <a href="#ControlGetPos.htm">ControlGetPos</a>
                   </li>
                   <li>
                     <a class="tbd" href="#ControlGetText.htm">ControlGetText</a>
@@ -2061,7 +2061,7 @@ else
                 <td height="16" class="calibre4">Retrieves which control of the target window has input focus, if any.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#ControlGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetPos</a></td>
+                <td height="16" class="calibre4"><a href="#ControlGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetPos</a></td>
                 <td height="16" class="calibre4">Retrieves the position and size of a control.</td>
               </tr>
               <tr class="calibre3">
@@ -12699,9 +12699,9 @@ else
 </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="ControlGetPos.htm" href="#ControlGetPos.htm">#</a> <h2 class="calibre17">ControlGetPos</h2> [v1.0.15+]
+          <a id="ControlGetPos.htm" href="#ControlGetPos.htm">#</a> <h2 class="calibre17">ControlGetPos</h2>
           <hr size="2" class="calibre24" />
           <p class="calibre8">Retrieves the position and size of a control.</p>
           <table cellspacing="5" width="100%" class="calibre28">
@@ -12728,15 +12728,15 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Control</td>
-                <td class="calibre4">Can be either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. If this parameter is blank, the target window's topmost control will be used.</td>
+                <td class="calibre4">Can be either ClassNN (the classname and instance number of the control) (<span class="x11">recommended</span>) or the name/text of the control (<span class="x11">can be slow</span>), both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. If this parameter is blank, the target window's topmost control will be used.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinTitle</td>
-                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class (v1.0.09+), specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
+                <td class="calibre4">The title or partial title of the target window (the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>). If this and the next 3 parameters are omitted, the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> will be used. If this is the letter A and the next 3 parameters are omitted, the active window will be used. To use a window class, specify ahk_class ExactClassName (shown by Window Spy). To use a window's <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">unique ID number</a>, specify ahk_id IDNumber.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">WinText</td>
-                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
+                <td class="calibre4">If present, this parameter must be a substring from a single text element of the target window. Hidden text elements are detected if <a href="#DetectHiddenText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenText</a> is ON.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeTitle</td>
@@ -12744,12 +12744,13 @@ else
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ExcludeText</td>
-                <td class="calibre4">Windows whose text include this value will not be considered. <span class="x11">This option relies on <a href="#Accessibility.htm">accessibility support</a>.</span></td>
+                <td class="calibre4">Windows whose text include this value will not be considered.</td>
               </tr>
             </tbody>
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="x11">This command relies on accessibility support. <a href="#Accessibility.htm">Please read this section</a> to avoid problems.</p>
           <p class="calibre8">If no matching window or control is found, the output variables will be made blank.</p>
           <p class="calibre8">Unlike commands that change a control, ControlGetPos does not have an automatic delay (<a href="#SetControlDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetControlDelay</a> does not affect it).</p>
           <p class="calibre8">To discover the name of the control that the mouse is currently hovering over, use <a href="#MouseGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseGetPos</a>. To retrieve a list of all controls in a window, use <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGet</a>.</p>
@@ -15453,7 +15454,7 @@ else
           <a id="Accessibility.htm" href="#Accessibility.htm">#</a>
           <h2 class="calibre9"><span class="calibre23">Commands based on Accessibility</span></h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Some commands, such as ControlSend or the ExcludeText of window matching options, can only work if accessibility information (AT-SPI) is available. This is the only way to make them work. This means that <b>on the computer where the script is run</b>, 1. at-spi2 needs to be installed, 2. assistive technologies need to be enabled (distribution setting), 3. several applications such as Chrome need special configuration flags. You can verify if a window properly works with at-spi with Window Spy ("Control Under Mouse Position"). To solve these problems at runtime, every time the respective command is run on a window where no at-spi integration could be detected, the prompt below is shown to the user. When you're using AHK_X11 for personal use, you may want to pre-empt some of these following steps, so you can also see it as a guide for your local setup:</p>
+          <p class="calibre8">Some commands, such as ControlSend or the ExcludeText of window matching options, can only work if accessibility information (AT-SPI) is available. This is the only way to make them work. This means that <b>on the computer where the script is run</b>, 1. at-spi2 needs to be installed, 2. assistive technologies need to be enabled (distribution setting), 3. several applications such as Chrome need special configuration flags. You can verify if a window properly works with at-spi with Window Spy ("Focused Control"). To solve these problems at runtime, every time the respective command is run on a window where no at-spi integration could be detected, the prompt below is shown to the user. When you're using AHK_X11 for personal use, you may want to pre-empt some of these following steps, so you can also see it as a guide for your local setup:</p>
           <pre>
 Could not determine Control Info for window '#{window_name}'!
 
