@@ -22,7 +22,7 @@ shards:
 
   x11:
     git: https://github.com/tamasszekeres/x11-cr.git
-    version: 1.1.0
+    version: 1.1.1
 
   x_do:
     git: https://github.com/phil294/x_do.cr.git
