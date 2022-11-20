@@ -110,7 +110,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			# # null = Pointer(Void).null
 			# # rule = ::Atspi::MatchRule.new(::Atspi::StateSet.new([] of UInt32), match_none, pointerof(null), match_none, [] of String, match_none, [] of String, match_none, false)
 			# # matches = accessible.matches(rule, Atspi::CollectionSortOrder::CANONICAL, 5, true)
-			each_descendant(accessible, include_hidden: include_hidden) do |acc, class_NN|
+			each_descendant(accessible, include_hidden: include_hidden) do |acc, _, class_NN|
 				is_match = text_or_class_NN == get_text(acc)
 				if is_match
 					descendant = acc
