@@ -121,7 +121,8 @@ end
 
 module Run
 	# Responsible for registering hotkeys to the X11 server,
-	# listening to all events and calling threads on hotkey or hotstring trigger.
+	# listening to all events and calling threads on hotkey trigger
+	# and calling given event listeners.
 	class X11
 		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else 
 
@@ -186,9 +187,7 @@ module Run
 			end
 		end
 
-		def run(runner : Runner, hotstring_end_chars)
-			@hotstring_end_chars = hotstring_end_chars
-
+		def run(runner : Runner)
 			if record = @record
 				record.enable_context_async(@record_context.not_nil!) do |record_data|
 					handle_record_event(runner, record_data)
@@ -268,12 +267,8 @@ module Run
 		end
 
 		@hotkeys = [] of Hotkey
-		@hotstrings = [] of Hotstring
 
-		def register_hotstring(hotstring)
-			@hotstrings << hotstring
-		end
-
+		# TODO: should probably be externalized too like with Hotstrings
 		def register_hotkey(hotkey, subscribe = true)
 			# apparently keycodes are display-dependent so they can't be determined at build time
 			hotkey.keycode = keysym_to_keycode(hotkey.keysym)
@@ -299,16 +294,7 @@ module Run
 			end
 		end
 
-		# Not using `String` here because it's more convenient (and also faster) to just
-		# move a char* pointer around
-		@key_buff = HotstringAbbrevKeysyms.new('0')
-		@key_buff_i = 0_u8
-
 		@pressed_down_keysyms : StaticArray(UInt64, 8) = StaticArray[0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64]
-
-		@hotstring_end_chars = [] of Char
-		@hotstring_candidate : Hotstring? = nil
-		@modifier_keysyms : StaticArray(Int32, 13) = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
 
 		private def handle_record_event(runner, record_data)
 			return if record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
@@ -335,6 +321,7 @@ module Run
 			handle_event(runner, key_event, keysym, char)
 		end
 
+		# TODO: put keysym and char into key_event in callers?
 		private def handle_event(runner, key_event, keysym, char)
 			return if @is_paused
 			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
@@ -365,48 +352,17 @@ module Run
 				hotkey.trigger
 			end
 
-			##### 2. Hotstrings
-			if up
-				prev_hotstring_candidate = @hotstring_candidate
-				@hotstring_candidate = nil
-				if ! char
-					if @modifier_keysyms.includes? keysym
-						# left/right buttons etc. should cancel current buffer but modifiers not: keep
-						@hotstring_candidate = prev_hotstring_candidate
-					else
-						@key_buff_i = 0_u8
-					end
-				else
-					normal_keypress = (::X11::ControlMask | ::X11::Mod1Mask | ::X11::Mod4Mask | ::X11::Mod5Mask) & key_event.state == 0
-					if normal_keypress
-						if char == '\b' # ::X11::XK_BackSpace
-							@key_buff_i -= 1 if @key_buff_i > 0
-						elsif @hotstring_end_chars.includes?(char)
-							@key_buff_i = 0_u8
-							if ! prev_hotstring_candidate.nil?
-								runner.set_global_built_in_static_var("A_EndChar", char.to_s)
-								prev_hotstring_candidate.trigger
-							end
-						else
-							@key_buff_i = 0_u8 if @key_buff_i > 29
-							@key_buff[@key_buff_i] = char
-							@key_buff_i += 1
-							match = @hotstrings.find { |hs| hs.keysyms_equal?(@key_buff, @key_buff_i) }
-							if match
-								if match.immediate
-									@key_buff_i = 0_u8
-									runner.set_global_built_in_static_var("A_EndChar", "")
-									match.trigger
-								else
-									@hotstring_candidate = match
-								end
-							end
-						end
-					else
-						@key_buff_i = 0_u8
-					end
-				end
+			# Hotstrings
+			@key_listeners.each do |sub|
+				sub.call(key_event, keysym, char)
 			end
+		end
+		@key_listeners = [] of Proc(::X11::KeyEvent, UInt64, Char?, Nil)
+		def register_key_listener(&block : ::X11::KeyEvent, UInt64, Char? -> _)
+			@key_listeners << block
+		end
+		def unregister_key_listener(&block)
+			@key_listeners.reject! &.== block
 		end
 
 		def keysym_pressed_down?(keysym)

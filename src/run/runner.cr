@@ -6,6 +6,7 @@ require "./gui"
 require "./at-spi"
 require "./x11"
 require "x_do"
+require "./hotstrings"
 
 module Run
 	enum SingleInstance
@@ -58,7 +59,6 @@ module Run
 		# see Thread.settings
 		@default_thread_settings = ThreadSettings.new
 		@hotkeys = {} of String => Hotkey
-		@hotstrings = [] of Hotstring
 		@x11 : X11?
 		def x11
 			# TODO: log? abort?
@@ -80,6 +80,7 @@ module Run
 			raise "Cannot access ATSPI (window control info) in headless mode" if @headless
 			@at_spi.not_nil!
 		end
+		@hotstrings : Hotstrings
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 		@builder : Build::Builder
@@ -99,14 +100,16 @@ module Run
 				@x_do = XDo.new
 				@x11 = X11.new
 			end
+
+			@hotstrings = Hotstrings.new(@settings.hotstring_end_chars, builder.hotstrings)
 		end
 		def run
 			@settings.persistent ||= (! @builder.hotkeys.empty? || ! @builder.hotstrings.empty?)
 			if ! @headless
 				@builder.hotkeys.each { |h| add_hotkey h }
-				@builder.hotstrings.each { |h| add_hotstring h }
+				@hotstrings.register(self)
 				spawn do
-					x11.run self, @settings.hotstring_end_chars
+					x11.run self
 				end
 				# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
 				::Thread.new do
@@ -313,13 +316,6 @@ module Run
 				hotkey.active = false
 			end
 			hotkey
-		end
-
-		def add_hotstring(hotstring)
-			hotstring.runner = self
-			@hotstrings << hotstring
-			x11.register_hotstring hotstring
-			hotstring
 		end
 
 		def handle_single_instance

@@ -1,10 +1,8 @@
 require "../util/ahk-string"
+require "./hotstrings"
 
 module Run
-	alias HotstringAbbrevKeysyms = StaticArray(Char, 30)
-
 	class Hotstring
-		property runner : Run::Runner?
 		getter abbrev : String
 		property label : String
 		property cmd : Cmd::Base?
@@ -39,9 +37,7 @@ module Run
 				other_keysyms.join[...other_size].downcase == @abbrev.downcase
 			end
 		end
-		def trigger
-			runner = @runner.not_nil!
-
+		def trigger(runner)
 			if @automatic_backspacing
 				runner.x11.pause do
 					(@abbrev.size + (@immediate ? 0 : 1)).times do
