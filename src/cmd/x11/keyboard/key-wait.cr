@@ -16,18 +16,24 @@ class Cmd::X11::Keyboard::KeyWait < Cmd::Base
 		end
 		keysym = thread.parse_key_combinations(key_name, implicit_braces: true)[0]?.try &.keysym
 		raise Run::RuntimeException.new "Key #{key_name} not found" if ! keysym
-		start = Time.monotonic
-		loop do
+		is_pressed = thread.runner.display.pressed_keys.includes?(keysym)
+		return "0" if down ? is_pressed : !is_pressed
+
+		wait_channel = Channel(Nil).new
+
+		listener = thread.runner.display.register_key_listener do
 			is_pressed = thread.runner.display.pressed_keys.includes?(keysym)
-			break if down ? is_pressed : !is_pressed
-			sleep 20.milliseconds
-			now = Time.monotonic
-			if timeout
-				if now - start >= timeout.not_nil!.seconds
-					return "1"
-				end
-			end
+			wait_channel.send(nil) if down ? is_pressed : !is_pressed
 		end
-		"0"
+
+		ret = select
+		when wait_channel.receive
+			"0"
+		# Neither Time::Span::MAX nor Time::Span::ZERO works here
+		when timeout(timeout ? timeout.not_nil!.seconds : 302400000.seconds)
+			"1"
+		end
+		thread.runner.display.unregister_key_listener(listener)
+		ret
 	end
 end

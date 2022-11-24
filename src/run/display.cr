@@ -114,9 +114,10 @@ module Run
 		@key_listeners = [] of Proc(::X11::KeyEvent, UInt64, Char?, Nil)
 		def register_key_listener(&block : ::X11::KeyEvent, UInt64, Char? -> _)
 			@key_listeners << block
+			block
 		end
-		def unregister_key_listener(&block)
-			@key_listeners.reject! &.== block
+		def unregister_key_listener(proc)
+			@key_listeners.reject! &.== proc
 		end
 	end
 end

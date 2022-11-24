@@ -1,5 +1,6 @@
 require "./thread"
 require "./timer"
+require "./hotkey"
 require "../cmd/base"
 
 module Run
