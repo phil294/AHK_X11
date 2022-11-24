@@ -18,7 +18,7 @@ class Cmd::X11::Keyboard::KeyWait < Cmd::Base
 		raise Run::RuntimeException.new "Key #{key_name} not found" if ! keysym
 		start = Time.monotonic
 		loop do
-			is_pressed = thread.runner.display.keysym_pressed_down?(keysym)
+			is_pressed = thread.runner.display.pressed_keys.includes?(keysym)
 			break if down ? is_pressed : !is_pressed
 			sleep 20.milliseconds
 			now = Time.monotonic

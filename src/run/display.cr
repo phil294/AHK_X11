@@ -2,6 +2,7 @@ require "./x11"
 require "x_do"
 require "./hotstrings"
 require "./hotkeys"
+require "./pressed-keys"
 require "./gui"
 require "./at-spi"
 
@@ -14,6 +15,7 @@ module Run
 		getter at_spi : AtSpi
 		getter hotstrings : Hotstrings
 		getter hotkeys : Hotkeys
+		getter pressed_keys : PressedKeys
 		@runner : Runner
 
 		def initialize(@runner)
@@ -23,6 +25,7 @@ module Run
 			@x_do = XDo.new
 			@hotstrings = Hotstrings.new(@runner, @runner.settings.hotstring_end_chars)
 			@hotkeys = Hotkeys.new(@runner)
+			@pressed_keys = PressedKeys.new(@runner)
 		end
 
 		def run(*, hotstrings, hotkeys)
@@ -33,6 +36,7 @@ module Run
 			hotstrings.each { |h| @hotstrings.add h }
 			@hotkeys.run
 			hotkeys.each { |h| @hotkeys.add h }
+			@pressed_keys.run
 			# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
 			::Thread.new do
 				gui.run # separate worker thread because gtk loop is blocking
@@ -100,21 +104,9 @@ module Run
 			@unsuspend_listeners.each &.call
 		end
 
-		@pressed_down_keysyms : StaticArray(UInt64, 8) = StaticArray[0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64]
-
 		# TODO: put keysym and char into key_event in callers?
 		private def handle_event(key_event, keysym, char)
 			return if @is_paused
-			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
-
-			if ! up
-				free_slot = @pressed_down_keysyms.index(keysym) || @pressed_down_keysyms.index(0)
-				@pressed_down_keysyms[free_slot] = keysym if free_slot
-			else
-				pressed_slot = @pressed_down_keysyms.index(keysym)
-				@pressed_down_keysyms[pressed_slot] = 0_u64 if pressed_slot
-			end
-
 			@key_listeners.each do |sub|
 				sub.call(key_event, keysym, char)
 			end
@@ -125,10 +117,6 @@ module Run
 		end
 		def unregister_key_listener(&block)
 			@key_listeners.reject! &.== block
-		end
-
-		def keysym_pressed_down?(keysym)
-			!! @pressed_down_keysyms.index(keysym)
 		end
 	end
 end
