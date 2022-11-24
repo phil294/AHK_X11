@@ -10,16 +10,16 @@ class Cmd::X11::Window::Util
 			win = thread.settings.last_found_window
 		elsif title.downcase == "a"
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here" if ! a_is_active
-			win = thread.runner.x_do.active_window
+			win = thread.runner.display.x_do.active_window
 		else
 			text = match_conditions[1]? || ""
 			exclude_title = match_conditions[2]? || ""
 			exclude_text = match_conditions[3]? || ""
-			current_desktop = thread.runner.x_do.desktop.to_i32
+			current_desktop = thread.runner.display.x_do.desktop.to_i32
 
 			wid = nil
 			# broken: https://github.com/woodruffw/x_do.cr/issues/10
-			wins = thread.runner.x_do.search do
+			wins = thread.runner.display.x_do.search do
 				require_all
 				only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
 				# ^ link also explains the need for specifying desktop:
@@ -45,9 +45,9 @@ class Cmd::X11::Window::Util
 					end
 					if ! text.empty? || ! exclude_text.empty?
 						win_texts = [] of ::String
-						frame = thread.runner.at_spi.find_window(pid: win.pid, window_name: win.name)
+						frame = thread.runner.display.at_spi.find_window(pid: win.pid, window_name: win.name)
 						if frame
-							win_texts = thread.runner.at_spi.get_all_texts(frame, include_hidden: false)
+							win_texts = thread.runner.display.at_spi.get_all_texts(frame, include_hidden: false)
 						end
 						if ! text.empty?
 							return false if win_texts.empty? || ! win_texts.index &.includes?(text)
@@ -66,16 +66,16 @@ class Cmd::X11::Window::Util
 			# Somehow, most (all?) window manager commands like close! or minimize!
 			# fail unless there is some other, arbitrary x11 request being sent after...
 			# no idea why, also independent of libxdo version. This call works around it.
-			thread.runner.x_do.focused_window sane: false
+			thread.runner.display.x_do.focused_window sane: false
 		end
 		!!win
 	end
 	def self.coord_relative_to_screen(thread, x, y)
-		loc = thread.runner.x_do.active_window.location
+		loc = thread.runner.display.x_do.active_window.location
 		return x + loc[0], y + loc[1]
 	end
 	def self.coord_screen_to_relative(thread, x, y)
-		loc = thread.runner.x_do.active_window.location
+		loc = thread.runner.display.x_do.active_window.location
 		return x - loc[0], y - loc[1]
 	end
 end

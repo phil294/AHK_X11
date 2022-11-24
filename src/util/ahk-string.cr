@@ -118,7 +118,7 @@ class Util::AhkString
 						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
 					{% end %}
 					yield Run::KeyCombination.new(key_name, keysym.to_u64, modifiers, up, down, repeat)
-					
+
 					modifiers = 0_u32
 				end
 			end

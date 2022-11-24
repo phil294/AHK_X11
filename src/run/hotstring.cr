@@ -39,14 +39,14 @@ module Run
 		end
 		def trigger(runner)
 			if @automatic_backspacing
-				runner.x11.pause do
+				runner.display.pause do
 					(@abbrev.size + (@immediate ? 0 : 1)).times do
-						runner.x_do.keys "BackSpace", delay: 0
+						runner.display.x_do.keys "BackSpace", delay: 0
 						sleep @delay.milliseconds if @delay != -1
 					end
 				end
 			end
-			
+
 			runner.add_thread @cmd.not_nil!, @priority
 		end
 	end

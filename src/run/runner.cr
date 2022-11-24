@@ -1,12 +1,6 @@
 require "./thread"
 require "./timer"
-require "./hotkey"
 require "../cmd/base"
-require "./gui"
-require "./at-spi"
-require "./x11"
-require "x_do"
-require "./hotstrings"
 
 module Run
 	enum SingleInstance
@@ -58,34 +52,16 @@ module Run
 		@timers = {} of String => Timer
 		# see Thread.settings
 		@default_thread_settings = ThreadSettings.new
-		@hotkeys = {} of String => Hotkey
-		@x11 : X11?
-		def x11
-			# TODO: log? abort?
-			raise "Cannot access X11 in headless mode" if @headless
-			@x11.not_nil!
-		end
-		@x_do : XDo?
-		def x_do
-			raise "Cannot access X_DO in headless mode" if @headless
-			@x_do.not_nil!
-		end
-		@gui : Gui?
-		def gui
-			raise "Cannot access GUI in headless mode" if @headless
-			@gui.not_nil!
-		end
-		@at_spi : AtSpi?
-		def at_spi
-			raise "Cannot access ATSPI (window control info) in headless mode" if @headless
-			@at_spi.not_nil!
-		end
-		@hotstrings : Hotstrings
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
 		@builder : Build::Builder
 		getter script_file : Path?
 		getter headless : Bool
+		@display : Display?
+		def display
+			raise "Cannot access Display in headless mode" if @headless
+			@display.not_nil!
+		end
 
 		def initialize(*, @builder, @script_file, @headless)
 			@labels = @builder.labels
@@ -94,32 +70,16 @@ module Run
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
-			if ! @headless
-				@gui = Gui.new default_title: script.basename
-				@at_spi = AtSpi.new
-				@x_do = XDo.new
-				@x11 = X11.new
-			end
-
-			@hotstrings = Hotstrings.new(@settings.hotstring_end_chars, builder.hotstrings)
 		end
 		def run
 			@settings.persistent ||= (! @builder.hotkeys.empty? || ! @builder.hotstrings.empty?)
 			if ! @headless
-				@builder.hotkeys.each { |h| add_hotkey h }
-				@hotstrings.register(self)
-				spawn do
-					x11.run self
-				end
-				# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
-				::Thread.new do
-					gui.run # separate worker thread because gtk loop is blocking
-				end
+				@display = Display.new self
+				@display.not_nil!.run hotstrings: @builder.hotstrings, hotkeys: @builder.hotkeys
 				if ! @settings.single_instance
 					@settings.single_instance = @settings.persistent ? SingleInstance::Prompt : SingleInstance::Off
 				end
 				handle_single_instance
-				gui.initialize_menu(self)
 			end
 			Fiber.yield
 			spawn same_thread: true { clock }
@@ -157,9 +117,9 @@ module Run
 				while thread = @threads.last?
 					if ! @headless
 						if thread.paused
-							gui.thread_pause
+							display.gui.thread_pause
 						else
-							gui.thread_unpause
+							display.gui.thread_unpause
 						end
 					end
 					select
@@ -238,7 +198,7 @@ module Run
 			down = var.downcase
 			case down
 			when "clipboard"
-				gui.clipboard do |clip|
+				display.gui.clipboard do |clip|
 					clip.set_text(value, -1)
 					clip.store
 				end
@@ -269,12 +229,12 @@ module Run
 			when "a_nowutc" then Time.utc.to_s("%Y%m%d%H%M%S")
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
 			when "clipboard"
-				gui.clipboard &.wait_for_text
+				display.gui.clipboard &.wait_for_text
 			else
 				nil
 			end
 		end
-		
+
 		def get_timer(label)
 			@timers[label]?
 		end
@@ -284,38 +244,6 @@ module Run
 			timer = Timer.new(self, cmd, period, priority)
 			@timers[label] = timer
 			timer
-		end
-
-		def add_hotkey(hotkey)
-			hotkey.runner = self
-			@hotkeys[hotkey.key_str] = hotkey
-			x11.register_hotkey hotkey
-			hotkey
-		end
-		def add_or_update_hotkey(*, key_str, label, priority, active_state = nil)
-			if label
-				cmd = @labels[label]?
-				raise RuntimeException.new "Add or update Hotkey: Label '#{label}' not found" if ! cmd
-			end
-			hotkey = @hotkeys[key_str]?
-			if hotkey
-				x11.unregister_hotkey hotkey
-				active_state = hotkey.active if active_state.nil?
-			else
-				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{key_str}" if ! label
-				hotkey = Hotkey.new(self, cmd.not_nil!, key_str, priority: priority, escape_char: @settings.escape_char)
-				@hotkeys[hotkey.key_str] = hotkey
-				active_state = true if active_state.nil?
-			end
-			hotkey.cmd = cmd if cmd
-			hotkey.priority = priority if priority
-			if active_state
-				x11.register_hotkey hotkey
-				hotkey.active = true
-			else
-				hotkey.active = false
-			end
-			hotkey
 		end
 
 		def handle_single_instance
@@ -340,7 +268,7 @@ module Run
 				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
 				::exit
 			when SingleInstance::Prompt
-				response = gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
+				response = display.gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
 				::exit if response != Gui::MsgBoxButton::Yes
 				Process.signal(Signal::HUP, already_running)
 			end
@@ -351,11 +279,11 @@ module Run
 			mode = ! @suspension if mode == nil
 			@suspension = mode.as(Bool)
 			if mode
-				x11.suspend
-				gui.suspend
+				display.suspend
+				display.gui.suspend
 			else
-				x11.unsuspend
-				gui.unsuspend
+				display.unsuspend
+				display.gui.unsuspend
 			end
 		end
 		def pause_thread(mode = nil, *, self_is_thread = true)
@@ -366,7 +294,7 @@ module Run
 			if mode
 				if underlying_thread
 					underlying_thread.pause
-					gui.thread_pause if ! @headless
+					display.gui.thread_pause if ! @headless
 				end
 			else
 				underlying_thread.unpause if underlying_thread

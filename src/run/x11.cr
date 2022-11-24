@@ -1,5 +1,6 @@
 require "x11"
 require "xtst"
+require "./display-adapter"
 
 at_exit { GC.collect }
 
@@ -112,9 +113,9 @@ module X11::C
 			# to the keysym so the fallback should work. Below are only known exceptions
 			"\n" => XK_Return,
 			"\t" => XK_Tab,
-			
+
 			# TODO:
-			# RAlt -- Note: If your keyboard layout has AltGr instead of RAlt, you can probably use it as a hotkey prefix via <^>! as described here. In addition, "LControl & RAlt::" would make AltGr itself into a hotkey. 
+			# RAlt -- Note: If your keyboard layout has AltGr instead of RAlt, you can probably use it as a hotkey prefix via <^>! as described here. In addition, "LControl & RAlt::" would make AltGr itself into a hotkey.
 		}
 	end
 end
@@ -123,18 +124,21 @@ module Run
 	# Responsible for registering hotkeys to the X11 server,
 	# listening to all events and calling threads on hotkey trigger
 	# and calling given event listeners.
-	class X11
-		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else 
+	class X11 < DisplayAdapter
+		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else
 
 		@root_win = 0_u64
 		@record_context : ::Xtst::LibXtst::RecordContext?
 		@record : ::Xtst::RecordExtension?
+		getter display : ::X11::Display
+		getter root_win : ::X11::Window
+
 		def initialize
 			set_error_handler
 
 			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
-			
+
 			begin
 				@record = record = ::Xtst::RecordExtension.new
 				record_range = record.create_range
@@ -187,10 +191,12 @@ module Run
 			end
 		end
 
-		def run(runner : Runner)
+		@key_handler : Proc(::X11::KeyEvent, UInt64, Char?, Nil)?
+		def run(*, key_handler)
+			@key_handler = key_handler
 			if record = @record
 				record.enable_context_async(@record_context.not_nil!) do |record_data|
-					handle_record_event(runner, record_data)
+					handle_record_event(record_data)
 				end
 				record_fd = IO::FileDescriptor.new record.data_display.connection_number
 				loop do
@@ -209,94 +215,13 @@ module Run
 				loop do
 					event = @display.next_event # Blocking!
 					if event.is_a? ::X11::KeyEvent
-						handle_key_event(runner, event)
+						handle_key_event(event)
 					end
 				end
 			end
 		end
 
-		@pause_counter = 0
-		@is_paused = false
-		@pause_mutex = Mutex.new
-		# multiple threads may request a pause. x11 will only resume after all have called
-		# `resume_x11` again.
-		# pausing x11 event handling can be very important in `Send` scenarios to prevent hotkeys
-		# from triggering themselves (or others).
-		# Please note that this `x11.pause` has nothing to do with `thread.pause`.
-		def pause
-			@pause_mutex.lock
-			@pause_counter += 1
-			if ! @is_paused
-				@hotkeys.each do |hotkey|
-					unregister_hotkey hotkey, unsubscribe: false
-				end
-				@is_paused = true
-			end
-			@pause_mutex.unlock
-		end
-		# before resume, x11 will discard all events collected since it got paused
-		def resume
-			@pause_mutex.lock
-			@pause_counter -= 1
-			if @pause_counter < 1
-				@pause_counter = 0
-				@hotkeys.each do |hotkey|
-					register_hotkey hotkey, subscribe: false
-				end
-				@is_paused = false
-			end
-			@pause_mutex.unlock
-		end
-		def pause(&block)
-			pause
-			yield
-			resume
-		end
-		@suspended = false
-		def suspend
-			@suspended = true
-			@hotkeys.each do |hotkey|
-				unregister_hotkey hotkey, unsubscribe: false if ! hotkey.exempt_from_suspension
-			end
-		end
-		def unsuspend
-			@suspended = false
-			@hotkeys.each do |hotkey|
-				register_hotkey hotkey, subscribe: false if ! hotkey.exempt_from_suspension
-			end
-		end
-
-		@hotkeys = [] of Hotkey
-
-		# TODO: should probably be externalized too like with Hotstrings
-		def register_hotkey(hotkey, subscribe = true)
-			# apparently keycodes are display-dependent so they can't be determined at build time
-			hotkey.keycode = keysym_to_keycode(hotkey.keysym)
-			if subscribe
-				@hotkeys << hotkey
-			end
-			if ! hotkey.no_grab
-				hotkey.modifier_variants.each do |mod|
-					if hotkey.keysym < 10
-						@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
-					else
-						@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
-					end
-				end
-			end
-		end
-		def unregister_hotkey(hotkey, unsubscribe = true)
-			hotkey.modifier_variants.each do |mod|
-				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
-			end
-			if unsubscribe
-				@hotkeys.delete hotkey
-			end
-		end
-
-		@pressed_down_keysyms : StaticArray(UInt64, 8) = StaticArray[0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64]
-
-		private def handle_record_event(runner, record_data)
+		private def handle_record_event(record_data)
 			return if record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
 			type, keycode, repeat = record_data.data
 			state = record_data.data[28]
@@ -308,65 +233,32 @@ module Run
 			_key_event.state = state
 			if keycode < 10 # mouse button
 				# pretend that keysym = keycode
-				handle_event(runner, _key_event, keycode.to_u64, nil)
+				@key_handler.not_nil!.call(_key_event, keycode.to_u64, nil)
 			else
-				handle_key_event(runner, _key_event)
+				handle_key_event(_key_event)
 			end
 		end
 
-		private def handle_key_event(runner, key_event)
+		private def handle_key_event(key_event)
 			lookup = key_event.lookup_string
 			char = lookup[:string][0]?
 			keysym = lookup[:keysym]
-			handle_event(runner, key_event, keysym, char)
+			@key_handler.not_nil!.call(key_event, keysym, char)
 		end
 
-		# TODO: put keysym and char into key_event in callers?
-		private def handle_event(runner, key_event, keysym, char)
-			return if @is_paused
-			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
-
-			if ! up
-				free_slot = @pressed_down_keysyms.index(keysym) || @pressed_down_keysyms.index(0)
-				@pressed_down_keysyms[free_slot] = keysym if free_slot
-			else
-				pressed_slot = @pressed_down_keysyms.index(keysym)
-				@pressed_down_keysyms[pressed_slot] = 0_u64 if pressed_slot
-			end
-
-			##### 1. Hotkeys
-			hotkey = @hotkeys.find do |hotkey|
-				hotkey.active &&
-				hotkey.keysym == keysym &&
-				hotkey.up == up &&
-				(hotkey.modifier_variants.any? &.== key_event.state) &&
-				(! @suspended || hotkey.exempt_from_suspension)
-			end
-			if hotkey
-				if ! hotkey.up && ! hotkey.no_grab
-					# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
-					key_map = XDo::LibXDo::Charcodemap.new
-					key_map.code = hotkey.keycode
-					runner.x_do.keys_raw [key_map], pressed: false, delay: 0
+		def grab_hotkey(hotkey)
+			hotkey.modifier_variants.each do |mod|
+				if hotkey.keysym < 10
+					@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
+				else
+					@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
-				hotkey.trigger
-			end
-
-			# Hotstrings
-			@key_listeners.each do |sub|
-				sub.call(key_event, keysym, char)
 			end
 		end
-		@key_listeners = [] of Proc(::X11::KeyEvent, UInt64, Char?, Nil)
-		def register_key_listener(&block : ::X11::KeyEvent, UInt64, Char? -> _)
-			@key_listeners << block
+		def ungrab_hotkey(hotkey)
+			hotkey.modifier_variants.each do |mod|
+				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
+			end
 		end
-		def unregister_key_listener(&block)
-			@key_listeners.reject! &.== block
-		end
-
-		def keysym_pressed_down?(keysym)
-			!! @pressed_down_keysyms.index(keysym)
-		end 
 	end
 end

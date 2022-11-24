@@ -27,7 +27,7 @@ class Cmd::ControlFlow::Hotkey < Cmd::Base
 			when 'T' then max_threads = n
 			end
 		end
-		
-		thread.runner.add_or_update_hotkey label: label, key_str: key_name, priority: priority, active_state: active_state
+
+		thread.runner.display.hotkeys.add_or_update(cmd_label: label, hotkey_label: key_name, priority: priority, active_state: active_state)
 	end
 end

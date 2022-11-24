@@ -8,7 +8,7 @@ class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 		sub_cmd = match[2]
 		control_var_name = args[1]
 		value = args[2]? || ""
-		thread.runner.gui.gui(thread, gui_id) do |gui|
+		thread.runner.display.gui.gui(thread, gui_id) do |gui|
 			control_info = gui.var_control_info[control_var_name]
 			next "1" if ! control_info
 			ctrl = control_info.control

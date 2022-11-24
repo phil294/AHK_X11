@@ -2,11 +2,11 @@ class Cmd::X11::Mouse::MouseGetPos < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end
 	def run(thread, args)
-		x, y, _, window = thread.runner.x_do.mouse_location
+		x, y, _, window = thread.runner.display.x_do.mouse_location
 		if args[3]? && ! args[3].empty?
-			frame = thread.runner.at_spi.find_window(pid: window.pid, window_name: window.name)
+			frame = thread.runner.display.at_spi.find_window(pid: window.pid, window_name: window.name)
 			if frame
-				_, class_NN = thread.runner.at_spi.find_descendant(frame, x: x, y: y)
+				_, class_NN = thread.runner.display.at_spi.find_descendant(frame, x: x, y: y)
 				if class_NN
 					thread.runner.set_user_var(args[3], class_NN)
 				else

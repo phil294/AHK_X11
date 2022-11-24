@@ -12,10 +12,10 @@ class Cmd::X11::Window::WinGet < Cmd::Base
 			when "id"
 				win.window
 			when "controllist"
-				frame = thread.runner.at_spi.find_window(pid: win.pid, window_name: win.name)
+				frame = thread.runner.display.at_spi.find_window(pid: win.pid, window_name: win.name)
 				if frame
 					ctrls = [] of ::String
-					thread.runner.at_spi.each_descendant(frame, max_children: 1000) do |acc, _, class_NN|
+					thread.runner.display.at_spi.each_descendant(frame, max_children: 1000) do |acc, _, class_NN|
 						ctrls << class_NN
 						true
 					end

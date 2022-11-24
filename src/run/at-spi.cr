@@ -86,7 +86,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 				# not be found (moderately likely). So finish here either way.
 				return descendant
 			end
-			
+
 			# Textual match
 			# Below is commented out an alternative way of matching with `.matches()`: This compiles when you
 			# fix gtk type error attributes to `Void**` but fails at runtime with error
@@ -373,7 +373,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		private def to_class_NN(path, role)
 			role.gsub(' ', '_') + '_' + path.map { |i| i.to_s }.join('_')
 		end
-		# e.g. flr *txt*=`a_b_0_2` returns `a b`, `[0,2]`
+		# e.g. for *txt*=`a_b_0_2` returns `a b`, `[0,2]`
 		private def from_class_NN(txt)
 			match = txt.match /([A-Za-z_]+)((_[0-9]+)+)/
 			return nil, [] of Int32 if ! match

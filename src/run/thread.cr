@@ -1,3 +1,6 @@
+require "x_do"
+require "./gui"
+require "./display"
 require "../util/ahk-string"
 
 module Run
@@ -96,7 +99,7 @@ module Run
 				result = cmd.run(self, parsed_args)
 			rescue e : RuntimeException
 				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
-				@runner.gui.msgbox msg
+				@runner.display.gui.msgbox msg
 				STDERR.puts msg
 				@done = true
 				@exit_code = 2 # TODO: ???
@@ -171,7 +174,7 @@ module Run
 			Util::AhkString.parse_key_combinations(str, @runner.settings.escape_char, implicit_braces: implicit_braces)
 		end
 		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> _)
-			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.x11, &block)
+			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.display.adapter.as(Run::X11), &block) # TODO: type cast etc
 		end
 
 		def parse_letter_options(str, &block : Char, Float64? -> _)

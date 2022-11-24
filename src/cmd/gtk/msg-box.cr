@@ -24,7 +24,7 @@ class Cmd::Gtk::Msgbox < Cmd::Base
 		if thread.runner.headless
 			puts text
 		else
-			response = thread.runner.gui.msgbox(text, options: options, title: title, timeout: timeout)
+			response = thread.runner.display.gui.msgbox(text, options: options, title: title, timeout: timeout)
 		end
 		thread.settings.msgbox_response = response
 	end
