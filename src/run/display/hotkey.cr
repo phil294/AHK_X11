@@ -1,4 +1,4 @@
-require "./key-combination"
+require "../key-combination"
 
 module Run
 	class Hotkey < KeyCombination

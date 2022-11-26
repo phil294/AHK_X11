@@ -1,4 +1,4 @@
-require "../util/ahk-string"
+require "../../util/ahk-string"
 require "./hotstrings"
 
 module Run

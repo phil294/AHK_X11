@@ -1,5 +1,5 @@
 require "../cmd/**"
-require "../run/hotstring"
+require "../run/display/hotstring"
 
 module Build
 	class ParsingException < Exception end

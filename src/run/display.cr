@@ -1,10 +1,10 @@
-require "./x11"
 require "x_do"
-require "./hotstrings"
-require "./hotkeys"
-require "./pressed-keys"
-require "./gui"
-require "./at-spi"
+require "./display/x11"
+require "./display/hotstrings"
+require "./display/hotkeys"
+require "./display/pressed-keys"
+require "./display/gui"
+require "./display/at-spi"
 
 module Run
 	# Groups all modules that require a running display server.

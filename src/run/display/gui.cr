@@ -1,6 +1,6 @@
 # require "malloc_pthread_shim"
 require "gobject/gtk"
-require "../logo"
+require "../../logo"
 
 module Run
 	# Please note that all GUI logic needs to happen on the same worker thread where `run` was called

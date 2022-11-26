@@ -1,5 +1,5 @@
 require "x_do"
-require "./gui"
+require "./display/gui"
 require "./display"
 require "../util/ahk-string"
 
