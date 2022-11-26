@@ -55,7 +55,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
-DONE      ?% (86/217):
+DONE      ?% (87/217):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -68,22 +68,22 @@ DONE      ?% (86/217):
 + StringUpper, Suspend, URLDownloadToFile, WinClose, WinGetPos, WinKill, WinMaximize, WinMinimize,
 + WinMove, WinRestore, MouseGetPos, MouseMove, GetKeyState, KeyWait, ControlClick, WinGetText,
 + WinGetTitle, WinGetClass, PixelGetColor, CoordMode, GuiControl, ControlGetPos, ControlGetText,
-+ WinGet
++ WinGet, Input
 
 NEW       3% (6/217): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet @@
 
 REMOVED   6% (12/217):
 # ### Those that simply make no sense in Linux:
-# EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
+# EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook,
 # #InstallMouseHook, #UseHook, Loop (registry)
 #
 # ### Skipped for other reasons:
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (109/217): alphabetically
-- BlockInput, ClipWait, Control, ControlFocus, ControlGet, ControlGetFocus, 
+TO DO     ?% (108/217): alphabetically
+- BlockInput, ClipWait, Control, ControlFocus, ControlGet, ControlGetFocus,
 - ControlMove, ControlSetText,
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
 - FileCopyDir, FileCreateShortcut,
@@ -91,21 +91,21 @@ TO DO     ?% (109/217): alphabetically
 - FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir,
 - FormatTime, GroupActivate, GroupAdd,
 - GroupClose, GroupDeactivate, GuiControlGet,
-- If var [not] in/contains MatchList, If var is [not] type, Input, 
+- If var [not] in/contains MatchList, If var is [not] type,
 - InputBox, KeyHistory, ListHotkeys, ListLines, ListVars, Loop (parse a string),
-- MouseClickDrag, OnExit, PixelSearch, 
-- Process, Progress, Random, RunAs, SetBatchLines, 
-- SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
-- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
-- SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
-- SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, 
+- MouseClickDrag, OnExit, PixelSearch,
+- Process, Progress, Random, RunAs, SetBatchLines,
+- SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay,
+- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode,
+- SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet,
+- SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText,
 - StatusBarWait, StringCaseSense, StringSplit, StringTrimLeft, StringTrimRight,
 - SysGet, Thread, ToolTip, Transform, TrayTip, WinActivateBottom,
 - WinGetActiveStats, WinGetActiveTitle,
 - WinHide, WinMenuSelectItem, WinMinimizeAll,
-- WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 
-- WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar, 
-- #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem, 
+- WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive,
+- WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar,
+- #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem,
 - #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #WinActivateForce
 
 Also planned, even though it's not part of 1.0.24 spec:
@@ -233,7 +233,7 @@ A more general overview:
 - `src/build` does the parsing etc. and is mostly complete
 - `src/run/runner` and `src/run/thread` are worth looking into, this is the heart of the application and where global and thread state is stored
 - `src/cmd` contains all commands exposed to the user.
-- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse) as `runner.x_do`, `crystal-gobject` for Gtk (`Gui`, `MsgBox`) as `runner.gui` (`gui.cr`) and Atspi (control handling) as `runner.at_spi` (`at-spi.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings) as `runner.x11` (`x11.cr`).
+- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse), `crystal-gobject` for Gtk (`Gui`, `MsgBox`, `gui.cr`) and Atspi (control handling, `at-spi.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings, `x11.cr`).
 
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 

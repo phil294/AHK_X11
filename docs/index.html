@@ -362,7 +362,7 @@
                 <a href="#KeyWait.htm">KeyWait</a>
               </li>
               <li>
-                <a class="tbd" href="#Input.htm">Input</a>
+                <a href="#Input.htm">Input</a>
               </li>
               <li>
                 <a href="#Send.htm">Send/SendRaw</a>
@@ -1094,7 +1094,7 @@ return
           <pre class="calibre22">~NumpadEnter::
 IfWinNotActive, CAD Editor
 	return
-Send, abc 
+Send, abc
 return</pre>
           <h3 class="calibre7"><br class="calibre12" />
             <br class="calibre12" /> How can a repeating action be stopped without exiting the script?
@@ -1141,14 +1141,14 @@ return
           </div>
           <h3 class="calibre7"><br class="calibre12" /> How to detect when a web page is finished loading?</h3>
           <p class="calibre8">The technique in the following example will work with MS Internet Explorer for most pages. A similar technique might work in other browsers:</p>
-          <pre class="calibre22">Run, www.yahoo.com 
+          <pre class="calibre22">Run, www.yahoo.com
 MouseMove, 0, 0  ; Prevents the status bar from showing a mouse-hover link instead of "Done".
-<span class="tbd">WinWait</span>, Yahoo! - Microsoft Internet Explorer 
-WinActivate 
-<span class="tbd">StatusBarWait</span>, Done, 30 
-if ErrorLevel &lt;&gt; 0 
-   MsgBox, The wait timed out or the window was closed. 
-else 
+<span class="tbd">WinWait</span>, Yahoo! - Microsoft Internet Explorer
+WinActivate
+<span class="tbd">StatusBarWait</span>, Done, 30
+if ErrorLevel &lt;&gt; 0
+   MsgBox, The wait timed out or the window was closed.
+else
    MsgBox, The page is done loading. </pre>
           <h3 class="calibre7"><br class="calibre12" /> How can dates and times be compared or manipulated?</h3>
           <p class="calibre8">The <a href="#EnvAdd.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvAdd</a> command can add or subtract a quantity of days, hours, minutes, or seconds to a time-string that is in the <a href="#FileSetTime.htm__YYYYMMDD" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">YYYYMMDDHH24MISS</a> format. The following example subtracts 7 days from the specified time: EnvAdd, VarContainingTimestamp, -7, days</p>
@@ -1317,7 +1317,7 @@ Please note: This only works unreliably, and in the above example, LControl will
           <p class="calibre8">Any backspacing done by the user is taken into account for the purpose of detecting hotstrings. However, the use of arrow keys, PageUp, PageDown, Home, and End to navigate within an editor will cause the hotstring recognition process to reset. In other words, it will begin waiting for an entirely new hotstring.</p>
           <p class="calibre8">A hotstring may be typed even when the active window is ignoring the user's keystrokes. In other words, the hotstring will still fire even though the triggering abbreviation is never visible. In addition, the backspace key will undo the most recently typed keystroke even though you can't see the effect.</p>
           <p class="calibre8">It is possible to <a href="#Gosub.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Gosub</a> or <a href="#Goto.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Goto</a> a hotstring label by including its first pair of colons (including any option symbols) in front of its name. However, if there are no options between the colons, you must escape the colon pair as in this example: Gosub `::btw</p>
-          <p class="calibre8">Although hotstrings are not monitored and will not be triggered during the course of an invisible <a href="#Input.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"><span class="tbd">Input</span></a> command, visible Inputs are capable of triggering them. </p>
+          <p class="calibre8">Although hotstrings are <span class="tbd">not monitored and will not be triggered during the course of an invisible</span> <a href="#Input.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Input</a> command, visible Inputs are capable of triggering them. </p>
           <p class="calibre8">Hotstrings can never be triggered by keystrokes produced by any AutoHotkey script. This avoids the possibility of an infinite loop wherein hotstrings trigger each other over and over.</p>
           <p class="calibre8">The <a href="#Input.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Input</a> command is more flexible than hotstrings for certain purposes. For example, it allows your keystrokes to be invisible from the active window (such as a game). It also supports non-character ending keys such as Escape. </p>
           <p class="calibre8">The <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard hook</a> is automatically used by any script that contains hotstrings.</p>
@@ -5224,7 +5224,7 @@ else IfEqual, x, 3 ; alternate style
 	Sleep, 1
 }
 else Gosub, a4  ; i.e. Any single command can be on the same line with an ELSE.
- 
+
 ;Also OK:
 IfEqual, y, 1, Gosub, b1
 else {
@@ -6656,10 +6656,10 @@ IfMsgBox, Timeout, Return ; i.e. Assume "No" if it timed out.
                 <td class="calibre4">Default<br class="calibre12" /> (v1.0.09+)</td>
                 <td class="calibre4">A string that will appear in the InputBox's edit field when the dialog first appears. The user can change it by backspacing or other means. </td>
               </tr>
-              <!--  Not sure if a timeout is needed/wanted 
-  <tr> 
+              <!--  Not sure if a timeout is needed/wanted
+  <tr>
     <td width="15%">timeout</td>
-    <td width="85%">(optional) Timeout in seconds.  After the timeout has 
+    <td width="85%">(optional) Timeout in seconds.  After the timeout has
       elapsed the message box will be automatically closed.</td>
   </tr>
 -->
@@ -6678,7 +6678,7 @@ IfMsgBox, Timeout, Return ; i.e. Assume "No" if it timed out.
           <p class="calibre8"><a href="#Input.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Input</a>, <a href="#MsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MsgBox</a>, <a href="#FileSelectFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFile</a>, <a href="#FileSelectFolder.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFolder</a>, <a href="#SplashTextOn.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SplashTextOn</a>, <a href="#ToolTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ToolTip</a></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <pre class="calibre22">InputBox, password, Enter Password, (your input will be hidden), hide 
+          <pre class="calibre22">InputBox, password, Enter Password, (your input will be hidden), hide
 InputBox, UserInput, Phone Number, Please enter a phone number., , 640, 480
 if ErrorLevel &lt;&gt; 0
 	MsgBox, CANCEL was pressed.
@@ -7024,7 +7024,7 @@ else IfMsgBox, No
           <p class="calibre8"><strong class="calibre14">Examples</strong></p>
           <pre class="calibre22">Progress, b w200, My SubText, My MainText, My Title
 Progress, 50 ; Set the position of the bar to 50%.
-Sleep, 4000 
+Sleep, 4000
 Progress, Off
 
 ; Create a window just to display some 18-point Courier text:
@@ -7034,7 +7034,7 @@ Progress, m2 b fs18 zh0, This is the Text.`nThis is a 2nd line., , , Courier New
 SplashImage, C:\My Pictures\Company Logo.gif
 
 ; Create a borderless SplashImage window with some large text beneath the image:
-SplashImage, C:\My Pictures\Company Logo.gif, b fs18, This is our company logo. 
+SplashImage, C:\My Pictures\Company Logo.gif, b fs18, This is our company logo.
 Sleep, 4000
 SplashImage, Off
 
@@ -7587,7 +7587,7 @@ return
                 <td class="calibre4">Options</td>
                 <td class="calibre4">
                   <p class="calibre8">A string of zero or more of the following letters with optional spaces in between. Example: B0 T5</p>
-<div class="tbd">                  
+<div class="tbd">
                   <p class="calibre8"><strong class="calibre14">B</strong> or <strong class="calibre14">B0</strong>: Specify the letter B to buffer the hotkey as described in <a href="#h_MaxThreadsBuffer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxThreadsBuffer</a>. Specify B0 (B with the number 0) to disable this type of buffering.</p>
 </div>
                   <p class="calibre8"><strong class="calibre14">Pn</strong>: Specify the letter P followed by the hotkey's <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">thread priority</a>. If the P option is omitted when creating a hotkey, 0 will be used. Requires v1.0.16+ </p>
@@ -7924,11 +7924,11 @@ MouseClick, left,,, 1, 0, U  ; Release the mouse button.
 return
 
 ; Example: Make joystick button behavior depend on joystick axis position.
-joy2:: 
-GetKeyState, joyx, JoyX 
-if joyx &gt; 75 
+joy2::
+GetKeyState, joyx, JoyX
+if joyx &gt; 75
 	MsgBox Action #1 (button pressed while joystick was pushed to the right)
-else if joyx &lt; 25 
+else if joyx &lt; 25
 	MsgBox Action #2 (button pressed while joystick was pushed to the left)
 else
 	MsgBox Action #3 (button pressed while joystick was centered horizontally)
@@ -8067,11 +8067,11 @@ MsgBox You double-pressed the right control key.
 return</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="Input.htm" href="#Input.htm">#</a> <h2 class="calibre17">Input</h2> [v1.0.10+]
+          <a id="Input.htm" href="#Input.htm">#</a> <h2 class="calibre17">Input</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Waits for the user to type a string (not supported on Windows 9x).</p>
+          <p class="calibre8">Waits for the user to type a string.</p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
@@ -8090,7 +8090,7 @@ return</pre>
                 <td width="85%" class="calibre4">
                   <p class="calibre8">The name of the variable in which to store the text entered by the user (by default, artificial input is also captured).</p>
                   <p class="calibre8">If this and the other parameters are omitted, any input in progress in another <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">thread</a> is terminated and its <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to the word NewInput. By contrast, the <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> of the current command will be set to 0 if it terminated a prior input or 1 if there was no prior input to terminate.</p>
-                  <p class="calibre8">Non-character keys such as PageUp and Escape are not stored. Whitespace characters such as TAB are stored literally. ENTER is stored as linefeed (`n) in v1.0.16+ and carriage return (`r) in earlier versions.</p>
+                  <p class="calibre8">Non-character keys such as PageUp and Escape are not stored. Whitespace characters such as TAB are stored literally. ENTER is stored <span class="tbd">as linefeed (`n) in v1.0.16+</span> <span class="x11">as carriage return (`r)</span></p>
                 </td>
               </tr>
               <tr class="calibre3">
@@ -8099,10 +8099,10 @@ return</pre>
                   <p class="calibre8"><u class="calibre20">A string of zero or more of the following letters (in any order, with optional spaces in between):</u></p>
                   <p class="calibre8"><strong class="calibre14">B</strong>: Backspace is ignored. Normally, pressing backspace during an input will remove the most recently pressed character from the end of the string. Note: If the input text is visible (such as in an editor) and the arrow keys or other means are used to navigate within it, backspace will still remove the last character rather than the one behind the caret (insert position).</p>
                   <p class="calibre8"><strong class="calibre14">C</strong>: Case sensitive. Normally, <em class="calibre21">MatchList</em> is not case sensitive.</p>
-                  <p class="calibre8"><strong class="calibre14">I</strong>: Ignore input generated by AutoHotkey itself, such as the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command. </p>
+                  <p class="calibre8 tbd"><strong class="calibre14">I</strong>: Ignore input generated by AutoHotkey itself, such as the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command. </p>
                   <p class="calibre8"><strong class="calibre14">L</strong>: Length limit (e.g. L5). The maximum allowed length of the input. When the text reaches this length, the input will be terminated and <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> will be set to the word Max unless the text matches one of the <em class="calibre21">MatchList</em> phrases, in which case <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to the word Match. If unspecified, the length limit is 16383, which is also the absolute maximum.</p>
-                  <p class="calibre8"><strong class="calibre14">M</strong> [v1.0.21+]: Modified keystrokes such as Control-A through Control-Z are recognized and transcribed if they correspond to real ASCII characters. Consider this example, which recognizes Control-C:<br class="calibre12" /> Transform, CtrlC, Chr, 3 ; Store the character for Ctrl-C in the CtrlC var. <br class="calibre12" /> Input, OutputVar, L1 M<br class="calibre12" /> if OutputVar = %CtrlC%<br class="calibre12" />      MsgBox, You pressed Control-C.<br class="calibre12" /> ExitApp</p>
-                  <p class="calibre8">Note: The characters Ctrl-A through Ctrl-Z correspond to "Chr 1" through "Chr 26". Also, the <strong class="calibre14">M </strong>option might cause some keyboard shortcuts such as Ctrl-LeftArrow to misbehave while an Input is in progress.</p>
+                  <p class="calibre8 tbd"><strong class="calibre14">M</strong> [v1.0.21+]: Modified keystrokes such as Control-A through Control-Z are recognized and transcribed if they correspond to real ASCII characters. Consider this example, which recognizes Control-C:<br class="calibre12" /> Transform, CtrlC, Chr, 3 ; Store the character for Ctrl-C in the CtrlC var. <br class="calibre12" /> Input, OutputVar, L1 M<br class="calibre12" /> if OutputVar = %CtrlC%<br class="calibre12" />      MsgBox, You pressed Control-C.<br class="calibre12" /> ExitApp</p>
+                  <p class="calibre8 tbd">Note: The characters Ctrl-A through Ctrl-Z correspond to "Chr 1" through "Chr 26". Also, the <strong class="calibre14">M </strong>option might cause some keyboard shortcuts such as Ctrl-LeftArrow to misbehave while an Input is in progress.</p>
                   <p class="calibre8"><strong class="calibre14">T</strong>: Timeout (e.g. T3). The number of seconds to wait before terminating the input and setting <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> to the word Timeout. If the input times out, <em class="calibre21">OutputVar</em> will be set to whatever text the user had time to enter. This value can be a floating point number such as 2.5.</p>
                   <p class="calibre8"><strong class="calibre14">V</strong>: Visible. Normally, the user's input is hidden from the system (suppressed). Use this option to have the user's keystrokes sent to the active window.</p>
                   <p class="calibre8"><strong class="calibre14">*</strong>: Wildcard (find anywhere). Normally, what the user types must exactly match one of the <em class="calibre21">MatchList</em> phrases for a match to occur. By contrast, this option finds a match more often because it searches the entire length of the input text.</p>
@@ -8114,16 +8114,16 @@ return</pre>
                   <p class="calibre8">A list of zero or more keys, any one of which terminates the input when pressed (the <em class="calibre21">EndKey</em> itself is not written to <em class="calibre21">OutputVar</em>). When an input is terminated this way, <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to the word EndKey followed by a colon and the name of the <em class="calibre21">EndKey, </em>e.g. EndKey:. or EndKey:Escape.</p>
                   <p class="calibre8">The <em class="calibre21">EndKey</em> list uses a format similar to the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command. For example, specifying {Enter}.{Esc} would cause either ENTER, period (.), or ESCAPE to terminate the input.</p>
                   <p class="calibre8">To use Control, Alt, or Shift as end-keys, specify the left and/or right version of the key, not the neutral version. For example, specify {LControl}{RControl} rather than {Control}.</p>
-                  <p class="calibre8">Although modified keys such as Control-C (^c) are not supported, certain keys that require the shift key to be held down -- namely punctuation marks such as ?!:@&amp;{} -- are supported in v1.0.14+.</p>
-                  <p class="calibre8">An explicit virtual key code such as {vkFF} may also be specified. This is useful in the rare case where a key has no name and produces no visible character when pressed. Its virtual key code can be determined by following the steps at the bottom fo the <a href="#KeyList.htm__SpecialKeys" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list page</a>.</p>
+                  <p class="calibre8 tbd">Although modified keys such as Control-C (^c) are not supported, certain keys that require the shift key to be held down -- namely punctuation marks such as ?!:@&amp;{} -- are supported in v1.0.14+.</p>
+                  <p class="calibre8 tbd">An explicit virtual key code such as {vkFF} may also be specified. This is useful in the rare case where a key has no name and produces no visible character when pressed. Its virtual key code can be determined by following the steps at the bottom fo the <a href="#KeyList.htm__SpecialKeys" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list page</a>.</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">MatchList</td>
                 <td class="calibre4">
                   <p class="calibre8">A comma-separated list of key phrases, any of which will cause the input to be terminated (in which case <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> will be set to the word Match). <strong class="calibre14">Any spaces or tabs around the delimiting commas are significant</strong>, meaning that they are part of the match string. For example, if <em class="calibre21">MatchList</em> is "ABC , XYZ ", the user must type a space after ABC or before XYZ to cause a match.</p>
-                  <p class="calibre8">In v1.0.17+, two consecutive commas results in a single literal comma. For example, the following would produce a single literal comma at the end of string: "string1,,,string2". Similarly, the following list contains only a single item with a literal comma inside it: "single,,item".</p>
-                  <p class="calibre8">Because the items in <em class="calibre21">MatchList</em> are not treated as individual parameters, the list can be contained entirely within a variable. In fact, all or part of it must be contained in a variable if its length exceeds 16383 since that is the maximum length of any script line. For example, <em class="calibre21">MatchList</em> might consist of %List1%,%List2%,%List3% -- where each of the sublists contains a large list of match phrases.</p>
+                  <p class="calibre8">Two consecutive commas results in a single literal comma. For example, the following would produce a single literal comma at the end of string: "string1,,,string2". Similarly, the following list contains only a single item with a literal comma inside it: "single,,item".</p>
+                  <p class="calibre8">Because the items in <em class="calibre21">MatchList</em> are not treated as individual parameters, the list can be contained entirely within a variable. <span class="tbd">In fact, all or part of it must be contained in a variable if its length exceeds 16383 since that is the maximum length of any script line. For example, <em class="calibre21">MatchList</em> might consist of %List1%,%List2%,%List3% -- where each of the sublists contains a large list of match phrases.</span></p>
                 </td>
               </tr>
             </tbody>
@@ -8166,7 +8166,7 @@ return</pre>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
           <p class="calibre8">If this command is used while an input is already in progress in another <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">thread</a>, that input will be terminated and its <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> will be set to the word NewInput. After that (if parameters were given), the new input will commence.</p>
           <p class="calibre8">Hotkeys are still in effect while the input is in progress; in other words, pressing a hotkey will have its normal effect. Similarly, <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">custom menu items</a> will still function and <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">timed subroutines</a> will still run. </p>
-          <p class="calibre8">When a script first uses this command, the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard hook</a> will be installed automatically if it isn't already present. Once that happens, the script becomes <a href="#h_Persistent.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">persistent</a>, meaning that <a href="#ExitApp.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ExitApp</a> should be used to terminate it.</p>
+          <p class="calibre8 rm">When a script first uses this command, the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard hook</a> will be installed automatically if it isn't already present. Once that happens, the script becomes <a href="#h_Persistent.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">persistent</a>, meaning that <a href="#ExitApp.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ExitApp</a> should be used to terminate it.</p>
           <p class="calibre8">Although not as flexible, <a href="#Hotstrings.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotstrings</a> are generally easier to use than the Input command.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
@@ -10615,8 +10615,8 @@ MouseClick, right, 200, 300
           <p class="calibre8"><a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a>, <a href="#WinGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinGet</a>, <a href="#SetDefaultMouseSpeed.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetDefaultMouseSpeed</a>, <a href="#MouseClick.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClick</a>, <a href="#MouseClickDrag.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClickDrag</a>, <a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <pre class="calibre22">MouseGetPos, xpos, ypos 
-Msgbox, The cursor is at X%xpos% Y%ypos%. 
+          <pre class="calibre22">MouseGetPos, xpos, ypos
+Msgbox, The cursor is at X%xpos% Y%ypos%.
 
 ; This example allows you to move the mouse around to see
 ; the title of the window currently under the cursor:
@@ -15948,7 +15948,7 @@ k_MenuItemShow = Show on-screen &amp;keyboard
 ; To have the keyboard appear on a monitor other than the primary, specify
 ; a number such as 2 for the following variable.  Leave it blank to use
 ; the primary:
-k_Monitor = 
+k_Monitor =
 
 ;---- End of configuration section.  Don't change anything below this point
 ; unless you want to alter the basic nature of the script.
@@ -16913,20 +16913,20 @@ return
               <p class="calibre47"><a href="MsgBoxButtonNames.ahk">Download This Script</a>  |  <a href="#index.htm">Other Sample Scripts</a>  |  <a href="http://www.autohotkey.com">Home</a></p>
               <hr class="calibre24" />
               <pre class="calibre48">#SingleInstance
-SetTimer, ChangeButtonNames, 50 
+SetTimer, ChangeButtonNames, 50
 MsgBox, 4, Add or Delete, Choose a button:
-IfMsgBox, YES 
-	MsgBox, You chose Add. 
-else 
-	MsgBox, You chose Delete. 
-return 
+IfMsgBox, YES
+	MsgBox, You chose Add.
+else
+	MsgBox, You chose Delete.
+return
 
-ChangeButtonNames: 
+ChangeButtonNames:
 IfWinNotExist, Add or Delete, , return  ; Keep waiting.
-SetTimer, ChangeButtonNames, off 
-WinActivate 
-ControlSetText, &amp;Yes, &amp;Add 
-ControlSetText, &amp;No, &amp;Delete 
+SetTimer, ChangeButtonNames, off
+WinActivate
+ControlSetText, &amp;Yes, &amp;Add
+ControlSetText, &amp;No, &amp;Delete
 return
 </pre>
             </div>
@@ -17098,7 +17098,7 @@ MouseRotationAngle = 0
 
 ;This is needed or key presses would faulty send their natural
 ;actions. Like NumPadDiv would send sometimes "/" to the
-;screen.       
+;screen.
 #InstallKeybdHook
 
 Temp = 0
@@ -18223,7 +18223,7 @@ IfExist, %SeekMyDir%
 			MsgBox, 8192, %version%, Processing your customised directory list...`n`n"%A_LoopReadLine%" does not exist and will be excluded from the scanning.`nPlease update [ %SeekMyDir% ].
 		Else
 			scanPath = %scanPath% "%A_LoopReadLine%"
-	} 
+	}
 }
 
 ; DELETE EXISTING FILE BEFORE CREATING A NEW VERSION
@@ -18613,7 +18613,7 @@ MenuTitle = -=-=-=-=-=-=-=-
 UMDelay = 20
 
 SetFormat, float, 0.0
-SetBatchLines, 10ms 
+SetBatchLines, 10ms
 SetTitleMatchMode, 2
 #SingleInstance
 
@@ -18795,10 +18795,10 @@ Return
               <p class="calibre47"> This script assigns hotkeys of your choice to raise and lower the master and/or wave volume. Both volumes are displayed as different color bar graphs. </p>
               <p class="calibre47"><a href="VolumeOSD.ahk">Download This Script</a>  |  <a href="#index.htm">Other Sample Scripts</a>  |  <a href="http://www.autohotkey.com">Home</a></p>
               <hr class="calibre24" />
-              <pre class="calibre48">;_________________________________________________ 
-;_______User Settings_____________________________ 
+              <pre class="calibre48">;_________________________________________________
+;_______User Settings_____________________________
 
-; Make customisation only in this area or hotkey area only!! 
+; Make customisation only in this area or hotkey area only!!
 
 ; The percentage by which to raise or lower the volume each time:
 vol_Step = 4
@@ -18831,8 +18831,8 @@ HotKey, +#Up, vol_WaveUp       ; Shift+Win+UpArrow
 HotKey, +#Down, vol_WaveDown
 
 
-;___________________________________________ 
-;_____Auto Execute Section__________________ 
+;___________________________________________
+;_____Auto Execute Section__________________
 
 ; DON'T CHANGE ANYTHING HERE (unless you know what you're doing).
 
@@ -18862,7 +18862,7 @@ SetBatchLines, 10ms
 Return
 
 
-;___________________________________________ 
+;___________________________________________
 
 vol_WaveUp:
 SoundSet, +%vol_Step%, Wave

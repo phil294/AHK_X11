@@ -117,6 +117,7 @@ class Util::AhkString
 					{% if ! flag?(:release) %}
 						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
 					{% end %}
+					# TODO: should this be key_nae.downcase ? what implications does it have?
 					yield Run::KeyCombination.new(key_name, keysym.to_u64, modifiers, up, down, repeat)
 
 					modifiers = 0_u32
@@ -134,7 +135,7 @@ class Util::AhkString
 	end
 
 	# Parses single-char-numbers combinations with optional spaces in between,
-	# e.g. `A1B2` or `*0 c100` and yields each char-number combination (downcase).
+	# e.g. `A1B2.1` or `*0 c100` and yields each char-number combination (downcase).
 	def self.parse_letter_options(str, escape_char : Char)
 		n = ""
 		letter = nil

@@ -55,6 +55,7 @@ module Run
 		@default_thread_settings = ThreadSettings.new
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
+		property current_input_channel : Channel(String)?
 		@builder : Build::Builder
 		getter script_file : Path?
 		getter headless : Bool
@@ -205,6 +206,9 @@ module Run
 				end
 			else
 				return if @built_in_static_vars[down]? || get_global_built_in_computed_var(down)
+				{% if ! flag?(:release) %}
+					puts "[debug] set_user_var '#{var}': #{value}"
+				{% end %}
 				@user_vars[down] = value
 			end
 		end

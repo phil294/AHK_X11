@@ -1,4 +1,5 @@
 module Run
+	# Similar to ::X11::KeyEvent, but more basic and some ahk-specific info too
 	class KeyCombination
 		getter key_name = ""
 		getter keysym = 0_u64

@@ -106,5 +106,11 @@ module Run
 				end
 			end
 		end
+		def block_input
+			@runner.display.adapter.grab_keyboard
+		end
+		def unblock_input
+			@runner.display.adapter.ungrab_keyboard
+		end
 	end
 end

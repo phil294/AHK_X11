@@ -28,7 +28,7 @@ module X11::C
 			"del" => XK_Delete,
 			"ins" => XK_Insert,
 			"pgup" => XK_Page_Up,
-			"pgdown" => XK_Page_Down,
+			"pgdn" => XK_Page_Down,
 			"printscreen" => XK_Print,
 
 			# Could not find the constants for these
@@ -259,6 +259,12 @@ module Run
 			hotkey.modifier_variants.each do |mod|
 				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
 			end
+		end
+		def grab_keyboard
+			@display.grab_keyboard(grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
+		end
+		def ungrab_keyboard
+			@display.ungrab_keyboard(time: ::X11::CurrentTime)
 		end
 	end
 end
