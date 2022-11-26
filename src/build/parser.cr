@@ -66,23 +66,14 @@ module Build
 			# This is the "normal" case where 90% of all commands fall into. All other if-clauses
 			# are special cases.
 			elsif cmd_class
-				csv_args = split_args(args, cmd_class.max_args + 1)
-				if csv_args.size > cmd_class.max_args
-					if cmd_class.multi_command
-						# examples: if, ifequals, else, }, ifequals, ... can all have residue content.
-						# split this line in two, add a new virtual line with the remainder.
-						@cmds << cmd_class.new line_no, cmd_class.max_args > 0 ? csv_args[..cmd_class.max_args-1] : [] of String
-						add_line csv_args[cmd_class.max_args], line_no
-					else
-						raise "'#{cmd_class.name}' accepts no arguments" if cmd_class.max_args == 0
-						# attach the remainder again and pass as is to the arg
-						# TODO: also maybe only if allowed via flag? so that commands don't accidentally accept / combine too many arguments
-						# TODO: spacing can wrongly get lost / added here because of the .strip + add ", " which may not add up
-						csv_args[cmd_class.max_args-1] += ", #{csv_args.pop}"
-						@cmds << cmd_class.new line_no, csv_args
-					end
-				elsif csv_args.size < cmd_class.min_args
+				csv_args = split_args(args, cmd_class.multi_command ? cmd_class.max_args + 1 : cmd_class.max_args)
+				if csv_args.size < cmd_class.min_args
 					raise "Minimum arguments required for '#{cmd_class.name}' is '#{cmd_class.min_args}', got '#{csv_args.size}'"
+				elsif csv_args.size > cmd_class.max_args
+					# multi command, examples: if, ifequals, else, }, ifequals, ... can all have residue content.
+					# split this line in two, add a new virtual line with the remainder.
+					@cmds << cmd_class.new line_no, cmd_class.max_args > 0 ? csv_args[..cmd_class.max_args-1] : [] of String
+					add_line csv_args[cmd_class.max_args], line_no
 				else
 					@cmds << cmd_class.new line_no, csv_args
 				end
