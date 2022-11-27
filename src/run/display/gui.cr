@@ -279,5 +279,27 @@ module Run
 				block.call(gui_info.not_nil!)
 			end
 		end
+		@tooltips = {} of Int32 => Gtk::Window
+		# Yields (and if not yet exists, creates) the tooltip referring to *tooltip_id*
+		def tooltip(tooltip_id : Int32, &block : Gtk::Window -> _)
+			if ! @tooltips[tooltip_id]?
+				act do
+					tooltip = ::Gtk::Window.new title: "AHK_X11 Tooltip #{tooltip_id.to_s}", window_position: Gtk::WindowPosition::MOUSE, type_hint: ::Gdk::WindowTypeHint::TOOLTIP, accept_focus: false, can_focus: false, resizable: false, skip_taskbar_hint: true, type: ::Gtk::WindowType::POPUP, modal: true, decorated: false
+					tooltip.keep_above = true
+					txt = ::Gtk::Label.new "Label"
+					txt.margin = 2
+					# txt.override_background_color ::Gtk::StateFlags::NORMAL, ::Gdk::RGBA.new(1,1,1) # <- doesnt work, is grey? using modifybg instead which is even more deprecated
+					# txt.override_color ::Gtk::StateFlags::NORMAL, ::Gdk::RGBA.new(0.341,0.341,0.341)
+					txt.modify_bg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,65535,65535,65535)
+					txt.modify_fg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,22359,22359,22359)
+					txt.override_font ::Pango::FontDescription.from_string("8")
+					tooltip.add(txt)
+					@tooltips[tooltip_id] = tooltip
+				end
+			end
+			act do
+				block.call(@tooltips[tooltip_id].not_nil!)
+			end
+		end
 	end
 end
