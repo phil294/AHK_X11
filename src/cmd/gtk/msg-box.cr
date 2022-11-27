@@ -5,7 +5,6 @@ class Cmd::Gtk::Msgbox < Cmd::Base
 		text = "Press OK to continue."
 		if args[0]?
 			maybe_options = args[0].to_i?
-			maybe_options = 0 if maybe_options == nil
 			if maybe_options && args[1]?
 				options = maybe_options
 				title = args[1].empty? ? nil : args[1]
@@ -13,11 +12,11 @@ class Cmd::Gtk::Msgbox < Cmd::Base
 				if args[3]?
 					timeout = args[3].to_f?
 					if ! timeout
-						text += ", #{args[3]}" # TODO: uncool and potentially wrong (happens somewhere in parser too)
+						text += ", #{args[3]}" # TODO: uncool and potentially wrong
 					end
 				end
 			else
-				text = args[0..].join(", ") # TODO: .
+				text = args.join(", ") # TODO: .
 			end
 		end
 		options ||= 0
