@@ -118,7 +118,7 @@ module Build
 					raise "Hotstring definition invalid or too complicated " if match.nil?
 					_, options, abbrev = match
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					hotstring = Run::Hotstring.new label.downcase, abbrev,
+					hotstring = Run::Hotstring.new label, abbrev,
 						options: @hotstring_default_options + options,
 						escape_char: @runner_settings.escape_char
 					@hotstrings << hotstring
@@ -130,7 +130,7 @@ module Build
 					end
 				else # Hotkey
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					@hotkeys << Run::Hotkey.new label.downcase, priority: 0, escape_char: @runner_settings.escape_char
+					@hotkeys << Run::Hotkey.new label, priority: 0, escape_char: @runner_settings.escape_char
 					if ! instant_action.empty?
 						add_line "#{instant_action}", line_no
 						add_line "Return", line_no

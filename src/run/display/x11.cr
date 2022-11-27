@@ -12,7 +12,8 @@ module X11::C
 			@type.constants # TODO: possible to declare this outside of the module?
 				.select { |c| c.stringify.starts_with?("XK_") } # && c.underlying-var-type.is_a?(Int32) < TODO: how to, so the bools are skipped? (and `|| ! sym.is_a?(Int32)` can be removed)
 				.reduce({} of String => Int32) do |acc, const_name|
-					key_name = const_name.stringify[3..].downcase
+					key_name = const_name.stringify[3..]
+					key_name = key_name.downcase if key_name.size > 1
 					acc[key_name.gsub(/_/, "")] = const_name
 					acc[key_name] = const_name
 					acc
@@ -163,9 +164,9 @@ module Run
 
 		def self.ahk_key_name_to_keysym(key_name)
 			return nil if key_name.empty?
-			down = key_name.downcase
-			lookup = ::X11::C.ahk_key_name_to_keysym_generic[down]? ||
-			::X11::C.ahk_key_name_to_keysym_custom[down]?
+			lookup = ::X11::C.ahk_key_name_to_keysym_generic[key_name]? ||
+			::X11::C.ahk_key_name_to_keysym_custom[key_name]? || ::X11::C.ahk_key_name_to_keysym_generic[key_name.downcase]? ||
+			::X11::C.ahk_key_name_to_keysym_custom[key_name.downcase]?
 			return lookup if lookup
 			char = key_name[0]
 			return nil if char >= 'A' && char < 'Z' || char >= 'a' && char <= 'z'

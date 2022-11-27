@@ -110,15 +110,14 @@ class Util::AhkString
 					keysym = Run::X11.ahk_key_name_to_keysym(key_name)
 					# TODO: why the typecheck / why not in x11.cr?
 					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
-					if key_name.upcase == key_name
+					if key_name.upcase == key_name && key_name.upcase != key_name.downcase
 						modifiers |= ::X11::ShiftMask
 					end
 
 					{% if ! flag?(:release) %}
 						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
 					{% end %}
-					# TODO: should this be key_nae.downcase ? what implications does it have?
-					yield Run::KeyCombination.new(key_name, keysym.to_u64, modifiers, up, down, repeat)
+					yield Run::KeyCombination.new(key_name.downcase, keysym.to_u64, modifiers, up, down, repeat)
 
 					modifiers = 0_u32
 				end
