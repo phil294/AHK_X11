@@ -167,6 +167,9 @@ module Run
 				end
 				tray_menu.append item_help
 				tray_menu.append Gtk::SeparatorMenuItem.new
+				item_window_spy = Gtk::MenuItem.new_with_label "Window Spy"
+				item_window_spy.on_activate { spawn { runner.launch_window_spy } }
+				tray_menu.append item_window_spy
 				item_reload = Gtk::MenuItem.new_with_label "Reload this script"
 				item_reload.on_activate { runner.reload }
 				tray_menu.append item_reload
@@ -194,7 +197,7 @@ module Run
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!
 		end
-		# Instead of showing both Suspension and ThreadPause state simultaneously, only one is showed dynamically, with Pause taking precedence.
+		# Instead of showing both Suspension and ThreadPause state simultaneously, only one is shown dynamically, with Pause taking precedence.
 		@is_suspend = false
 		@is_pause = false
 		def suspend
@@ -224,6 +227,7 @@ module Run
 		def open_edit(runner)
 			if runner.script_file
 				begin
+					# TODO: rewrite all "shell: ?true" process runs to proper "prog", [args]
 					Process.run "gtk-launch \"$(xdg-mime query default text/plain)\" '#{runner.script_file.not_nil!.to_s}'", shell: true
 				rescue e
 					STDERR.puts e # TODO:

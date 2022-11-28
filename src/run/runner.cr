@@ -157,6 +157,12 @@ module Run
 			exit_app 0
 		end
 
+		def launch_window_spy
+			bin_path = Process.executable_path
+			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
+			p = Process.new bin_path, ["--windowspy"], chdir: @initial_working_dir
+		end
+
 		private def auto_execute_section_ended
 			exit_app @exit_code if ! @settings.persistent
 			repl
