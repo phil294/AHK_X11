@@ -93,18 +93,18 @@ module Build
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
-				case split[1]?
-				when "=" then cmd_class = Cmd::ControlFlow::IfEqual
-				when "<>", "!=" then cmd_class = Cmd::ControlFlow::IfNotEqual
-				when ">" then cmd_class = Cmd::ControlFlow::IfGreater
-				when ">=" then cmd_class = Cmd::ControlFlow::IfGreaterOrEqual
-				when "<" then cmd_class = Cmd::ControlFlow::IfLess
-				when "<=" then cmd_class = Cmd::ControlFlow::IfLessOrEqual
-				when "between" then cmd_class = Cmd::ControlFlow::IfBetween
+				cmd_class = case split[1]?
+				when "=" then Cmd::ControlFlow::IfEqual
+				when "<>", "!=" then Cmd::ControlFlow::IfNotEqual
+				when ">" then Cmd::ControlFlow::IfGreater
+				when ">=" then Cmd::ControlFlow::IfGreaterOrEqual
+				when "<" then Cmd::ControlFlow::IfLess
+				when "<=" then Cmd::ControlFlow::IfLessOrEqual
+				when "between" then Cmd::ControlFlow::IfBetween
 				when "not"
 					if (split[2]? || "").starts_with?("between ")
 						split[2] = split[2][8..]
-						cmd_class = Cmd::ControlFlow::IfNotBetween
+						Cmd::ControlFlow::IfNotBetween
 					end
 				end
 				raise "If condition '#{split[1]?}' is unknown" if ! cmd_class
