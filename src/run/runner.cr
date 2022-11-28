@@ -215,7 +215,11 @@ module Run
 				{% if ! flag?(:release) %}
 					puts "[debug] set_user_var '#{var}': #{value}"
 				{% end %}
-				@user_vars[down] = value
+				if value.empty?
+					@user_vars.delete down
+				else
+					@user_vars[down] = value
+				end
 			end
 		end
 		# `var` is case insensitive
