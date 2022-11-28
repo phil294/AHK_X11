@@ -49,7 +49,7 @@ if ARGV[0]?
 		puts "AHK_X11 version: #{version}\nTargets to partially implement Classic Windows AutoHotkey specification: v1.0.24 (2004). AutoHotkey is a scripting language."
 		::exit
 	elsif ARGV[0] == "-h" || ARGV[0] == "--help"
-		puts "AHK_X11 is a Linux implementation for AutoHotkey classic version 1.0.24 (2004). Internal version: #{version}. Full up to date documentation can be found at https://phil294.github.io/AHK_X11/.\n\nPossible methods of invocation:\n\nahk_x11 \"path to script.ahk\"\nahk_x11 /dev/stdin <<< $'MsgBox, 1\\nMsgBox, 2'\nahk_x11 --repl\nahk_x11 --windowspy\nahk --compile \"path to script.ahk\" \"optional: output executable file path\"\nAlternatively, just run the program without arguments to open the graphical installer. Once installed, you should be able to run and/or compile any .ahk file in your file manager by selecting it from the right click context menu."
+		puts "AHK_X11 is a Linux implementation for AutoHotkey classic version 1.0.24 (2004). Internal version: #{version}. Full up to date documentation can be found at https://phil294.github.io/AHK_X11/.\n\nPossible methods of invocation:\n\nahk_x11 \"path to script.ahk\"\nahk_x11 /dev/stdin <<< $'MsgBox, 1\\nMsgBox, 2'\nahk_x11 --repl\nahk_x11 --windowspy\nahk_x11 --compile \"path to script.ahk\" \"optional: output executable file path\"\n\nAlternatively, just run the program without arguments to open the graphical installer. Once installed, you should be able to run and/or compile any .ahk file in your file manager by selecting it from the right click context menu."
 		::exit
 	elsif ARGV[0] == "--repl"
 		lines = ["#Persistent"]
