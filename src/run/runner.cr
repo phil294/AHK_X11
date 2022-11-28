@@ -237,7 +237,7 @@ module Run
 			when "a_min" then Time.local.minute.to_s(precision: 2)
 			when "a_sec" then Time.local.second.to_s(precision: 2)
 			when "a_now" then Time.local.to_YYYYMMDDHH24MISS
-			when "a_nowutc" then Time.utc.to_s("%Y%m%d%H%M%S")
+			when "a_nowutc" then Time.utc.to_YYYYMMDDHH24MISS
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
 			when "clipboard"
 				display.gui.clipboard &.wait_for_text
