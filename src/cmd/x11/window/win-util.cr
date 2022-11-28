@@ -18,25 +18,30 @@ class Cmd::X11::Window::Util
 			current_desktop = thread.runner.display.x_do.desktop.to_i32
 
 			wid = nil
+			if title.starts_with?("ahk_id ")
+				wid = title[7..].to_u64?
+				raise Run::RuntimeException.new "ahk_id must be a number" if ! wid
+			end
 			# broken: https://github.com/woodruffw/x_do.cr/issues/10
 			wins = thread.runner.display.x_do.search do
 				require_all
-				only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
-				# ^ link also explains the need for specifying desktop:
-				desktop current_desktop
-				# TODO: these should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
-				if title.starts_with?("ahk_class ")
-					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
-				elsif title.starts_with?("ahk_id ")
-					wid = title[7..].to_u64?
-					raise Run::RuntimeException.new "ahk_id must be a number" if ! wid
+				if ! wid
+					only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
+					# ^ link also explains the need for specifying desktop:
+					desktop current_desktop
+				end
+				if wid
+					window_name "." # "Can't structify an empty search"
 					# No way to search by ID currently, so get all and filter below
+				elsif title.starts_with?("ahk_class ")
+					# TODO: these/name etc should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
+					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
 				else
 					window_name title # todo same as above / seems to be partial match but only at *start* of string
 				end
 			end.reject &.name.nil?
 
-			if ! wid.nil?
+			if wid
 				win = wins.find { |win| win.window == wid }
 			else
 				wins.select! do |win|
