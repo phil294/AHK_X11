@@ -102,7 +102,7 @@ Uninstall:
 	FileDelete %A_Home%/.local/share/applications/%app_name%.desktop
 	FileDelete %A_Home%/.local/share/applications/%app_name%-compiler.desktop
 	FileDelete %A_Home%/.local/share/applications/%app_name%-windowspy.desktop
-	update-desktop-database %A_Home%/.local/share/applications
+	RunWait, update-desktop-database %A_Home%/.local/share/applications
 
 	MsgBox, Uninstall complete.
 Return
