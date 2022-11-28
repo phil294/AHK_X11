@@ -13,7 +13,7 @@ Gui, Add, Text, x180, %app_comment%
 Gui, Add, Text, xm0 y100, Installer`n`nNo script specified to execute. You can use AHK_X11 from command line if you want.`nOtherwise, click INSTALL below (recommended). This will install the binary and associate`nall .ahk files with it,so you can double click your scripts for execution.
 Gui, Add, Button, x180 y210 gInstall, %A_Space%%A_Space%%A_Space%->  INSTALL  <-%A_Space%%A_Space%%A_Space%
 Gui, Add, Button, x180 y250 gUninstall, Uninstall
-Gui, Show, w300 h280
+Gui, Show, w300 h280, AHK_X11 Installer
 Sleep, 9999999999999 ; no repl
 Return
 
