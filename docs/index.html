@@ -224,7 +224,7 @@
                 <a href="#LoopFile.htm">Loop (files &amp; folders)</a>
               </li>
               <li>
-                <a class="tbd" href="#LoopParse.htm">Loop (parse a string)</a>
+                <a href="#LoopParse.htm">Loop (parse a string)</a>
               </li>
               <li>
                 <a href="#LoopReadFile.htm">Loop (read file contents)</a>
@@ -575,7 +575,7 @@
                 <a class="tbd" href="#IfIs.htm">If var is [not] type</a>
               </li>
               <li>
-                <a class="tbd" href="#LoopParse.htm">Loop (parse a string)</a>
+                <a href="#LoopParse.htm">Loop (parse a string)</a>
               </li>
               <li>
                 <a href="#SetEnv.htm">SetEnv (var = value)</a>
@@ -1957,7 +1957,7 @@ Please note: This only works unreliably, and in the above example, LControl will
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_LoopField</td>
-                <td class="calibre4"><span class="tbd">See <a href="#LoopParse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">parsing loop</a>. </span></td>
+                <td class="calibre4">See <a href="#LoopParse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">parsing loop</a>.</td>
               </tr>
             </tbody>
           </table>
@@ -2388,7 +2388,7 @@ else
                 <td height="16" class="calibre4">Retrieves the specified files or folders, one at a time.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#LoopParse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Loop (parse a string) </a></td>
+                <td height="16" class="calibre4"><a href="#LoopParse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Loop (parse a string) </a></td>
                 <td height="16" class="calibre4">Retrieves substrings (fields) from a string, one by one.</td>
               </tr>
               <tr class="calibre3">
@@ -5429,7 +5429,7 @@ Loop
 </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="LoopParse.htm" href="#LoopParse.htm">#</a> <h2 class="calibre17">Loop (parse a string) </h2>
           <hr size="2" class="calibre24" />
@@ -5447,7 +5447,7 @@ Loop
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Parse</td>
-                <td width="85%" class="calibre4">This parameter must be the word PARSE, and unlike other loop types, it must not be a variable reference that resolves to the word PARSE.</td>
+                <td width="85%" class="calibre4">This parameter must be the word PARSE<span class="rm">, and unlike other loop types, it must not be a variable reference that resolves to the word PARSE.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">InputVar</td>
@@ -5459,7 +5459,7 @@ Loop
                 <td class="calibre4">Delimiters</td>
                 <td class="calibre4">
                   <p class="calibre8">If this parameter is blank or omitted, each character of <em class="calibre21">InputVar</em> will be treated as a separate substring.</p>
-                  <p class="calibre8">In v1.0.09+, if this parameter is <strong class="calibre14">CSV</strong>, <em class="calibre21">InputVar</em> will be parsed in standard comma separated value format. Here is an example of a CSV line produced by MS Excel: "first field",SecondField,"the word ""special"" is quoted literally",,"last field, has literal comma"</p>
+                  <p class="calibre8 tbd">In v1.0.09+, if this parameter is <strong class="calibre14">CSV</strong>, <em class="calibre21">InputVar</em> will be parsed in standard comma separated value format. Here is an example of a CSV line produced by MS Excel: "first field",SecondField,"the word ""special"" is quoted literally",,"last field, has literal comma"</p>
                   <p class="calibre8">Otherwise, <em class="calibre21">Delimiters</em> contains one or more characters (case sensitive) used to determine where the boundaries between substrings occur in <em class="calibre21">InputVar</em>.</p>
                   <p class="calibre8">Delimiter characters are not considered to be part of the substrings themselves. In addition, if there is nothing between a pair of delimiters within <em class="calibre21">InputVar</em>, the corresponding substring will be empty.</p>
                   <p class="calibre8">For example: `, (an escaped comma) would divide the string based on every occurrence of a comma. Similarly, %A_Tab%%A_Space% would start a new substring every time a space or tab is encountered in <em class="calibre21">InputVar</em>.</p>

@@ -15,6 +15,7 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 	@read_input_file : ::File? = nil
 	getter read_output_file : ::File? = nil
 	getter index = 0
+	@parse_iter : Iterator(::String)?
 	# Set up counters etc., register loop as innermost, open resources etc.
 	private def init(thread, args)
 		if ! args[0]?
@@ -30,7 +31,17 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 					raise Run::RuntimeException.new "Loop, Read: Input file missing" if ! args[1]? || args[1].empty?
 					@read_input_file = ::File.new(args[1])
 					@read_output_file = ::File.new(args[2], "a") if args[2]?
-				# when "parse"
+				when "parse"
+					@type = LoopType::Parse
+					raise Run::RuntimeException.new "Loop, Parse: Input var missing" if ! args[1]? || args[1].empty?
+					# There is only ::String::each_line but not for custom delimiters, so crafting RegExes seems to be
+					# the most straightforward way here, although sequential reading instead of .split would be better
+					txt = thread.get_var(args[1])
+					delimiters = Regex.new((args[2]? || "").split("").map { |c| Regex.escape(c) }.join('|'))
+					parse_arr = txt.split(delimiters)
+					omit_chars = (args[3]? || "").split("").map { |c| Regex.escape(c) }.join('|')
+					parse_omit_chars_regex = Regex.new("^(?:#{omit_chars})*([\\w\\W]*?)(?:#{omit_chars})*$")
+					@parse_iter = parse_arr.each.map &.gsub(parse_omit_chars_regex, "\\1")
 				else
 					@type = LoopType::Files
 					Cmd::File::Util.match(args) do |match|
@@ -84,6 +95,14 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 				fin = false
 				thread.runner.set_user_var("A_LoopReadLine", line)
 			end
+		when LoopType::Parse
+			field = @parse_iter.not_nil!.next
+			if field.is_a?(Iterator::Stop)
+				fin = true
+			else
+				fin = false
+				thread.runner.set_user_var("A_LoopField", field)
+			end
 		else
 			fin = false
 		end
@@ -98,6 +117,7 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 		@index = 0
 		@read_input_file.not_nil!.close if @read_input_file
 		@read_output_file.not_nil!.close if @read_output_file
+		@parse_iter = nil
 		thread.loop_stack.pop
 	end
 end
