@@ -55,7 +55,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
 
 ```diff
-DONE      ?% (88/217):
+DONE      ?% (89/217):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -68,7 +68,7 @@ DONE      ?% (88/217):
 + StringUpper, Suspend, URLDownloadToFile, WinClose, WinGetPos, WinKill, WinMaximize, WinMinimize,
 + WinMove, WinRestore, MouseGetPos, MouseMove, GetKeyState, KeyWait, ControlClick, WinGetText,
 + WinGetTitle, WinGetClass, PixelGetColor, CoordMode, GuiControl, ControlGetPos, ControlGetText,
-+ WinGet, Input, Loop (parse a string)
++ WinGet, Input, Loop (parse a string), ToolTip
 
 NEW       3% (6/217): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet @@
@@ -82,7 +82,7 @@ REMOVED   6% (12/217):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (107/217): alphabetically
+TO DO     ?% (106/217): alphabetically
 - BlockInput, ClipWait, Control, ControlFocus, ControlGet, ControlGetFocus,
 - ControlMove, ControlSetText,
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
@@ -100,7 +100,7 @@ TO DO     ?% (107/217): alphabetically
 - SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet,
 - SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText,
 - StatusBarWait, StringCaseSense, StringSplit, StringTrimLeft, StringTrimRight,
-- SysGet, Thread, ToolTip, Transform, TrayTip, WinActivateBottom,
+- SysGet, Thread, Transform, TrayTip, WinActivateBottom,
 - WinGetActiveStats, WinGetActiveTitle,
 - WinHide, WinMenuSelectItem, WinMinimizeAll,
 - WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive,

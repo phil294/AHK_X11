@@ -292,7 +292,7 @@
                 <a class="tbd" href="#SplashTextOn.htm">SplashTextOn/SplashTextOff</a>
               </li>
               <li>
-                <a class="tbd" href="#ToolTip.htm">ToolTip</a>
+                <a href="#ToolTip.htm">ToolTip</a>
               </li>
               <li>
                 <a class="tbd" href="#TrayTip.htm">TrayTip</a>
@@ -1112,7 +1112,7 @@ if KeepWinZRunning = y  ; This means an underlying <a href="#Threads.htm" class=
 KeepWinZRunning = y
 Loop,
 {
-	<span class="tbd">ToolTip</span>, Press Win-Z again to stop this from flashing.
+	ToolTip, Press Win-Z again to stop this from flashing.
 	Sleep, 1000
 	ToolTip
 	if KeepWinZRunning =  ; The user signaled the loop to stop by pressing Win-Z again.
@@ -2672,7 +2672,7 @@ else
                 <td height="16" class="calibre4">Sets the priority or interruptibility <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">threads</a>.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#ToolTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ToolTip</a></td>
+                <td height="16" class="calibre4"><a href="#ToolTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ToolTip</a></td>
                 <td height="16" class="calibre4">Creates an always-on-top window anywhere on the screen.</td>
               </tr>
               <tr class="calibre3">
@@ -7107,9 +7107,9 @@ Loop, %windir%\system32\*.*
           <p class="calibre8">SplashTextOn, , , Just a simple title.<br class="calibre12" /> Sleep, 2000<br class="calibre12" /> SplashTextOn, 400, 300, Clipboard, The clipboard contains:`n%clipboard%<br class="calibre12" /> WinMove, Clipboard, , 0, 0 ; Move the splash window to the top left corner. <br class="calibre12" /> Msgbox, Press OK to dismiss the SplashText<br class="calibre12" /> SplashTextOff </p>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="ToolTip.htm" href="#ToolTip.htm">#</a> <h2 class="calibre17">ToolTip</h2> [v1.0.09+]
+          <a id="ToolTip.htm" href="#ToolTip.htm">#</a> <h2 class="calibre17">ToolTip</h2>
           <hr size="2" class="calibre24" />
           <p class="calibre8">Creates an always-on-top window anywhere on the screen.</p>
           <table cellspacing="5" width="100%" class="calibre28">
@@ -7136,7 +7136,7 @@ Loop, %windir%\system32\*.*
               <tr class="calibre3">
                 <td class="calibre4">WhichToolTip</td>
                 <td class="calibre4">
-                  <p class="calibre8">Omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first). Requires v1.0.15+. </p>
+                  <p class="calibre8">Omit this parameter if you don't need multiple tooltips to appear simultaneously. Otherwise, this is a number between 1 and 20 to indicate which tooltip window to operate upon. If unspecified, that number is 1 (the first).</p>
                 </td>
               </tr>
             </tbody>
@@ -7144,7 +7144,7 @@ Loop, %windir%\system32\*.*
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
           <p class="calibre8"> If the X &amp; Y coordinates would cause the tooltip to run off screen, it is repositioned to be visible.</p>
-          <p class="calibre8">The tooltip appears until it is cleared by running the command with no parameters, until the script terminates, or sometimes until it is clicked upon.</p>
+          <p class="calibre8">The tooltip appears until it is cleared by running the command with no parameters, until the script terminates, <span class="rm">or sometimes until it is clicked upon.</span></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a>, <a href="#TrayTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">TrayTip</a>, <a href="#Progress.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Progress</a>, <a href="#SplashTextOn.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SplashTextOn</a>, <a href="#MsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MsgBox</a>, <a href="#InputBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">InputBox</a>, <a href="#FileSelectFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFile</a>, <a href="#FileSelectFolder.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFolder</a></p>
