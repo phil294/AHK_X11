@@ -294,9 +294,9 @@ module Run
 					txt.margin = 2
 					# txt.override_background_color ::Gtk::StateFlags::NORMAL, ::Gdk::RGBA.new(1,1,1) # <- doesnt work, is grey? using modifybg instead which is even more deprecated
 					# txt.override_color ::Gtk::StateFlags::NORMAL, ::Gdk::RGBA.new(0.341,0.341,0.341)
-					txt.modify_bg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,65535,65535,65535)
-					txt.modify_fg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,22359,22359,22359)
-					txt.override_font ::Pango::FontDescription.from_string("8")
+					txt.modify_bg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,65535,65535,57825)
+					txt.modify_fg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,0,0,0)
+					txt.override_font ::Pango::FontDescription.from_string("9")
 					tooltip.add(txt)
 					@tooltips[tooltip_id] = tooltip
 				end
