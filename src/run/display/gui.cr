@@ -216,6 +216,7 @@ module Run
 			act { @tray.not_nil!.from_icon_name = "content-loading-symbolic" }
 		end
 		def thread_unpause
+			return if ! @is_pause
 			@is_pause = false
 			if @is_suspend
 				suspend
