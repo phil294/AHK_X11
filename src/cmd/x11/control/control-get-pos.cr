@@ -13,7 +13,7 @@ class Cmd::X11::Mouse::ControlGetPos < Cmd::Base
 			args.delete_at(0)
 		end
 		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
-			frame = thread.runner.display.at_spi.find_window(pid: win.pid, window_name: win.name)
+			frame = thread.runner.display.at_spi.find_window(thread, win)
 			return if ! frame
 			acc = thread.runner.display.at_spi.find_descendant(frame, class_nn_or_text)
 			return if ! acc

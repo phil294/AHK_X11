@@ -57,7 +57,7 @@ class Cmd::X11::Window::Util
 					end
 					if ! text.empty? || ! exclude_text.empty?
 						win_texts = [] of ::String
-						frame = thread.runner.display.at_spi.find_window(pid: win.pid, window_name: win.name)
+						frame = thread.runner.display.at_spi.find_window(thread, win)
 						if frame
 							win_texts = thread.runner.display.at_spi.get_all_texts(frame, include_hidden: false)
 						end

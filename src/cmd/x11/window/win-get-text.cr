@@ -8,7 +8,7 @@ class Cmd::X11::Window::WinGetText < Cmd::Base
 		match_conditions = args[1..]? || [] of ::String
 		out_var = args[0]
 		Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true) do |win|
-			frame = thread.runner.display.at_spi.find_window(pid: win.pid, window_name: win.name)
+			frame = thread.runner.display.at_spi.find_window(thread, win)
 			if frame
 				texts = thread.runner.display.at_spi.get_all_texts(frame, include_hidden: false)
 				thread.runner.set_user_var(out_var, texts.join("\n"))

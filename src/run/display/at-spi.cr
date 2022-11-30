@@ -20,11 +20,16 @@ module Run
 			@is_init = true
 		end
 
-		# Finds the first x11 window-like accessible corresponding to *pid* and *window_name*
+		# Finds the first x11 window-like accessible corresponding to the window's pid and name
 		# or `nil` if no match was found.
 		# There is no match by window XID. (https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/21)
-		def find_window(*, pid, window_name, include_hidden = false)
+		def find_window(thread, win, include_hidden = false)
 			init
+			wid = win.window
+			frame = thread.cache.frame_by_id[wid]?
+			return frame if frame
+			pid = win.pid
+			window_name = win.name
 			app = each_app do |app|
 				break app if app.process_id == pid
 			end
@@ -44,7 +49,10 @@ module Run
 					end
 				end
 			end
-			return frame if frame
+			if frame
+				thread.cache.frame_by_id[wid] = frame
+				return frame
+			end
 			raise Run::RuntimeException.new "Could not determine Control Info for window '#{window_name}'!
 
 Some things may not work as expected. You can press OK and the script will continue, or read on below on how to fix this:

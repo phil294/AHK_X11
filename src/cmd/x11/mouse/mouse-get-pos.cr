@@ -4,7 +4,7 @@ class Cmd::X11::Mouse::MouseGetPos < Cmd::Base
 	def run(thread, args)
 		x, y, _, window = thread.runner.display.x_do.mouse_location
 		if args[3]? && ! args[3].empty?
-			frame = thread.runner.display.at_spi.find_window(pid: window.pid, window_name: window.name)
+			frame = thread.runner.display.at_spi.find_window(thread, window)
 			if frame
 				_, class_NN = thread.runner.display.at_spi.find_descendant(frame, x: x, y: y)
 				if class_NN
