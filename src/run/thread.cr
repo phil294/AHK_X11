@@ -20,6 +20,11 @@ module Run
 		property coord_mode_menu = CoordMode::RELATIVE
 	end
 
+	# see Thread.cache
+	private struct ThreadCache
+		getter window_by_id = {} of UInt64 => XDo::Window
+	end
+
 	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,
 	# except they're not cooperative at all; they take each other's place (prioritized) and
 	# continue until their individual end. Threads never really run in parallel:
@@ -35,6 +40,13 @@ module Run
 		# Each thread starts with its own set of settings (e.g. CoordMode),
 		# the default can be changed in the auto execute section.
 		getter settings : ThreadSettings
+		# `Cache` holds internal state that may be accessed often by the user from various
+		# commands, but its calculation can be a performance bottleneck, especially when accessed
+		# many times in a row. The data should not change frequently.
+		# Caching like this is only a last resort and should be avoided.
+		# TODO: Invalidate all every 500ms or so, maybe by exposing/wrapping `get` and `set`,
+		# because threads can also be long-lived with large loops and sleeps.
+		getter cache = ThreadCache.new
 		# These thread-specific vars are only changed by the program and also exposed
 		# to the user. Also see `settings`.
 		# User-modifiable variables are inherently global and thus live in `Runner`.

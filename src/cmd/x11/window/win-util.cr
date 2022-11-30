@@ -12,16 +12,22 @@ class Cmd::X11::Window::Util
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here" if ! a_is_active
 			win = thread.runner.display.x_do.active_window
 		else
+			wid = nil
+			if title.starts_with?("ahk_id ")
+				wid = title[7..].to_u64?
+				raise Run::RuntimeException.new "ahk_id must be a number" if ! wid
+				win = thread.cache.window_by_id[wid]?
+				if win
+					yield win
+					return true
+				end
+			end
+
 			text = match_conditions[1]? || ""
 			exclude_title = match_conditions[2]? || ""
 			exclude_text = match_conditions[3]? || ""
 			current_desktop = thread.runner.display.x_do.desktop.to_i32
 
-			wid = nil
-			if title.starts_with?("ahk_id ")
-				wid = title[7..].to_u64?
-				raise Run::RuntimeException.new "ahk_id must be a number" if ! wid
-			end
 			# broken: https://github.com/woodruffw/x_do.cr/issues/10
 			wins = thread.runner.display.x_do.search do
 				require_all
@@ -43,6 +49,7 @@ class Cmd::X11::Window::Util
 
 			if wid
 				win = wins.find { |win| win.window == wid }
+				thread.cache.window_by_id[wid] = win if win
 			else
 				wins.select! do |win|
 					if ! exclude_title.empty?
