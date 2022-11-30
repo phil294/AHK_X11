@@ -305,5 +305,9 @@ module Run
 				block.call(@tooltips[tooltip_id].not_nil!)
 			end
 		end
+		def destroy_tooltip(tooltip_id)
+			act { @tooltips[tooltip_id].destroy }
+			@tooltips.delete tooltip_id
+		end
 	end
 end

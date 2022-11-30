@@ -6,8 +6,8 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 		txt = args[0]?
 		x = args[1]?.try &.to_i?
 		y = args[2]?.try &.to_i?
-		thread.runner.display.gui.tooltip(id) do |tooltip|
-			if txt
+		if txt && ! txt.empty?
+			thread.runner.display.gui.tooltip(id) do |tooltip|
 				tooltip.children.next.unsafe_as(::Gtk::Label).label = txt
 				if x && y
 					if thread.settings.coord_mode_tooltip == ::Run::CoordMode::RELATIVE
@@ -16,9 +16,9 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 					tooltip.move x.not_nil!, y.not_nil!
 				end
 				tooltip.show_all
-			else
-				tooltip.destroy
 			end
+		else
+			thread.runner.display.gui.destroy_tooltip id
 		end
 	end
 end
