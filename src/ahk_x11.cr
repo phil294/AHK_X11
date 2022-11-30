@@ -24,7 +24,7 @@ Signal::HUP.trap do
 	::exit 129
 end
 
-HEADLESS = ! ENV["DISPLAY"]?
+HEADLESS = ! ENV["DISPLAY"]? || ENV["DISPLAY"].empty?
 
 def build_error(msg)
 	msg = "#{msg}\n\nThe program will exit."
