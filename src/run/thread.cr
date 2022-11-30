@@ -23,7 +23,8 @@ module Run
 	# see Thread.cache
 	private struct ThreadCache
 		getter window_by_id = {} of UInt64 => XDo::Window
-		getter frame_by_id = {} of UInt64 => ::Atspi::Accessible
+		getter top_level_accessible_by_window_id = {} of UInt64 => ::Atspi::Accessible
+		getter accessible_by_class_nn_by_window_id = {} of UInt64 => Hash(String, ::Atspi::Accessible)
 	end
 
 	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,

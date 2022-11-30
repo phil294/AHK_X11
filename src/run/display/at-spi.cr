@@ -23,10 +23,11 @@ module Run
 		# Finds the first x11 window-like accessible corresponding to the window's pid and name
 		# or `nil` if no match was found.
 		# There is no match by window XID. (https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/21)
-		def find_window(thread, win, include_hidden = false)
+		private def find_window(thread, win, include_hidden = false)
 			init
 			wid = win.window
-			frame = thread.cache.frame_by_id[wid]?
+			thread.cache.accessible_by_class_nn_by_window_id[wid] ||= {} of String => ::Atspi::Accessible
+			frame = thread.cache.top_level_accessible_by_window_id[wid]?
 			return frame if frame
 			pid = win.pid
 			window_name = win.name
@@ -50,7 +51,7 @@ module Run
 				end
 			end
 			if frame
-				thread.cache.frame_by_id[wid] = frame
+				thread.cache.top_level_accessible_by_window_id[wid] = frame
 				return frame
 			end
 			raise Run::RuntimeException.new "Could not determine Control Info for window '#{window_name}'!
@@ -72,15 +73,21 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 - Programs built with Tk (rare) usually never work."
 			return nil
 		end
-		# Finds the first match for *text_or_class_NN* inside *accessible* or `nil` if
+		# Finds the first match for *text_or_class_NN* inside *win* or `nil` if
 		# no match was found.
-		def find_descendant(accessible, text_or_class_NN, include_hidden = false)
+		def find_descendant(thread, win, text_or_class_NN, include_hidden = false)
 			descendant : ::Atspi::Accessible? = nil
+
+			accessible = find_window(thread, win, include_hidden)
+			return nil if ! accessible
 
 			class_NN_role, class_NN_path = from_class_NN(text_or_class_NN)
 			if class_NN_role
+				class_NN = text_or_class_NN
 				# This is 99% a class_NN. These are essentially control paths so we can try to
 				# get the control without searching.
+				descendant = thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN]?
+				return descendant if descendant
 				k = accessible
 				path_valid = class_NN_path.each do |i|
 					break false if i > k.child_count - 1
@@ -89,12 +96,19 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 				if path_valid != false && k.role_name == class_NN_role
 					descendant = k
 				end
-				# Don't support actual class_NN-like text matches (very unlikely)
-				# at the expense of running slow text match logic every time a class_NN could
-				# not be found (moderately likely). So finish here either way.
-				return descendant
+				if descendant
+					thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN] = descendant.not_nil!
+					return descendant
+				else
+					# Also stop here: Don't support actual class_NN-like text matches (very unlikely)
+					# at the expense of running slow text match logic every time a class_NN could
+					# not be found (moderately likely).
+					return descendant
+				end
 			end
 
+			text = text_or_class_NN
+			class_NN = ""
 			# Textual match
 			# Below is commented out an alternative way of matching with `.matches()`: This compiles when you
 			# fix gtk type error attributes to `Void**` but fails at runtime with error
@@ -118,12 +132,12 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			# # null = Pointer(Void).null
 			# # rule = ::Atspi::MatchRule.new(::Atspi::StateSet.new([] of UInt32), match_none, pointerof(null), match_none, [] of String, match_none, [] of String, match_none, false)
 			# # matches = accessible.matches(rule, Atspi::CollectionSortOrder::CANONICAL, 5, true)
-			each_descendant(accessible, include_hidden: include_hidden) do |acc, _, class_NN|
-				is_match = text_or_class_NN == get_text(acc)
+			each_descendant(thread, win, include_hidden: include_hidden) do |acc, _, acc_class_NN|
+				is_match = get_text(acc) == text
 				if is_match
 					descendant = acc
 					{% if ! flag?(:release) %}
-						puts "[debug] find_descendant #{acc.name}, #{acc.role}, #{class_NN}"
+						puts "[debug] find_descendant #{acc.name}, #{acc.role}, #{acc_class_NN}"
 					{% end %}
 				end
 				is_match ? nil : true
@@ -132,10 +146,12 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		end
 		# Finds the most specific accessible that contains the screen-wide coordinate. and combine both
 		# Cannot use relative coords because they are usually baloney in atspi.
-		def find_descendant(accessible, *, x, y)
+		def find_descendant(thread, win, *, x, y, include_hidden = false)
+			accessible = find_window(thread, win, include_hidden)
+			return nil, nil if ! accessible
 			# Fast; most of the time, it returns the accurate deepest child, but sometimes
 			# it just returns the first child even though that one has many descendants itself
-			# e.g. application launcher (alt+f3) in XFCE...
+			# e.g. xfce4-appfinder
 			top_match = accessible.accessible_at_point(x, y, ::Atspi::CoordType::SCREEN)
 			return nil, nil if ! top_match
 			# If we went the completely manual way, class_NN would already be known to us,
@@ -152,7 +168,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			# `accessible` directly, but this way, it is usually very fast.
 			# This is in contrast to find-by-text (see comment inside find_descendant above)
 			# where manual seems to be the only way.
-			each_descendant(match) do |acc, path, class_NN, nest_level|
+			iter_descendants(match, nil, false) do |acc, path, class_NN, nest_level|
 				if nest_level <= match_nest_level
 					next nil # stop
 				end
@@ -179,7 +195,8 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 				match_path = top_match_path + match_path
 			end
 			match_class_NN = to_class_NN(match_path, match.role_name)
-
+			
+			thread.cache.accessible_by_class_nn_by_window_id[win.window][match_class_NN] = match
 			{% if ! flag?(:release) %}
 				puts "[debug] find_descendant name:#{match.name}, role:#{match.role}, classNN:#{match_class_NN}, text:#{match ? get_text(match) : ""}, actions:#{get_actions(match)[1]}, selectable:#{selectable?(match)}. top_match_path:#{top_match_path}, match_path:#{match_path}, top_match role:#{top_match.role}, top_match name:#{top_match.name}"
 			{% end %}
@@ -212,8 +229,11 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		# `false`: Continue but skip the children of this accessible, so continue on
 		#     to the next sibling or parent;
 		# `nil`: Stop.
-		def each_descendant(accessible, *, include_hidden = false, max_children = nil, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
+		def each_descendant(thread, win, *, include_hidden = false, max_children = nil, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
+			accessible = find_window(thread, win, include_hidden)
+			return if ! accessible
 			iter_descendants(accessible, max_children, include_hidden) do |desc, path, class_NN, nest_level|
+				thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN] = desc
 				block.call desc, path, class_NN, nest_level
 			end
 		end
@@ -233,7 +253,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			response
 		end
 		# check if the accessible is what X11 understands as a window
-		def top_level_window?(accessible)
+		private def top_level_window?(accessible)
 			role = accessible.role
 			# https://docs.gtk.org/atspi2/enum.Role.html
 			# may not be complete yet
@@ -241,15 +261,16 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		end
 		# checks if the element is both visible and showing. Does not mean that the tl window
 		# itself isn't hidden behind another window though.
-		def hidden?(accessible)
+		# TODO: Not guaranteed to be accurate: xfce4-appfinder just scrambles coordinates instead.
+		private def hidden?(accessible)
 			state_set = accessible.state_set
 			! state_set.contains(::Atspi::StateType::SHOWING) || ! state_set.contains(::Atspi::StateType::VISIBLE)
 		end
-		def selectable?(accessible)
+		private def selectable?(accessible)
 			accessible.state_set.contains(::Atspi::StateType::SELECTABLE)
 		end
 		# Selecting always happens somewhere in the parent chain
-		def select!(accessible)
+		private def select!(accessible)
 			child_i = accessible.index_in_parent
 			parent = accessible.parent
 			while parent
@@ -277,10 +298,10 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		end
 		# returns an array of recursive text strings, no duplication present.
 		# only 1,000 descendant nodes are queried each to not kill performance completely
-		# with windows very large lists (e.g. Gtk tables: each cell is a child of the table)
-		def get_all_texts(accessible, *, include_hidden)
+		# with windows with very large lists (e.g. Gtk tables: each cell is a child of the table)
+		def get_all_texts(thread, win, *, include_hidden)
 			strings = [] of ::String
-			each_descendant(accessible, include_hidden: include_hidden, max_children: 1000) do |descendant, class_NN|
+			each_descendant(thread, win, include_hidden: include_hidden, max_children: 1000) do |descendant, _, class_NN|
 				text = get_text(descendant)
 				strings << text if text
 				true
@@ -349,7 +370,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		# Retrieves the list of actions names. If *accessible* has no actions,
 		# it continues going upwards the parent chain until something was found.
 		# Returns both the actions and that respective accessible where they are at.
-		def get_actions(accessible)
+		private def get_actions(accessible)
 			actions = [] of String
 			while actions.empty? && accessible
 				begin
@@ -364,7 +385,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			end
 			return actions.empty? ? nil : accessible, actions
 		end
-		# Goes up the ancestor chain an constructs a downwards array of `.index_in_parent` values,
+		# Goes up the ancestor chain and constructs a downwards array of `.index_in_parent` values,
 		# Linear complexity, so hopefully never slow.
 		private def to_path(accessible)
 			path = [] of Int32

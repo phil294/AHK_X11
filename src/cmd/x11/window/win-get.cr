@@ -12,15 +12,12 @@ class Cmd::X11::Window::WinGet < Cmd::Base
 			when "id"
 				win.window
 			when "controllist"
-				frame = thread.runner.display.at_spi.find_window(thread, win)
-				if frame
-					ctrls = [] of ::String
-					thread.runner.display.at_spi.each_descendant(frame, max_children: 1000) do |acc, _, class_NN|
-						ctrls << class_NN
-						true
-					end
-					ctrls.join '\n'
+				ctrls = [] of ::String
+				thread.runner.display.at_spi.each_descendant(thread, win, max_children: 1000) do |_, _, class_NN|
+					ctrls << class_NN
+					true
 				end
+				ctrls.join '\n'
 			end
 			thread.runner.set_user_var(out_var, value.to_s)
 		end
