@@ -1,5 +1,4 @@
 require "./win-util"
-require "gobject/gtk"
 
 class Cmd::X11::Window::WinSet < Cmd::Base
 	def self.min_args; 2 end
@@ -32,7 +31,7 @@ class Cmd::X11::Window::WinSet < Cmd::Base
 				end
 				x11_dpy.sync(false)
 			when "transcolor"
-				color = value.split(' ')[0]
+				color = value.split(' ')[0].downcase
 				gui = thread.runner.display.gui.guis.find do |gui_id, gui_info|
 					win.window == gui_info.window.window.unsafe_as(GdkX11::X11Window).xid
 				end
@@ -40,7 +39,7 @@ class Cmd::X11::Window::WinSet < Cmd::Base
 					raise Run::RuntimeException.new "WinSet, TransColor is only supported for your own Gui windows in order to be able to achieve transparent background. However the window you passed, '#{win.name}', does not appear to be such a Gui."
 				end
 				gui_id, gui_info = gui
-				if gui_info.color != color.downcase
+				if ! gui_info.window_color || ! gui_info.window_color.not_nil!.equal(thread.runner.display.gui.parse_rgba(color))
 					raise Run::RuntimeException.new "WinSet, TransColor currently only works when you previously set \"Gui, Color\" to the exact same value."
 				end
 				thread.runner.display.gui.act do

@@ -45,7 +45,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					widget.text = text
 					widget.connect "changed", run_g_label
 				end
-			when "button"
+			when "button" # TODO: "default" stuff from docs
 				widget = ::Gtk::Button.new label: text
 				widget.connect "clicked", run_g_label
 				button_click_label = "button" + text.gsub(/[ &\n\r]/, "")
@@ -72,6 +72,8 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			else
 				raise Run::RuntimeException.new "Unknown Gui control '#{type}'"
 			end
+
+			widget.override_background_color(::Gtk::StateFlags::NORMAL, gui.control_color) if gui.control_color
 
 			if opt["v"]?
 				alt_submit = !! opt["altsubmit"]?

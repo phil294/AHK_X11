@@ -764,7 +764,7 @@
                 <a href="#WinRestore.htm">WinRestore</a>
               </li>
               <li>
-                <a class="tbd" href="#WinSet.htm">WinSet</a>
+                <a href="#WinSet.htm">WinSet</a>
               </li>
               <li>
                 <a class="tbd" href="#WinSetTitle.htm">WinSetTitle</a>
@@ -2764,7 +2764,7 @@ else
                 <td height="16" class="calibre4">Unminimizes or unmaximizes a window if it is minimized or maximized.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#WinSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinSet</a></td>
+                <td height="16" class="calibre4"><a href="#WinSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinSet</a></td>
                 <td height="16" class="calibre4">Makes a window "always on top" and/or transparent.</td>
               </tr>
               <tr class="calibre3">
@@ -5984,15 +5984,17 @@ return</pre>
           <p class="calibre8">Once a menu has been used as a menu bar, it should not be used as a popup menu or a submenu. This is because menu bars internally require a different format (note: this restriction applies only to the menu bar itself, not its submenus). If you need to work around this, create one menu to use as the menu bar and another identical menu to use as a popup menu or submenu.</p>
           <p class="calibre8">The use of certain destructive <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">menu sub-commands</a> such as Delete and DeleteAll against a menu that is currently being used as a menu bar will not succeed (a warning dialog is displayed unless the <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">UseErrorLevel</a> setting is in effect). To make such changes: 1) detach the menu bar (see above); 2) make the changes; 3) reattach the menu bar. This restriction does not apply to the menu bar's submenus.</p>
           <p class="calibre8"> </p>
+</div>
           <p class="calibre8"><span class="calibre17"><a id="Gui.htm__Color" href="#Gui.htm__Color" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Color [, WindowColor, ControlColor]</span></p>
           <p class="calibre8">Sets the background color of the window and/or its controls. <em class="calibre21">ControlColor</em> is applied to all present and future controls in the window (with the exception of a few types that do not support a custom color).</p>
           <p class="calibre8">Leave either parameter blank to retain the current color. Otherwise, specify one of the 16 primary <a href="#Progress.htm__colors" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">HTML color names</a> or a 6-digit RGB color value (the 0x prefix is optional), or specify the word Default to return either to its default color. Example values: Silver, FFFFAA, 0xFFFFAA, Default</p>
           <p class="calibre8">By default, the window's background color is the system's color for the face of buttons, and the controls' background color is the system's default window color (usually white).</p>
           <p class="calibre8">The color of the menu bar and its submenus can be changed as in this example: <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Menu</a>, MyMenuBar, Color, White</p>
-          <p class="calibre8">To make the background transparent on Windows 2000/XP and beyond, use <a href="#WinSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinSet TransColor</a>. However, if you do this without first having assigned a custom window via "Gui, Color", buttons will also become transparent. To prevent this, first assign a custom color and then make that color transparent as in this example:<br class="calibre12" /> Gui, Color, EEAA99<br class="calibre12" /> WinSet, TransColor, EEAA99, My Window Title ; But first turn <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> on if needed.</p>
+          <p class="calibre8">To make the background transparent, use <a href="#WinSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinSet TransColor</a>. <span class="rm">However, if you do this without first having assigned a custom window via "Gui, Color", buttons will also become transparent. To prevent this,</span> first assign a custom color and then make that color transparent as in this example:<br class="calibre12" /> Gui, Color, EEAA99<br class="calibre12" /> WinSet, TransColor, EEAA99, My Window Title ; But first turn <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> on if needed.</p>
           <p class="calibre8">To additionally remove the border and title bar from a window with a transparent background, use the following <em class="calibre21">after</em> the window has been made transparent:<br class="calibre12" /> Gui, -Caption ; Or use "Gui, 2:-Caption" if it is the second window, etc.</p>
           <p class="calibre8">To illustrate the above, there is an example of an on-screen display (OSD) at the bottom of this page.</p>
           <p class="calibre8"> </p>
+<div class="tbd">
           <p class="calibre8"><span class="calibre17"><a id="Gui.htm__Font" href="#Gui.htm__Font" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Font [, Options, FontName]</span></p>
           <p class="calibre8">Sets the font typeface, size, style, and/or color for controls created from this point onward.</p>
           <p class="calibre8">Omit both parameters to restore the font to the system's default GUI typeface, size, and color. </p>
@@ -14677,9 +14679,9 @@ WinMinimize ; use the window found above
           <p class="calibre8"><strong class="calibre14">Example</strong></p> WinRestore, Untitled - Notepad
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="WinSet.htm" href="#WinSet.htm">#</a> <h2 class="calibre17">WinSet</h2> [v1.0.08+]
+          <a id="WinSet.htm" href="#WinSet.htm">#</a> <h2 class="calibre17">WinSet</h2>
           <hr size="2" class="calibre24" />
           <p class="calibre8">Makes a window "always on top" and/or transparent. </p>
           <table cellspacing="5" width="100%" class="calibre28">
@@ -14718,14 +14720,14 @@ WinMinimize ; use the window found above
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14"><u class="calibre20">Attribute, Value</u></strong></p>
           <p class="calibre8"><strong class="calibre14">AlwaysOnTop</strong>, <strong class="calibre14">[On|Off|Toggle]</strong>: Makes a window stay on top of all other windows. Use ON to turn on the setting, OFF to turn it off, or TOGGLE to set it to the opposite of its current state. If omitted, it defaults to TOGGLE. The word Topmost can be used in place of AlwaysOnTop.</p>
-          <p class="calibre8"><strong class="calibre14">Bottom</strong> [v1.0.23+]: Sends a window to the bottom of stack; that is, beneath all other windows. The effect is similar to pressing Alt-Escape. Example: WinSet, Bottom,, WinTitle </p>
+          <p class="calibre8"><strong class="calibre14">Bottom</strong> Sends a window to the bottom of stack; that is, beneath all other windows. The effect is similar to pressing Alt-Escape. Example: WinSet, Bottom,, WinTitle </p>
           <p class="calibre8"><strong class="calibre14">Transparent, N</strong>: Makes a window semi-transparent. Specify for <em class="calibre21">N</em> a number between 0 and 255 to indicate the degree of transparency: 0 makes the window invisible while 255 makes it opaque. In v1.0.23+, transparency may be turned off completely for a window by specifying the word OFF. This is different than specifying 255 because it may improve performance and reduce system resource usage.</p>
-          <p class="calibre8"><strong class="calibre14">TransColor, Color [N]</strong>: Makes all pixels of the chosen color invisible inside the target window, which allows the contents of the window behind it to show through. If the user clicks on an invisible pixel, the click will "fall through" to the window behind it. Specify for <em class="calibre21">Color</em> a color name or RGB value (see the <a href="#Progress.htm__colors" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">color chart</a> for guidance, or use <a href="#PixelGetColor.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">PixelGetColor</a> in its RGB mode). To additionally make the visible part of the window partially transparent, append a space (not a comma) followed by the transparency level (0-255). Example: WinSet, TransColor, EEAA99 150, WinTitle </p>
+          <p class="calibre8"><strong class="calibre14">TransColor, Color [N]</strong>: Makes all pixels of the chosen color invisible inside the target window, which allows the contents of the window behind it to show through. <span class="rm">If the user clicks on an invisible pixel, the click will "fall through" to the window behind it.</span> Specify for <em class="calibre21">Color</em> a color name or RGB value (see the <a href="#Progress.htm__colors" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">color chart</a> for guidance, or use <a href="#PixelGetColor.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">PixelGetColor</a> in its RGB mode). <span class="tbd">To additionally make the visible part of the window partially transparent, append a space (not a comma) followed by the transparency level (0-255). Example: WinSet, TransColor, EEAA99 150, WinTitle</span> </p>
           <p class="calibre8">TransColor is often used to create on-screen displays and other visual effects; see the bottom of the <a href="#Gui.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Gui</a> page for an example. TransColor requires v1.0.23+.</p>
+          <p class="calibre8 x11">Only works in conjunction with Gui, Color. Not supported on non-Gui windows.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">The <em class="calibre21">Transparent</em> and <em class="calibre21">TransColor</em> attributes are only supported on Windows 2000/XP or later; they will have no effect on other operating systems.</p>
-          <p class="calibre8">To make the task bar transparent, use <em class="calibre21">WinSet, Transparent, 150, ahk_class Shell_TrayWnd</em>. Similarly, to make the Start Menu transparent, follow this example:<br class="calibre12" /> DetectHiddenWindows, on<br class="calibre12" /> WinSet, Transparent, 150, ahk_class BaseBar</p>
+          <p class="calibre8 rm">To make the task bar transparent, use <em class="calibre21">WinSet, Transparent, 150, ahk_class Shell_TrayWnd</em>. Similarly, to make the Start Menu transparent, follow this example:<br class="calibre12" /> DetectHiddenWindows, on<br class="calibre12" /> WinSet, Transparent, 150, ahk_class BaseBar</p>
           <p class="calibre8">To make all or selected menus on the entire system transparent, keep a script such as the following always running. Note that although such a script cannot make its own menus transparent, it can make those of other scripts transparent:</p>
           <pre class="calibre22">#Persistent
 SetTimer, WatchForMenu, 5

@@ -252,7 +252,8 @@ module Run
 			property last_section_x = 0
 			property last_section_y = 0
 			getter var_control_info = {} of String => ControlInfo
-			property color = "_"
+			property window_color : Gdk::RGBA? = nil
+			property control_color : Gdk::RGBA? = nil
 			def initialize(@window, @fixed)
 			end
 		end
@@ -313,6 +314,14 @@ module Run
 		def destroy_tooltip(tooltip_id)
 			act { @tooltips[tooltip_id].destroy }
 			@tooltips.delete tooltip_id
+		end
+		def parse_rgba(v)
+			if v.to_i?(16)
+				v = "##{v}"
+			end
+			color = Gdk::RGBA.new(0,0,0,1)
+			color.parse(v)
+			color
 		end
 	end
 end
