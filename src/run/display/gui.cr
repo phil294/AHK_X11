@@ -252,10 +252,11 @@ module Run
 			property last_section_x = 0
 			property last_section_y = 0
 			getter var_control_info = {} of String => ControlInfo
+			property color = "_"
 			def initialize(@window, @fixed)
 			end
 		end
-		@guis = {} of String => GuiInfo
+		getter guis = {} of String => GuiInfo
 		# Yields (and if not yet exists, creates) the gui info referring to *gui_id*,
 		# including the `window`, and passes the block on to the GTK idle thread so
 		# you can run GTK code with it.
@@ -276,6 +277,9 @@ module Run
 							STDERR.puts e
 						end
 					end
+					# To support transparent background when invoked via WinSet:
+					# Appears to be impossible to set dynamically, so needed at win build time:
+					window.visual = window.screen.rgba_visual
 					gui_info = GuiInfo.new(window, fixed)
 				end
 				@guis[gui_id] = gui_info.not_nil!
