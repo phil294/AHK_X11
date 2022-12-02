@@ -18,6 +18,10 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 				tooltip.show_all
 			end
 		else
+			# Updating text is twice as fast than destroying and rebuilding, so maybe hiding
+			# would be better here: thread.runner.display.gui.tooltip(id) &.hide
+			# However that's not any faster than destroy? So we might as well keep that to
+			# clean up unused windows:
 			thread.runner.display.gui.destroy_tooltip id
 		end
 	end
