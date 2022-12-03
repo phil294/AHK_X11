@@ -153,6 +153,7 @@ module Build
 				end
 				comma = rest_args.empty? ? "" : ","
 				add_line "Gui#{sub_cmd}, #{gui_id}#{comma} #{rest_args}", line_no
+				@runner_settings.persistent = true
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
 			elsif first_word.ends_with?("++")
