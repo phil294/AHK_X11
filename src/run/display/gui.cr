@@ -265,7 +265,7 @@ module Run
 			gui_info = @guis[gui_id]?
 			if ! gui_info
 				act do
-					window = Gtk::Window.new title: @default_title, window_position: Gtk::WindowPosition::CENTER, icon: @icon_pixbuf
+					window = Gtk::Window.new title: @default_title, window_position: Gtk::WindowPosition::CENTER, icon: @icon_pixbuf, resizable: false
 					# , border_width: 20
 					fixed = Gtk::Fixed.new
 					window.add fixed
