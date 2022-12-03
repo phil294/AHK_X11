@@ -147,6 +147,10 @@ module Build
 				gui_id = match[1]? || "1"
 				sub_cmd = match[2]
 				raise "Gui subcommand missing" if sub_cmd.empty?
+				if sub_cmd.starts_with?('-') || sub_cmd.starts_with?('+')
+					rest_args = sub_cmd
+					sub_cmd = "Option"
+				end
 				comma = rest_args.empty? ? "" : ","
 				add_line "Gui#{sub_cmd}, #{gui_id}#{comma} #{rest_args}", line_no
 			elsif first_word.ends_with?(':')
