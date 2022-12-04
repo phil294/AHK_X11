@@ -18,6 +18,7 @@ module Run
 		property coord_mode_mouse = CoordMode::RELATIVE
 		property coord_mode_caret = CoordMode::RELATIVE
 		property coord_mode_menu = CoordMode::RELATIVE
+		property ahk_x11_track_performance = false
 	end
 
 	# see Thread.cache
@@ -25,6 +26,12 @@ module Run
 		getter window_by_id = {} of UInt64 => XDo::Window
 		getter top_level_accessible_by_window_id = {} of UInt64 => ::Atspi::Accessible
 		getter accessible_by_class_nn_by_window_id = {} of UInt64 => Hash(String, ::Atspi::Accessible)
+	end
+
+	class CmdPerformance
+		property count : Int32
+		property total : Time::Span
+		def initialize(@count = 0, @total = 0.nanoseconds) end
 	end
 
 	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,
@@ -63,6 +70,7 @@ module Run
 		@unpause_channel = Channel(Nil).new
 		getter paused = false
 		getter loop_stack = [] of Cmd::ControlFlow::Loop
+		property performance_by_cmd = {} of String => CmdPerformance
 		def initialize(@runner, start, @priority, @settings)
 			@stack << start
 		end
@@ -108,9 +116,17 @@ module Run
 			{% if ! flag?(:release) %}
 				puts "[debug] run: #{cmd.class.name} #{parsed_args.to_s}"
 			{% end %}
-
 			begin
+				start = Time.monotonic
 				result = cmd.run(self, parsed_args)
+				cmd_execution_time = Time.monotonic - start
+				if @settings.ahk_x11_track_performance
+					if ! @performance_by_cmd[cmd.class.name]?
+						@performance_by_cmd[cmd.class.name] = CmdPerformance.new
+					end
+					@performance_by_cmd[cmd.class.name].count += 1
+					@performance_by_cmd[cmd.class.name].total += cmd_execution_time
+				end
 			rescue e : RuntimeException
 				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
 				@runner.display.gui.msgbox msg
