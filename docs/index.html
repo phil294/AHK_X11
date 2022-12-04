@@ -569,7 +569,7 @@
                 <a href="#IfInString.htm">IfInString/IfNotInString</a>
               </li>
               <li>
-                <a class="tbd" href="#IfIn.htm">If var [not] in/contains MatchList</a>
+                <a href="#IfIn.htm">If var [not] in/contains MatchList</a>
               </li>
               <li>
                 <a class="tbd" href="#IfIs.htm">If var is [not] type</a>
@@ -2287,7 +2287,7 @@ else
                 <td height="16" class="calibre4">Checks whether a <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variable's</a> contents are numerically or alphabetically between two values (inclusive).</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#IfIn.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">If var [not] in/contains MatchList </a></td>
+                <td height="16" class="calibre4"><a href="#IfIn.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">If var [not] in/contains MatchList </a></td>
                 <td height="16" class="calibre4">Checks whether a <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variable's</a> contents match one of the items in a list.</td>
               </tr>
               <tr class="calibre3">
@@ -11715,10 +11715,10 @@ else
 	Sleep, 1</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="IfIn.htm" href="#IfIn.htm">#</a> <h2 class="calibre17">If var [not] in value1,value2,... </h2> [v1.0.18+]<br class="calibre12" />
-          <span class="calibre17">If var [not] contains value1,value2,... </span> [v1.0.19+]
+          <span class="calibre17">If var [not] contains value1,value2,... </span>
           <hr size="2" class="calibre24" />
           <p class="calibre8">Checks whether a <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variable's</a> contents match one of the items in a list.</p>
           <table cellspacing="5" width="100%" class="calibre28">
@@ -11745,7 +11745,7 @@ else
                   <p class="calibre8">A comma-separated list of strings, each of which will be compared to the contents of <em class="calibre21">Var</em> for a match. <strong class="calibre14">Any spaces or tabs around the delimiting commas are significant</strong>, meaning that they are part of the match string. For example, if <em class="calibre21">MatchList</em> is "ABC , XYZ", <em class="calibre21">Var</em> must contain either "ABC " (trailing space) or " XYZ" (leading space) to cause a match.</p>
                   <p class="calibre8">Two consecutive commas results in a single literal comma. For example, the following would produce a single literal comma at the end of string1: "string1,,,string2". Similarly, the following list contains only a single item with a literal comma inside it: "single,,item". To include a blank item in the list, make the first character a comma as in this example: ,string1,string2 (when using the "contains" operator, a blank item will always result in a match since the empty string is found in all strings).</p>
                   <p class="calibre8">Because the items in <em class="calibre21">MatchList</em> are not treated as individual parameters, the list can be contained entirely within a variable. In fact, all or part of it must be contained in a variable if its length exceeds 16383 since that is the maximum length of any script line. For example, <em class="calibre21">MatchList</em> might consist of %List1%,%List2%,%List3% -- where each of the sublists contains a large list of match phrases.</p>
-                  <p class="calibre8">Any single item in the list that is longer than 16384 characters will have those extra characters treated as a new list item. Thus, it is usually best to avoid including such items.</p>
+                  <p class="calibre8 tbd">Any single item in the list that is longer than 16384 characters will have those extra characters treated as a new list item. Thus, it is usually best to avoid including such items.</p>
                 </td>
               </tr>
             </tbody>

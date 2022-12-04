@@ -93,7 +93,10 @@ module Build
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
-				cmd_class = case split[1]?
+				var_name = split[0]
+				operator = split[1]? || ""
+				arg2 = split[2]? || ""
+				cmd_class = case operator
 				when "=" then Cmd::ControlFlow::IfEqual
 				when "<>", "!=" then Cmd::ControlFlow::IfNotEqual
 				when ">" then Cmd::ControlFlow::IfGreater
@@ -101,14 +104,23 @@ module Build
 				when "<" then Cmd::ControlFlow::IfLess
 				when "<=" then Cmd::ControlFlow::IfLessOrEqual
 				when "between" then Cmd::ControlFlow::IfBetween
+				when "in" then Cmd::ControlFlow::IfIn
+				when "contains" then Cmd::ControlFlow::IfContains
 				when "not"
-					if (split[2]? || "").starts_with?("between ")
-						split[2] = split[2][8..]
+					case
+					when arg2.starts_with?("between ")
+						arg2 = arg2[8..]
 						Cmd::ControlFlow::IfNotBetween
+					when arg2.starts_with?("in ")
+						arg2 = arg2[3..]
+						Cmd::ControlFlow::IfNotIn
+					when arg2.starts_with?("contains ")
+						arg2 = arg2[9..]
+						Cmd::ControlFlow::IfNotContains
 					end
 				end
-				raise "If condition '#{split[1]?}' is unknown" if ! cmd_class
-				csv_args = [split[0], split[2]? || ""]
+				raise "If condition '#{operator}' is unknown" if ! cmd_class
+				csv_args = [var_name, arg2]
 				@cmds << cmd_class.new line_no, csv_args
 			elsif line_content.includes?("::")
 				add_line "Return", line_no if @hotstrings.empty? && @hotkeys.empty?
