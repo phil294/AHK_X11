@@ -30,7 +30,7 @@ module Build
 					add_line line, line_no
 				rescue e
 					{% if ! flag?(:release) %}
-						puts "[debug]", e.inspect_with_backtrace
+						e.inspect_with_backtrace(STDERR)
 					{% end %}
 					raise SyntaxException.new "Syntax Error in line #{line_no+1}:\n#{e.message}.\n\nLine content was: '#{line}'."
 				end

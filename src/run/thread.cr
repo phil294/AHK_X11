@@ -129,8 +129,11 @@ module Run
 				end
 			rescue e : RuntimeException
 				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
+				STDERR.puts e.to_s
+				{% if ! flag?(:release) %}
+					e.inspect_with_backtrace(STDERR)
+				{% end %}
 				@runner.display.gui.msgbox msg
-				STDERR.puts msg
 				@done = true
 				@exit_code = 2 # TODO: ???
 				return @exit_code
