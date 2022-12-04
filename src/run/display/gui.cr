@@ -307,8 +307,8 @@ module Run
 		def gui_destroy(gui_id)
 			gui = @guis[gui_id]?
 			return if ! gui
-			act { gui.window.destroy }
 			@guis.delete(gui_id)
+			act { gui.window.destroy }
 		end
 		@tooltips = {} of Int32 => Gtk::Window
 		# Yields (and if not yet exists, creates) the tooltip referring to *tooltip_id*
@@ -333,8 +333,10 @@ module Run
 			end
 		end
 		def destroy_tooltip(tooltip_id)
-			act { @tooltips[tooltip_id].destroy }
+			tooltip = @tooltips[tooltip_id]?
+			return if ! tooltip
 			@tooltips.delete tooltip_id
+			act { tooltip.destroy }
 		end
 		def parse_rgba(v)
 			if v.to_i?(16)
