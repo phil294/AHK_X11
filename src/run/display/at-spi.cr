@@ -229,11 +229,14 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		# `false`: Continue but skip the children of this accessible, so continue on
 		#     to the next sibling or parent;
 		# `nil`: Stop.
-		def each_descendant(thread, win, *, include_hidden = false, max_children = nil, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
+		def each_descendant(thread, win, *, include_hidden = false, max_children = nil, skip_non_interactive = false, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
 			accessible = find_window(thread, win, include_hidden)
 			return if ! accessible
 			iter_descendants(accessible, max_children, include_hidden) do |desc, path, class_NN, nest_level|
 				thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN] = desc
+				if skip_non_interactive
+					next true if ! interactive?(desc)
+				end
 				block.call desc, path, class_NN, nest_level
 			end
 		end
@@ -268,6 +271,14 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		end
 		private def selectable?(accessible)
 			accessible.state_set.contains(::Atspi::StateType::SELECTABLE)
+		end
+		private def interactive?(accessible)
+			begin
+				n_actions = accessible.n_actions
+			rescue
+				n_actions = 0
+			end
+			n_actions > 0 || selectable?(accessible)
 		end
 		# Selecting always happens somewhere in the parent chain
 		private def select!(accessible)
