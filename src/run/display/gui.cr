@@ -149,7 +149,7 @@ module Run
 			stream = Gio::MemoryInputStream.new_from_bytes(GLib::Bytes.new(bytes))
 			GdkPixbuf::Pixbuf.new_from_stream(stream, nil)
 		end
-		def initialize_menu(runner)
+		private def init_menu(runner)
 			act do
 				@tray = tray = Gtk::StatusIcon.new
 				@icon_pixbuf = @default_icon_pixbuf = bytes_to_pixbuf logo_blob
@@ -193,6 +193,14 @@ module Run
 					tray_menu.popup(nil, nil, nil, nil, button, time)
 				end
 			end
+		end
+		def init(runner)
+			act do
+				provider = Gtk::CssProvider.new
+				Gtk::StyleContext.add_provider_for_screen(Gdk::Display.default.not_nil!.default_screen, provider, Gtk::STYLE_PROVIDER_PRIORITY_APPLICATION)
+				provider.load_from_data(".no-padding {padding: 0;}")
+			end
+			init_menu(runner)
 		end
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!

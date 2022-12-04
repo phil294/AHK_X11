@@ -41,7 +41,7 @@ module Run
 			::Thread.new do
 				gui.run # separate worker thread because gtk loop is blocking
 			end
-			gui.initialize_menu(@runner)
+			gui.init(@runner)
 		end
 
 		@pause_counter = 0

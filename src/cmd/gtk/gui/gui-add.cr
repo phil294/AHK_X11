@@ -139,6 +139,9 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 
 			w = opt["w"]?.try &.[:n] || -1
 			h = opt["h"]?.try &.[:n] || -1
+			if w > -1 || h > -1
+				widget.style_context.add_class("no-padding")
+			end
 
 			widget.set_size_request w, h
 			gui.fixed.put widget, x, y
