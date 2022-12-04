@@ -289,6 +289,12 @@ module Run
 				block.call(gui_info.not_nil!)
 			end
 		end
+		def gui_destroy(gui_id)
+			gui = @guis[gui_id]?
+			return if ! gui
+			act { gui.window.destroy }
+			@guis.delete(gui_id)
+		end
 		@tooltips = {} of Int32 => Gtk::Window
 		# Yields (and if not yet exists, creates) the tooltip referring to *tooltip_id*
 		def tooltip(tooltip_id : Int32, &block : Gtk::Window -> _)
