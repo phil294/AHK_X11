@@ -21,7 +21,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			end
 		}
 		
-		thread.runner.display.gui.gui(thread, gui_id) do |gui|
+		thread.runner.display.gui.gui(thread, gui_id, no_wait: true) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
 			when "text"

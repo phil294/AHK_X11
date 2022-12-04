@@ -37,6 +37,13 @@ module Run
 			raise RuntimeException.new result.message, result.cause if result.is_a?(Exception)
 			result
 		end
+		# :ditto:
+		def act_no_wait(&block)
+			GLib.idle_add do
+				block.call
+				false
+			end
+		end
 
 		def clipboard(&block : Gtk::Clipboard -> _)
 			act do
@@ -269,9 +276,8 @@ module Run
 		# Yields (and if not yet exists, creates) the gui info referring to *gui_id*,
 		# including the `window`, and passes the block on to the GTK idle thread so
 		# you can run GTK code with it.
-		def gui(thread, gui_id, &block : GuiInfo -> _)
-			gui_info = @guis[gui_id]?
-			if ! gui_info
+		def gui(thread, gui_id, *, no_wait = false, &block : GuiInfo -> _)
+			if ! @guis[gui_id]?
 				act do
 					window = Gtk::Window.new title: @default_title, window_position: Gtk::WindowPosition::CENTER, icon: @icon_pixbuf, resizable: false
 					# , border_width: 20
@@ -289,12 +295,13 @@ module Run
 					# To support transparent background when invoked via WinSet:
 					# Appears to be impossible to set dynamically, so needed at win build time:
 					window.visual = window.screen.rgba_visual
-					gui_info = GuiInfo.new(window, fixed)
+					@guis[gui_id] = GuiInfo.new(window, fixed)
 				end
-				@guis[gui_id] = gui_info.not_nil!
 			end
-			act do
-				block.call(gui_info.not_nil!)
+			if no_wait
+				act_no_wait { block.call(@guis[gui_id]) }
+			else
+				act { block.call(@guis[gui_id]) }
 			end
 		end
 		def gui_destroy(gui_id)
