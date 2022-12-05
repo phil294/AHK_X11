@@ -260,6 +260,7 @@ module Run
 		private class GuiInfo
 			getter window : Gtk::Window
 			getter fixed : Gtk::Fixed
+			getter widgets = [] of Gtk::Widget
 			property last_widget : Gtk::Widget? = nil
 			property last_x = 0
 			property last_y = 0

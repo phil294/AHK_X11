@@ -149,6 +149,8 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			gui.last_x = x
 			gui.last_y = y
 			gui.last_widget = widget
+			# https://github.com/jhass/crystal-gobject/issues/105
+			gui.widgets << widget
 		end
 	end
 end
