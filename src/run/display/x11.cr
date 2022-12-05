@@ -201,12 +201,9 @@ module Run
 				end
 				record_fd = IO::FileDescriptor.new record.data_display.connection_number
 				loop do
-					loop do
-						break if @display.pending == 0
-						# Although events from next_event aren't used in this case, this queue apparently
-						# still must always be empty. If not, the hotkeys aren't even grabbed.
-						@display.next_event
-					end
+					# Although events from next_event aren't used in this case, this queue apparently
+					# still must always be empty. If not, the hotkeys aren't even grabbed.
+					flush_event_queue
 					record_fd.not_nil!.wait_readable
 					record.process_replies
 				end
@@ -219,6 +216,13 @@ module Run
 						handle_key_event(event)
 					end
 				end
+			end
+		end
+
+		private def flush_event_queue
+			loop do
+				break if @display.pending == 0
+				@display.next_event
 			end
 		end
 
@@ -255,17 +259,21 @@ module Run
 					@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
+			flush_event_queue
 		end
 		def ungrab_hotkey(hotkey)
 			hotkey.modifier_variants.each do |mod|
 				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
 			end
+			flush_event_queue
 		end
 		def grab_keyboard
 			@display.grab_keyboard(grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
+			flush_event_queue
 		end
 		def ungrab_keyboard
 			@display.ungrab_keyboard(time: ::X11::CurrentTime)
+			flush_event_queue
 		end
 	end
 end
