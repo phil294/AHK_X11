@@ -15483,6 +15483,8 @@ The window '#{window_name}' has no control children, according the AT-SPI inform
 - If you tried all of that and it still doesn't work, this program may not support control access at all. Please consider opening up an issue at github.com/phil294/ahk_x11 so we can investigate. Almost every program out there will work some way or another!
 - Programs built with Tk (rare) usually never work.
           </pre>
+          <hr/>
+          <p class="calibre8">Another thing to note: While all these accessibility-related commands usually perform reasonably fast, the *very first* usage of any such command will bootstrap the protocol. This can take a while, sometimes *multiple seconds*.</p>
         </div>
       </div>
 <div class="tbd">
