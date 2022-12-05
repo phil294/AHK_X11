@@ -12,7 +12,6 @@ module Run
 		getter adapter : DisplayAdapter
 		getter x_do : XDo
 		getter gui : Gui
-		getter at_spi : AtSpi
 		getter hotstrings : Hotstrings
 		getter hotkeys : Hotkeys
 		getter pressed_keys : PressedKeys
@@ -118,6 +117,30 @@ module Run
 		end
 		def unregister_key_listener(proc)
 			@key_listeners.reject! &.== proc
+		end
+
+		def at_spi
+			# AtSpi stuff can fail in various ways with null pointers, (rare) crashes, timeouts etc.
+			# so this is some kind of catch-all method which seems to work great
+			GC.disable
+			error = nil
+			5.times do |i|
+				begin
+					resp = yield @at_spi
+					GC.enable
+					return resp
+				rescue e : Run::RuntimeException
+					GC.enable
+					raise e
+				rescue e
+					e.inspect_with_backtrace(STDERR)
+					error = e
+					sleep 250.milliseconds
+					STDERR.puts "Retrying... (#{i})/5)"
+				end
+			end
+			GC.enable
+			raise error.not_nil!
 		end
 	end
 end

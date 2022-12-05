@@ -10,9 +10,9 @@ class Cmd::X11::Mouse::ControlGetText < Cmd::Base
 		args.delete_at(0)
 		args.delete_at(0)
 		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
-			acc = thread.runner.display.at_spi.find_descendant(thread, win, class_nn_or_text)
+			acc = thread.runner.display.at_spi &.find_descendant(thread, win, class_nn_or_text)
 			return "1" if ! acc
-			txt = thread.runner.display.at_spi.get_text(acc) || ""
+			txt = thread.runner.display.at_spi &.get_text(acc) || ""
 			thread.runner.set_user_var(out_var, txt)
 		end
 		"0"

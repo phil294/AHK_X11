@@ -17,7 +17,7 @@ class Cmd::X11::Window::WinGet < Cmd::Base
 				# only want interactive ones, and filtering out non-interactives with AHK code is
 				# either very hard or very slow, specially given our current line execution speed...
 				# But it does add a little bit of incompatibility with Windows
-				thread.runner.display.at_spi.each_descendant(thread, win, max_children: 1000, skip_non_interactive: true) do |_, _, class_NN|
+				thread.runner.display.at_spi &.each_descendant(thread, win, max_children: 1000, skip_non_interactive: true) do |_, _, class_NN|
 					ctrls << class_NN
 					true
 				end
