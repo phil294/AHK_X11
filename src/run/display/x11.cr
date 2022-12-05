@@ -11,6 +11,12 @@ module X11::C
 		{{
 			@type.constants # TODO: possible to declare this outside of the module?
 				.select { |c| c.stringify.starts_with?("XK_") } # && c.underlying-var-type.is_a?(Int32) < TODO: how to, so the bools are skipped? (and `|| ! sym.is_a?(Int32)` can be removed)
+				# Hash lookups are expensive, they take about 3 ms each here (!) but I'm not really sure
+				# we can do anything about it: NamedTuple would be much better for this use case as it's
+				# stack-allocated and tailored towards values which are known at runtime, but it's
+				# limited to 300 items only. I guess a solution would be a manually curated, reasonably
+				# ordered list (perhaps case statement)... I now opted for adding a cache below, which
+				# is definitely the fastest solution as the program runs over time (see _cache)
 				.reduce({} of String => Int32) do |acc, const_name|
 					key_name = const_name.stringify[3..]
 					key_name = key_name.downcase if key_name.size > 1
@@ -162,17 +168,27 @@ module Run
 			@display.keysym_to_keycode(sym)
 		end
 
+		# See comments inside `ahk_key_name_to_keysym_generic` for why this is necessary.
+		# Esp. for stuff like `Input` with many EndKeys parameter, this cache is quite
+		# useful, as it speed it up from 0.2s by factor 1,000
+		@@ahk_key_name_to_keysym_cache = {} of String => (Int32 | Bool)
+
 		def self.ahk_key_name_to_keysym(key_name)
 			return nil if key_name.empty?
-			lookup = ::X11::C.ahk_key_name_to_keysym_generic[key_name]? ||
-			::X11::C.ahk_key_name_to_keysym_custom[key_name]? || ::X11::C.ahk_key_name_to_keysym_generic[key_name.downcase]? ||
-			::X11::C.ahk_key_name_to_keysym_custom[key_name.downcase]?
-			return lookup if lookup
+			cached = @@ahk_key_name_to_keysym_cache[key_name]?
+			return cached if cached
+			lookup = ::X11::C.ahk_key_name_to_keysym_custom[key_name]? || ::X11::C.ahk_key_name_to_keysym_generic[key_name]? || ::X11::C.ahk_key_name_to_keysym_custom[key_name.downcase]? || ::X11::C.ahk_key_name_to_keysym_generic[key_name.downcase]?
+			if lookup
+				@@ahk_key_name_to_keysym_cache[key_name] = lookup
+				return lookup
+			end
 			char = key_name[0]
 			return nil if char >= 'A' && char < 'Z' || char >= 'a' && char <= 'z'
 			# This fallback may fail but it's very likely this is the correct match now.
 			# This is the normal path for special chars like . @ $ etc.
-			char.ord
+			ord = char.ord
+			@@ahk_key_name_to_keysym_cache[key_name] = ord
+			ord
 		end
 
 		# Makes sure the program doesn't exit when a Hotkey is not free for grabbing
