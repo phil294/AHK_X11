@@ -45,7 +45,7 @@ module Run
 				remove(hotkey)
 				active_state = hotkey.active if active_state.nil?
 			else
-				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{cmd_label}" if ! cmd_label
+				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{hotkey_label}" if ! cmd_label
 				hotkey = Hotkey.new(cmd.not_nil!, hotkey_label, priority: priority, escape_char: @runner.settings.escape_char)
 				@hotkeys << hotkey
 				active_state = true if active_state.nil?
