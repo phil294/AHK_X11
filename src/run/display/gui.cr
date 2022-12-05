@@ -308,8 +308,13 @@ module Run
 		def gui_destroy(gui_id)
 			gui = @guis[gui_id]?
 			return if ! gui
+			act do
+				gui.window.destroy
+				# https://github.com/jhass/crystal-gobject/issues/105#issuecomment-1338281572
+				gui.widgets.each &.destroy
+			end
+			GC.collect
 			@guis.delete(gui_id)
-			act { gui.window.destroy }
 		end
 		@tooltips = {} of Int32 => Gtk::Window
 		# Yields (and if not yet exists, creates) the tooltip referring to *tooltip_id*
@@ -336,8 +341,9 @@ module Run
 		def destroy_tooltip(tooltip_id)
 			tooltip = @tooltips[tooltip_id]?
 			return if ! tooltip
-			@tooltips.delete tooltip_id
 			act { tooltip.destroy }
+			GC.collect
+			@tooltips.delete tooltip_id
 		end
 		def parse_rgba(v)
 			if v.to_i?(16)

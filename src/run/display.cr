@@ -128,9 +128,11 @@ module Run
 				begin
 					resp = yield @at_spi
 					GC.enable
+					GC.collect
 					return resp
 				rescue e : Run::RuntimeException
 					GC.enable
+					GC.collect
 					raise e
 				rescue e
 					e.inspect_with_backtrace(STDERR)
@@ -140,6 +142,7 @@ module Run
 				end
 			end
 			GC.enable
+			GC.collect
 			raise error.not_nil!
 		end
 	end
