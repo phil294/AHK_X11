@@ -13,9 +13,13 @@ class Cmd::X11::Mouse::ControlGetPos < Cmd::Base
 			args.delete_at(0)
 		end
 		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
-			acc = thread.runner.display.at_spi &.find_descendant(thread, win, class_nn_or_text)
-			return if ! acc
-			ext = acc.extents(::Atspi::CoordType::WINDOW)
+			ext = thread.runner.display.at_spi do |at_spi|
+				acc = at_spi.find_descendant(thread, win, class_nn_or_text)
+				if acc
+					acc.extents(::Atspi::CoordType::WINDOW)
+				end
+			end
+			return if ! ext
 			thread.runner.set_user_var(out_x, ext.x.to_s) if out_x && ! out_x.empty?
 			thread.runner.set_user_var(out_y, ext.y.to_s) if out_y && ! out_y.empty?
 			thread.runner.set_user_var(out_w, ext.width.to_s) if out_w && ! out_w.empty?
