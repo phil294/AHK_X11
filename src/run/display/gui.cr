@@ -24,6 +24,7 @@ module Run
 		def act(&block : -> T) forall T
 			channel = Channel(T | Exception).new
 			GLib.idle_add do
+				GC.collect
 				begin
 					result = block.call
 				rescue e
@@ -31,6 +32,7 @@ module Run
 					next false
 				end
 				channel.send(result)
+				GC.collect
 				false
 			end
 			result = channel.receive
@@ -40,7 +42,9 @@ module Run
 		# :ditto:
 		def act_no_wait(&block)
 			GLib.idle_add do
+				GC.collect
 				block.call
+				GC.collect
 				false
 			end
 		end
@@ -315,6 +319,7 @@ module Run
 			end
 			GC.collect
 			@guis.delete(gui_id)
+			GC.collect
 		end
 		@tooltips = {} of Int32 => Gtk::Window
 		# Yields (and if not yet exists, creates) the tooltip referring to *tooltip_id*
@@ -344,6 +349,7 @@ module Run
 			act { tooltip.destroy }
 			GC.collect
 			@tooltips.delete tooltip_id
+			GC.collect
 		end
 		def parse_rgba(v)
 			if v.to_i?(16)
