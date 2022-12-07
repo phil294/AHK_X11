@@ -11,9 +11,9 @@ class Cmd::X11::Mouse::ControlGetText < Cmd::Base
 		args.delete_at(0)
 		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
 			txt = thread.runner.display.at_spi do |at_spi|
-				acc = at_spi.find_descendant(thread, win, class_nn_or_text)
-				if acc
-					at_spi.get_text(acc) || ""
+				desc, _, _ = at_spi.find_descendant(thread, win, class_nn_or_text)
+				if desc
+					at_spi.get_text(desc) || ""
 				end
 			end
 			return "1" if ! txt

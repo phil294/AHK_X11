@@ -27,8 +27,8 @@ module Run
 			init
 			wid = win.window
 			thread.cache.accessible_by_class_nn_by_window_id[wid] ||= {} of String => ::Atspi::Accessible
-			frame = thread.cache.top_level_accessible_by_window_id[wid]?
-			return frame if frame
+			cached = thread.cache.top_level_accessible_by_window_id[wid]?
+			return cached if cached
 			pid = win.pid
 			window_name = win.name
 			app = each_app do |app|
@@ -51,8 +51,21 @@ module Run
 				end
 			end
 			if frame
-				thread.cache.top_level_accessible_by_window_id[wid] = frame
-				return frame
+				# All accessible positions can be faulty (i.e., not match the actual coordinate in the window)
+				# in some applications, most prominently Firefox/Thunderbird. Here, even the top level frame
+				# has a small offset (when it should really be 0) which is probably equal to the window
+				# decoration bar/borders. This offset problem cascades down to all its children. Thus,
+				# it is necessary to remember this offset and always return it, in case a calling function
+				# wants to determine an accessible's position (ControlGetPos). It could also calculate the
+				# offset dynamically when needed, but out of performance reasons (looping hundreds of times
+				# over ControlGetPos), this should be cached.
+				y_offset = frame.extents(::Atspi::CoordType::WINDOW).y
+				y_offset = 0 if y_offset < 0 || y_offset > 50
+				x_offset = frame.extents(::Atspi::CoordType::WINDOW).x
+				x_offset = 0 if x_offset < 0 || x_offset > 20
+				ret = {frame: frame, y_offset: y_offset, x_offset: x_offset}
+				thread.cache.top_level_accessible_by_window_id[wid] = ret
+				return ret
 			end
 			raise Run::RuntimeException.new "Could not determine Control Info for window '#{window_name}'!
 
@@ -71,15 +84,17 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 - According to the internet, these following environment variables may also help: GNOME_ACCESSIBILITY=1, QT_ACCESSIBILITY=1, GTK_MODULES=gail:atk-bridge and QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1. This is probably only relevant for outdated programs too, if ever.
 - If you tried all of that and it still doesn't work, this program may not support control access at all. Please consider opening up an issue at github.com/phil294/ahk_x11 so we can investigate. Almost every program out there will work some way or another!
 - Programs built with Tk (rare) usually never work."
-			return nil
 		end
 		# Finds the first match for *text_or_class_NN* inside *win* or `nil` if
 		# no match was found.
 		def find_descendant(thread, win, text_or_class_NN, include_hidden = false)
 			descendant : ::Atspi::Accessible? = nil
 
-			accessible = find_window(thread, win, include_hidden)
-			return nil if ! accessible
+			top_level = find_window(thread, win, include_hidden)
+			accessible = top_level[:frame]
+			y_offset = top_level[:y_offset]
+			x_offset = top_level[:x_offset]
+			return nil, nil, nil, nil if ! accessible
 
 			class_NN_role, class_NN_path = from_class_NN(text_or_class_NN)
 			if class_NN_role
@@ -87,7 +102,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 				# This is 99% a class_NN. These are essentially control paths so we can try to
 				# get the control without searching.
 				descendant = thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN]?
-				return descendant if descendant
+				return descendant, accessible, x_offset, y_offset if descendant
 				k = accessible
 				path_valid = class_NN_path.each do |i|
 					break false if i > k.child_count - 1
@@ -98,12 +113,12 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 				end
 				if descendant
 					thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN] = descendant.not_nil!
-					return descendant
+					return descendant, accessible, x_offset, y_offset
 				else
 					# Also stop here: Don't support actual class_NN-like text matches (very unlikely)
 					# at the expense of running slow text match logic every time a class_NN could
 					# not be found (moderately likely).
-					return descendant
+					return descendant, accessible, x_offset, y_offset
 				end
 			end
 
@@ -142,18 +157,18 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 				end
 				is_match ? nil : true
 			end
-			descendant
+			return descendant, accessible, x_offset, y_offset
 		end
 		# Finds the most specific accessible that contains the screen-wide coordinate. and combine both
 		# Cannot use relative coords because they are usually baloney in atspi.
 		def find_descendant(thread, win, *, x, y, include_hidden = false)
-			accessible = find_window(thread, win, include_hidden)
-			return nil, nil if ! accessible
+			top_level = find_window(thread, win, include_hidden)
+			return nil, nil, nil, nil, nil if ! top_level[:frame]?
 			# Fast; most of the time, it returns the accurate deepest child, but sometimes
 			# it just returns the first child even though that one has many descendants itself
 			# e.g. xfce4-appfinder
-			top_match = accessible.accessible_at_point(x, y, ::Atspi::CoordType::SCREEN)
-			return nil, nil if ! top_match
+			top_match = top_level[:frame].accessible_at_point(x, y, ::Atspi::CoordType::SCREEN)
+			return nil, nil, nil, nil, nil if ! top_match
 			# If we went the completely manual way, class_NN would already be known to us,
 			# but the shortcut made this impossible, so we now need to reverse look it up (up to now)
 			# because this is custom logic and not provided by atspi.
@@ -165,7 +180,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			match_nest_level = -1
 			# ...that's why we need to check for more children and go the manual way too.
 			# If the previous shortcut weren't available, we'd have to apply this to
-			# `accessible` directly, but this way, it is usually very fast.
+			# top level directly, but this way, it is usually very fast.
 			# This is in contrast to find-by-text (see comment inside find_descendant above)
 			# where manual seems to be the only way.
 			iter_descendants(match, nil, false) do |acc, path, class_NN, nest_level|
@@ -200,7 +215,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			{% if ! flag?(:release) %}
 				puts "[debug] find_descendant name:#{match.name}, role:#{match.role}, classNN:#{match_class_NN}, text:#{match ? get_text(match) : ""}, actions:#{get_actions(match)[1]}, selectable:#{selectable?(match)}. top_match_path:#{top_match_path}, match_path:#{match_path}, top_match role:#{top_match.role}, top_match name:#{top_match.name}"
 			{% end %}
-			return match, match_class_NN
+			return match, match_class_NN, top_level[:frame], top_level[:x_offset], top_level[:y_offset]
 		end
 		def each_app
 			init
@@ -229,15 +244,16 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		# `false`: Continue but skip the children of this accessible, so continue on
 		#     to the next sibling or parent;
 		# `nil`: Stop.
-		def each_descendant(thread, win, *, include_hidden = false, max_children = nil, skip_non_interactive = false, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
-			accessible = find_window(thread, win, include_hidden)
+		def each_descendant(thread, win, *, include_hidden = false, max_children = nil, skip_non_interactive = false, &block : ::Atspi::Accessible, Array(Int32), String, Int32, ::Atspi::Accessible, Int32, Int32 -> Bool?)
+			top_level = find_window(thread, win, include_hidden)
+			accessible = top_level[:frame]
 			return if ! accessible
 			iter_descendants(accessible, max_children, include_hidden) do |desc, path, class_NN, nest_level|
 				thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN] = desc
 				if skip_non_interactive
 					next true if ! interactive?(desc)
 				end
-				block.call desc, path, class_NN, nest_level
+				block.call desc, path, class_NN, nest_level, accessible, top_level[:x_offset], top_level[:y_offset]
 			end
 		end
 		private def iter_descendants(accessible, max_children, include_hidden, nest_level = 0, path = [] of Int32, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
@@ -264,10 +280,14 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 		end
 		# checks if the element is both visible and showing. Does not mean that the tl window
 		# itself isn't hidden behind another window though.
-		# TODO: Not guaranteed to be accurate: xfce4-appfinder just scrambles coordinates instead.
 		private def hidden?(accessible)
 			state_set = accessible.state_set
 			! state_set.contains(::Atspi::StateType::SHOWING) || ! state_set.contains(::Atspi::StateType::VISIBLE)
+			# return true if ! state_set.contains(::Atspi::StateType::SHOWING) || ! state_set.contains(::Atspi::StateType::VISIBLE)
+			# showing/visible is not guaranteed to be accurate in some apps:
+			# gtk scrolled list like xfce4-appfinder just scrambles coordinates instead.
+			# extents = desc.extents(::Atspi::CoordType::SCREEN)
+			# extents.x < 0 || extents.y  0
 		end
 		private def selectable?(accessible)
 			accessible.state_set.contains(::Atspi::StateType::SELECTABLE)

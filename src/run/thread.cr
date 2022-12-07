@@ -23,7 +23,7 @@ module Run
 
 	# see Thread.cache
 	private struct ThreadCache
-		getter top_level_accessible_by_window_id = {} of UInt64 => ::Atspi::Accessible
+		getter top_level_accessible_by_window_id = {} of UInt64 => NamedTuple(frame: ::Atspi::Accessible, x_offset: Int32, y_offset: Int32)
 		getter accessible_by_class_nn_by_window_id = {} of UInt64 => Hash(String, ::Atspi::Accessible)
 	end
 
