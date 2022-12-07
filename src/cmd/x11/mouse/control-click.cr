@@ -14,10 +14,10 @@ class Cmd::X11::Mouse::ControlClick < Cmd::Base
 
 		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
 			success = thread.runner.display.at_spi do |at_spi|
-				desc, _, _ = at_spi.find_descendant(thread, win, class_nn_or_text)
-				if desc
+				acc = at_spi.find_descendant(thread, win, class_nn_or_text)
+				if acc
 					count.times do
-						s = at_spi.click(desc)
+						s = at_spi.click(acc)
 						return false if ! s
 					end
 					true

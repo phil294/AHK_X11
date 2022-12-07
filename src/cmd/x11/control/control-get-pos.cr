@@ -13,18 +13,17 @@ class Cmd::X11::Mouse::ControlGetPos < Cmd::Base
 			args.delete_at(0)
 		end
 		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
-			ext, x_offset, y_offset = thread.runner.display.at_spi do |at_spi|
-				desc, frame, x_offs, y_offs = at_spi.find_descendant(thread, win, class_nn_or_text)
-				if desc
-					break desc.extents(::Atspi::CoordType::WINDOW), x_offs, y_offs
+			ext = thread.runner.display.at_spi do |at_spi|
+				acc = at_spi.find_descendant(thread, win, class_nn_or_text)
+				if acc
+					at_spi.get_pos(thread, win, acc)
 				end
-				next nil, nil, nil
 			end
-			return if ! ext || ! x_offset || ! y_offset
-			thread.runner.set_user_var(out_x, (ext.x - x_offset).to_s) if out_x && ! out_x.empty?
-			thread.runner.set_user_var(out_y, (ext.y - y_offset).to_s) if out_y && ! out_y.empty?
-			thread.runner.set_user_var(out_w, ext.width.to_s) if out_w && ! out_w.empty?
-			thread.runner.set_user_var(out_h, ext.height.to_s) if out_h && ! out_h.empty?
+			return if ! ext
+			thread.runner.set_user_var(out_x, ext[0].to_s) if out_x && ! out_x.empty?
+			thread.runner.set_user_var(out_y, ext[1].to_s) if out_y && ! out_y.empty?
+			thread.runner.set_user_var(out_w, ext[2].to_s) if out_w && ! out_w.empty?
+			thread.runner.set_user_var(out_h, ext[3].to_s) if out_h && ! out_h.empty?
 		end
 	end
 end

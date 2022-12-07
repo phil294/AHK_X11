@@ -23,7 +23,7 @@ module Run
 
 	# see Thread.cache
 	private struct ThreadCache
-		getter top_level_accessible_by_window_id = {} of UInt64 => NamedTuple(frame: ::Atspi::Accessible, x_offset: Int32, y_offset: Int32)
+		getter top_level_accessible_by_window_id = {} of UInt64 => ::Atspi::Accessible
 		getter accessible_by_class_nn_by_window_id = {} of UInt64 => Hash(String, ::Atspi::Accessible)
 	end
 
@@ -54,6 +54,14 @@ module Run
 		# Caching like this is only a last resort and should be avoided.
 		# TODO: Invalidate all every 500ms or so, maybe by exposing/wrapping `get` and `set`,
 		# because threads can also be long-lived with large loops and sleeps.
+		# Best would be an intelligent cache which is cleared whenever thread changes,
+		# a pseudo-async (KeyWait), waiting (Sleep) or changing (send,click,activate,...) command
+		# happens, or X11 reports an input event, and otherwise keeps its state, and
+		# perhaps *also* every 500ms.
+		# In that case, it would be very unlikely for the cache contents to become invalid, and we
+		# could also cache more common and more frequently changing properties such as
+		# active window/pos, mouse pos, etc. Right now this would be pre-optimization as
+		# barely any notable speed could be gained from this, so... not yet
 		getter cache = ThreadCache.new
 		# These thread-specific vars are only changed by the program and also exposed
 		# to the user. Also see `settings`.
