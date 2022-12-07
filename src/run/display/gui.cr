@@ -23,8 +23,8 @@ module Run
 		# so perfect for Gui modifications, new window requests etc.
 		def act(&block : -> T) forall T
 			channel = Channel(T | Exception).new
+			GC.collect
 			GLib.idle_add do
-				GC.collect
 				begin
 					result = block.call
 				rescue e
@@ -32,11 +32,11 @@ module Run
 					next false
 				end
 				channel.send(result)
-				GC.collect
 				false
 			end
 			result = channel.receive
 			raise RuntimeException.new result.message, result.cause if result.is_a?(Exception)
+			GC.collect
 			result
 		end
 		# :ditto:
@@ -264,7 +264,9 @@ module Run
 		private class GuiInfo
 			getter window : Gtk::Window
 			getter fixed : Gtk::Fixed
-			getter widgets = [] of Gtk::Widget
+			getter window_on_destroy : Proc(Nil) # GC
+			getter window_pointer : LibGtk::Window*
+			getter widgets = [] of Gtk::Widget # GC
 			property last_widget : Gtk::Widget? = nil
 			property last_x = 0
 			property last_y = 0
@@ -274,7 +276,7 @@ module Run
 			getter var_control_info = {} of String => ControlInfo
 			property window_color : Gdk::RGBA? = nil
 			property control_color : Gdk::RGBA? = nil
-			def initialize(@window, @fixed)
+			def initialize(@window, @fixed, @window_on_destroy, @window_pointer)
 			end
 		end
 		getter guis = {} of String => GuiInfo
@@ -288,7 +290,7 @@ module Run
 					# , border_width: 20
 					fixed = Gtk::Fixed.new
 					window.add fixed
-					window.connect "destroy" do
+					window_on_destroy = ->do
 						close_label_id = gui_id == "1" ? "" : gui_id
 						close_label = "#{close_label_id}GuiClose".downcase
 						begin thread.runner.add_thread close_label, 0
@@ -296,11 +298,13 @@ module Run
 							# TODO: ...
 							STDERR.puts e
 						end
+						nil
 					end
+					window.connect "destroy" { window_on_destroy.call }
 					# To support transparent background when invoked via WinSet:
 					# Appears to be impossible to set dynamically, so needed at win build time:
 					window.visual = window.screen.rgba_visual
-					@guis[gui_id] = GuiInfo.new(window, fixed)
+					@guis[gui_id] = GuiInfo.new(window, fixed, window_on_destroy, window.to_unsafe)
 				end
 			end
 			if no_wait
@@ -313,9 +317,12 @@ module Run
 			gui = @guis[gui_id]?
 			return if ! gui
 			act do
-				gui.window.destroy
 				# https://github.com/jhass/crystal-gobject/issues/105#issuecomment-1338281572
 				gui.widgets.each &.destroy
+			end
+			GC.collect
+			act do
+				gui.window.destroy
 			end
 			GC.collect
 			@guis.delete(gui_id)
