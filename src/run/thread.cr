@@ -23,7 +23,6 @@ module Run
 
 	# see Thread.cache
 	private struct ThreadCache
-		getter window_by_id = {} of UInt64 => XDo::Window
 		getter top_level_accessible_by_window_id = {} of UInt64 => ::Atspi::Accessible
 		getter accessible_by_class_nn_by_window_id = {} of UInt64 => Hash(String, ::Atspi::Accessible)
 	end

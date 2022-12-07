@@ -12,45 +12,30 @@ class Cmd::X11::Window::Util
 			raise Run::RuntimeException.new "expected window matching arguents as 'A' for active window cannot be inferred here" if ! a_is_active
 			win = thread.runner.display.x_do.active_window
 		else
-			wid = nil
 			if title.starts_with?("ahk_id ")
 				wid = title[7..].to_u64?
 				raise Run::RuntimeException.new "ahk_id must be a number" if ! wid
-				win = thread.cache.window_by_id[wid]?
-				if win
-					yield win
-					return true
-				end
-			end
+				win = XDo::Window.new(thread.runner.display.x_do.xdo_p, wid)
+    			win = nil if ! win.name
+			else
+				text = match_conditions[1]? || ""
+				exclude_title = match_conditions[2]? || ""
+				exclude_text = match_conditions[3]? || ""
+				current_desktop = thread.runner.display.x_do.desktop.to_i32
 
-			text = match_conditions[1]? || ""
-			exclude_title = match_conditions[2]? || ""
-			exclude_text = match_conditions[3]? || ""
-			current_desktop = thread.runner.display.x_do.desktop.to_i32
-
-			# broken: https://github.com/woodruffw/x_do.cr/issues/10
-			wins = thread.runner.display.x_do.search do
-				require_all
-				if ! wid
+				wins = thread.runner.display.x_do.search do
+					require_all
 					only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
 					# ^ link also explains the need for specifying desktop:
 					desktop current_desktop
-				end
-				if wid
-					window_name "." # "Can't structify an empty search"
-					# No way to search by ID currently, so get all and filter below
-				elsif title.starts_with?("ahk_class ")
-					# TODO: these/name etc should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
-					window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
-				else
-					window_name title # todo same as above / seems to be partial match but only at *start* of string
-				end
-			end.reject &.name.nil?
+					if title.starts_with?("ahk_class ")
+						# TODO: these/name etc should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
+						window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
+					else
+						window_name title # todo same as above / seems to be partial match but only at *start* of string
+					end
+				end.reject &.name.nil?
 
-			if wid
-				win = wins.find { |win| win.window == wid }
-				thread.cache.window_by_id[wid] = win if win
-			else
 				wins.select! do |win|
 					if ! exclude_title.empty?
 						return false if win.name.not_nil!.includes? exclude_title 
