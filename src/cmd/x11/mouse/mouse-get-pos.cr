@@ -4,12 +4,8 @@ class Cmd::X11::Mouse::MouseGetPos < Cmd::Base
 	def run(thread, args)
 		x, y, _, window = thread.runner.display.x_do.mouse_location
 		if args[3]? && ! args[3].empty?
-			_, class_NN = thread.runner.display.at_spi &.find_descendant(thread, window, x: x, y: y)
-			if class_NN
-				thread.runner.set_user_var(args[3], class_NN)
-			else
-				thread.runner.set_user_var(args[3], "")
-			end
+			result = thread.runner.display.at_spi &.find_descendant(thread, window, x: x, y: y)
+			thread.runner.set_user_var(args[3], result && result[1] || "")
 		end
 		if thread.settings.coord_mode_mouse == ::Run::CoordMode::RELATIVE
 			x, y = Cmd::X11::Window::Util.coord_screen_to_relative(thread, x, y)

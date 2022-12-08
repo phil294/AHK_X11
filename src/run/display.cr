@@ -143,7 +143,7 @@ module Run
 			end
 			GC.enable
 			GC.collect
-			raise error.not_nil!
+			return nil
 		end
 	end
 end
