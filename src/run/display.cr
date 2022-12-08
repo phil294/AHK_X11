@@ -124,7 +124,7 @@ module Run
 			# so this is some kind of catch-all method which seems to work great
 			GC.disable
 			error = nil
-			5.times do |i|
+			3.times do |i|
 				begin
 					resp = yield @at_spi
 					GC.enable
@@ -137,8 +137,8 @@ module Run
 				rescue e
 					e.inspect_with_backtrace(STDERR)
 					error = e
-					STDERR.puts "Retrying... (#{i+1}/5)"
-					sleep 250.milliseconds
+					STDERR.puts "Retrying... (#{i+1}/3)"
+					sleep 50.milliseconds
 				end
 			end
 			GC.enable
