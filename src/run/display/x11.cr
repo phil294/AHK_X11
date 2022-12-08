@@ -235,11 +235,14 @@ module Run
 			end
 		end
 
+		@flush_event_queue_mutex = Mutex.new
 		private def flush_event_queue
+			@flush_event_queue_mutex.lock
 			loop do
 				break if @display.pending == 0
 				@display.next_event
 			end
+			@flush_event_queue_mutex.unlock
 		end
 
 		private def handle_record_event(record_data)
