@@ -259,7 +259,7 @@ The window '#{window_name} #{app ? " is recognized but has no control children, 
 			role = accessible.role
 			# https://docs.gtk.org/atspi2/enum.Role.html
 			# may not be complete yet
-			role == ::Atspi::Role::FRAME || role == ::Atspi::Role::WINDOW || role == ::Atspi::Role::DIALOG || role == ::Atspi::Role::FILE_CHOOSER
+			role == ::Atspi::Role::FRAME || role == ::Atspi::Role::WINDOW || role == ::Atspi::Role::DIALOG || role == ::Atspi::Role::FILE_CHOOSER || role == ::Atspi::Role::ALERT
 		end
 		# checks if the element is both visible and showing. Does not mean that the tl window
 		# itself isn't hidden behind another window though.
