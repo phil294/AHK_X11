@@ -139,6 +139,9 @@ module Run
 		@record : ::Xtst::RecordExtension?
 		getter display : ::X11::Display
 		getter root_win : ::X11::Window
+		# Multiple threads can access this X11 instance, but to avoid dead locks surrounding
+		# the blocking event loop, every state altering method needs to be synchronized with mutex:
+		@mutex = Mutex.new
 
 		def initialize
 			set_error_handler
@@ -160,6 +163,7 @@ module Run
 		end
 
 		def finalize
+			@mutex.lock
 			@display.close
 			@record.not_nil!.close if @record
 		end
@@ -221,13 +225,17 @@ module Run
 					# still must always be empty. If not, the hotkeys aren't even grabbed.
 					flush_event_queue
 					record_fd.not_nil!.wait_readable
+					@mutex.lock
 					record.process_replies
+					@mutex.unlock
 				end
 			else
 				# Misses non-grabbed keys and mouse events. It could also be done this way
 				# (see old commits), but only unreliably and not worth the effort.
 				loop do
+					@mutex.lock
 					event = @display.next_event # Blocking!
+					@mutex.unlock
 					if event.is_a? ::X11::KeyEvent
 						handle_key_event(event)
 					end
@@ -235,14 +243,13 @@ module Run
 			end
 		end
 
-		@flush_event_queue_mutex = Mutex.new
 		private def flush_event_queue
-			@flush_event_queue_mutex.lock
+			@mutex.lock
 			loop do
 				break if @display.pending == 0
 				@display.next_event
 			end
-			@flush_event_queue_mutex.unlock
+			@mutex.unlock
 		end
 
 		private def handle_record_event(record_data)
@@ -271,6 +278,7 @@ module Run
 		end
 
 		def grab_hotkey(hotkey)
+			@mutex.lock
 			hotkey.modifier_variants.each do |mod|
 				if hotkey.keysym < 10
 					@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
@@ -278,20 +286,27 @@ module Run
 					@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
+			@mutex.unlock
 			flush_event_queue
 		end
 		def ungrab_hotkey(hotkey)
+			@mutex.lock
 			hotkey.modifier_variants.each do |mod|
 				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
 			end
+			@mutex.unlock
 			flush_event_queue
 		end
 		def grab_keyboard
+			@mutex.lock
 			@display.grab_keyboard(grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
+			@mutex.unlock
 			flush_event_queue
 		end
 		def ungrab_keyboard
+			@mutex.lock
 			@display.ungrab_keyboard(time: ::X11::CurrentTime)
+			@mutex.unlock
 			flush_event_queue
 		end
 	end

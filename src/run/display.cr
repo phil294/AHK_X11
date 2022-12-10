@@ -55,35 +55,33 @@ module Run
 		# pausing event handling can be very important in `Send` scenarios to prevent hotkeys
 		# from triggering themselves (or others).
 		# Please note that this `display.pause` has nothing to do with `thread.pause`.
-		def pause
-			@pause_mutex.lock
+		private def pause
 			@pause_counter += 1
 			if ! @is_paused
 				@is_paused = true
 				@pause_listeners.each &.call
 			end
-			@pause_mutex.unlock
-		end
-		@resume_listeners = [] of Proc(Nil)
-		def on_resume(&block)
-			@resume_listeners << block
 		end
 		# :ditto:
-		def resume
-			@pause_mutex.lock
+		private def resume
 			@pause_counter -= 1
 			if @pause_counter < 1
 				@pause_counter = 0
 				@is_paused = false
 				@resume_listeners.each &.call
 			end
-			@pause_mutex.unlock
 		end
 		# :ditto:
 		def pause(&block)
+			@pause_mutex.lock
 			pause
 			yield
 			resume
+			@pause_mutex.unlock
+		end
+		@resume_listeners = [] of Proc(Nil)
+		def on_resume(&block)
+			@resume_listeners << block
 		end
 		@suspend_listeners = [] of Proc(Nil)
 		def on_suspend(&block)
@@ -107,7 +105,9 @@ module Run
 		private def handle_event(key_event, keysym, char)
 			return if @is_paused
 			@key_listeners.each do |sub|
-				sub.call(key_event, keysym, char)
+				spawn same_thread: true do
+					sub.call(key_event, keysym, char)
+				end
 			end
 		end
 		@key_listeners = [] of Proc(::X11::KeyEvent, UInt64, Char?, Nil)
