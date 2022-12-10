@@ -10,16 +10,16 @@ class Cmd::Gtk::Gui::GuiShow < Cmd::Base
 			gui.window.show_all
 			w, h = gui.window.size
 			x, y = gui.window.position
-			thread.parse_word_options(options).each do |w, i|
+			thread.parse_word_options(options).each do |v, i|
 				n = i[:n]
-				case w
+				case v
 				when "w" then w = n if n
 				when "h" then h = n if n
 				when "x" then x = n if n
 				when "y" then y = n if n
 				end
 			end
-			gui.window.resize w, h
+			gui.window.set_default_size w, h
 			gui.window.move x, y
 		end
 	end
