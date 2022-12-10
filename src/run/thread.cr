@@ -38,6 +38,8 @@ module Run
 	# continue until their individual end. Threads never really run in parallel:
 	# There's always one "current thread"
 	class Thread
+		@@id_counter = 0
+		getter id : Int32
 		getter runner : Runner
 		# `Settings` are configuration properties that may or may not be modified by various
 		# `Cmd`s and affect the script's execution logic. Settings are **never**, however,
@@ -79,6 +81,8 @@ module Run
 		getter loop_stack = [] of Cmd::ControlFlow::Loop
 		property performance_by_cmd = {} of String => CmdPerformance
 		def initialize(@runner, start, @priority, @settings)
+			@@id_counter += 1
+			@id = @@id_counter
 			@stack << start
 		end
 
@@ -121,7 +125,7 @@ module Run
 			end
 
 			{% if ! flag?(:release) %}
-				puts "[debug] run: #{cmd.class.name} #{parsed_args.to_s}"
+				puts "[debug] run[#{@id}]: #{cmd.class.name} #{parsed_args.to_s}"
 			{% end %}
 			begin
 				start = Time.monotonic
@@ -157,7 +161,7 @@ module Run
 				raise "Result should be String for ErrorLevel command??" if ! result.is_a?(String)
 				set_thread_built_in_static_var("ErrorLevel", result)
 				{% if ! flag?(:release) %}
-					puts "[debug] ErrorLevel: #{result}"
+					puts "[debug] ErrorLevel[#{@id}]: #{result}"
 				{% end %}
 			end
 			# current stack el may have been altered by prev cmd.run(), in which case disregard the normal flow
