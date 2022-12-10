@@ -2,6 +2,7 @@ require "./thread"
 require "./timer"
 require "./display/hotkey"
 require "../cmd/base"
+require "system/user"
 
 module Run
 	enum SingleInstance
@@ -29,7 +30,7 @@ module Run
 	class Runner
 		# These are editable by the user
 		@user_vars = {} of String => String
-		# These are only changed by the program. See also `get_global_built_in_computed_var`
+		# These are only set by the program. See also `get_global_built_in_computed_var`
 		@built_in_static_vars = {
 			"a_space" => " ",
 			"a_tab" => "\t",
@@ -226,6 +227,7 @@ module Run
 		def set_global_built_in_static_var(var, value)
 			@built_in_static_vars[var.downcase] = value
 		end
+		# These are only set by the program. See also `built_in_static_vars`.
 		# `var` is case insensitive
 		private def get_global_built_in_computed_var(var)
 			case var.downcase
@@ -243,10 +245,13 @@ module Run
 			when "a_now" then Time.local.to_YYYYMMDDHH24MISS
 			when "a_nowutc" then Time.utc.to_YYYYMMDDHH24MISS
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
-			when "clipboard"
-				display.gui.clipboard &.wait_for_text
-			else
-				nil
+			when "clipboard" then display.gui.clipboard &.wait_for_text
+			when "a_screenwidth" then display.adapter.display.default_screen.width.to_s
+			when "a_screenheight" then display.adapter.display.default_screen.height.to_s
+			when "a_username" then Hacks.username
+			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
+			when "a_computername" then `uname -n`
+			else nil
 			end
 		end
 

@@ -3,6 +3,7 @@ require "./build/builder"
 require "./run/runner"
 require "./compiler"
 require "./logo"
+require "./hacks"
 
 fun main(argc : Int32, argv : UInt8**) : Int32
 	# It's also possible to run everything *without* `preview_mt` and spawn threads manually instead.
