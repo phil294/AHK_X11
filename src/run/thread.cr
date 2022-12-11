@@ -118,16 +118,16 @@ module Run
 			end
 			stack_i = @stack.size - 1
 
-			parsed_args = cmd.args.map do |arg|
-				Util::AhkString.parse_string(arg, @runner.settings.escape_char) do |var_name_lookup|
-					get_var(var_name_lookup)
-				end
-			end
-
-			{% if ! flag?(:release) %}
-				puts "[debug] run[#{@id}]: #{cmd.class.name} #{parsed_args.to_s}"
-			{% end %}
 			begin
+				parsed_args = cmd.args.map do |arg|
+					Util::AhkString.parse_string(arg, @runner.settings.escape_char) do |var_name_lookup|
+						get_var(var_name_lookup)
+					end
+				end
+				{% if ! flag?(:release) %}
+					puts "[debug] run[#{@id}]: #{cmd.class.name} #{parsed_args.to_s}"
+				{% end %}
+
 				start = Time.monotonic
 				result = cmd.run(self, parsed_args)
 				cmd_execution_time = Time.monotonic - start
