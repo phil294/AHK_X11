@@ -21,8 +21,7 @@ module Run
 		end
 
 		# Finds the first x11 window-like accessible corresponding to the window's pid and name
-		# or `nil` if no match was found.
-		# There is no match by window XID. (https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/21)
+		# or size or `nil` if no match was found.
 		private def find_window(thread, win, include_hidden = false)
 			init
 			wid = win.window
@@ -35,19 +34,35 @@ module Run
 				break app if app.process_id == pid
 			end
 			if app
-				frame = each_child(app, include_hidden: include_hidden) do |tl_child|
-					break tl_child if top_level_window?(tl_child) && tl_child.name == window_name
+				# There is no match by window XID (https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/21),
+				# so bland comparison by title or size is necessary:
+				tl_children = [] of ::Atspi::Accessible
+				each_child(app, include_hidden: include_hidden) do |tl_child|
+					tl_children << tl_child if top_level_window?(tl_child)
+				end
+				return nil if tl_children.empty?
+				name_matches = tl_children.select { |t| t.name == window_name }
+				if name_matches.size == 1
+					# False positives *are* possible here, e.g. if the popup has the same window title
+					# as another window of the same PID while the popup has no atspi title (e.g.
+					# the default in ahk guis, see below)
+					frame = name_matches.first
+				elsif name_matches.size > 1
+					tl_children = name_matches
 				end
 				if ! frame
-					frame = each_child(app, include_hidden: include_hidden) do |tl_child|
-						# Some popup windows have no title in atspi. Not sure who's responsibility
-						# it is to set those, so if it is a recurring bug or application-specific.
-						# TODO: In either case, we should compare win size next as that is a better
-						# match criteria than empty win title as below. Also do that when there are
-						# multiple name matches above. Win size matching is not easy though because
-						# libxdo returns geometry including borders and decoration but atspi does not...
-						break tl_child if top_level_window?(tl_child) && tl_child.name.empty?
-					end
+					# Some windows have no or missing title in atspi. Example: Gtk alerts, such as our
+					# MsgBox. So the window title match won't help here. Also, there can be multiple
+					# windows. So we fall back to approximating sizes. Cannot strictly compare sizes
+					# because these may differ depending on decorations...
+					win_w, win_h = win.size
+					window_size = (win_w + win_h).to_i
+					tl_children.sort! { |t1, t2|
+						t1_e = t1.extents(::Atspi::CoordType::SCREEN)
+						t2_e = t2.extents(::Atspi::CoordType::SCREEN)
+						(window_size - t1_e.width - t1_e.height).abs - (window_size - t2_e.width - t2_e.height).abs
+					}
+					frame = tl_children.first
 				end
 			end
 			if frame
