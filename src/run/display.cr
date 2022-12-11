@@ -138,7 +138,7 @@ module Run
 					e.inspect_with_backtrace(STDERR)
 					error = e
 					STDERR.puts "Retrying... (#{i+1}/3)"
-					sleep 50.milliseconds
+					sleep 300.milliseconds
 				end
 			end
 			GC.enable
