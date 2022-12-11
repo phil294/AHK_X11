@@ -11,7 +11,7 @@ AutoHotkey for Linux.
 
 This project is usable, but WORK IN PROGRESS.
 
-**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://discord.com/invite/autohotkey-115993023636176902)'s #ahk_x11 channel.
+**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://discord.com/invite/autohotkey-115993023636176902)'s #ahk_x11 channel (you need to give yourself the ahk_x11 role).
 
 **Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
 
@@ -52,7 +52,7 @@ Besides:
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
 
-<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
+<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>FULL DOCUMENTATION HERE</b></a>.</summary>
 
 ```diff
 DONE      ?% (90/219):
@@ -180,7 +180,7 @@ Besides, it should be noted that un[documented](https://phil294.github.io/AHK_X1
 
 These are the steps required to build this project locally, such as if you want to contribute to the project. Please open an issue if anything doesn't work.
 
-You don't need to follow this procedure to *use* AHK_X11, for that, please see Installation above.
+**YOU DO <EM>NOT</EM> NEED TO FOLLOW THESE STEPS AS AN AUTOHOTKEY DEVELOPER**. Do do that, download AHK_X11 - see **INSTALLATION** ABOVE. Then you can start scripting. The below steps are for DEVELOPING IN **CRYSTAL LANGUAGE**.
 
 1. Install development versions of prerequisites.
     1. Ubuntu 20.04 and up:
