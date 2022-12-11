@@ -14,7 +14,8 @@ class Cmd::Misc::PixelGetColor < Cmd::Base
 			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x, y, 1, 1)
 			if pixbuf
 				color = [] of UInt8
-				# limit/length is missing? need to cap manually
+				# internal pixels storage is complex https://docs.gtk.org/gdk-pixbuf/class.Pixbuf.html#image-data
+				# but here we just need the first three bytes
 				pixbuf.pixels[0].each_slice(3) do |slice|
 					color = slice
 					break

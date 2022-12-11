@@ -66,10 +66,10 @@ class Cmd::X11::Window::Util
 	end
 	def self.coord_relative_to_screen(thread, x, y)
 		loc = thread.runner.display.x_do.active_window.location
-		return x + loc[0], y + loc[1]
+		return x + loc[0].to_i, y + loc[1].to_i
 	end
 	def self.coord_screen_to_relative(thread, x, y)
 		loc = thread.runner.display.x_do.active_window.location
-		return x - loc[0], y - loc[1]
+		return x - loc[0].to_i, y - loc[1].to_i
 	end
 end
