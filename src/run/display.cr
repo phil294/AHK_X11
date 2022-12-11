@@ -19,7 +19,7 @@ module Run
 
 		def initialize(@runner)
 			@adapter = X11.new
-			@gui = Gui.new default_title: (@runner.get_global_var("A_ScriptName") || "")
+			@gui = Gui.new default_title: (@runner.get_global_var("a_scriptname") || "")
 			@at_spi = AtSpi.new
 			@x_do = XDo.new
 			@hotstrings = Hotstrings.new(@runner, @runner.settings.hotstring_end_chars)
