@@ -49,6 +49,7 @@ Clock:
 		Return
 	WinGetClass, win_class, ahk_id %win_id%
 	WinGetPos, win_x, win_y, win_w, win_h, ahk_id %win_id%
+	WinGetText, win_txt, ahk_id %win_id%
 
 	; Mouse
 	MouseGetPos, mouse_x_win, mouse_y_win
@@ -56,38 +57,29 @@ Clock:
 	MouseGetPos, mouse_x_screen, mouse_y_screen
 
 	; Ctrl
+	ctrl_nn =
+	ctrl_x =
+	ctrl_y =
+	ctrl_w =
+	ctrl_h =
+	ctrl_txt =
 	win_missing_atspi = 0
-	if win_id = %last_win_id%
-		if ctrl_nn = N/A
-			; we already know ctrls dont work here and a popup (error) has been shown to the user
-			win_missing_atspi = 1
-    last_win_id = %win_id%
-	if win_missing_atspi = 0
+	win_right = win_x
+	win_right += %win_w%
+	win_bottom = win_y
+	win_bottom += %win_h%
+	if mouse_x_win >= 0
+		if mouse_y_win >= 0
+			if mouse_x_win < %win_right%
+				if mouse_y_win < %win_bottom%
+					MouseGetPos, , , , ctrl_nn
+	if ctrl_nn <>
 	{
-		ctrl_nn =
-		ctrl_x =
-		ctrl_y =
-		ctrl_w =
-		ctrl_h =
-		ctrl_txt =
-		win_right = win_x
-		win_right += %win_w%
-		win_bottom = win_y
-		win_bottom += %win_h%
-		if mouse_x_win >= 0
-			if mouse_y_win >= 0
-				if mouse_x_win < %win_right%
-					if mouse_y_win < %win_bottom%
-					{
-						ctrl_nn = N/A
-						MouseGetPos, , , , ctrl_nn
-						if ctrl_nn <>
-						{
-							ControlGetPos, ctrl_x, ctrl_y, ctrl_w, ctrl_h, %ctrl_nn%, ahk_id %win_id%
-							ControlGetText, ctrl_txt, %ctrl_nn%, ahk_id %win_id%
-                            WinGetText, win_txt, ahk_id %win_id%
-						}
-					}
+		ControlGetPos, ctrl_x, ctrl_y, ctrl_w, ctrl_h, %ctrl_nn%, ahk_id %win_id%
+		ControlGetText, ctrl_txt, %ctrl_nn%, ahk_id %win_id%
+	} else {
+		if win_txt =
+			win_missing_atspi = 1
 	}
 
 	; Pixel
@@ -100,7 +92,10 @@ Clock:
 	; Update GUI
 	GuiControl, , gui_win, %win_title%`nahk_class %win_class%
 	GuiControl, , gui_mouse, Screen:`t`t%mouse_x_screen%, %mouse_y_screen% (less often used)`nColor:`t`t%pixel_color% (Red=%pixel_color_r% Green=%pixel_color_g% Blue=%pixel_color_b%)`nWindow:`t%mouse_x_win%, %mouse_y_win% (default)
-	GuiControl, , gui_control, ClassNN:`t%ctrl_nn%`n`tText:`t%ctrl_txt%`nPos:`t`tx: %ctrl_x%`ty: %ctrl_y%`tw: %ctrl_w%`th: %ctrl_h%
+	if win_missing_atspi = 1
+		GuiControl, , gui_control, ACCESSIBILITY SUPPORT MISSING! Please read the documentation section on accessibility for instructions: https://phil294.github.io/AHK_X11/#Accessibility.htm
+	else
+		GuiControl, , gui_control, ClassNN:`t%ctrl_nn%`n`tText:`t%ctrl_txt%`nPos:`t`tx: %ctrl_x%`ty: %ctrl_y%`tw: %ctrl_w%`th: %ctrl_h%
 	GuiControl, , gui_win_pos, x: %win_x%`ty: %win_y%`tw: %win_w%`th: %win_h%
 	GuiControl, , gui_visible_text, %win_txt%
 Return

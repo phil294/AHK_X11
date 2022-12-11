@@ -29,8 +29,8 @@ module Run
 			thread.cache.accessible_by_class_nn_by_window_id[wid] ||= {} of String => ::Atspi::Accessible
 			frame = thread.cache.top_level_accessible_by_window_id[wid]?
 			return frame if frame
-			pid = win.pid
 			window_name = win.name
+			pid = win.pid
 			app = each_app do |app|
 				break app if app.process_id == pid
 			end
@@ -54,23 +54,7 @@ module Run
 				thread.cache.top_level_accessible_by_window_id[wid] = frame
 				return frame
 			end
-			raise Run::RuntimeException.new "Could not determine Control Info for window '#{window_name}'!
-
-Some things may not work as expected. You can press OK and the script will continue, or read on below on how to fix this:
-
-The window '#{window_name} #{app ? " is recognized but has no control children, according the AT-SPI information it exposes" : " is not recognized by AT-SPI"}. Usually, this means one of the following:
-- You haven't enabled the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you need to reboot.
-- If the window is a Chromium-based browser such as Chrome or Brave or an Electron-based application such as VSCode, Slack, Spotify, Discord and many more (www.electronjs.org/apps), it needs to be launched with two tweaks:
-    1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer.
-    2. Add argument --force-renderer-accessibility. You can do so by editing the program's \"Desktop file\", or starting it from command line and passing it there.
-  Example for Chrome:
-    export ACCESSIBILITY_ENABLED=1
-    chrome --force-renderer-accessibility
-- If the window is a Java application, you need to install the ATK bridge: For Debian-based applications, this is libatk-wrapper-java. For Arch Linux based ones, it's java-atk-wrapper-openjdk8 (depending on the Java version)
-- In the rare case that the window is an exotic, old application built with Qt4, such as some programs that haven't been maintained since 2015, you need to install qt-at-spi.
-- According to the internet, these following environment variables may also help: GNOME_ACCESSIBILITY=1, QT_ACCESSIBILITY=1, GTK_MODULES=gail:atk-bridge and QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1. This is probably only relevant for outdated programs too, if ever.
-- If you tried all of that and it still doesn't work, this program may not support control access at all. Please consider opening up an issue at github.com/phil294/ahk_x11 so we can investigate. Almost every program out there will work some way or another!
-- Programs built with Tk (rare) usually never work."
+			nil
 		end
 		# Finds the first match for *text_or_class_NN* inside *win* or `nil` if
 		# no match was found.

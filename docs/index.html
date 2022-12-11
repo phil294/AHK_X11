@@ -14261,6 +14261,7 @@ IfWinExist, Untitled - Notepad
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="x11">This command relies on accessibility support. <a href="#Accessibility.htm">Please read this section</a> to avoid problems.</p>
           <p class="calibre8">The text retrieved is generally the same as what Window Spy shows for that window.</p>
           <p class="calibre8">Each text element ends with a <span class="rm">carriage return and</span> linefeed (<span class="rm">CR+</span>LF), which can be represented in the script as <span class="rm">`r</span>`n</p>
           <p class="calibre8 tbd">The amount of text retrieved is limited to a variable's maximum capacity (which can be changed via the <a href="#h_MaxMem.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxMem</a> directive). As a result, this command might use a large amount of RAM if the target window (e.g. an editor with a large document open) contains a large quantity of text. To avoid this, it might be possible to retrieve only portions of the window's text by using <a href="#ControlGetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlGetText</a> instead. However, a variable's memory can be freed after use by assigning it to nothing, i.e. OutputVar =</p>
@@ -15463,14 +15464,9 @@ else
           <a id="Accessibility.htm" href="#Accessibility.htm">#</a>
           <h2 class="calibre9"><span class="calibre23">Commands based on Accessibility</span></h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Some commands, such as ControlSend or the ExcludeText of window matching options, can only work if accessibility information (AT-SPI) is available. This is the only way to make them work. This means that <b>on the computer where the script is run</b>, 1. at-spi2 needs to be installed, 2. assistive technologies need to be enabled (distribution setting), 3. several applications such as Chrome need special configuration flags. You can verify if a window properly works with at-spi with Window Spy ("Focused Control"). To solve these problems at runtime, every time the respective command is run on a window where no at-spi integration could be detected, the prompt below is shown to the user. When you're using AHK_X11 for personal use, you may want to pre-empt some of these following steps, so you can also see it as a guide for your local setup:</p>
+          <p class="calibre8">Some commands, such as ControlSend or the ExcludeText of window matching options, can only work if accessibility information (AT-SPI) is available. This is the only way to make them work. This means that <b>on the computer where the script is run</b>, 1. at-spi2 needs to be installed, 2. assistive technologies need to be enabled (distribution setting), 3. several applications such as Chrome need special configuration flags. You can verify if a window properly works with at-spi with Window Spy ("Focused Control"). Most windows work, but these are the steps every user of your script may need to take:</p>
           <pre>
-Could not determine Control Info for window '#{window_name}'!
-
-Some things may not work as expected. You can press OK and the script will continue, or read on below on how to fix this:
-
-The window '#{window_name}' has no control children, according the AT-SPI information it exposes. Usually, this means one of the following:
-- You haven't enabled the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you need to reboot.
+- Enable the assistive technologies setting for your distribution. There's usually a single checkbox somewhere to be found to enable it. After enabling, you need to reboot.
 - If the window is a Chromium-based browser such as Chrome or Brave or an Electron-based application such as VSCode, Slack, Spotify, Discord and many more (www.electronjs.org/apps), it needs to be launched with two tweaks:
     1. Set environment variable ACCESSIBILITY_ENABLED to value 1. You can e.g. enable this globally by adding another line with content ACCESSIBILITY_ENABLED=1 into the file /etc/environment and then restarting your computer.
     2. Add argument --force-renderer-accessibility. You can do so by editing the program's \"Desktop file\", or starting it from command line and passing it there.
@@ -15481,7 +15477,7 @@ The window '#{window_name}' has no control children, according the AT-SPI inform
 - In the rare case that the window is an exotic, old application built with Qt4, such as some programs that haven't been maintained since 2015, you need to install qt-at-spi.
 - According to the internet, these following environment variables may also help: GNOME_ACCESSIBILITY=1, QT_ACCESSIBILITY=1, GTK_MODULES=gail:atk-bridge and QT_LINUX_ACCESSIBILITY_ALWAYS_ON=1. This is probably only relevant for outdated programs too, if ever.
 - If you tried all of that and it still doesn't work, this program may not support control access at all. Please consider opening up an issue at github.com/phil294/ahk_x11 so we can investigate. Almost every program out there will work some way or another!
-- Programs built with Tk (rare) usually never work.
+- Most games and programs built with Tk (rare) usually never work.
           </pre>
           <hr/>
           <p class="calibre8">Another thing to note: While all these accessibility-related commands usually perform reasonably fast, the *very first* usage of any such command will bootstrap the protocol. This can take a while, sometimes *multiple seconds*.</p>
