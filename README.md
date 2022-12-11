@@ -4,7 +4,7 @@ AutoHotkey for Linux.
 
 <div align="center">
 
-![MsgBox](popup.png)
+![MsgBox](assets/popup.png)
 
 `MsgBox, AHK_X11` (*)
 </div>
@@ -21,7 +21,7 @@ This project is usable, but WORK IN PROGRESS.
 
 [**Go to installation instructions**](#installation)
 
-[**DEMO VIDEO**](https://raw.githubusercontent.com/phil294/AHK_X11/master/demo.mp4): Installation, script creation, compilation
+[**DEMO VIDEO**](https://raw.githubusercontent.com/phil294/AHK_X11/master/assets/demo.mp4): Installation, script creation, compilation
 
 [AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux.
 
@@ -116,6 +116,12 @@ Also planned, even though it's not part of 1.0.24 spec:
 ```
 </details>
 
+## Showcase of scripts
+
+- [Vimium Everywhere](https://github.com/phil294/vimium-everywhere): Keyboard navigation for the whole desktop
+- [Activity monitor](https://github.com/phil294/activity-monitor): Demonstrates keyboard tracking, window, control listing and more
+- ...did you create something with AHK_X11 that could potentially be useful to others too? Suggestions for this list? Please open an issue or [write me a mail](mailto:github@waritschlager.de)!
+
 ## Installation
 
 Prerequisites:
@@ -133,7 +139,7 @@ There are different ways to use it.
 1. The graphical way, like on Windows: Running the program directly opens up the interactive installer.
     - Once installed, all `.ahk` files are associated with AHK_X11, so you can simply double click them.
     - Also adds the Compiler into `Open as...` Menus.
-    - Also adds Window Spy to your applications.
+    - Also adds Window Spy to your applications. It looks [something like this](./assets/WindowSpy.png).
 2. Command line: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
     - Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
     - When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`).
@@ -143,6 +149,10 @@ There are different ways to use it.
     - Hashbang supported if first line starts with `#!`
 
 ### Caveats
+
+#### Accessibility
+
+All commands or command options related to Controls (e.g. ControlClick or WinGetText) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
 
 #### Focus stealing prevention
 
