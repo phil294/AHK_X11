@@ -215,9 +215,36 @@ You don't need to follow this procedure to *use* AHK_X11, for that, please see I
 
 ## Performance
 
-Not yet explicitly tuned for performance, but by design and choice of technology, it should run reasonably fast. Most recent tests yielded 0.03 ms for parsing one instruction line (this happens once at startup). Execution speed even is at least x100 faster than that.
+AHK_X11 is an interpreted language, not a compiled one. This means that no compile time optimizations take place on your script code, apart from some validation and reference placements. Also, all variables are of type String. So you probably wouldn't want to use it for performance-critical applications. However, the tool itself is written in Crystal and thus compiled and optimized for speed, so everything should still be reasonably fast. The speed of some of the slower commands depends on either libxdo or X11 and it's not yet clear whether there is much room for improvement. Some tests run on a 3.5 GHz machine:
 
-TODO: speed measurements for `Send` and window operations
+Parsing a single line takes about 30 µs (this happens once at startup), and execution time depends on what a command does:
+- `x = 1`: 70 ns (0.00000007 s)
+- `FileRead, x, y.txt`: 10 µs (0.000010 s)
+- `WinGetTitle, A`: 87 µs (0.000087 s)
+- `WinActivate, title`: 60 ms (0.0060 s)
+- `Send, a`: 530 µs (0.00053 s)
+- `Clipboard = a`: 6 ms (0.006 s)
+- `SendRaw, a`: 9 ms (0.009 s) (??)
+- `WinGetText`: 0-3 s (!)
+
+You can run fine-grained performance tests with the following special hidden instruction:
+
+```AutoHotkey
+AHK_X11_track_performance_start
+Loop, 1000
+    Send, a
+AHK_X11_track_performance_stop
+```
+prints something like:
+```
+[{"send", count: 1000, total: 00:00:00.530032328>},
+ {"loop", count: 1001, total: 00:00:00.000206347>}]
+```
+
+More tips:
+- Some values are cached internally while the thread is running, so repeated commands may run faster
+- The first time an AtSpi-related command (Control*, WinGetText, ... see "Accessibility" section in the docs) runs, the interface needs to be initialized which can take some time (0-5s)
+- Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so typically e.g. the matching criteria `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`.
 
 ## Contributing
 
