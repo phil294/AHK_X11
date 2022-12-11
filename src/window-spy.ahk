@@ -18,6 +18,7 @@ Gui, Add, Text, x5 y525, All Text:
 Gui, Add, Edit, x5 y545 h45 w320 r3 vgui_all_text
 Gui, Add, Text, x5 y595 vgui_frozen, (Win+A to freeze display)
 Gui, Show,, Window Spy
+WinSet, AlwaysOnTop, ON, Window Spy
 
 SetTimer, Clock, 500
 
