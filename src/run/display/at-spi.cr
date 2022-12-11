@@ -299,14 +299,21 @@ module Run
 		end
 		def get_text(accessible)
 			text = begin
-				# TODO: textareas etc?
-				# TODO: only if has no children?
 				accessible.text_iface.text(0, -1)
 			rescue e
 				accessible.name
 			end
 			text = text.gsub('￼', "").strip()
 			text.empty? ? nil : text
+		end
+		def set_text(accessible, text)
+			iface = begin
+				accessible.editable_text_iface
+			rescue e
+				return false
+			end
+			iface.set_text_contents text
+			true
 		end
 		# returns an array of recursive text strings, no duplication present.
 		# only 1,000 descendant nodes are queried each to not kill performance completely

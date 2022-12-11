@@ -655,7 +655,7 @@
                     <a href="#ControlSend.htm">ControlSend/ControlSendRaw</a>
                   </li>
                   <li>
-                    <a class="tbd" href="#ControlSetText.htm">ControlSetText</a>
+                    <a href="#ControlSetText.htm">ControlSetText</a>
                   </li>
                   <li>
                     <a href="#Menu.htm">Menu</a>
@@ -2077,7 +2077,7 @@ else
                 <td height="16" class="calibre4">Sends simulated keystrokes to a window or control.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#ControlSetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlSetText</a></td>
+                <td height="16" class="calibre4"><a href="#ControlSetText.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlSetText</a></td>
                 <td height="16" class="calibre4">Changes the text of a control.</td>
               </tr>
               <tr class="calibre3">
@@ -12909,7 +12909,7 @@ WinActivate
 return</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="ControlSetText.htm" href="#ControlSetText.htm">#</a> <h2 class="calibre17">ControlSetText</h2>
           <hr size="2" class="calibre24" />
@@ -12927,7 +12927,7 @@ return</pre>
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Control</td>
-                <td width="85%" class="calibre4">Can be either ClassNN (the classname and instance number of the control) or the name/text of the control, both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. If this parameter is blank, the target window's topmost control will be used.</td>
+                <td width="85%" class="calibre4">Can be either ClassNN (the classname and instance number of the control (<span class="x11">recommended</span>)) or the name/text of the control (<span class="x11">can be slow</span>), both of which can be determined via Window Spy. When using name/text, the matching behavior is determined by <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>. <span class="tbd">If this parameter is blank, the target window's topmost control will be used.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">NewText</td>
@@ -12956,7 +12956,8 @@ return</pre>
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">To improve reliability, a delay is done automatically after every use of this command. That delay can be changed via <a href="#SetControlDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetControlDelay</a>.</p>
+          <p class="x11">This command relies on accessibility support. <a href="#Accessibility.htm">Please read this section</a> to avoid problems.</p>
+          <p class="calibre8 tbd">To improve reliability, a delay is done automatically after every use of this command. That delay can be changed via <a href="#SetControlDelay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetControlDelay</a>.</p>
           <p class="calibre8">Window titles and text are always case sensitive. Hidden windows are not detected unless <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> has been turned on.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
