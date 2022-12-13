@@ -74,6 +74,7 @@ module Run
 		# Finds the first match for *text_or_class_NN* inside *win* or `nil` if
 		# no match was found.
 		def find_descendant(thread, win, text_or_class_NN, include_hidden = false)
+			return nil if text_or_class_NN.empty?
 			descendant : ::Atspi::Accessible? = nil
 
 			accessible = find_window(thread, win, include_hidden)
