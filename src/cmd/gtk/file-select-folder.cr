@@ -7,7 +7,7 @@ class Cmd::Gtk::FileSelectFolder < Cmd::Base
 		root_dir = args[1]?
 		prompt = args[3]? || "Select Folder - " + thread.runner.get_global_var("a_scriptname").not_nil!
 		channel = Channel(::String).new
-		thread.runner.gui.act do
+		thread.runner.display.gui.act do
 			dialog = ::Gtk::FileChooserDialog.new title: prompt, action: ::Gtk::FileChooserAction::SELECT_FOLDER
 			dialog.add_button "Cancel", ::Gtk::ResponseType::CANCEL.value
 			dialog.add_button "Open", ::Gtk::ResponseType::OK.value

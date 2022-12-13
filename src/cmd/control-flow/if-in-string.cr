@@ -5,6 +5,6 @@ class Cmd::ControlFlow::IfInString < Cmd::Base
 	def self.conditional; true end
 	def run(thread, args)
 		var_name, search_string = args
-		thread.get_var(var_name).includes?(search_string)
+		thread.get_var(var_name).downcase.includes?(search_string.downcase)
 	end
 end

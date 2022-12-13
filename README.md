@@ -4,14 +4,14 @@ AutoHotkey for Linux.
 
 <div align="center">
 
-![MsgBox](popup.png)
+![MsgBox](assets/popup.png)
 
 `MsgBox, AHK_X11` (*)
 </div>
 
 This project is usable, but WORK IN PROGRESS.
 
-**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://discord.com/invite/autohotkey-115993023636176902)'s #ahk_x11 channel.
+**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://discord.com/invite/autohotkey-115993023636176902)'s #ahk_x11 channel (you need to give yourself the ahk_x11 role).
 
 **Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
 
@@ -21,7 +21,7 @@ This project is usable, but WORK IN PROGRESS.
 
 [**Go to installation instructions**](#installation)
 
-[**DEMO VIDEO**](https://raw.githubusercontent.com/phil294/AHK_X11/master/demo.mp4): Installation, script creation, compilation
+[**DEMO VIDEO**](https://raw.githubusercontent.com/phil294/AHK_X11/master/assets/demo.mp4): Installation, script creation, compilation
 
 [AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux.
 
@@ -43,7 +43,7 @@ Features:
 - [x] GUIs (partially done)
 - [x] One-click compile script to portable stand-alone executable
 - [x] Scripting: labels, flow control: If/Else, Loop
-- [ ] Window Spy
+- [x] Window Spy
 - [x] Graphical installer (optional)
 - [x] Context menu and compilation just like on Windows
 
@@ -52,10 +52,10 @@ Besides:
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
 
-<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11">docs</a>.</summary>
+<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>FULL DOCUMENTATION HERE</b></a>.</summary>
 
 ```diff
-DONE      36% (76/217):
+DONE      ?% (92/219):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -66,47 +66,48 @@ DONE      36% (76/217):
 + IniWrite, Loop (files & folders), Loop (read file contents), MouseClick, Pause, Reload,
 + StringGetPos, StringLeft, StringLen, StringLower, StringMid, StringReplace, StringRight,
 + StringUpper, Suspend, URLDownloadToFile, WinClose, WinGetPos, WinKill, WinMaximize, WinMinimize,
-+ WinMove, WinRestore, MouseGetPos, MouseMove, GetKeyState, KeyWait
++ WinMove, WinRestore, MouseGetPos, MouseMove, GetKeyState, KeyWait, ControlClick, WinGetText,
++ WinGetTitle, WinGetClass, PixelGetColor, CoordMode, GuiControl, ControlGetPos, ControlGetText,
++ WinGet, Input, Loop (parse a string), ToolTip, If var [not] in/contains MatchList, ControlSetText,
++ PixelSearch
 
-NEW       3% (6/217): (not part of spec or from a more recent version)
-@@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet @@
+NEW       ?% (8/219): (not part of spec or from a more recent version)
+@@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet, @@
+@@ ahk_x11_track_performance_start, ahk_x11_track_performance_stop @@
 
-REMOVED   10% (22/217):
+REMOVED   ?% (12/219):
 # ### Those that simply make no sense in Linux:
-# EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook, 
+# EnvSet, EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook,
 # #InstallMouseHook, #UseHook, Loop (registry)
-#
-# ### "Control" commands are impossible with X11, I *think*?
-# Control, ControlClick, ControlFocus, ControlGet, ControlGetFocus, 
-# ControlGetPos, ControlGetText, ControlMove, ControlSetText, SetControlDelay
 #
 # ### Skipped for other reasons:
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     50% (109/217): alphabetically
-- BlockInput, ClipWait, CoordMode, 
+TO DO     ?% (103/219): alphabetically
+- BlockInput, ClipWait, Control, ControlFocus, ControlGet, ControlGetFocus,
+- ControlMove,
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
 - FileCopyDir, FileCreateShortcut,
 - FileInstall, FileGetAttrib, FileGetShortcut, FileGetSize, FileGetTime, FileGetVersion,
 - FileMove, FileMoveDir, FileRecycle, FileRecycleEmpty, FileRemoveDir,
 - FormatTime, GroupActivate, GroupAdd,
-- GroupClose, GroupDeactivate, GuiControl, GuiControlGet,
-- If var [not] in/contains MatchList, If var is [not] type, Input, 
-- InputBox, KeyHistory, ListHotkeys, ListLines, ListVars, Loop (parse a string),
-- MouseClickDrag, OnExit, PixelGetColor, PixelSearch, 
-- Process, Progress, Random, RunAs, SetBatchLines, 
-- SetCapslockState, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay, 
-- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, 
-- SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet, 
-- SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText, 
+- GroupClose, GroupDeactivate, GuiControlGet,
+- If var is [not] type,
+- InputBox, KeyHistory, ListHotkeys, ListLines, ListVars,
+- MouseClickDrag, OnExit,
+- Process, Progress, Random, RunAs, SetBatchLines,
+- SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetKeyDelay, SetMouseDelay,
+- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode,
+- SetWinDelay, Shutdown, Sort, SoundGet, SoundGetWaveVolume, SoundPlay, SoundSet,
+- SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, SplitPath, StatusBarGetText,
 - StatusBarWait, StringCaseSense, StringSplit, StringTrimLeft, StringTrimRight,
-- SysGet, Thread, ToolTip, Transform, TrayTip, WinActivateBottom,
-- WinGetActiveStats, WinGetActiveTitle, WinGetClass, WinGet, WinGetText,
-- WinGetTitle, WinHide, WinMenuSelectItem, WinMinimizeAll,
-- WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive, 
-- WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar, 
-- #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem, 
+- SysGet, Thread, Transform, TrayTip, WinActivateBottom,
+- WinGetActiveStats, WinGetActiveTitle,
+- WinHide, WinMenuSelectItem, WinMinimizeAll,
+- WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive,
+- WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar,
+- #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem,
 - #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #WinActivateForce
 
 Also planned, even though it's not part of 1.0.24 spec:
@@ -115,6 +116,12 @@ Also planned, even though it's not part of 1.0.24 spec:
 - #IfWinActive (the directive)
 ```
 </details>
+
+## Showcase of scripts
+
+- [Vimium Everywhere](https://github.com/phil294/vimium-everywhere): Keyboard navigation for the whole desktop
+- [Activity monitor](https://github.com/phil294/activity-monitor): Demonstrates keyboard tracking, window, control listing and more
+- ...did you create something with AHK_X11 that could potentially be useful to others too? Suggestions for this list? Please open an issue or [write me a mail](mailto:github@waritschlager.de)!
 
 ## Installation
 
@@ -133,14 +140,20 @@ There are different ways to use it.
 1. The graphical way, like on Windows: Running the program directly opens up the interactive installer.
     - Once installed, all `.ahk` files are associated with AHK_X11, so you can simply double click them.
     - Also adds the Compiler into `Open as...` Menus.
+    - Also adds Window Spy to your applications. It looks [something like this](./assets/WindowSpy.png).
 2. Command line: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
     - Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
     - When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`).
     - If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
-    - Compile scripts with `./ahk_x11 --compile "path/script.ahk"
+    - Compile scripts with `./ahk_x11 --compile "path/script.ahk"`
+    - Run Window Spy with `./ahk_x11 --windowspy`
     - Hashbang supported if first line starts with `#!`
 
 ### Caveats
+
+#### Accessibility
+
+All commands or command options related to Controls (e.g. ControlClick or WinGetText) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
 
 #### Focus stealing prevention
 
@@ -178,13 +191,13 @@ Besides, it should be noted that un[documented](https://phil294.github.io/AHK_X1
 
 These are the steps required to build this project locally, such as if you want to contribute to the project. Please open an issue if anything doesn't work.
 
-You don't need to follow this procedure to *use* AHK_X11, for that, please see Installation above.
+**YOU DO <EM>NOT</EM> NEED TO FOLLOW THESE STEPS AS AN AUTOHOTKEY DEVELOPER**. Do do that, download AHK_X11 - see **INSTALLATION** ABOVE. Then you can start scripting. The below steps are for DEVELOPING IN **CRYSTAL LANGUAGE**.
 
 1. Install development versions of prerequisites.
     1. Ubuntu 20.04 and up:
         1. Dependencies
             ```
-            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev
+            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev
             ```
         1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
     1. Arch Linux:
@@ -196,7 +209,7 @@ You don't need to follow this procedure to *use* AHK_X11, for that, please see I
 1. `shards install`
 1. Run various library tweaks with `./setup_dependencies.sh`. This is mostly WIP and hacked together, so if anything doesn't work, please open an issue.
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.<br>Read on for a cross-distro compatible build.
-1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04.
+1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04. (Update: this entire section is still correct, but not future proof and WIP, see [#24](https://github.com/phil294/AHK_X11/issues/24))
     - Should be statically linked:
         - `libxdo`. Additionally to the above reasons, it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. Also, we fix a rarely occurring fatal error here (probably Crystal-specific?). So,
             - clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there,
@@ -205,6 +218,7 @@ You don't need to follow this procedure to *use* AHK_X11, for that, please see I
         - Dependencies of `libxdo`: `libxkbcommon`, `libXtst`, `libXi`, `libXinerama` and `libXext`. The static libraries should be available from your package manager dependencies installed above so normally there's nothing you need to do.
         - Other (crystal dependencies?), also via package manager: `libevent_pthreads`, `libevent`, and `libpcre`
         - `libgc` is currently shipped and linked automatically by Crystal itself so there is no need for it
+        - `libssl` and `libcrypto` because Ubuntu 22.04 introduced an abi version bump
     - Stays dynamically linked:
         - `libgtk-3` and its dependencies, because afaik Gtk is installed everywhere, even on Qt-based distros. If you know of any common distribution that does not include Gtk libs by default please let me know. Gtk does also not officially support static linking. `libgtk-3`, `libgd_pixbuf-2.0`, `libgio-2.0`, `libgobject-2.0`, `libglib-2.0`, `libgobject-2.0`
         - glibc / unproblematic libraries according to [this list](https://github.com/AppImage/pkg2appimage/blob/master/excludelist): `libX11`, `libm`, `libpthread`, `librt`, `libdl`.
@@ -213,9 +227,36 @@ You don't need to follow this procedure to *use* AHK_X11, for that, please see I
 
 ## Performance
 
-Not yet explicitly tuned for performance, but by design and choice of technology, it should run reasonably fast. Most recent tests yielded 0.03 ms for parsing one instruction line (this happens once at startup). Execution speed even is at least x100 faster than that.
+AHK_X11 is an interpreted language, not a compiled one. This means that no compile time optimizations take place on your script code, apart from some validation and reference placements. Also, all variables are of type String. So you probably wouldn't want to use it for performance-critical applications. However, the tool itself is written in Crystal and thus compiled and optimized for speed, so everything should still be reasonably fast. The speed of some of the slower commands depends on either libxdo or X11 and it's not yet clear whether there is much room for improvement. Some tests run on a 3.5 GHz machine:
 
-TODO: speed measurements for `Send` and window operations
+Parsing a single line takes about 30 µs (this happens once at startup), and execution time depends on what a command does:
+- `x = 1`: 70 ns (0.00000007 s)
+- `FileRead, x, y.txt`: 10 µs (0.000010 s)
+- `WinGetTitle, A`: 87 µs (0.000087 s)
+- `WinActivate, title`: 60 ms (0.0060 s)
+- `Send, a`: 530 µs (0.00053 s)
+- `Clipboard = a`: 6 ms (0.006 s)
+- `SendRaw, a`: 9 ms (0.009 s) (??)
+- `WinGetText`: 0-3 s (!)
+
+You can run fine-grained performance tests with the following special hidden instruction:
+
+```AutoHotkey
+AHK_X11_track_performance_start
+Loop, 1000
+    Send, a
+AHK_X11_track_performance_stop
+```
+prints something like:
+```
+[{"send", count: 1000, total: 00:00:00.530032328>},
+ {"loop", count: 1001, total: 00:00:00.000206347>}]
+```
+
+More tips:
+- Some values are cached internally while the thread is running, so repeated commands may run faster
+- The first time an AtSpi-related command (Control*, WinGetText, ... see "Accessibility" section in the docs) runs, the interface needs to be initialized which can take some time (0-5s)
+- Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so typically e.g. the matching criteria `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`.
 
 ## Contributing
 
@@ -232,7 +273,7 @@ A more general overview:
 - `src/build` does the parsing etc. and is mostly complete
 - `src/run/runner` and `src/run/thread` are worth looking into, this is the heart of the application and where global and thread state is stored
 - `src/cmd` contains all commands exposed to the user.
-- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse) as `runner.x_do`, `crystal-gobject` for Gtk (`Gui`, `MsgBox`) as `runner.gui` (`gui.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings) as `runner.x11` (`x11.cr`).
+- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse), `crystal-gobject` for Gtk (`Gui`, `MsgBox`, `gui.cr`) and Atspi (control handling, `at-spi.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings, `x11.cr`).
 
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 

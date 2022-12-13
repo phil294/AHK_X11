@@ -1,10 +1,36 @@
+require "x_do"
+require "./display/gui"
+require "./display"
 require "../util/ahk-string"
 
 module Run
+	enum CoordMode
+		SCREEN
+		RELATIVE
+	end
+
 	# see Thread.settings
 	private struct ThreadSettings
 		property last_found_window : XDo::Window?
 		property msgbox_response : Gui::MsgBoxButton?
+		property coord_mode_tooltip = CoordMode::RELATIVE
+		property coord_mode_pixel = CoordMode::RELATIVE
+		property coord_mode_mouse = CoordMode::RELATIVE
+		property coord_mode_caret = CoordMode::RELATIVE
+		property coord_mode_menu = CoordMode::RELATIVE
+		property ahk_x11_track_performance = false
+	end
+
+	# see Thread.cache
+	private struct ThreadCache
+		getter top_level_accessible_by_window_id = {} of UInt64 => ::Atspi::Accessible
+		getter accessible_by_class_nn_by_window_id = {} of UInt64 => Hash(String, ::Atspi::Accessible)
+	end
+
+	class CmdPerformance
+		property count : Int32
+		property total : Time::Span
+		def initialize(@count = 0, @total = 0.nanoseconds) end
 	end
 
 	# AHK threads are no real threads but pseudo-threads and pretty much like crystal fibers,
@@ -12,6 +38,8 @@ module Run
 	# continue until their individual end. Threads never really run in parallel:
 	# There's always one "current thread"
 	class Thread
+		@@id_counter = 0
+		getter id : Int32
 		getter runner : Runner
 		# `Settings` are configuration properties that may or may not be modified by various
 		# `Cmd`s and affect the script's execution logic. Settings are **never**, however,
@@ -22,6 +50,21 @@ module Run
 		# Each thread starts with its own set of settings (e.g. CoordMode),
 		# the default can be changed in the auto execute section.
 		getter settings : ThreadSettings
+		# `Cache` holds internal state that may be accessed often by the user from various
+		# commands, but its calculation can be a performance bottleneck, especially when accessed
+		# many times in a row. The data should not change frequently.
+		# Caching like this is only a last resort and should be avoided.
+		# TODO: Invalidate all every 500ms or so, maybe by exposing/wrapping `get` and `set`,
+		# because threads can also be long-lived with large loops and sleeps.
+		# Best would be an intelligent cache which is cleared whenever thread changes,
+		# a pseudo-async (KeyWait), waiting (Sleep) or changing (send,click,activate,...) command
+		# happens, or X11 reports an input event, and otherwise keeps its state, and
+		# perhaps *also* every 500ms.
+		# In that case, it would be very unlikely for the cache contents to become invalid, and we
+		# could also cache more common and more frequently changing properties such as
+		# active window/pos, mouse pos, etc. Right now this would be pre-optimization as
+		# barely any notable speed could be gained from this, so... not yet
+		getter cache = ThreadCache.new
 		# These thread-specific vars are only changed by the program and also exposed
 		# to the user. Also see `settings`.
 		# User-modifiable variables are inherently global and thus live in `Runner`.
@@ -36,7 +79,10 @@ module Run
 		@unpause_channel = Channel(Nil).new
 		getter paused = false
 		getter loop_stack = [] of Cmd::ControlFlow::Loop
+		property performance_by_cmd = {} of String => CmdPerformance
 		def initialize(@runner, start, @priority, @settings)
+			@@id_counter += 1
+			@id = @@id_counter
 			@stack << start
 		end
 
@@ -72,18 +118,33 @@ module Run
 			end
 			stack_i = @stack.size - 1
 
-			parsed_args = cmd.args.map do |arg|
-				Util::AhkString.parse_string(arg, @runner.settings.escape_char) do |var_name_lookup|
-					get_var(var_name_lookup)
-				end
-			end
-
 			begin
+				parsed_args = cmd.args.map do |arg|
+					Util::AhkString.parse_string(arg, @runner.settings.escape_char) do |var_name_lookup|
+						get_var(var_name_lookup)
+					end
+				end
+				{% if ! flag?(:release) %}
+					puts "[debug] run[#{@id}]: #{cmd.class.name} #{parsed_args.to_s}"
+				{% end %}
+
+				start = Time.monotonic
 				result = cmd.run(self, parsed_args)
+				cmd_execution_time = Time.monotonic - start
+				if @settings.ahk_x11_track_performance
+					if ! @performance_by_cmd[cmd.class.name]?
+						@performance_by_cmd[cmd.class.name] = CmdPerformance.new
+					end
+					@performance_by_cmd[cmd.class.name].count += 1
+					@performance_by_cmd[cmd.class.name].total += cmd_execution_time
+				end
 			rescue e : RuntimeException
 				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
-				@runner.gui.msgbox msg
-				STDERR.puts msg
+				STDERR.puts e.to_s
+				{% if ! flag?(:release) %}
+					e.inspect_with_backtrace(STDERR)
+				{% end %}
+				@runner.display.gui.msgbox msg
 				@done = true
 				@exit_code = 2 # TODO: ???
 				return @exit_code
@@ -99,6 +160,9 @@ module Run
 			elsif cmd.class.sets_error_level
 				raise "Result should be String for ErrorLevel command??" if ! result.is_a?(String)
 				set_thread_built_in_static_var("ErrorLevel", result)
+				{% if ! flag?(:release) %}
+					puts "[debug] ErrorLevel[#{@id}]: #{result}"
+				{% end %}
 			end
 			# current stack el may have been altered by prev cmd.run(), in which case disregard the normal flow
 			if @stack[stack_i]? == cmd # not altered
@@ -154,7 +218,7 @@ module Run
 			Util::AhkString.parse_key_combinations(str, @runner.settings.escape_char, implicit_braces: implicit_braces)
 		end
 		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> _)
-			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.x11, &block)
+			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.display.adapter.as(Run::X11), &block) # TODO: type cast etc
 		end
 
 		def parse_letter_options(str, &block : Char, Float64? -> _)

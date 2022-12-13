@@ -23,11 +23,11 @@ module Build
 
 			# This can only really be done once the linker has finished
 			@hotkeys.each do |hotkey|
-				hotkey.cmd = @labels[hotkey.key_str]
+				hotkey.cmd = @labels[hotkey.key_str.downcase]
 				hotkey.exempt_from_suspension = hotkey.cmd.is_a?(Cmd::Misc::Suspend)
 			end
 			@hotstrings.each do |hotstring|
-				hotstring.cmd = @labels[hotstring.label]
+				hotstring.cmd = @labels[hotstring.label.downcase]
 			end
 
 			nil

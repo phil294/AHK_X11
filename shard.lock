@@ -22,11 +22,11 @@ shards:
 
   x11:
     git: https://github.com/tamasszekeres/x11-cr.git
-    version: 1.1.0
+    version: 1.1.1
 
   x_do:
     git: https://github.com/phil294/x_do.cr.git
-    version: 0.8.3+git.commit.659ab684722c2fc0b4b89c0011ce98b3b01a420c
+    version: 0.8.3+git.commit.94f755a4f18a9a9820e9738b371cbe6b49731926
 
   xtst:
     git: https://github.com/phil294/xtst-cr.git

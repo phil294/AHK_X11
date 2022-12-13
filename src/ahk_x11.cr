@@ -3,6 +3,7 @@ require "./build/builder"
 require "./run/runner"
 require "./compiler"
 require "./logo"
+require "./hacks"
 
 fun main(argc : Int32, argv : UInt8**) : Int32
 	# It's also possible to run everything *without* `preview_mt` and spawn threads manually instead.
@@ -24,7 +25,7 @@ Signal::HUP.trap do
 	::exit 129
 end
 
-HEADLESS = ! ENV["DISPLAY"]?
+HEADLESS = ! ENV["DISPLAY"]? || ENV["DISPLAY"].empty?
 
 def build_error(msg)
 	msg = "#{msg}\n\nThe program will exit."
@@ -43,13 +44,18 @@ def filename_to_path(filename)
 end
 
 script_file = nil
+version = {{ read_file("./shard.yml").split("\n")[1][9..] }}
 if ARGV[0]?
 	if ARGV[0] == "-v" || ARGV[0] == "--version"
-		version = {{ read_file("./shard.yml").split("\n")[1][9..] }}
-		puts "AHK_X11 version: #{version}\nTargets to partially implement Classic Windows AutoHotkey specification: v1.0.24 (2004)"
+		puts "AHK_X11 version: #{version}\nTargets to partially implement Classic Windows AutoHotkey specification: v1.0.24 (2004). AutoHotkey is a scripting language."
+		::exit
+	elsif ARGV[0] == "-h" || ARGV[0] == "--help"
+		puts "AHK_X11 is a Linux implementation for AutoHotkey classic version 1.0.24 (2004). Internal version: #{version}. Full up to date documentation can be found at https://phil294.github.io/AHK_X11/.\n\nPossible methods of invocation:\n\nahk_x11 \"path to script.ahk\"\nahk_x11 /dev/stdin <<< $'MsgBox, 1\\nMsgBox, 2'\nahk_x11 --repl\nahk_x11 --windowspy\nahk_x11 --compile \"path to script.ahk\" \"optional: output executable file path\"\n\nAlternatively, just run the program without arguments to open the graphical installer. Once installed, you should be able to run and/or compile any .ahk file in your file manager by selecting it from the right click context menu."
 		::exit
 	elsif ARGV[0] == "--repl"
 		lines = ["#Persistent"]
+	elsif ARGV[0] == "--windowspy"
+		lines = {{ read_file("./src/window-spy.ahk").split("\n") }}
 	elsif ARGV[0] == "--compile"
 		build_error "Syntax: ahk_x11 --compile FILE_NAME [OUTPUT_FILENAME]" if ARGV.size < 2
 		Compiler.new.compile(filename_to_path(ARGV[1]), ARGV[2]? ? filename_to_path(ARGV[2]) : nil)

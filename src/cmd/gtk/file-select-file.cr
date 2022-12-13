@@ -7,7 +7,7 @@ class Cmd::Gtk::FileSelectFile < Cmd::Base
 		root_dir = args[2]?
 		prompt = args[3]? || "Select File - " + thread.runner.get_global_var("a_scriptname").not_nil!
 		channel = Channel(::String).new
-		thread.runner.gui.act do
+		thread.runner.display.gui.act do
 			if options.includes?('s')
 				action = ::Gtk::FileChooserAction::SAVE
 				do_overwrite_confirmation = true

@@ -1,10 +1,8 @@
 require "./thread"
 require "./timer"
-require "./hotkey"
+require "./display/hotkey"
 require "../cmd/base"
-require "./gui"
-require "./x11"
-require "x_do"
+require "system/user"
 
 module Run
 	enum SingleInstance
@@ -32,7 +30,7 @@ module Run
 	class Runner
 		# These are editable by the user
 		@user_vars = {} of String => String
-		# These are only changed by the program. See also `get_global_built_in_computed_var`
+		# These are only set by the program. See also `get_global_built_in_computed_var`
 		@built_in_static_vars = {
 			"a_space" => " ",
 			"a_tab" => "\t",
@@ -56,29 +54,17 @@ module Run
 		@timers = {} of String => Timer
 		# see Thread.settings
 		@default_thread_settings = ThreadSettings.new
-		@hotkeys = {} of String => Hotkey
-		@hotstrings = [] of Hotstring
-		@x11 : X11?
-		def x11
-			# TODO: log? abort?
-			raise "Cannot access X11 in headless mode" if !@x11
-			@x11.not_nil!
-		end
-		@x_do : XDo?
-		def x_do
-			raise "Cannot access X_DO in headless mode" if !@x_do
-			@x_do.not_nil!
-		end
-		@gui : Gui?
-		def gui
-			raise "Cannot access GUI in headless mode" if !@gui
-			@gui.not_nil!
-		end
 		# similar to `ThreadSettings`
 		getter settings : RunnerSettings
+		property current_input_channel : Channel(String)?
 		@builder : Build::Builder
 		getter script_file : Path?
 		getter headless : Bool
+		@display : Display?
+		def display
+			raise "Cannot access Display in headless mode" if @headless
+			@display.not_nil!
+		end
 
 		def initialize(*, @builder, @script_file, @headless)
 			@labels = @builder.labels
@@ -87,29 +73,16 @@ module Run
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
-			if ! @headless
-				@gui = Gui.new default_title: script.basename
-				@x_do = XDo.new
-				@x11 = X11.new
-			end
 		end
 		def run
 			@settings.persistent ||= (! @builder.hotkeys.empty? || ! @builder.hotstrings.empty?)
 			if ! @headless
-				@builder.hotkeys.each { |h| add_hotkey h }
-				@builder.hotstrings.each { |h| add_hotstring h }
-				spawn same_thread: true do
-					x11.run self, @settings.hotstring_end_chars
-				end
-				# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
-				::Thread.new do
-					gui.run # separate worker thread because gtk loop is blocking
-				end
+				@display = Display.new self
+				@display.not_nil!.run hotstrings: @builder.hotstrings, hotkeys: @builder.hotkeys
 				if ! @settings.single_instance
 					@settings.single_instance = @settings.persistent ? SingleInstance::Prompt : SingleInstance::Off
 				end
 				handle_single_instance
-				gui.initialize_menu(self)
 			end
 			Fiber.yield
 			spawn same_thread: true { clock }
@@ -147,9 +120,9 @@ module Run
 				while thread = @threads.last?
 					if ! @headless
 						if thread.paused
-							gui.thread_pause
+							display.gui.thread_pause
 						else
-							gui.thread_unpause
+							display.gui.thread_unpause
 						end
 					end
 					select
@@ -183,6 +156,12 @@ module Run
 			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
 			p = Process.new bin_path, ARGV, chdir: @initial_working_dir
 			exit_app 0
+		end
+
+		def launch_window_spy
+			bin_path = Process.executable_path
+			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
+			p = Process.new bin_path, ["--windowspy"], chdir: @initial_working_dir
 		end
 
 		private def auto_execute_section_ended
@@ -228,19 +207,27 @@ module Run
 			down = var.downcase
 			case down
 			when "clipboard"
-				gui.clipboard do |clip|
+				display.gui.clipboard do |clip|
 					clip.set_text(value, -1)
 					clip.store
 				end
 			else
 				return if @built_in_static_vars[down]? || get_global_built_in_computed_var(down)
-				@user_vars[down] = value
+				{% if ! flag?(:release) %}
+					puts "[debug] set_user_var '#{var}': #{value}"
+				{% end %}
+				if value.empty?
+					@user_vars.delete down
+				else
+					@user_vars[down] = value
+				end
 			end
 		end
 		# `var` is case insensitive
 		def set_global_built_in_static_var(var, value)
 			@built_in_static_vars[var.downcase] = value
 		end
+		# These are only set by the program. See also `built_in_static_vars`.
 		# `var` is case insensitive
 		private def get_global_built_in_computed_var(var)
 			case var.downcase
@@ -256,15 +243,18 @@ module Run
 			when "a_min" then Time.local.minute.to_s(precision: 2)
 			when "a_sec" then Time.local.second.to_s(precision: 2)
 			when "a_now" then Time.local.to_YYYYMMDDHH24MISS
-			when "a_nowutc" then Time.utc.to_s("%Y%m%d%H%M%S")
+			when "a_nowutc" then Time.utc.to_YYYYMMDDHH24MISS
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
-			when "clipboard"
-				gui.clipboard &.wait_for_text
-			else
-				nil
+			when "clipboard" then display.gui.clipboard &.wait_for_text
+			when "a_screenwidth" then display.adapter.display.default_screen.width.to_s
+			when "a_screenheight" then display.adapter.display.default_screen.height.to_s
+			when "a_username" then Hacks.username
+			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
+			when "a_computername" then `uname -n`
+			else nil
 			end
 		end
-		
+
 		def get_timer(label)
 			@timers[label]?
 		end
@@ -274,45 +264,6 @@ module Run
 			timer = Timer.new(self, cmd, period, priority)
 			@timers[label] = timer
 			timer
-		end
-
-		def add_hotkey(hotkey)
-			hotkey.runner = self
-			@hotkeys[hotkey.key_str] = hotkey
-			x11.register_hotkey hotkey
-			hotkey
-		end
-		def add_or_update_hotkey(*, key_str, label, priority, active_state = nil)
-			if label
-				cmd = @labels[label]?
-				raise RuntimeException.new "Add or update Hotkey: Label '#{label}' not found" if ! cmd
-			end
-			hotkey = @hotkeys[key_str]?
-			if hotkey
-				x11.unregister_hotkey hotkey
-				active_state = hotkey.active if active_state.nil?
-			else
-				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{key_str}" if ! label
-				hotkey = Hotkey.new(self, cmd.not_nil!, key_str, priority: priority, escape_char: @settings.escape_char)
-				@hotkeys[hotkey.key_str] = hotkey
-				active_state = true if active_state.nil?
-			end
-			hotkey.cmd = cmd if cmd
-			hotkey.priority = priority if priority
-			if active_state
-				x11.register_hotkey hotkey
-				hotkey.active = true
-			else
-				hotkey.active = false
-			end
-			hotkey
-		end
-
-		def add_hotstring(hotstring)
-			hotstring.runner = self
-			@hotstrings << hotstring
-			x11.register_hotstring hotstring
-			hotstring
 		end
 
 		def handle_single_instance
@@ -337,7 +288,7 @@ module Run
 				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
 				::exit
 			when SingleInstance::Prompt
-				response = gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
+				response = display.gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
 				::exit if response != Gui::MsgBoxButton::Yes
 				Process.signal(Signal::HUP, already_running)
 			end
@@ -348,11 +299,11 @@ module Run
 			mode = ! @suspension if mode == nil
 			@suspension = mode.as(Bool)
 			if mode
-				x11.suspend
-				gui.suspend
+				display.suspend
+				display.gui.suspend
 			else
-				x11.unsuspend
-				gui.unsuspend
+				display.unsuspend
+				display.gui.unsuspend
 			end
 		end
 		def pause_thread(mode = nil, *, self_is_thread = true)
@@ -363,7 +314,7 @@ module Run
 			if mode
 				if underlying_thread
 					underlying_thread.pause
-					gui.thread_pause if ! @headless
+					display.gui.thread_pause if ! @headless
 				end
 			else
 				underlying_thread.unpause if underlying_thread

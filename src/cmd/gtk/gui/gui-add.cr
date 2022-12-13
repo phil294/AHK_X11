@@ -21,7 +21,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			end
 		}
 		
-		thread.runner.gui.gui(gui_id) do |gui|
+		thread.runner.display.gui.gui(thread, gui_id, no_wait: true) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
 			when "text"
@@ -45,10 +45,10 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					widget.text = text
 					widget.connect "changed", run_g_label
 				end
-			when "button"
+			when "button" # TODO: "default" stuff from docs
 				widget = ::Gtk::Button.new label: text
 				widget.connect "clicked", run_g_label
-				button_click_label = "button" + text.gsub(/ &\n\r/, "")
+				button_click_label = "button" + text.gsub(/[ &\n\r]/, "")
 				widget.on_clicked do
 					begin runner.add_thread button_click_label, 0
 					rescue
@@ -72,6 +72,8 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			else
 				raise Run::RuntimeException.new "Unknown Gui control '#{type}'"
 			end
+
+			widget.override_background_color(::Gtk::StateFlags::NORMAL, gui.control_color) if gui.control_color
 
 			if opt["v"]?
 				alt_submit = !! opt["altsubmit"]?
@@ -137,6 +139,9 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 
 			w = opt["w"]?.try &.[:n] || -1
 			h = opt["h"]?.try &.[:n] || -1
+			if w > -1 || h > -1
+				widget.style_context.add_class("no-padding")
+			end
 
 			widget.set_size_request w, h
 			gui.fixed.put widget, x, y
@@ -144,6 +149,8 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			gui.last_x = x
 			gui.last_y = y
 			gui.last_widget = widget
+			# https://github.com/jhass/crystal-gobject/issues/105
+			gui.widgets << widget
 		end
 	end
 end

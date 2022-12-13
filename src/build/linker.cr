@@ -128,7 +128,6 @@ module Build
 		@continues = [] of Continue
 		def break(cmd : Break)
 			@breaks << cmd
-			pp! "break loop"
 		end
 		def continue(cmd : Continue)
 			@continues << cmd

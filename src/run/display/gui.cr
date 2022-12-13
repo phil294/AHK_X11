@@ -1,6 +1,6 @@
 # require "malloc_pthread_shim"
 require "gobject/gtk"
-require "../logo"
+require "../../logo"
 
 module Run
 	# Please note that all GUI logic needs to happen on the same worker thread where `run` was called
@@ -23,6 +23,7 @@ module Run
 		# so perfect for Gui modifications, new window requests etc.
 		def act(&block : -> T) forall T
 			channel = Channel(T | Exception).new
+			GC.collect
 			GLib.idle_add do
 				begin
 					result = block.call
@@ -35,7 +36,17 @@ module Run
 			end
 			result = channel.receive
 			raise RuntimeException.new result.message, result.cause if result.is_a?(Exception)
+			GC.collect
 			result
+		end
+		# :ditto:
+		def act_no_wait(&block)
+			GLib.idle_add do
+				GC.collect
+				block.call
+				GC.collect
+				false
+			end
 		end
 
 		def clipboard(&block : Gtk::Clipboard -> _)
@@ -149,7 +160,7 @@ module Run
 			stream = Gio::MemoryInputStream.new_from_bytes(GLib::Bytes.new(bytes))
 			GdkPixbuf::Pixbuf.new_from_stream(stream, nil)
 		end
-		def initialize_menu(runner)
+		private def init_menu(runner)
 			act do
 				@tray = tray = Gtk::StatusIcon.new
 				@icon_pixbuf = @default_icon_pixbuf = bytes_to_pixbuf logo_blob
@@ -167,6 +178,9 @@ module Run
 				end
 				tray_menu.append item_help
 				tray_menu.append Gtk::SeparatorMenuItem.new
+				item_window_spy = Gtk::MenuItem.new_with_label "Window Spy"
+				item_window_spy.on_activate { spawn { runner.launch_window_spy } }
+				tray_menu.append item_window_spy
 				item_reload = Gtk::MenuItem.new_with_label "Reload this script"
 				item_reload.on_activate { runner.reload }
 				tray_menu.append item_reload
@@ -191,10 +205,18 @@ module Run
 				end
 			end
 		end
+		def init(runner)
+			act do
+				provider = Gtk::CssProvider.new
+				Gtk::StyleContext.add_provider_for_screen(Gdk::Display.default.not_nil!.default_screen, provider, Gtk::STYLE_PROVIDER_PRIORITY_APPLICATION)
+				provider.load_from_data(".no-padding {padding: 0;}")
+			end
+			init_menu(runner)
+		end
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!
 		end
-		# Instead of showing both Suspension and ThreadPause state simultaneously, only one is showed dynamically, with Pause taking precedence.
+		# Instead of showing both Suspension and ThreadPause state simultaneously, only one is shown dynamically, with Pause taking precedence.
 		@is_suspend = false
 		@is_pause = false
 		def suspend
@@ -213,6 +235,7 @@ module Run
 			act { @tray.not_nil!.from_icon_name = "content-loading-symbolic" }
 		end
 		def thread_unpause
+			return if ! @is_pause
 			@is_pause = false
 			if @is_suspend
 				suspend
@@ -224,6 +247,7 @@ module Run
 		def open_edit(runner)
 			if runner.script_file
 				begin
+					# TODO: rewrite all "shell: ?true" process runs to proper "prog", [args]
 					Process.run "gtk-launch \"$(xdg-mime query default text/plain)\" '#{runner.script_file.not_nil!.to_s}'", shell: true
 				rescue e
 					STDERR.puts e # TODO:
@@ -240,6 +264,9 @@ module Run
 		private class GuiInfo
 			getter window : Gtk::Window
 			getter fixed : Gtk::Fixed
+			getter window_on_destroy : Proc(Nil) # GC
+			getter window_pointer : LibGtk::Window*
+			getter widgets = [] of Gtk::Widget # GC
 			property last_widget : Gtk::Widget? = nil
 			property last_x = 0
 			property last_y = 0
@@ -247,28 +274,97 @@ module Run
 			property last_section_x = 0
 			property last_section_y = 0
 			getter var_control_info = {} of String => ControlInfo
-			def initialize(@window, @fixed)
+			property window_color : Gdk::RGBA? = nil
+			property control_color : Gdk::RGBA? = nil
+			def initialize(@window, @fixed, @window_on_destroy, @window_pointer)
 			end
 		end
-		@guis = {} of String => GuiInfo
+		getter guis = {} of String => GuiInfo
 		# Yields (and if not yet exists, creates) the gui info referring to *gui_id*,
 		# including the `window`, and passes the block on to the GTK idle thread so
 		# you can run GTK code with it.
-		def gui(gui_id, &block : GuiInfo -> _)
-			gui_info = @guis[gui_id]?
-			if ! gui_info
+		def gui(thread, gui_id, *, no_wait = false, &block : GuiInfo -> _)
+			if ! @guis[gui_id]?
 				act do
-					window = Gtk::Window.new title: @default_title, window_position: Gtk::WindowPosition::CENTER, icon: @icon_pixbuf
+					window = Gtk::Window.new title: @default_title, window_position: Gtk::WindowPosition::CENTER, icon: @icon_pixbuf, resizable: false
 					# , border_width: 20
 					fixed = Gtk::Fixed.new
 					window.add fixed
-					gui_info = GuiInfo.new(window, fixed)
+					window_on_destroy = ->do
+						close_label_id = gui_id == "1" ? "" : gui_id
+						close_label = "#{close_label_id}GuiClose".downcase
+						begin thread.runner.add_thread close_label, 0
+						rescue e
+							# TODO: ...
+							STDERR.puts e
+						end
+						nil
+					end
+					window.connect "destroy" { window_on_destroy.call }
+					# To support transparent background when invoked via WinSet:
+					# Appears to be impossible to set dynamically, so needed at win build time:
+					window.visual = window.screen.rgba_visual
+					@guis[gui_id] = GuiInfo.new(window, fixed, window_on_destroy, window.to_unsafe)
 				end
-				@guis[gui_id] = gui_info.not_nil!
+			end
+			if no_wait
+				act_no_wait { block.call(@guis[gui_id]) }
+			else
+				act { block.call(@guis[gui_id]) }
+			end
+		end
+		def gui_destroy(gui_id)
+			gui = @guis[gui_id]?
+			return if ! gui
+			act do
+				# https://github.com/jhass/crystal-gobject/issues/105#issuecomment-1338281572
+				gui.widgets.each &.destroy
+			end
+			GC.collect
+			act do
+				gui.window.destroy
+			end
+			GC.collect
+			@guis.delete(gui_id)
+			GC.collect
+		end
+		@tooltips = {} of Int32 => Gtk::Window
+		# Yields (and if not yet exists, creates) the tooltip referring to *tooltip_id*
+		def tooltip(tooltip_id : Int32, &block : Gtk::Window -> _)
+			if ! @tooltips[tooltip_id]?
+				act do
+					tooltip = ::Gtk::Window.new title: "AHK_X11 Tooltip #{tooltip_id.to_s}", window_position: Gtk::WindowPosition::MOUSE, type_hint: ::Gdk::WindowTypeHint::TOOLTIP, accept_focus: false, can_focus: false, resizable: false, skip_taskbar_hint: true, type: ::Gtk::WindowType::POPUP, modal: true, decorated: false
+					tooltip.keep_above = true
+					txt = ::Gtk::Label.new "Label"
+					txt.margin = 2
+					# txt.override_background_color ::Gtk::StateFlags::NORMAL, ::Gdk::RGBA.new(1,1,1) # <- doesnt work, is grey? using modifybg instead which is even more deprecated
+					# txt.override_color ::Gtk::StateFlags::NORMAL, ::Gdk::RGBA.new(0.341,0.341,0.341)
+					txt.modify_bg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,65535,65535,57825)
+					txt.modify_fg ::Gtk::StateType::NORMAL, ::Gdk::Color.new(nil,0,0,0)
+					txt.override_font ::Pango::FontDescription.from_string("9")
+					tooltip.add(txt)
+					@tooltips[tooltip_id] = tooltip
+				end
 			end
 			act do
-				block.call(gui_info.not_nil!)
+				block.call(@tooltips[tooltip_id].not_nil!)
 			end
+		end
+		def destroy_tooltip(tooltip_id)
+			tooltip = @tooltips[tooltip_id]?
+			return if ! tooltip
+			act { tooltip.destroy }
+			GC.collect
+			@tooltips.delete tooltip_id
+			GC.collect
+		end
+		def parse_rgba(v)
+			if v.to_i?(16)
+				v = "##{v}"
+			end
+			color = Gdk::RGBA.new(0,0,0,1)
+			color.parse(v)
+			color
 		end
 	end
 end

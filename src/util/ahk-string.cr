@@ -110,15 +110,15 @@ class Util::AhkString
 					keysym = Run::X11.ahk_key_name_to_keysym(key_name)
 					# TODO: why the typecheck / why not in x11.cr?
 					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
-					if key_name.upcase == key_name
+					if key_name.upcase == key_name && key_name.upcase != key_name.downcase
 						modifiers |= ::X11::ShiftMask
 					end
 
 					{% if ! flag?(:release) %}
 						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
 					{% end %}
-					yield Run::KeyCombination.new(key_name, keysym.to_u64, modifiers, up, down, repeat)
-					
+					yield Run::KeyCombination.new(key_name.downcase, keysym.to_u64, modifiers, up, down, repeat)
+
 					modifiers = 0_u32
 				end
 			end
@@ -134,7 +134,7 @@ class Util::AhkString
 	end
 
 	# Parses single-char-numbers combinations with optional spaces in between,
-	# e.g. `A1B2` or `*0 c100` and yields each char-number combination (downcase).
+	# e.g. `A1B2.1` or `*0 c100` and yields each char-number combination (downcase).
 	def self.parse_letter_options(str, escape_char : Char)
 		n = ""
 		letter = nil

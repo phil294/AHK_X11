@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
+        "Accerciser",
+        "atspi",
+        "camelcase",
         "cmds",
         "downcase",
         "forall",
@@ -13,8 +16,11 @@
         "keysyms",
         "libxdo",
         "msgbox",
+        "pixbuf",
         "Tasker",
+        "Thunar",
         "ungrab",
+        "XFCE",
         "xtst"
     ]
 }

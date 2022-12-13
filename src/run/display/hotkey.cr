@@ -1,9 +1,8 @@
-require "./key-combination"
+require "../key-combination"
 
 module Run
 	class Hotkey < KeyCombination
-		property runner : Run::Runner?
-		getter key_str : String
+		getter key_str : String # TODO: rename label
 		property cmd : Cmd::Base?
 		property priority : Int32
 		property active = true
@@ -13,10 +12,11 @@ module Run
 		def initialize(@key_str, *, @priority, escape_char)
 			init(escape_char)
 		end
-		def initialize(@runner, @cmd, @key_str, *, @priority, escape_char, @active = true)
+		def initialize(@cmd, @key_str, *, @priority, escape_char, @active = true)
 			init(escape_char)
 		end
 
+		# TODO: all of this is x11 specific and shouldn't be in this file. probably best just recompute every time it's needed inside x11.cr:(un)grab_key
 		@@available_modifier_combinations : Array(Int32)
 		# TODO: this can probably be done much easier, it's just all possible combinations of all possible sizes >= 1 of all relevant modifiers. Could actually also be a macro except that then you'd need the integers directly, not the X11 synonyms
 		@@available_modifier_combinations =
@@ -49,8 +49,8 @@ module Run
 				end
 			end
 		end
-		def trigger
-			@runner.not_nil!.add_thread @cmd.not_nil!, @priority
+		def trigger(runner)
+			runner.not_nil!.add_thread @cmd.not_nil!, @priority
 		end
 	end
 end

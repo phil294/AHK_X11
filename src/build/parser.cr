@@ -1,5 +1,5 @@
 require "../cmd/**"
-require "../run/hotstring"
+require "../run/display/hotstring"
 
 module Build
 	class ParsingException < Exception end
@@ -30,7 +30,7 @@ module Build
 					add_line line, line_no
 				rescue e
 					{% if ! flag?(:release) %}
-						puts "[debug]", e.inspect_with_backtrace
+						e.inspect_with_backtrace(STDERR)
 					{% end %}
 					raise SyntaxException.new "Syntax Error in line #{line_no+1}:\n#{e.message}.\n\nLine content was: '#{line}'."
 				end
@@ -66,23 +66,14 @@ module Build
 			# This is the "normal" case where 90% of all commands fall into. All other if-clauses
 			# are special cases.
 			elsif cmd_class
-				csv_args = split_args(args, cmd_class.max_args + 1)
-				if csv_args.size > cmd_class.max_args
-					if cmd_class.multi_command
-						# examples: if, ifequals, else, }, ifequals, ... can all have residue content.
-						# split this line in two, add a new virtual line with the remainder.
-						@cmds << cmd_class.new line_no, cmd_class.max_args > 0 ? csv_args[..cmd_class.max_args-1] : [] of String
-						add_line csv_args[cmd_class.max_args], line_no
-					else
-						raise "'#{cmd_class.name}' accepts no arguments" if cmd_class.max_args == 0
-						# attach the remainder again and pass as is to the arg
-						# TODO: also maybe only if allowed via flag? so that commands don't accidentally accept / combine too many arguments
-						# TODO: spacing can wrongly get lost / added here because of the .strip + add ", " which may not add up
-						csv_args[cmd_class.max_args-1] += ", #{csv_args.pop}"
-						@cmds << cmd_class.new line_no, csv_args
-					end
-				elsif csv_args.size < cmd_class.min_args
+				csv_args = split_args(args, cmd_class.multi_command ? cmd_class.max_args + 1 : cmd_class.max_args)
+				if csv_args.size < cmd_class.min_args
 					raise "Minimum arguments required for '#{cmd_class.name}' is '#{cmd_class.min_args}', got '#{csv_args.size}'"
+				elsif csv_args.size > cmd_class.max_args
+					# multi command, examples: if, ifequals, else, }, ifequals, ... can all have residue content.
+					# split this line in two, add a new virtual line with the remainder.
+					@cmds << cmd_class.new line_no, cmd_class.max_args > 0 ? csv_args[..cmd_class.max_args-1] : [] of String
+					add_line csv_args[cmd_class.max_args], line_no
 				else
 					@cmds << cmd_class.new line_no, csv_args
 				end
@@ -102,22 +93,34 @@ module Build
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
-				case split[1]?
-				when "=" then cmd_class = Cmd::ControlFlow::IfEqual
-				when "<>", "!=" then cmd_class = Cmd::ControlFlow::IfNotEqual
-				when ">" then cmd_class = Cmd::ControlFlow::IfGreater
-				when ">=" then cmd_class = Cmd::ControlFlow::IfGreaterOrEqual
-				when "<" then cmd_class = Cmd::ControlFlow::IfLess
-				when "<=" then cmd_class = Cmd::ControlFlow::IfLessOrEqual
-				when "between" then cmd_class = Cmd::ControlFlow::IfBetween
+				var_name = split[0]
+				operator = split[1]? || ""
+				arg2 = split[2]? || ""
+				cmd_class = case operator
+				when "=" then Cmd::ControlFlow::IfEqual
+				when "<>", "!=" then Cmd::ControlFlow::IfNotEqual
+				when ">" then Cmd::ControlFlow::IfGreater
+				when ">=" then Cmd::ControlFlow::IfGreaterOrEqual
+				when "<" then Cmd::ControlFlow::IfLess
+				when "<=" then Cmd::ControlFlow::IfLessOrEqual
+				when "between" then Cmd::ControlFlow::IfBetween
+				when "in" then Cmd::ControlFlow::IfIn
+				when "contains" then Cmd::ControlFlow::IfContains
 				when "not"
-					if (split[2]? || "").starts_with?("between ")
-						split[2] = split[2][8..]
-						cmd_class = Cmd::ControlFlow::IfNotBetween
+					case
+					when arg2.starts_with?("between ")
+						arg2 = arg2[8..]
+						Cmd::ControlFlow::IfNotBetween
+					when arg2.starts_with?("in ")
+						arg2 = arg2[3..]
+						Cmd::ControlFlow::IfNotIn
+					when arg2.starts_with?("contains ")
+						arg2 = arg2[9..]
+						Cmd::ControlFlow::IfNotContains
 					end
 				end
-				raise "If condition '#{split[1]?}' is unknown" if ! cmd_class
-				csv_args = [split[0], split[2]? || ""]
+				raise "If condition '#{operator}' is unknown" if ! cmd_class
+				csv_args = [var_name, arg2]
 				@cmds << cmd_class.new line_no, csv_args
 			elsif line_content.includes?("::")
 				add_line "Return", line_no if @hotstrings.empty? && @hotkeys.empty?
@@ -127,7 +130,7 @@ module Build
 					raise "Hotstring definition invalid or too complicated " if match.nil?
 					_, options, abbrev = match
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					hotstring = Run::Hotstring.new label.downcase, abbrev,
+					hotstring = Run::Hotstring.new label, abbrev,
 						options: @hotstring_default_options + options,
 						escape_char: @runner_settings.escape_char
 					@hotstrings << hotstring
@@ -139,7 +142,7 @@ module Build
 					end
 				else # Hotkey
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					@hotkeys << Run::Hotkey.new label.downcase, priority: 0, escape_char: @runner_settings.escape_char
+					@hotkeys << Run::Hotkey.new label, priority: 0, escape_char: @runner_settings.escape_char
 					if ! instant_action.empty?
 						add_line "#{instant_action}", line_no
 						add_line "Return", line_no
@@ -149,15 +152,20 @@ module Build
 				# Gui accepts many subcommands. Instead of duplicating parsing logic into a generic
 				# `Gui` cmd, instead join together (e.g. `GuiAdd`) and parse line again with that.
 				# All subcommands exist as standalone commands and expect the gui id as 1st arg.
-				split = split_args(args, 2)
+				split = args.split(',', 2).map &.strip
 				sub_instruction = split[0]? || ""
 				rest_args = split[1]? || ""
 				match = sub_instruction.match(/(?:(\S+)\s*:\s*)?(.*)/).not_nil!
 				gui_id = match[1]? || "1"
 				sub_cmd = match[2]
 				raise "Gui subcommand missing" if sub_cmd.empty?
+				if sub_cmd.starts_with?('-') || sub_cmd.starts_with?('+')
+					rest_args = sub_cmd
+					sub_cmd = "Option"
+				end
 				comma = rest_args.empty? ? "" : ","
 				add_line "Gui#{sub_cmd}, #{gui_id}#{comma} #{rest_args}", line_no
+				@runner_settings.persistent = true
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
 			elsif first_word.ends_with?("++")
