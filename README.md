@@ -197,7 +197,7 @@ These are the steps required to build this project locally, such as if you want 
     1. Ubuntu 20.04 and up:
         1. Dependencies
             ```
-            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev
+            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev
             ```
         1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
     1. Arch Linux:
@@ -209,7 +209,7 @@ These are the steps required to build this project locally, such as if you want 
 1. `shards install`
 1. Run various library tweaks with `./setup_dependencies.sh`. This is mostly WIP and hacked together, so if anything doesn't work, please open an issue.
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.<br>Read on for a cross-distro compatible build.
-1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04.
+1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04. (Update: this entire section is still correct, but not future proof and WIP, see [#24](https://github.com/phil294/AHK_X11/issues/24))
     - Should be statically linked:
         - `libxdo`. Additionally to the above reasons, it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. Also, we fix a rarely occurring fatal error here (probably Crystal-specific?). So,
             - clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there,
@@ -218,6 +218,7 @@ These are the steps required to build this project locally, such as if you want 
         - Dependencies of `libxdo`: `libxkbcommon`, `libXtst`, `libXi`, `libXinerama` and `libXext`. The static libraries should be available from your package manager dependencies installed above so normally there's nothing you need to do.
         - Other (crystal dependencies?), also via package manager: `libevent_pthreads`, `libevent`, and `libpcre`
         - `libgc` is currently shipped and linked automatically by Crystal itself so there is no need for it
+        - `libssl` and `libcrypto` because Ubuntu 22.04 introduced an abi version bump
     - Stays dynamically linked:
         - `libgtk-3` and its dependencies, because afaik Gtk is installed everywhere, even on Qt-based distros. If you know of any common distribution that does not include Gtk libs by default please let me know. Gtk does also not officially support static linking. `libgtk-3`, `libgd_pixbuf-2.0`, `libgio-2.0`, `libgobject-2.0`, `libglib-2.0`, `libgobject-2.0`
         - glibc / unproblematic libraries according to [this list](https://github.com/AppImage/pkg2appimage/blob/master/excludelist): `libX11`, `libm`, `libpthread`, `librt`, `libdl`.
