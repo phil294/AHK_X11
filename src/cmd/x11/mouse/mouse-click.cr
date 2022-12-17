@@ -11,9 +11,17 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 		when "xbutton2", "x2" then XDo::Button::Button9
 		else XDo::Button::Left
 		end
-		x_current, y_current, screen = thread.runner.display.x_do.mouse_location
-		x = args[1]?.try &.to_i? || x_current
-		y = args[2]?.try &.to_i? || y_current
+		current_x, current_y, screen = thread.runner.display.x_do.mouse_location
+		x = args[1]?.try &.to_i?
+		y = args[2]?.try &.to_i?
+		if x && y
+			if thread.settings.coord_mode_mouse == ::Run::CoordMode::RELATIVE
+				x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
+			end
+		else
+			x = current_x
+			y = current_y
+		end
 		count = args[3]?.try &.to_i? || 1
 		up = down = false
 		case args[5]?.try &.downcase
@@ -26,9 +34,6 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 				if relative
 					thread.runner.display.x_do.move_mouse x, y
 				else
-					if thread.settings.coord_mode_mouse == ::Run::CoordMode::RELATIVE
-						x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
-					end
 					thread.runner.display.x_do.move_mouse x, y, screen
 				end
 				thread.runner.display.x_do.mouse_down button if ! up
