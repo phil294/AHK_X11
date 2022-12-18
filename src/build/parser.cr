@@ -100,7 +100,11 @@ module Build
 				i = -1
 				File.new(path).each_line do |line|
 					i += 1
-					add_line line, i
+					begin
+						add_line line, i
+					rescue e
+						raise Exception.new ((e.message || "") + "\n#Include line: #{i}"), e.cause
+					end
 				end
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
