@@ -55,7 +55,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>FULL DOCUMENTATION HERE</b></a>.</summary>
 
 ```diff
-DONE      ?% (92/219):
+DONE      ?% (93/219):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -69,7 +69,7 @@ DONE      ?% (92/219):
 + WinMove, WinRestore, MouseGetPos, MouseMove, GetKeyState, KeyWait, ControlClick, WinGetText,
 + WinGetTitle, WinGetClass, PixelGetColor, CoordMode, GuiControl, ControlGetPos, ControlGetText,
 + WinGet, Input, Loop (parse a string), ToolTip, If var [not] in/contains MatchList, ControlSetText,
-+ PixelSearch
++ PixelSearch, #Include
 
 NEW       ?% (8/219): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet, @@
@@ -84,7 +84,7 @@ REMOVED   ?% (12/219):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (103/219): alphabetically
+TO DO     ?% (102/219): alphabetically
 - BlockInput, ClipWait, Control, ControlFocus, ControlGet, ControlGetFocus,
 - ControlMove,
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
@@ -107,7 +107,7 @@ TO DO     ?% (103/219): alphabetically
 - WinHide, WinMenuSelectItem, WinMinimizeAll,
 - WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive,
 - WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar,
-- #HotkeyInterval, #HotkeyModifierTimeout, #Include, #MaxHotkeysPerInterval, #MaxMem,
+- #HotkeyInterval, #HotkeyModifierTimeout, #MaxHotkeysPerInterval, #MaxMem,
 - #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #WinActivateForce
 
 Also planned, even though it's not part of 1.0.24 spec:
