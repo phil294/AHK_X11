@@ -69,6 +69,11 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				end
 				widget.active = (opt["choose"][:n] || 1) - 1 if opt["choose"]?
 				widget.connect "changed", run_g_label
+			when "picture", "pic"
+				widget = ::Gtk::Image.new_from_file text
+				widget.has_window = true
+				widget.events = ::Gdk::EventMask::BUTTON_PRESS_MASK.to_i
+				widget.connect "button-press-event", run_g_label
 			else
 				raise Run::RuntimeException.new "Unknown Gui control '#{type}'"
 			end
