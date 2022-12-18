@@ -107,12 +107,16 @@ class Util::AhkString
 				end
 				escape = false
 				if key_name
+					if key_name.size == 1 && key_name.upcase != key_name.downcase
+						if modifiers & ::X11::ShiftMask == ::X11::ShiftMask
+							key_name = key_name.upcase
+						elsif key_name.upcase == key_name
+							modifiers |= ::X11::ShiftMask
+						end
+					end
 					keysym = Run::X11.ahk_key_name_to_keysym(key_name)
 					# TODO: why the typecheck / why not in x11.cr?
 					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
-					if key_name.size == 1 && key_name.upcase == key_name && key_name.upcase != key_name.downcase
-						modifiers |= ::X11::ShiftMask
-					end
 
 					{% if ! flag?(:release) %}
 						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
