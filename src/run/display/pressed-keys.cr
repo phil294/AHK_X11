@@ -9,7 +9,7 @@ module Run
 		@pressed_down_keysyms : StaticArray(UInt64, 8) = StaticArray[0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64,0_u64]
 
 		def run
-			@runner.display.register_key_listener do |key_event, keysym, char|
+			@runner.display.register_key_listener do |key_event, keysym, char, is_paused|
 				up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
 
 				if ! up

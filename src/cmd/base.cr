@@ -26,7 +26,7 @@ module Cmd
 		# runner can be accessed via `thread.runner`.
 		# When `class.conditional`, the return value determines the next branch.
 		# When `class.sets_error_level`, the thread's `ErrorLevel` will be set
-		# to the return value .
+		# to the return value.
 		# In all other cases, the return value is ignored.
 		abstract def run(thread, args)
 

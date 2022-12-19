@@ -191,7 +191,7 @@
             <a href="#">Flow of Control</a>
             <ul>
               <li>
-                <a class="tbd" href="#h_Include.htm">#Include/#IncludeAgain</a>
+                <a href="#h_Include.htm">#Include/#IncludeAgain</a>
               </li>
               <li>
                 <a href="#Block.htm">Block</a>
@@ -805,7 +805,7 @@
                 <a href="#h_Hotstring.htm">#Hotstring</a>
               </li>
               <li>
-                <a class="tbd" href="#h_Include.htm">#Include/#IncludeAgain</a>
+                <a href="#h_Include.htm">#Include/#IncludeAgain</a>
               </li>
               <li>
                 <a class="tbd" href="#h_MaxHotkeysPerInterval.htm">#MaxHotkeysPerInterval</a>
@@ -2816,7 +2816,7 @@ else
                 <td height="16" class="calibre4">Changing <a href="#Hotstrings.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotstring</a> options or ending characters.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#h_Include.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#Include</a></td>
+                <td height="16" class="calibre4"><a href="#h_Include.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#Include</a></td>
                 <td height="16" class="calibre4">Causes the script to behave as though the specified file's contents are present.</td>
               </tr>
               <tr class="calibre3">
@@ -5041,7 +5041,7 @@ return</pre>
           </p>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="h_Include.htm" href="#h_Include.htm">#</a> <h2 class="calibre17">#Include / #IncludeAgain</h2>
           <hr size="2" class="calibre24" />
@@ -6087,10 +6087,12 @@ return</pre>
           <p class="calibre8">1: Prevent unmodified keys<br class="calibre12" /> 2: Prevent Shift-only keys <br class="calibre12" /> 4: Prevent Control-only keys <br class="calibre12" /> 8: Prevent Alt-only keys<br class="calibre12" /> 16: Prevent Shift-Control keys <br class="calibre12" /> 32: Prevent Shift-Alt keys <br class="calibre12" /> 64: This value is not supported (it will not behave correctly).<br class="calibre12" /> 128: Prevent Shift-Control-Alt keys.</p>
           <p class="calibre8">For example, Limit1 would prevent unmodified hotkeys such as letters and numbers from being entered, and Limit15 would require at least two modifier keys. If the user types a forbidden modifier combination, the Control+Alt combination is visibly and automatically substituted.</p>
           <p class="calibre8">The Hotkey control has limited capabilities. For example, it does not support mouse/joystick hotkeys or the Windows key (LWin and RWin). One way to work around this is to provide one or more <a href="#Gui.htm__CheckBox" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">checkboxes</a> as a means for the user to enable extra modifiers such as the Windows key.</p>
+</div>
           <p class="calibre8"><br class="calibre12" />
-            <strong class="calibre14"><span class="calibre30"><a id="Gui.htm__Picture" href="#Gui.htm__Picture" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Picture</span></strong> (or <strong class="calibre14"><span class="calibre30">Pic</span></strong>): An area containing an image (see last paragraph for supported file types). The <em class="calibre21">Text</em> parameter is the filename of the image, which is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified. To retain the image's actual width and/or height, omit the W and/or H options. Otherwise, the image is scaled to the specified width and/or height. To shrink or enlarge the image while preserving its aspect ratio, specify -1 for one of the dimensions and a positive number for the other. For example, specifying "w200 h-1" would make the image 200 pixels wide and cause its height to be set automatically. If the picture cannot be loaded or displayed (e.g. file not found), the control is left empty and its height and width are set to zero.
+            <strong class="calibre14"><span class="calibre30"><a id="Gui.htm__Picture" href="#Gui.htm__Picture" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Picture</span></strong> (or <strong class="calibre14"><span class="calibre30">Pic</span></strong>): An area containing an image (see last paragraph for supported file types). The <em class="calibre21">Text</em> parameter is the filename of the image, which is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified. <span class="tbd">To retain the image's actual width and/or height, omit the W and/or H options. Otherwise, the image is scaled to the specified width and/or height. To shrink or enlarge the image while preserving its aspect ratio, specify -1 for one of the dimensions and a positive number for the other. For example, specifying "w200 h-1" would make the image 200 pixels wide and cause its height to be set automatically. If the picture cannot be loaded or displayed (e.g. file not found), the control is left empty and its height and width are set to zero.</span>
           </p>
           <p class="calibre8">To use a picture as a background for other controls, the picture should normally be added prior to those controls. However, if those controls are input-capable and the picture has a <a href="#Gui.htm__label" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">g-label</a>, create the picture after the other controls and include +0x4000000 (which is WS_CLIPSIBLINGS) in the picture's <em class="calibre21">Options</em>. This trick also allows a picture to be the background behind a Tab control.</p>
+<div class="tbd">
           <p class="calibre8"><strong class="calibre14">Icons and cursors</strong>: In v1.0.24, icons (.ico), cursors (.cur), and animated cursors (.ani) are supported on all operating systems. In addition, icons can be loaded from EXE and DLL files that contain them. To use an icon other than the first one in the file, include in <em class="calibre21">Options</em> the word Icon followed by the number of the icon. In the following example, the second icon would be used: <em class="calibre21">Gui, Add, Picture, Icon2, C:\My Application.exe</em>. Note: Specifying an icon number causes a different icon loading method to be used, which might prevent a .ani file from being animated. It also prevents AltSubmit (see next paragraph) from taking effect.</p>
           <p class="calibre8"><a id="Gui.htm__PicAltSubmit" href="#Gui.htm__PicAltSubmit" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Specifying the word AltSubmit in <em class="calibre21">Options</em> tells the program to use Microsoft's GDIPlus.dll to load the image, which might result in a different appearance for certain types of images. For example, it would load an icon containing a transparent background as a transparent bitmap, which allows the <a href="#Gui.htm__BackgroundTrans" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">BackgroundTrans</a> option to take effect for such an icon. If GDIPlus is not available (see next paragraph), AltSubmit is ignored and the image is loaded using the normal method.</p>
           <p class="calibre8">All operating systems support GIF, JPG, and BMP images. With AutoHotkey v1.0.22+ running on Windows XP or later, additional image formats such as PNG, TIF, ICO, Exif, WMF, and EMF are supported. Operating systems older than XP can be given support by copying Microsoft's free GDI+ DLL into the AutoHotkey.exe folder (but in the case of a <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">compiled script</a>, copy the DLL into the script's folder). To download the DLL, search for the following phrase at <a href="http://www.microsoft.com" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">www.microsoft.com</a>: gdi redistributable.</p>

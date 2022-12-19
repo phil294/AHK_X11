@@ -42,6 +42,7 @@ class Cmd::Misc::Run < Cmd::Base
 		end
 
 		success = false
+		stdout = stderr = ""
 
 		# TODO: This only sets up the dialog but the printing logic is missing. Not sure
 		# how to implement the draw_page callback for arbitrary file types, so I disabled
@@ -52,6 +53,10 @@ class Cmd::Misc::Run < Cmd::Base
 		# 		print_op.run ::Gtk::PrintOperationAction::PRINT_DIALOG, nil
 		#		success = ...
 		# 	end
+
+		if edit
+			success, stdout, stderr = try_execute("gtk-launch \"$(xdg-mime query default text/plain)\" '#{target}'", chdir: pwd, stdout: !!output_stdout, stderr: !!output_stderr)
+		end
 
 		thread.runner.display.gui.act do
 			begin
@@ -66,15 +71,16 @@ class Cmd::Misc::Run < Cmd::Base
 		
 		if ! success && open
 			success, stdout, stderr = try_execute(target, chdir: pwd, stdout: !!output_stdout, stderr: !!output_stderr)
-			if success
-				thread.runner.set_user_var(output_stdout, stdout) if output_stdout
-				thread.runner.set_user_var(output_stderr, stderr) if output_stderr
-			end
 		end
 
 		if ! success
 			path = ::File.expand_path(target)
 			success = try_execute("xdg-open " + path) && ""
+		end
+
+		if success
+			thread.runner.set_user_var(output_stdout, stdout) if output_stdout && ! output_stdout.empty?
+			thread.runner.set_user_var(output_stderr, stderr) if output_stderr && ! output_stderr.empty?
 		end
 
 		if opt["useerrorlevel"]?
@@ -87,7 +93,7 @@ class Cmd::Misc::Run < Cmd::Base
 			end
 		end
 
-		if output_var_pid && ! @wait && success.is_a?(Int64)
+		if output_var_pid && ! output_var_pid.empty? && ! @wait && success.is_a?(Int64)
 			thread.runner.set_user_var(output_var_pid, success.to_s)
 		end
 	end

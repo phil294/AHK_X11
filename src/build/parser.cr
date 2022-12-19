@@ -22,6 +22,7 @@ module Build
 
 		@block_comment = false
 		@hotstring_default_options = ""
+		@already_included = [] of Path
 
 		def parse_into_cmds!(lines : Indexable(String))
 			@cmds.clear
@@ -90,6 +91,21 @@ module Build
 					@hotstring_default_options = args.strip
 				end
 			elsif first_word == "#requires" # noop for ahk discord bot. Command is v1.1.33+.
+			elsif first_word.starts_with?("#include")
+				path = Path[args].expand
+				if first_word != "#includeagain"
+					return if @already_included.includes?(path)
+				end
+				@already_included << path
+				i = -1
+				File.new(path).each_line do |line|
+					i += 1
+					begin
+						add_line line, i
+					rescue e
+						raise Exception.new ((e.message || "") + "\n#Include line: #{i}"), e.cause
+					end
+				end
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)

@@ -13,8 +13,8 @@ module Run
 		end
 
 		def run
-			@runner.display.register_key_listener do |key_event, keysym, char|
-				handle_event(key_event, keysym, char)
+			@runner.display.register_key_listener do |key_event, keysym, char, is_paused|
+				handle_event(key_event, keysym, char, is_paused)
 			end
 		end
 
@@ -31,8 +31,9 @@ module Run
 		@candidate : Hotstring? = nil
 		@modifier_keysyms : StaticArray(Int32, 13) = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
 
-		def handle_event(key_event, keysym, char)
-			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
+		def handle_event(key_event, keysym, char, is_paused)
+			return if is_paused
+			up = key_event.type == ::X11::KeyPress || key_event.type == ::X11::ButtonPress
 			return if ! up
 			prev_candidate = @candidate
 			@candidate = nil

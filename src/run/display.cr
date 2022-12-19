@@ -103,15 +103,14 @@ module Run
 
 		# TODO: put keysym and char into key_event in callers?
 		private def handle_event(key_event, keysym, char)
-			return if @is_paused
 			@key_listeners.each do |sub|
 				spawn same_thread: true do
-					sub.call(key_event, keysym, char)
+					sub.call(key_event, keysym, char, @is_paused)
 				end
 			end
 		end
-		@key_listeners = [] of Proc(::X11::KeyEvent, UInt64, Char?, Nil)
-		def register_key_listener(&block : ::X11::KeyEvent, UInt64, Char? -> _)
+		@key_listeners = [] of Proc(::X11::KeyEvent, UInt64, Char?, Bool, Nil)
+		def register_key_listener(&block : ::X11::KeyEvent, UInt64, Char?, Bool -> _)
 			@key_listeners << block
 			block
 		end

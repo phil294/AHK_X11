@@ -186,6 +186,7 @@ module Run
 				@@ahk_key_name_to_keysym_cache[key_name] = lookup
 				return lookup
 			end
+			return nil if key_name.size > 1
 			char = key_name[0]
 			return nil if char >= 'A' && char < 'Z' || char >= 'a' && char <= 'z'
 			# This fallback may fail but it's very likely this is the correct match now.
