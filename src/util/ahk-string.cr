@@ -81,6 +81,7 @@ class Util::AhkString
 					when '!' then modifiers |= ::X11::Mod1Mask
 					when '#' then modifiers |= ::X11::Mod4Mask
 					when '\0' then modifiers |= ::X11::Mod5Mask
+					when '$' then
 					else
 						if implicit_braces || char == '{'
 							key_name = ""
