@@ -24,11 +24,6 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 		thread.runner.display.gui.gui(thread, gui_id, no_wait: true) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
-			when "text"
-				widget = ::Gtk::Label.new text
-				widget.has_window = true
-				widget.events = ::Gdk::EventMask::BUTTON_PRESS_MASK.to_i
-				widget.connect "button-press-event", run_g_label
 			when "edit"
 				if opt["r"]?.try &.[:n].try &.> 1
 					widget = ::Gtk::ScrolledWindow.new vexpand: true, hexpand: false, shadow_type: ::Gtk::ShadowType::IN
@@ -75,7 +70,10 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				widget.events = ::Gdk::EventMask::BUTTON_PRESS_MASK.to_i
 				widget.connect "button-press-event", run_g_label
 			else
-				raise Run::RuntimeException.new "Unknown Gui control '#{type}'"
+				widget = ::Gtk::Label.new text
+				widget.has_window = true
+				widget.events = ::Gdk::EventMask::BUTTON_PRESS_MASK.to_i
+				widget.connect "button-press-event", run_g_label
 			end
 
 			widget.override_background_color(::Gtk::StateFlags::NORMAL, gui.control_color) if gui.control_color
