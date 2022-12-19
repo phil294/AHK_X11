@@ -9,8 +9,8 @@ module Run
 		end
 
 		def run
-			@runner.display.register_key_listener do |key_event, keysym, char|
-				handle_event(key_event, keysym, char)
+			@runner.display.register_key_listener do |key_event, keysym, char, is_paused|
+				handle_event(key_event, keysym, char, is_paused)
 			end
 			@runner.display.on_pause { pause }
 			@runner.display.on_suspend { resume }
@@ -62,7 +62,8 @@ module Run
 			hotkey
 		end
 
-		def handle_event(key_event, keysym, char)
+		def handle_event(key_event, keysym, char, is_paused)
+			return if is_paused
 			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease # TODO: externalize somehow because this is duplicate in various places
 
 			hotkey = @hotkeys.find do |hotkey|

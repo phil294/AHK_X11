@@ -46,8 +46,9 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 		end
 
 		buf = ""
-		listener = thread.runner.display.register_key_listener do |key_event, keysym, char| # TODO: inconsistency: KeyEvent/char vs. KeyCombination.key_name
-			next if key_event.type != ::X11::KeyRelease
+		listener = thread.runner.display.register_key_listener do |key_event, keysym, char, is_paused| # TODO: inconsistency: KeyEvent/char vs. KeyCombination.key_name
+			next if is_paused
+			next if key_event.type != ::X11::KeyPress
 			end_key = end_keys.find { |k| k.keysym == keysym }
 			if end_key
 				next channel.send("EndKey:#{end_key.key_name}")
