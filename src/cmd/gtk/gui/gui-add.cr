@@ -43,7 +43,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			when "button" # TODO: "default" stuff from docs
 				widget = ::Gtk::Button.new label: text
 				widget.connect "clicked", run_g_label
-				button_click_label = "button" + text.gsub(/[ &\n\r]/, "")
+				button_click_label = "button" + text.gsub(/[ &\n\r]/, "").downcase
 				widget.on_clicked do
 					begin runner.add_thread button_click_label, 0
 					rescue
