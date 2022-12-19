@@ -23,10 +23,12 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 		timeout = nil
 		visible = false
 		match_anywhere = false
+		ignore_generated_input = false
 		thread.parse_letter_options(args[1]? || "") do |c, n|
 			case c
 			when 'b' then ignore_backspace = true
 			when 'c' then case_sensitive = true
+			when 'i' then ignore_generated_input = true
 			when 'l' then max = n.try &.to_i || 1
 			when 't' then timeout = n
 			when 'v' then visible = true
@@ -47,7 +49,7 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 
 		buf = ""
 		listener = thread.runner.display.register_key_listener do |key_event, keysym, char, is_paused| # TODO: inconsistency: KeyEvent/char vs. KeyCombination.key_name
-			next if is_paused
+			next if is_paused && ignore_generated_input
 			next if key_event.type != ::X11::KeyPress
 			end_key = end_keys.find { |k| k.keysym == keysym }
 			if end_key
