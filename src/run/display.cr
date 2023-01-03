@@ -123,7 +123,7 @@ module Run
 			# so this is some kind of catch-all method which seems to work great
 			GC.disable
 			error = nil
-			3.times do |i|
+			5.times do |i|
 				begin
 					resp = yield @at_spi
 					GC.enable
@@ -134,12 +134,13 @@ module Run
 					GC.collect
 					raise e
 				rescue e
-					e.inspect_with_backtrace(STDERR)
 					error = e
-					STDERR.puts "Retrying... (#{i+1}/3)"
-					sleep 300.milliseconds
+					STDERR.puts "An internal AtSpi request failed. Retrying... (#{i+1}/5)"
+					sleep 600.milliseconds
 				end
 			end
+			STDERR.puts "AtSpi failed five times in a row. Last seen error:"
+			error.not_nil!.inspect_with_backtrace(STDERR)					
 			GC.enable
 			GC.collect
 			return nil
