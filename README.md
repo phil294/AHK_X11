@@ -153,7 +153,7 @@ There are different ways to use it.
 
 #### Accessibility
 
-All commands or command options related to Controls (e.g. ControlClick or WinGetText) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
+All commands or command options related to Controls (e.g. `ControlClick` or `WinGetText`) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
 
 #### Focus stealing prevention
 
@@ -180,18 +180,52 @@ Some Linux distros offer a configurable setting for focus stealing prevention. U
 
 #### Incompatibilities with Windows versions
 
-Like covered above, AHK_X11 is vastly different to modern Windows-AutoHotkey because it is 1. *missing its more recent features* and 2. there are *still several features missing*. Apart from that, there are a few minor *incompatibilities* between AHK_X11 and the then-Windows-AutoHotkey 1.0.24:
+Like covered above, AHK_X11 is vastly different to modern Windows-AutoHotkey because 1. its spec is *missing its more recent features* and 2. there are *still several features missing*. Apart from that, there are a few minor *incompatibilities* between AHK_X11 and the then-Windows-AutoHotkey 1.0.24:
 - `#NoEnv` is the default, this means, to access environment variables, you'll have to use `EnvGet`.
 - All arguments are always evaluated only at runtime, even if they are static. This can lead to slightly different behavior or error messages at runtime vs. build time.
 - Several more small subtle differences highlighted in green throughout the docs page
 
 Besides, it should be noted that un[documented](https://phil294.github.io/AHK_X11) == undefined.
 
+## Performance
+
+AHK_X11 is an interpreted language, not a compiled one. This means that no compile time optimizations take place on your script code, apart from some validation and reference placements. Also, all variables are of type String. So you probably wouldn't want to use it for performance-critical applications. However, the tool itself is written in Crystal and thus compiled and optimized for speed, so everything should still be reasonably fast. The speed of some of the slower commands depends on either libxdo or X11 and it's not yet clear whether there is much room for improvement. Some tests run on a 3.5 GHz machine:
+
+Parsing a single line takes about 30 µs (this happens once at startup), and execution time depends on what a command does:
+- `x = 1`: 70 ns (0.00000007 s)
+- `FileRead, x, y.txt`: 10 µs (0.00001 s)
+- `WinGetTitle, A`: 87 µs (0.000087 s)
+- `Send, a`: 530 µs (0.00053 s)
+- `Clipboard = a`: 6 ms (0.006 s)
+- `SendRaw, a`: 9 ms (0.009 s) (??)
+- `WinActivate, title`: 60 ms (0.06 s)
+- `WinGetText`: 0-3 s (!)
+
+You can run fine-grained benchmarks with the following special hidden instruction:
+
+```AutoHotkey
+AHK_X11_track_performance_start
+Loop, 1000
+    Send, a
+AHK_X11_track_performance_stop
+```
+prints something like:
+```
+[{"send", count: 1000, total: 00:00:00.530032328>},
+ {"loop", count: 1001, total: 00:00:00.000206347>}]
+```
+Note that the internal code around executing commands takes about 10 µs between two every commands and you can't do anything about it and this *not* measured / included in the benchmark command's output. This can actually be the bottleneck in some scripts and should probably be improved
+
+More tips:
+- Some values are cached internally while the thread is running, so repeated commands may run faster
+- The first time an AtSpi-related command (`Control`-*, `WinGetText`, ... see "Accessibility" section above) runs, the interface needs to be initialized which can take some time (0-5s)
+- Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so e.g. `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`. So for many window operations you might want to do a single `WinGet, win_id, ID` beforehand and then reuse that `%win_id`.
+
 ## Development
 
 These are the steps required to build this project locally, such as if you want to contribute to the project. Please open an issue if anything doesn't work.
 
-**YOU DO <EM>NOT</EM> NEED TO FOLLOW THESE STEPS AS AN AUTOHOTKEY DEVELOPER**. Do do that, download AHK_X11 - see **INSTALLATION** ABOVE. Then you can start scripting. The below steps are for DEVELOPING IN **CRYSTAL LANGUAGE**.
+**YOU DO <EM>NOT</EM> NEED TO FOLLOW THESE STEPS AS AN AUTOHOTKEY DEVELOPER**. To do that, download AHK_X11 - see **INSTALLATION** ABOVE. Then you can start scripting. The below steps are for DEVELOPING IN **CRYSTAL LANGUAGE**.
 
 1. Install development versions of prerequisites.
     1. Ubuntu 20.04 and up:
@@ -224,39 +258,6 @@ These are the steps required to build this project locally, such as if you want 
         - glibc / unproblematic libraries according to [this list](https://github.com/AppImage/pkg2appimage/blob/master/excludelist): `libX11`, `libm`, `libpthread`, `librt`, `libdl`.
 1. All in all, once you have `libxdo.a` inside the folder `static`, the following builds the final binary which should be very portable: `shards build -Dpreview_mt --link-flags="-no-pie -L$PWD/static -Wl,-Bstatic -lxdo -lxkbcommon -lXinerama -lXext -lXtst -lXi -levent_pthreads -levent -lpcre -Wl,-Bdynamic"`. When not in development, increase optimizations and runtime speed by adding `--release`. The resulting binary is about 4.7 MiB in size.
 1. Attach the installer with `bin/ahk_x11 --compile src/installer.ahk tmp && mv tmp bin/ahk_x11`. Explanation: The installer is not shipped separately and instead bundled with the binary by doing this. Bundling is the same thing as compiling a script as a user. As you can see, it is possible to repeatedly compile a binary, with each script being appended at the end each time. Only the last one actually executed - and only if no params are passed to the program. There's no point in compiling multiple times, but it allows us to ship a default script (the installer) for when no arguments are passed. In other words, this is possible for a user: `ahk_x11 --compile script1.ahk && ./script1 --compile script2.ahk && ./script2` but no one will ever do that.
-
-## Performance
-
-AHK_X11 is an interpreted language, not a compiled one. This means that no compile time optimizations take place on your script code, apart from some validation and reference placements. Also, all variables are of type String. So you probably wouldn't want to use it for performance-critical applications. However, the tool itself is written in Crystal and thus compiled and optimized for speed, so everything should still be reasonably fast. The speed of some of the slower commands depends on either libxdo or X11 and it's not yet clear whether there is much room for improvement. Some tests run on a 3.5 GHz machine:
-
-Parsing a single line takes about 30 µs (this happens once at startup), and execution time depends on what a command does:
-- `x = 1`: 70 ns (0.00000007 s)
-- `FileRead, x, y.txt`: 10 µs (0.00001 s)
-- `WinGetTitle, A`: 87 µs (0.000087 s)
-- `Send, a`: 530 µs (0.00053 s)
-- `Clipboard = a`: 6 ms (0.006 s)
-- `SendRaw, a`: 9 ms (0.009 s) (??)
-- `WinActivate, title`: 60 ms (0.06 s)
-- `WinGetText`: 0-3 s (!)
-
-You can run fine-grained benchmarks with the following special hidden instruction:
-
-```AutoHotkey
-AHK_X11_track_performance_start
-Loop, 1000
-    Send, a
-AHK_X11_track_performance_stop
-```
-prints something like:
-```
-[{"send", count: 1000, total: 00:00:00.530032328>},
- {"loop", count: 1001, total: 00:00:00.000206347>}]
-```
-
-More tips:
-- Some values are cached internally while the thread is running, so repeated commands may run faster
-- The first time an AtSpi-related command (Control*, WinGetText, ... see "Accessibility" section in the docs) runs, the interface needs to be initialized which can take some time (0-5s)
-- Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so typically e.g. the matching criteria `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`.
 
 ## Contributing
 
