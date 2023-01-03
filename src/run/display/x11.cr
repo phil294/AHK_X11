@@ -204,7 +204,7 @@ module Run
 				::X11::C::X.get_error_text display, error_event.value.error_code, buffer.to_unsafe, 1024
 				error_message = String.new buffer.to_unsafe
 				if error_event.value.error_code == 10
-					STDERR.puts "Display server failed with 'BadAccess'. This most likely means that you are trying to register a Hotkey that is already grabbed by another application. The script will continue but your Hotkey will not work."
+					STDERR.puts error_message + " (You can probably ignore this error)"
 				else
 					STDERR.puts "Display server unexpectedly failed with the following error message:\n\n#{error_message}\n\nThe script will exit."
 					::exit 5
