@@ -6,7 +6,7 @@ app_name = ahk_x11
 app_ext = ahk
 app_comment = AHK_X11: AutoHotkey for Linux
 binary_dir = %A_Home%/.local/bin
-binary_path = %binary_dir%/ahk_x11
+binary_path = %binary_dir%/ahk_x11.AppImage
 app_logo = /tmp/tmp_ahk_x11_logo.png
 
 Gui, Add, Text, x180, %app_comment%

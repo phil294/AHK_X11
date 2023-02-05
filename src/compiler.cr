@@ -2,8 +2,12 @@
 class Compiler
 	TRAILER = "AHK_SOUR"
 	def initialize
-		bin_path = Process.executable_path
-		raise "Cannot determine binary path" if ! bin_path
+		bin_path = ENV["APPIMAGE"]?
+		if ! bin_path || bin_path.empty?
+			bin_path = Process.executable_path
+			raise "Cannot determine binary path" if ! bin_path
+			puts "WARNING: AHK_X11 Binary does not appear to be inside an AppImage. Compilation will succeed but the resulting standalone program will not be very portable as dependencies are not bundled. This means that it may not run on other systems, or may fail to run on your system in the future. It is highly recommended you download the official ahk_x11.AppImage file instead, or add the packaging step to your build process (check ahk_x11's latest build instructions)."
+		end
 		@bin_file = File.new(bin_path)
 	end
 	def finalize
