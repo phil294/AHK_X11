@@ -16,8 +16,18 @@ class Cmd::Misc::Run < Cmd::Base
 		chdir = nil if chdir && chdir.empty?
 		stdout_m = stdout ? IO::Memory.new : Process::Redirect::Close
 		stderr_m = stderr ? IO::Memory.new : Process::Redirect::Close
+		if @wait
+			cmd = args[0]
+			params = args[1..]
+		else
+			# Neither `bash -c 'stuff & disown'` nor `nohup` nor `p.close` nor io close args
+			# work to prevent the spawned process from quitting once our main process exits,
+			# only setsid does.
+			cmd = "setsid"
+			params = args
+		end
 		begin
-			p = Process.new(args[0], args[1..], chdir: chdir, output: stdout_m, error: stderr_m)
+			p = Process.new(cmd, params, chdir: chdir, output: stdout_m, error: stderr_m)
 		rescue e : IO::Error
 			return false, "", ""
 		end
