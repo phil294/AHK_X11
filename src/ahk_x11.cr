@@ -80,14 +80,14 @@ begin
 	builder = Build::Builder.new
 	builder.build lines
 rescue e : Build::SyntaxException | Build::ParsingException
-	build_error e.message
+	build_error e
 end
 
 begin
 	runner = Run::Runner.new builder: builder, script_file: script_file, headless: HEADLESS
 	runner.run
 rescue e : Run::RuntimeException
-	build_error e.message
+	build_error e
 end
 
 sleep # exiting is completely handled in runner

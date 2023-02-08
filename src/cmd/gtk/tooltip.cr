@@ -8,7 +8,9 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 		y = args[2]?.try &.to_i?
 		if txt && ! txt.empty?
 			thread.runner.display.gui.tooltip(id) do |tooltip|
-				tooltip.children.next.unsafe_as(::Gtk::Label).label = txt
+				# Fails due to some not yet understood bindings error
+				# tooltip.children[0].unsafe_as(::Gtk::Label).label = txt
+				::Gtk::Label.new(LibGLib.g_list_nth(tooltip.children.to_unsafe, 0).value.data, GICrystal::Transfer::None).label = txt
 				if x && y
 					if thread.settings.coord_mode_tooltip == ::Run::CoordMode::RELATIVE
 						x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x.not_nil!, y.not_nil!)

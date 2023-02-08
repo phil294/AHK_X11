@@ -10,8 +10,8 @@ class Cmd::Gtk::Gui::GuiOption < Cmd::Base
 				when "resize" then gui.window.resizable = ! i[:minus]
 				when "maximizebox", "minimizebox"
 					gui.window.type_hint = i[:minus] ?
-						::Gdk::WindowTypeHint::MENU :
-						::Gdk::WindowTypeHint::NORMAL
+						::Gdk::WindowTypeHint::Menu :
+						::Gdk::WindowTypeHint::Normal
 				when "toolwindow" then gui.window.skip_taskbar_hint = ! i[:minus]
 				end
 			end

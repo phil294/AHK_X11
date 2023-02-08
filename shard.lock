@@ -8,9 +8,13 @@ shards:
     git: https://github.com/crystal-community/future.cr.git
     version: 1.0.0
 
-  gobject:
-    git: https://github.com/jhass/crystal-gobject.git
-    version: 0.10.0
+  gi-crystal:
+    git: https://github.com/hugopl/gi-crystal.git
+    version: 0.14.0
+
+  gtk4:
+    git: https://github.com/hugopl/gtk4.cr.git
+    version: 0.12.0
 
   malloc_pthread_shim:
     git: https://github.com/jhass/crystal-malloc_pthread_shim.git
@@ -19,6 +23,10 @@ shards:
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
     version: 2.0.7
+
+  version_from_shard:
+    git: https://github.com/hugopl/version_from_shard.git
+    version: 1.2.5
 
   x11:
     git: https://github.com/tamasszekeres/x11-cr.git

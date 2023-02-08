@@ -58,8 +58,8 @@ module Run
 					win_w, win_h = win.size
 					window_size = (win_w + win_h).to_i
 					tl_children.sort! { |t1, t2|
-						t1_e = t1.extents(::Atspi::CoordType::SCREEN)
-						t2_e = t2.extents(::Atspi::CoordType::SCREEN)
+						t1_e = t1.extents(::Atspi::CoordType::Screen)
+						t2_e = t2.extents(::Atspi::CoordType::Screen)
 						(window_size - t1_e.width - t1_e.height).abs - (window_size - t2_e.width - t2_e.height).abs
 					}
 					frame = tl_children.first
@@ -151,7 +151,7 @@ module Run
 			# Fast; most of the time, it returns the accurate deepest child, but sometimes
 			# it just returns the first child even though that one has many descendants itself
 			# e.g. xfce4-appfinder
-			top_match = accessible.accessible_at_point(x, y, ::Atspi::CoordType::SCREEN)
+			top_match = accessible.accessible_at_point(x, y, ::Atspi::CoordType::Screen)
 			return nil, nil if ! top_match
 			# If we went the completely manual way, class_NN would already be known to us,
 			# but the shortcut made this impossible, so we now need to reverse look it up (up to now)
@@ -171,7 +171,7 @@ module Run
 				if nest_level <= match_nest_level
 					next nil # stop
 				end
-				contained = acc.contains(x, y, ::Atspi::CoordType::SCREEN)
+				contained = acc.contains(x, y, ::Atspi::CoordType::Screen)
 				if contained
 					match = acc
 					match_path = path
@@ -259,7 +259,7 @@ module Run
 			role = accessible.role
 			# https://docs.gtk.org/atspi2/enum.Role.html
 			# may not be complete yet
-			role == ::Atspi::Role::FRAME || role == ::Atspi::Role::WINDOW || role == ::Atspi::Role::DIALOG || role == ::Atspi::Role::FILE_CHOOSER || role == ::Atspi::Role::ALERT
+			role == ::Atspi::Role::Frame || role == ::Atspi::Role::Window || role == ::Atspi::Role::Dialog || role == ::Atspi::Role::FileChooser || role == ::Atspi::Role::Alert
 		end
 		# checks if the element is both visible and showing. Does not mean that the tl window
 		# itself isn't hidden behind another window though.
@@ -269,10 +269,10 @@ module Run
 		# If required, this needs to be done with AHK code.
 		private def hidden?(accessible)
 			state_set = accessible.state_set
-			! state_set.contains(::Atspi::StateType::SHOWING) || ! state_set.contains(::Atspi::StateType::VISIBLE)
+			! state_set.contains(::Atspi::StateType::Showing) || ! state_set.contains(::Atspi::StateType::Visible)
 		end
 		private def selectable?(accessible)
-			accessible.state_set.contains(::Atspi::StateType::SELECTABLE)
+			accessible.state_set.contains(::Atspi::StateType::Selectable)
 		end
 		private def interactive?(accessible)
 			begin
@@ -313,7 +313,7 @@ module Run
 			rescue e
 				return false
 			end
-			iface.set_text_contents text
+			iface.text_contents = text
 			true
 		end
 		# returns an array of recursive text strings, no duplication present.
@@ -446,7 +446,7 @@ module Run
 			#
 			# So we need to ask for global coordinates instead which seems to always be correct (?),
 			# and then convert them into relative ones.
-			ext = accessible.extents(::Atspi::CoordType::SCREEN)
+			ext = accessible.extents(::Atspi::CoordType::Screen)
 			x = ext.x
 			y = ext.y
 			w = ext.width

@@ -8,8 +8,8 @@ class Cmd::Gtk::Gui::GuiShow < Cmd::Base
 		thread.runner.display.gui.gui(thread, gui_id) do |gui|
 			gui.window.title = title if title
 			gui.window.show_all
-			w, h = gui.window.size
-			x, y = gui.window.position
+			LibGtk.gtk_window_get_size(gui.window.to_unsafe, out w, out h)
+			LibGtk.gtk_window_get_position(gui.window.to_unsafe, out x, out y)
 			thread.parse_word_options(options).each do |v, i|
 				n = i[:n]
 				case v

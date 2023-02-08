@@ -11,12 +11,8 @@ class Cmd::Gtk::Gui::GuiSubmit < Cmd::Base
 				value = case
 				when ctrl.is_a?(::Gtk::Entry) then ctrl.text
 				when ctrl.is_a?(::Gtk::ScrolledWindow) then
-					text_buffer = ctrl.children.next.unsafe_as(::Gtk::TextView).buffer
-					iter_start = ::Gtk::TextIter.new
-					iter_end = ::Gtk::TextIter.new
-					text_buffer.start_iter iter_start
-					text_buffer.end_iter iter_end
-					text_buffer.text(iter_start, iter_end, true)
+					# s.a. tooltip.cr
+					::Gtk::TextView.new(LibGLib.g_list_nth(ctrl.children.to_unsafe, 0).value.data, GICrystal::Transfer::None).buffer.text
 				when ctrl.is_a?(::Gtk::CheckButton) then
 					ctrl.active ? "1" : "0"
 				when ctrl.is_a?(::Gtk::ComboBoxText) then
