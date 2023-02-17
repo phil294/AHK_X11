@@ -1,4 +1,4 @@
-# require "gobject/atspi"
+require "atspi"
 
 module Run
 	# Atspi is the framework-independent tooling for accessibility in the Linux world.

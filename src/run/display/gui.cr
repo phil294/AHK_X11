@@ -1,5 +1,4 @@
-# require "malloc_pthread_shim"
-require "gtk4" # this is gtk3
+require "gtk3"
 require "../../logo"
 
 module Run
