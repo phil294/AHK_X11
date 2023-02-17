@@ -22,7 +22,8 @@ These are the steps required to build this project locally, such as if you want 
 1. `git clone https://github.com/phil294/AHK_X11`
 1. `cd AHK_X11`
 1. `shards install`
-1. Run various library tweaks with `./setup_dependencies.sh`. This is mostly WIP and hacked together, so if anything doesn't work, please open an issue.
+1. `bin/gi-crystal`
+1. Remove the `private` from `private getter xdo_p : LibXDo::XDo*` in `lib/x_do/src/x_do.cr` (this is a temporary fix)
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.
 1. Find your final binary in the `./bin` folder, it's about 4 MiB in size.
 

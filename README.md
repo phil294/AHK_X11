@@ -128,7 +128,7 @@ Also planned, even though it's not part of 1.0.24 spec:
 **[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)**. Make the downloaded file executable and you should be good to go.
 
 Prerequisites:
-- X11 and GTK are the only dependencies. You most likely have them already. Wayland support would be cool too some day.
+- X11 is the only dependency. You most likely have them already. Wayland support would be cool too some day.
 - Old distros like Debian *before* 10 (Buster) or Ubuntu *before* 18.04 are not supported ([reason](https://github.com/jhass/crystal-gobject/issues/73#issuecomment-661235729)). Otherwise, it should not matter what system you use.
 
 
