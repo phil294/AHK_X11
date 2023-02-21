@@ -29,6 +29,10 @@ module Run
 			frame = thread.cache.top_level_accessible_by_window_id[wid]?
 			return frame if frame
 			window_name = win.name
+			if window_name.nil?
+				# Happens only rarely e.g. when clicking rapidly. The window is gone and a `.pid` would segfault.
+				return nil
+			end
 			pid = win.pid
 			app = each_app do |app|
 				break app if app.process_id == pid
