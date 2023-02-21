@@ -24,6 +24,8 @@ These are the steps required to build this project locally, such as if you want 
 1. `shards install`
 1. `bin/gi-crystal`
 1. Remove the `private` from `private getter xdo_p : LibXDo::XDo*` in `lib/x_do/src/x_do.cr` (this is a temporary fix)
+1. Add `require "../g_lib-2.0/g_lib"` to the top of `lib/gtk4/lib/gi-crystal/src/auto/xlib-2.0/xlib.cr` (this is a temporary fix)
+1. In `lib/gtk4/lib/gi-crystal/src/auto/gtk-3.0/gtk.cr`, replace all usages of `Glib::String` with `::String` (this is a temporary fix)
 1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.
 1. Find your final binary in the `./bin` folder, it's about 4 MiB in size.
 
