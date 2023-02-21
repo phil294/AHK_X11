@@ -8,9 +8,19 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 		y = args[2]?.try &.to_i?
 		if txt && ! txt.empty?
 			thread.runner.display.gui.tooltip(id) do |tooltip|
-				# Fails due to some not yet understood bindings error
-				# tooltip.children[0].unsafe_as(::Gtk::Label).label = txt
-				::Gtk::Label.new(LibGLib.g_list_nth(tooltip.children.to_unsafe, 0).value.data, GICrystal::Transfer::None).label = txt
+
+				# (ahk_x11:655793): Gtk-CRITICAL **: 16:13:19.371: gtk_container_foreach: assertion 'GTK_IS_CONTAINER (container)' failed
+				children = tooltip.children
+				# Fails every ~50th time, GC something:
+				# Nil assertion failed
+				begin
+					child = children[0]
+					lbl = child.unsafe_as(::Gtk::Label)
+					lbl.label = txt
+				rescue e
+					STDERR.puts "Tooltip setting label (Gtk child) failed because of " + e.to_s
+				end
+
 				if x && y
 					if thread.settings.coord_mode_tooltip == ::Run::CoordMode::RELATIVE
 						x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x.not_nil!, y.not_nil!)

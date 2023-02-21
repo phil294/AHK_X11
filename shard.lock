@@ -2,7 +2,7 @@ version: 2.0
 shards:
   atspi:
     git: https://github.com/phil294/atspi.cr.git
-    version: 0.12.0+git.commit.288017ce69e02a6d2241e66f24f8040c257079ec
+    version: 0.12.0+git.commit.dc31620f1cc66f9fce2f4d0ed3114dc22a15ccf1
 
   cron_parser:
     git: https://github.com/kostya/cron_parser.git
@@ -14,11 +14,11 @@ shards:
 
   gi-crystal:
     git: https://github.com/hugopl/gi-crystal.git
-    version: 0.15.0+git.commit.02c3e3ea5016b19c78575f74128fd6c068c78098
+    version: 0.15.0+git.commit.55034968f636aadd68ab4246dd4e3104fb21f6af
 
   gtk3:
     git: https://github.com/phil294/gtk3.cr.git
-    version: 0.12.0+git.commit.037ebef30bdc91c469d6462748a24945d846dcba
+    version: 0.12.0+git.commit.56f5d0ad696e8a16c7cfe094a1c505d4ec556aa7
 
   malloc_pthread_shim:
     git: https://github.com/jhass/crystal-malloc_pthread_shim.git
