@@ -24,7 +24,8 @@ class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 						ctrl.label = value
 					end
 				when ::Gtk::ScrolledWindow
-					text_buffer = ctrl.children[0].unsafe_as(::Gtk::TextView).buffer
+					# s.a. tooltip.cr
+					text_buffer = ::Gtk::TextView.new(LibGLib.g_list_nth(ctrl.children.to_unsafe, 0).value.data, GICrystal::Transfer::None).buffer
 					text_buffer.set_text(value, -1) # TODO text= ?
 				when ::Gtk::Button, ::Gtk::Label
 					ctrl.label = value
