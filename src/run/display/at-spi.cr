@@ -305,11 +305,8 @@ module Run
 			parent.select_child(child_i) if parent
 		end
 		def get_text(accessible)
-			text = begin
-				accessible.text_iface.text(0, -1)
-			rescue e
-				accessible.name
-			end
+			text = accessible.text_iface.text(0, -1)
+			text = accessible.name if text.empty?
 			text = text.gsub('￼', "").strip()
 			text.empty? ? nil : text
 		end
