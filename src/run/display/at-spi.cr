@@ -221,6 +221,8 @@ module Run
 			accessible.child_count.times do |i|
 				break if max && i > max
 				child = accessible.child_at_index(i)
+				# happens randomly from time to time... without check, `hidden?` will segfault
+				next if child.nil? || child.to_unsafe.nil? || child.to_unsafe.null?
 				if ! include_hidden
 					next if hidden?(child)
 				end
