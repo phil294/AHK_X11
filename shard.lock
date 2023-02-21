@@ -14,7 +14,8 @@ shards:
 
   gi-crystal:
     git: https://github.com/hugopl/gi-crystal.git
-    version: 0.15.0+git.commit.55034968f636aadd68ab4246dd4e3104fb21f6af
+    # TODO https://github.com/hugopl/gi-crystal/issues/70
+    version: 0.15.0+git.commit.3610c6cc103dcd02c8cff50c9b74c52b07f11d7c
 
   gtk3:
     git: https://github.com/phil294/gtk3.cr.git
