@@ -1,4 +1,5 @@
 require "./file-util"
+# FileSetAttrib, Attributes [, FilePattern, OperateOnFolders?, Recurse?]
 class Cmd::File::FileSetAttrib < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 4 end

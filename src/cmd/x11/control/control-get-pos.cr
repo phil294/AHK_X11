@@ -1,5 +1,5 @@
 require "../window/win-util"
-
+# ControlGetPos [, X, Y, Width, Height, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::X11::Mouse::ControlGetPos < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 9 end

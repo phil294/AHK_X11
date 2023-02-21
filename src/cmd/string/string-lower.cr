@@ -1,3 +1,4 @@
+# StringLower, OutputVar, InputVar [, T]
 class Cmd::String::StringLower < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 3 end

@@ -1,3 +1,4 @@
+# Run, Target [, WorkingDir, Max|Min|Hide|UseErrorLevel, OutputVarPID, OutputVarStdout, OutputVarStderr]
 class Cmd::Misc::Run < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 6 end

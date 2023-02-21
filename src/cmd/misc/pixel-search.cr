@@ -1,3 +1,4 @@
+# PixelSearch, OutputVarX, OutputVarY, X1, Y1, X2, Y2, ColorID [, Variation, RGB]
 class Cmd::Misc::PixelSearch < Cmd::Base
 	def self.min_args; 7 end
 	def self.max_args; 9 end

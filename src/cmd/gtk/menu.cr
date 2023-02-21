@@ -1,3 +1,4 @@
+# Menu, MenuName, Cmd [, P3, P4, P5, FutureUse]
 class Cmd::Gtk::Gui::Menu < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 5 end

@@ -168,6 +168,7 @@ module Build
 				# Gui accepts many subcommands. Instead of duplicating parsing logic into a generic
 				# `Gui` cmd, instead join together (e.g. `GuiAdd`) and parse line again with that.
 				# All subcommands exist as standalone commands and expect the gui id as 1st arg.
+				# GUI, sub-command [, Param2, Param3, Param4]
 				split = args.split(',', 2).map &.strip
 				sub_instruction = split[0]? || ""
 				rest_args = split[1]? || ""

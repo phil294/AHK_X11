@@ -1,5 +1,5 @@
 require "./win-util"
-
+# WinClose [, WinTitle, WinText, SecondsToWait, ExcludeTitle, ExcludeText]
 class Cmd::X11::Window::WinClose < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 5 end

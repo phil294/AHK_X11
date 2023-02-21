@@ -1,3 +1,4 @@
+# ControlSend [, Control, Keys, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::X11::Keyboard::ControlSend < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 6 end
