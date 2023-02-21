@@ -21,10 +21,6 @@ shards:
     git: https://github.com/phil294/gtk3.cr.git
     version: 0.12.0+git.commit.56f5d0ad696e8a16c7cfe094a1c505d4ec556aa7
 
-  malloc_pthread_shim:
-    git: https://github.com/jhass/crystal-malloc_pthread_shim.git
-    version: 0.1.0
-
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
     version: 2.0.7
