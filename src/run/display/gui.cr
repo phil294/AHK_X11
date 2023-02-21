@@ -15,12 +15,15 @@ module Run
 			Gtk.main
 		end
 
+		@act_mutex = Mutex.new
 		# For running Gtk code on the Gtk worker thread (`idle_add` tells GTK to run
 		# the `block` in its free time),
 		# so perfect for Gui modifications, new window requests etc.
 		def act(&block : -> T) forall T
+			@act_mutex.lock
 			channel = Channel(T | Exception).new
 			GC.collect
+			GC.disable
 			GLib.idle_add do
 				begin
 					result = block.call
@@ -32,18 +35,16 @@ module Run
 				false
 			end
 			result = channel.receive
-			raise RuntimeException.new result.message, result.cause if result.is_a?(Exception)
-			GC.collect
-			result
-		end
-		# :ditto:
-		def act_no_wait(&block)
-			GLib.idle_add do
-				GC.collect
-				block.call
-				GC.collect
-				false
+			exception : Exception? = nil
+			if result.is_a?(Exception)
+				# This must happen here before the GC collect because even stacktraces themselves can disappear
+				exception = RuntimeException.new result.message, result.cause
 			end
+			GC.enable
+			GC.collect
+			@act_mutex.unlock
+			raise exception if exception
+			result.as(T)
 		end
 
 		def clipboard(&block : Gtk::Clipboard -> _)
@@ -267,9 +268,6 @@ module Run
 		private class GuiInfo
 			getter window : Gtk::Window
 			getter fixed : Gtk::Fixed
-			getter window_on_destroy : Proc(Nil) # GC
-			getter window_pointer : Pointer(Void) # GC
-			getter widgets = [] of Gtk::Widget # GC
 			property last_widget : Gtk::Widget? = nil
 			property last_x = 0
 			property last_y = 0
@@ -279,14 +277,14 @@ module Run
 			getter var_control_info = {} of String => ControlInfo
 			property window_color : Gdk::RGBA? = nil
 			property control_color : Gdk::RGBA? = nil
-			def initialize(@window, @fixed, @window_on_destroy, @window_pointer)
+			def initialize(@window, @fixed)
 			end
 		end
 		getter guis = {} of String => GuiInfo
 		# Yields (and if not yet exists, creates) the gui info referring to *gui_id*,
 		# including the `window`, and passes the block on to the GTK idle thread so
 		# you can run GTK code with it.
-		def gui(thread, gui_id, *, no_wait = false, &block : GuiInfo -> _)
+		def gui(thread, gui_id, &block : GuiInfo -> _)
 			if ! @guis[gui_id]?
 				act do
 					window = Gtk::Window.new title: @default_title, window_position: Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: false
@@ -296,40 +294,22 @@ module Run
 					window_on_destroy = ->do
 						close_label_id = gui_id == "1" ? "" : gui_id
 						close_label = "#{close_label_id}GuiClose".downcase
-						begin
-							thread.runner.add_thread close_label, 0
-						rescue e
-							# TODO: ...
-							STDERR.puts e
-						end
+						thread.runner.add_thread close_label, 0
 					end
 					window.destroy_signal.connect { window_on_destroy.call }
 					# To support transparent background when invoked via WinSet:
 					# Appears to be impossible to set dynamically, so needed at win build time:
 					window.visual = window.screen.rgba_visual
-					@guis[gui_id] = GuiInfo.new(window, fixed, window_on_destroy, window.to_unsafe)
+					@guis[gui_id] = GuiInfo.new(window, fixed)
 				end
 			end
-			if no_wait
-				act_no_wait { block.call(@guis[gui_id]) }
-			else
-				act { block.call(@guis[gui_id]) }
-			end
+			act { block.call(@guis[gui_id]) }
 		end
 		def gui_destroy(gui_id)
 			gui = @guis[gui_id]?
 			return if ! gui
-			act do
-				# https://github.com/jhass/crystal-gobject/issues/105#issuecomment-1338281572
-				gui.widgets.each &.destroy
-			end
-			GC.collect
-			act do
-				gui.window.destroy
-			end
-			GC.collect
+			act { gui.window.destroy }
 			@guis.delete(gui_id)
-			GC.collect
 		end
 		@tooltips = {} of Int32 => Gtk::Window
 		# Yields (and if not yet exists, creates) the tooltip referring to *tooltip_id*
@@ -358,9 +338,7 @@ module Run
 			tooltip = @tooltips[tooltip_id]?
 			return if ! tooltip
 			act { tooltip.destroy }
-			GC.collect
 			@tooltips.delete tooltip_id
-			GC.collect
 		end
 		def parse_rgba(v)
 			if v.to_i?(16)

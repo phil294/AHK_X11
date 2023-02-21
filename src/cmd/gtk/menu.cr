@@ -15,11 +15,7 @@ class Cmd::Gtk::Gui::Menu < Cmd::Base
 					label = name if label.empty?
 					item = ::Gtk::MenuItem.new_with_label name
 					item.activate_signal.connect do
-						begin
-							thread.runner.add_thread label.downcase, priority
-						rescue e
-							STDERR.puts e # TODO:
-						end
+						thread.runner.add_thread label.downcase, priority
 					end
 					tray_menu.append item
 				end

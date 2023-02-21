@@ -12,16 +12,11 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 		g_label = opt["g"]?.try &.[:v].downcase
 		run_g_label = ->{
 			if g_label
-				begin
-					runner.add_thread g_label, 0
-				rescue e
-					STDERR.puts e # TODO: Add application-global logger which shows popop
-					# (can't allow exceptions here because we're on the GUI thread)
-				end
+				runner.add_thread g_label, 0
 			end
 		}
 		
-		thread.runner.display.gui.gui(thread, gui_id, no_wait: true) do |gui|
+		thread.runner.display.gui.gui(thread, gui_id) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
 			when "edit"
@@ -45,9 +40,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				widget.clicked_signal.connect run_g_label
 				button_click_label = "button" + text.gsub(/[ &\n\r]/, "").downcase
 				widget.clicked_signal.connect do
-					begin runner.add_thread button_click_label, 0
-					rescue
-					end
+					runner.add_thread button_click_label, 0
 				end
 			when "checkbox"
 				widget = ::Gtk::CheckButton.new label: text
@@ -152,8 +145,6 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			gui.last_x = x
 			gui.last_y = y
 			gui.last_widget = widget
-			# https://github.com/jhass/crystal-gobject/issues/105
-			gui.widgets << widget
 		end
 	end
 end

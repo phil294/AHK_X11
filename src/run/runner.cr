@@ -98,17 +98,18 @@ module Run
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
-		def add_thread(cmd : Cmd::Base | String, priority) : Thread
-			if cmd.is_a?(String)
-				cmd_ = @labels[cmd]?
-				raise RuntimeException.new "Label '#{cmd}' not found" if ! cmd_
-				cmd = cmd_
-			end
+		def add_thread(cmd : Cmd::Base, priority) : Thread
 			thread = Thread.new(self, cmd, priority, @default_thread_settings)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
 			@run_thread_channel.send(nil) if i == @threads.size - 1
 			thread
+		end
+		# :ditto:
+		def add_thread(cmd_str : String, priority) : Thread?
+			cmd = @labels[cmd_str]?
+			return nil if ! cmd
+			add_thread(cmd, priority)
 		end
 
 		# Forever continuously figures out the "current thread" (`@threads.last`) and
