@@ -1,3 +1,4 @@
+# MouseClick, WhichButton [, X, Y, ClickCount, Speed, D|U, R]
 class Cmd::X11::Mouse::MouseClick < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 7 end

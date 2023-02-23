@@ -1,4 +1,5 @@
 require "./file-util"
+# FileSetTime [, YYYYMMDDHH24MISS, FilePattern, WhichTime, OperateOnFolders?, Recurse?]
 class Cmd::File::FileSetTime < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 5 end

@@ -1,5 +1,5 @@
 require "time"
-
+# Input [, OutputVar, Options, EndKeys, MatchList]
 class Cmd::X11::Keyboard::Input < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end

@@ -1,3 +1,4 @@
+# MouseGetPos, [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl]
 class Cmd::X11::Mouse::MouseGetPos < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end

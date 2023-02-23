@@ -1,3 +1,4 @@
+# FileSelectFile, OutputVar [, Options, RootDir, Prompt, Filter]
 class Cmd::Gtk::FileSelectFile < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 5 end

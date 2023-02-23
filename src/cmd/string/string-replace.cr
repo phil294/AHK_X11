@@ -1,3 +1,4 @@
+# StringReplace, OutputVar, InputVar, SearchText [, ReplaceText, ReplaceAll?]
 class Cmd::String::StringReplace < Cmd::Base
 	def self.min_args; 3 end
 	def self.max_args; 5 end

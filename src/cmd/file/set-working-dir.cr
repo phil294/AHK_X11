@@ -1,3 +1,4 @@
+# SetWorkingDir, DirName
 class Cmd::File::SetWorkingDir < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 1 end

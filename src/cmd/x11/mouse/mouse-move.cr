@@ -1,3 +1,4 @@
+# MouseMove, X, Y [, Speed, R]
 class Cmd::X11::Mouse::MouseMove < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 4 end

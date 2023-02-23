@@ -1,3 +1,4 @@
+# ControlSendRaw [, Control, Keys, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::X11::Keyboard::ControlSendRaw < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 6 end

@@ -1,3 +1,4 @@
+# RegExGetPos, OutputVar, InputVar, SearchText [, L#|R#]
 class Cmd::String::RegExGetPos < Cmd::Base
 	def self.min_args; 3 end
 	def self.max_args; 4 end

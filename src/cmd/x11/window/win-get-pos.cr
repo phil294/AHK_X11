@@ -1,5 +1,5 @@
 require "./win-util"
-
+# WinGetPos [, X, Y, Width, Height, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::X11::Window::WinGetPos < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 8 end

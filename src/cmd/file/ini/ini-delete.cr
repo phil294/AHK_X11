@@ -1,4 +1,5 @@
 require "ini"
+# IniDelete, Filename, Section [, Key]
 class Cmd::File::IniDelete < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 3 end
