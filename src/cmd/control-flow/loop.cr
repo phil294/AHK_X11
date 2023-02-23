@@ -1,3 +1,7 @@
+# Loop [, Count]
+# Loop, FilePattern [, IncludeFolders?, Recurse?]
+# Loop, Parse, InputVar [, Delimiters, OmitChars, FutureUse]
+# Loop, Read, InputFile [, OutputFile, FutureUse]
 class Cmd::ControlFlow::Loop < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end

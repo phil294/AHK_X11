@@ -1,3 +1,4 @@
+# PixelGetColor, OutputVar, X, Y [, RGB]
 class Cmd::Misc::PixelGetColor < Cmd::Base
 	def self.min_args; 3 end
 	def self.max_args; 4 end

@@ -1,3 +1,4 @@
+# StringRight, OutputVar, InputVar, Count
 class Cmd::String::StringRight < Cmd::Base
 	def self.min_args; 3 end
 	def self.max_args; 3 end

@@ -1,3 +1,4 @@
+# GuiControl, Sub-command, ControlID [, Param3]
 class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 3 end

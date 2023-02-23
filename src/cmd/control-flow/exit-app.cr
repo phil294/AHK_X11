@@ -1,3 +1,4 @@
+# ExitApp [, ExitCode]
 class Cmd::ControlFlow::ExitApp < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 1 end

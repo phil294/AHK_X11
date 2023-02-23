@@ -1,3 +1,4 @@
+# Submit [, NoHide]
 class Cmd::Gtk::Gui::GuiSubmit < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 2 end

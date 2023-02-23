@@ -1,4 +1,5 @@
 require "ini"
+# IniWrite, Value, Filename, Section, Key
 class Cmd::File::IniWrite < Cmd::Base
 	def self.min_args; 4 end
 	def self.max_args; 4 end

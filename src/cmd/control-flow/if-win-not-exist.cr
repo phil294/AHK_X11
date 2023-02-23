@@ -1,3 +1,4 @@
+# IfWinNotExist [, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::ControlFlow::IfWinNotExist < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end

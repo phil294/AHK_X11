@@ -1,3 +1,4 @@
+# ToolTip [, Text, X, Y, WhichToolTip]
 class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end

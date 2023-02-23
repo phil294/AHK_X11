@@ -1,5 +1,5 @@
 require "./win-util"
-
+# WinSet, Attribute, Value [, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::X11::Window::WinSet < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 6 end

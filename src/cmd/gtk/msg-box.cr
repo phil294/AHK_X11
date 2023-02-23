@@ -1,3 +1,5 @@
+# MsgBox [, Options, Title, Text, Timeout]
+# MsgBox, Text
 class Cmd::Gtk::Msgbox < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end
