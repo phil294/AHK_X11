@@ -43,7 +43,7 @@ The released binaries are special because they need to be portable. We achieve t
 1. Get `linuxdeploy-x86_64.AppImage` from https://github.com/linuxdeploy/linuxdeploy/, into this `build` folder
 1. Get `linuxdeploy-plugin-gtk.sh` from https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh
 1. Instead of `shards build`, run `./build.sh`. This also does shards build, but it adds the `--release` flag (slower compilation, faster output binary) and does the AppImage magic and attaches the installer.
-1. Find your final binary `ahk_x11.AppImage` in the `build` folder. It's about 30 MiB in size.
+1. Find your final binary `ahk_x11-[version]-x86_64.AppImage` in the `build` folder. It's about 30 MiB in size.
 
 ## Contributing
 
