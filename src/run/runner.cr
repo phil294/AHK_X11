@@ -69,10 +69,13 @@ module Run
 		def initialize(*, @builder, @script_file, @headless)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
-			script = @script_file ? @script_file.not_nil! : Path[Process.executable_path || ""].expand
+			script = @script_file ? @script_file.not_nil! : Path[binary_path].expand
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
+		end
+		private def binary_path()
+			ENV["APPIMAGE"]? || Process.executable_path || raise RuntimeException.new "Cannot determine binary path"
 		end
 		def run
 			@settings.persistent ||= (! @builder.hotkeys.empty? || ! @builder.hotstrings.empty?)
@@ -95,17 +98,18 @@ module Run
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
-		def add_thread(cmd : Cmd::Base | String, priority) : Thread
-			if cmd.is_a?(String)
-				cmd_ = @labels[cmd]?
-				raise RuntimeException.new "Label '#{cmd}' not found" if ! cmd_
-				cmd = cmd_
-			end
+		def add_thread(cmd : Cmd::Base, priority) : Thread
 			thread = Thread.new(self, cmd, priority, @default_thread_settings)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
 			@run_thread_channel.send(nil) if i == @threads.size - 1
 			thread
+		end
+		# :ditto:
+		def add_thread(cmd_str : String, priority) : Thread?
+			cmd = @labels[cmd_str]?
+			return nil if ! cmd
+			add_thread(cmd, priority)
 		end
 
 		# Forever continuously figures out the "current thread" (`@threads.last`) and
@@ -152,16 +156,12 @@ module Run
 
 		def reload
 			STDERR.puts "Reloading..."
-			bin_path = Process.executable_path
-			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
-			p = Process.new bin_path, ARGV, chdir: @initial_working_dir
+			p = Process.new binary_path, ARGV, chdir: @initial_working_dir
 			exit_app 0
 		end
 
 		def launch_window_spy
-			bin_path = Process.executable_path
-			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
-			p = Process.new bin_path, ["--windowspy"], chdir: @initial_working_dir
+			p = Process.new binary_path, ["--windowspy"], chdir: @initial_working_dir
 		end
 
 		private def auto_execute_section_ended

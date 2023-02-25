@@ -9,13 +9,13 @@ class Cmd::Gtk::FileSelectFolder < Cmd::Base
 		prompt = args[3]? || "Select Folder - " + thread.runner.get_global_var("a_scriptname").not_nil!
 		channel = Channel(::String).new
 		thread.runner.display.gui.act do
-			dialog = ::Gtk::FileChooserDialog.new title: prompt, action: ::Gtk::FileChooserAction::SELECT_FOLDER
-			dialog.add_button "Cancel", ::Gtk::ResponseType::CANCEL.value
-			dialog.add_button "Open", ::Gtk::ResponseType::OK.value
+			dialog = ::Gtk::FileChooserDialog.new title: prompt, action: ::Gtk::FileChooserAction::SelectFolder
+			dialog.add_button "Cancel", ::Gtk::ResponseType::Cancel.value
+			dialog.add_button "Open", ::Gtk::ResponseType::Ok.value
 			dialog.current_folder = root_dir if root_dir
-			dialog.on_response do |_, response_id|
+			dialog.response_signal.connect do |response_id|
 				response = ::Gtk::ResponseType.new(response_id)
-				filename = response == ::Gtk::ResponseType::OK ? (dialog.filename || "") : ""
+				filename = response == ::Gtk::ResponseType::Ok ? (dialog.filename.to_s || "") : ""
 				channel.send(filename)
 				dialog.destroy
 			end

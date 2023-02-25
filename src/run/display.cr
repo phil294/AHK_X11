@@ -118,21 +118,17 @@ module Run
 			@key_listeners.reject! &.== proc
 		end
 
-		def at_spi
+		def at_spi(&block : AtSpi -> T) forall T
 			# AtSpi stuff can fail in various ways with null pointers, (rare) crashes, timeouts etc.
 			# so this is some kind of catch-all method which seems to work great
-			GC.disable
 			error = nil
 			5.times do |i|
 				begin
-					resp = yield @at_spi
-					GC.enable
-					GC.collect
+					resp : T? = nil
+					@gui.act do # to make use of the GC mgm
+						resp = block.call @at_spi
+					end
 					return resp
-				rescue e : Run::RuntimeException
-					GC.enable
-					GC.collect
-					raise e
 				rescue e
 					error = e
 					STDERR.puts "An internal AtSpi request failed. Retrying... (#{i+1}/5)"
@@ -141,8 +137,6 @@ module Run
 			end
 			STDERR.puts "AtSpi failed five times in a row. Last seen error:"
 			error.not_nil!.inspect_with_backtrace(STDERR)					
-			GC.enable
-			GC.collect
 			return nil
 		end
 	end

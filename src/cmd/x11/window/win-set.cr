@@ -43,7 +43,7 @@ class Cmd::X11::Window::WinSet < Cmd::Base
 					raise Run::RuntimeException.new "WinSet, TransColor currently only works when you previously set \"Gui, Color\" to the same color."
 				end
 				thread.runner.display.gui.act do
-					gui_info.window.override_background_color(::Gtk::StateFlags::NORMAL, ::Gdk::RGBA.new(0,0,0,0))
+					gui_info.window.override_background_color(::Gtk::StateFlags::Normal, ::Gdk::RGBA.new(0,0,0,0))
 				end
 			end
 		end

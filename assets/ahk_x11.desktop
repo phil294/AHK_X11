@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=ahk_x11
+Exec=ahk_x11 %u
+MimeType=application/x-ahk_x11
+Icon=ahk_x11
+Terminal=false
+Type=Application
+Categories=GTK;Utility;Development
+Comment=AHK_X11: AutoHotkey for Linux

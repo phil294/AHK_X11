@@ -25,12 +25,10 @@ class Cmd::Misc::PixelSearch < Cmd::Base
 		thread.runner.display.gui.act do
 			# https://docs.gtk.org/gdk-pixbuf/class.Pixbuf.html#image-data
 			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x1, y1, w, h)
-			next "2" if ! pixbuf || pixbuf.bits_per_sample != 8 || pixbuf.colorspace != GdkPixbuf::Colorspace::RGB || pixbuf.width != w || pixbuf.height != h || x1 < 0 || y1 < 0
+			next "2" if ! pixbuf || pixbuf.bits_per_sample != 8 || pixbuf.colorspace != GdkPixbuf::Colorspace::Rgb || pixbuf.width != w || pixbuf.height != h || x1 < 0 || y1 < 0
 			row_stride = pixbuf.rowstride
 			n_channels = pixbuf.n_channels
-			# alternatively, `pixbuf.pixels[0]` but that's not an indexable so for a nicer interface:
-			pixels = LibGdkPixbuf.pixbuf_get_pixels(pixbuf.to_unsafe_pixbuf, out _)
-			next "2" if pixels.null?
+			pixels = pixbuf.pixels
 			is_match = false
 			h.times do |y|
 				w.times do |x|

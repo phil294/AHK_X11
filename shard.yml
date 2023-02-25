@@ -23,7 +23,7 @@ dependencies:
   x_do:
     github: phil294/x_do.cr
     commit: 94f755a4f18a9a9820e9738b371cbe6b49731926
-  gobject:
-    github: jhass/crystal-gobject
-  malloc_pthread_shim:
-    github: jhass/crystal-malloc_pthread_shim
+  gtk3:
+    github: phil294/gtk3.cr
+  atspi:
+    github: phil294/atspi.cr
