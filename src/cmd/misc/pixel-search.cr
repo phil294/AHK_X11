@@ -41,7 +41,7 @@ class Cmd::Misc::PixelSearch < Cmd::Base
 						match_x = x + x1
 						match_y = y + y1
 						if thread.settings.coord_mode_pixel == ::Run::CoordMode::RELATIVE
-							match_y, match_x = Cmd::X11::Window::Util.coord_screen_to_relative(thread, match_y, match_x)
+							match_x, match_y = Cmd::X11::Window::Util.coord_screen_to_relative(thread, match_x, match_y)
 						end
 						thread.runner.set_user_var(out_x, match_x.to_s) if ! out_x.empty?
 						thread.runner.set_user_var(out_y, match_y.to_s) if ! out_y.empty?

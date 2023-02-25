@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 30
+N_TESTS = 32
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -387,16 +387,15 @@ gosub assert
 ;Pause [, On|Off|Toggle]
 
 coordmode, pixel, relative
-PixelGetColor, color, 24, 10, rgb
+PixelGetColor, color, 26, 8, rgb
 expect = pixelgetcolor,color,7BC07B
 gosub assert
 
 PixelSearch, x, y, 0, 0, 100, 100, 0x7BC07B, 0, rgb
-expect = pixelsearch,x,24
-; TODO broken?
-; gosub assert
-expect = pixelsearch,y,10
-; gosub assert
+expect = pixelsearch,x,26
+gosub assert
+expect = pixelsearch,y,8
+gosub assert
 
 ;;PostMessage, Msg [, wParam, lParam, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
 ;;Process, Cmd, PID-or-Name [, Param3]
