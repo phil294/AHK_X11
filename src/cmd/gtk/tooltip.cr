@@ -12,9 +12,9 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 
 				# (ahk_x11:655793): Gtk-CRITICAL **: 16:13:19.371: gtk_container_foreach: assertion 'GTK_IS_CONTAINER (container)' failed
 				children = tooltip.children
-				# Fails every ~50th time, GC something:
-				# Nil assertion failed
 				begin
+					# Fails every ~50th time, GC something:
+					# Nil assertion failed
 					child = children[0]
 					lbl = child.unsafe_as(::Gtk::Label)
 					lbl.label = txt
