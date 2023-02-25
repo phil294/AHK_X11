@@ -17,7 +17,7 @@ class Cmd::Misc::PixelGetColor < Cmd::Base
 				color = [] of UInt8
 				# internal pixels storage is complex https://docs.gtk.org/gdk-pixbuf/class.Pixbuf.html#image-data
 				# but here we just need the first three bytes
-				pixbuf.pixels.each_slice(3) do |slice| # TODO
+				pixbuf.pixels.each_slice(3) do |slice|
 					color = slice
 					break
 				end
