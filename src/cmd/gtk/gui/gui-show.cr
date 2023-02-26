@@ -6,7 +6,7 @@ class Cmd::Gtk::Gui::GuiShow < Cmd::Base
 		gui_id = args[0]
 		options = args[1]? || ""
 		title = args[2]?
-		thread.runner.display.gui.gui(thread, gui_id) do |gui|
+		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			gui.window.title = title if title
 			gui.window.show_all
 			LibGtk.gtk_window_get_size(gui.window.to_unsafe, out w, out h)

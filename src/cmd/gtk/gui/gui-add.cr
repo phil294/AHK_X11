@@ -17,7 +17,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			end
 		}
 		
-		thread.runner.display.gui.gui(thread, gui_id) do |gui|
+		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
 			when "edit"
@@ -74,7 +74,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 
 			if opt["v"]?
 				alt_submit = !! opt["altsubmit"]?
-				gui.var_control_info[opt["v"][:v]] = Run::Gui::ControlInfo.new widget, alt_submit
+				gui.var_control_info[opt["v"][:v]] = Run::Gtk::ControlInfo.new widget, alt_submit
 			end
 
 			gui.padding = 7 if gui.padding == 0 # TODO:

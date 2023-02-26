@@ -71,7 +71,7 @@ class Cmd::Misc::Run < Cmd::Base
 		# how to implement the draw_page callback for arbitrary file types, so I disabled
 		# this and made `print` just send the file to `lp` instead for now.
 		# if print
-		# 	thread.runner.display.gui.act do
+		# 	thread.runner.display.gtk.act do
 		# 		print_op = ::Gtk::PrintOperation.new
 		# 		print_op.run ::Gtk::PrintOperationAction::PRINT_DIALOG, nil
 		#		success = ...
@@ -81,7 +81,7 @@ class Cmd::Misc::Run < Cmd::Base
 			success, stdout, stderr = try_execute(thread, "gtk-launch '#{`xdg-mime query default text/plain`.strip}' '#{target_raw}'", chdir: pwd, stdout: !!output_stdout, stderr: !!output_stderr)
 		end
 
-		thread.runner.display.gui.act do
+		thread.runner.display.gtk.act do
 			begin
 				if target.starts_with?("www.")
 					target = "http://#{target}"

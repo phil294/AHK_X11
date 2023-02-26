@@ -3,7 +3,7 @@ require "./display/x11"
 require "./display/hotstrings"
 require "./display/hotkeys"
 require "./display/pressed-keys"
-require "./display/gui"
+require "./display/gtk"
 require "./display/at-spi"
 
 module Run
@@ -11,7 +11,7 @@ module Run
 	class Display
 		getter adapter : DisplayAdapter
 		getter x_do : XDo
-		getter gui : Gui
+		getter gtk : Gtk
 		getter hotstrings : Hotstrings
 		getter hotkeys : Hotkeys
 		getter pressed_keys : PressedKeys
@@ -19,7 +19,7 @@ module Run
 
 		def initialize(@runner)
 			@adapter = X11.new
-			@gui = Gui.new default_title: (@runner.get_global_var("a_scriptname") || "")
+			@gtk = Gtk.new default_title: (@runner.get_global_var("a_scriptname") || "")
 			@at_spi = AtSpi.new
 			@x_do = XDo.new
 			@hotstrings = Hotstrings.new(@runner, @runner.settings.hotstring_end_chars)
@@ -38,9 +38,9 @@ module Run
 			@pressed_keys.run
 			# Cannot use normal mt `spawn` because https://github.com/crystal-lang/crystal/issues/12392
 			::Thread.new do
-				gui.run # separate worker thread because gtk loop is blocking
+				gtk.run # separate worker thread because gtk loop is blocking
 			end
-			gui.init(@runner)
+			gtk.init(@runner)
 		end
 
 		@pause_counter = 0
@@ -125,7 +125,7 @@ module Run
 			5.times do |i|
 				begin
 					resp : T? = nil
-					@gui.act do # to make use of the GC mgm
+					@gtk.act do # to make use of the GC mgm
 						resp = block.call @at_spi
 					end
 					return resp

@@ -124,9 +124,9 @@ module Run
 				while thread = @threads.last?
 					if ! @headless
 						if thread.paused
-							display.gui.thread_pause
+							display.gtk.thread_pause
 						else
-							display.gui.thread_unpause
+							display.gtk.thread_unpause
 						end
 					end
 					select
@@ -207,7 +207,7 @@ module Run
 			down = var.downcase
 			case down
 			when "clipboard"
-				display.gui.clipboard do |clip|
+				display.gtk.clipboard do |clip|
 					clip.set_text(value, -1)
 					clip.store
 				end
@@ -245,7 +245,7 @@ module Run
 			when "a_now" then Time.local.to_YYYYMMDDHH24MISS
 			when "a_nowutc" then Time.utc.to_YYYYMMDDHH24MISS
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
-			when "clipboard" then display.gui.clipboard &.wait_for_text
+			when "clipboard" then display.gtk.clipboard &.wait_for_text
 			when "a_screenwidth" then display.adapter.display.default_screen.width.to_s
 			when "a_screenheight" then display.adapter.display.default_screen.height.to_s
 			when "a_username" then Hacks.username
@@ -288,8 +288,8 @@ module Run
 				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
 				::exit
 			when SingleInstance::Prompt
-				response = display.gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
-				::exit if response != Gui::MsgBoxButton::Yes
+				response = display.gtk.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
+				::exit if response != Gtk::MsgBoxButton::Yes
 				Process.signal(Signal::HUP, already_running)
 			end
 		end
@@ -300,10 +300,10 @@ module Run
 			@suspension = mode.as(Bool)
 			if mode
 				display.suspend
-				display.gui.suspend
+				display.gtk.suspend
 			else
 				display.unsuspend
-				display.gui.unsuspend
+				display.gtk.unsuspend
 			end
 		end
 		def pause_thread(mode = nil, *, self_is_thread = true)
@@ -314,7 +314,7 @@ module Run
 			if mode
 				if underlying_thread
 					underlying_thread.pause
-					display.gui.thread_pause if ! @headless
+					display.gtk.thread_pause if ! @headless
 				end
 			else
 				underlying_thread.unpause if underlying_thread

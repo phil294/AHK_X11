@@ -8,7 +8,7 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 		x = args[1]?.try &.to_i?
 		y = args[2]?.try &.to_i?
 		if txt && ! txt.empty?
-			thread.runner.display.gui.tooltip(id) do |tooltip|
+			thread.runner.display.gtk.tooltip(id) do |tooltip|
 
 				# (ahk_x11:655793): Gtk-CRITICAL **: 16:13:19.371: gtk_container_foreach: assertion 'GTK_IS_CONTAINER (container)' failed
 				children = tooltip.children
@@ -32,10 +32,10 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 			end
 		else
 			# Updating text is twice as fast than destroying and rebuilding, so maybe hiding
-			# would be better here: thread.runner.display.gui.tooltip(id) &.hide
+			# would be better here: thread.runner.display.gtk.tooltip(id) &.hide
 			# However that's not any faster than destroy? So we might as well keep that to
 			# clean up unused windows:
-			thread.runner.display.gui.destroy_tooltip id
+			thread.runner.display.gtk.destroy_tooltip id
 		end
 	end
 end

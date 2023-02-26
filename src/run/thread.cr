@@ -1,5 +1,5 @@
 require "x_do"
-require "./display/gui"
+require "./display/gtk"
 require "./display"
 require "../util/ahk-string"
 
@@ -12,7 +12,7 @@ module Run
 	# see Thread.settings
 	private struct ThreadSettings
 		property last_found_window : XDo::Window?
-		property msgbox_response : Gui::MsgBoxButton?
+		property msgbox_response : Gtk::MsgBoxButton?
 		property coord_mode_tooltip = CoordMode::RELATIVE
 		property coord_mode_pixel = CoordMode::RELATIVE
 		property coord_mode_mouse = CoordMode::RELATIVE
@@ -148,7 +148,7 @@ module Run
 				{% if ! flag?(:release) %}
 					e.inspect_with_backtrace(STDERR)
 				{% end %}
-				@runner.display.gui.msgbox msg
+				@runner.display.gtk.msgbox msg
 				@done = true
 				@exit_code = 2 # TODO: ???
 				return @exit_code

@@ -33,9 +33,9 @@ def build_error(msg)
 	end
 	msg = "#{msg}\n\nThe program will exit."
 	if ! HEADLESS
-		gui = Run::Gui.new "AHK_X11"
-		spawn gui.run
-		gui.msgbox msg
+		gtk = Run::Gtk.new "AHK_X11"
+		spawn gtk.run
+		gtk.msgbox msg
 	end
 	abort msg
 end

@@ -22,7 +22,7 @@ class Cmd::Misc::PixelSearch < Cmd::Base
 		variation = args[7]?.try &.to_i? || 0
 		w = x2 - x1 + 1
 		h = y2 - y1 + 1
-		thread.runner.display.gui.act do
+		thread.runner.display.gtk.act do
 			# https://docs.gtk.org/gdk-pixbuf/class.Pixbuf.html#image-data
 			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x1, y1, w, h)
 			next "2" if ! pixbuf || pixbuf.bits_per_sample != 8 || pixbuf.colorspace != GdkPixbuf::Colorspace::Rgb || pixbuf.width != w || pixbuf.height != h || x1 < 0 || y1 < 0

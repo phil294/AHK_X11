@@ -11,7 +11,7 @@ class Cmd::Misc::PixelGetColor < Cmd::Base
 			x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
 		end
 		rgb = ((args[3]?.try &.downcase) || "") == "rgb"
-		thread.runner.display.gui.act do
+		thread.runner.display.gtk.act do
 			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x, y, 1, 1)
 			if pixbuf
 				color = [] of UInt8
