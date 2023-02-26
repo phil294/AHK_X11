@@ -28,6 +28,9 @@ end
 HEADLESS = ! ENV["DISPLAY"]? || ENV["DISPLAY"].empty?
 
 def build_error(msg)
+	if msg.is_a?(Exception)
+		msg.inspect_with_backtrace(STDERR)
+	end
 	msg = "#{msg}\n\nThe program will exit."
 	if ! HEADLESS
 		gui = Run::Gui.new "AHK_X11"
