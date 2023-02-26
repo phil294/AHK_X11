@@ -114,7 +114,9 @@ module X11::C
 			"alt" => XK_Alt_L,
 			"lalt" => XK_Alt_L,
 			"ralt" => XK_Alt_R,
-			# TODO: capslock?
+			"scrolllock" => XK_Scroll_Lock,
+			"capslock" => XK_Caps_Lock,
+			"numlock" => XK_Num_Lock,
 
 			# Printable non-letters, symbols ;%@ etc.: Often their unicode ord is equal
 			# to the keysym so the fallback should work. Below are only known exceptions
