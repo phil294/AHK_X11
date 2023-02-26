@@ -172,9 +172,7 @@ module Build
 				split = args.split(',', 2).map &.strip
 				sub_instruction = split[0]? || ""
 				rest_args = split[1]? || ""
-				match = sub_instruction.match(/(?:(\S+)\s*:\s*)?(.*)/).not_nil!
-				gui_id = match[1]? || "1"
-				sub_cmd = match[2]
+				gui_id, sub_cmd = Parser.gui_sub_instruction_to_id_and_cmd(sub_instruction)
 				raise "Gui subcommand missing" if sub_cmd.empty?
 				if sub_cmd.starts_with?('-') || sub_cmd.starts_with?('+')
 					rest_args = sub_cmd
@@ -228,5 +226,11 @@ module Build
 			end
 		end
 
+		def self.gui_sub_instruction_to_id_and_cmd(sub_instruction)
+			match = sub_instruction.match(/(?:(\S+)\s*:\s*)?(.*)/).not_nil!
+			gui_id = match[1]? || "1"
+			sub_cmd = match[2]
+			return gui_id, sub_cmd
+		end
 	end
 end
