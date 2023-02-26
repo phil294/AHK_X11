@@ -458,7 +458,6 @@ expect = wingetclass,class,AppRun.wrapped ; Ahk_x11
 gosub assert
 
 WinGetText, txt
-; TODO: improves in gtk3 branch? img name? img alt tag? why window name?
 expect = wingettext,txt,ahk_x11_test_gui`nbtn txt 1`nedit txt 3
 gosub assert
 
