@@ -142,13 +142,15 @@ There are different ways to use it.
     - Once installed, all `.ahk` files are associated with AHK_X11, so you can simply double click them.
     - Also adds the Compiler into `Open as...` Menus.
     - Also adds Window Spy to your applications. It looks [something like this](./assets/WindowSpy.png).
-2. Command line: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
-    - Once your script's auto-execute section has finished, you can also execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
-    - When you don't want to pass a script, you can specify `--repl` instead (implicit `#Persistent`).
-    - If you want to pass your command from stdin instead of file, do it like this: `./ahk_x11 /dev/stdin <<< 'MsgBox'`.
+2. Command line
+    - Either: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
+    - Or: Pass code from stdin, e.g. `echo $'var = 123\nMsgBox %var%' | ./ahk_x11`
+    - Once your script's auto-execute section has finished, you can also interactively execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
+    - When you don't want to pass a script and jump to this mode directly, you can specify `--repl` instead (implicit `#Persistent`).
     - Compile scripts with `./ahk_x11 --compile "path/script.ahk"`
     - Run Window Spy with `./ahk_x11 --windowspy`
     - Hashbang supported if first line starts with `#!`
+    - You can disable graphical commands by manually unsetting the DISPLAY variable. Example: `DISPLAY= ./ahk_x11 <<< 'Echo abc'` just prints `abc` to the console (`Echo` command is a special ahk_x11-only command). The only advantage is faster startup time.
 
 ### Caveats
 
