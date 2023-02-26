@@ -118,7 +118,7 @@ goto l_after_gui
 				gui_button_clicked_success = 1
 			return
 l_after_gui:
-
+sleep 10
 ifwinnotexist, ahk_x11_test_gui
 {
 	fail_reason = gui win not exist
@@ -256,6 +256,7 @@ gosub assert
 ;Exit [, ExitCode]
 ;ExitApp [, ExitCode]
 
+txt =
 tmp_file = ahk_x11_test_%a_now%.txt
 FileAppend, txt, %tmp_file%
 FileCopy, %tmp_file%, %tmp_file%2
