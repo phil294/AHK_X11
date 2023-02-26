@@ -142,7 +142,7 @@ module Run
 					@performance_by_cmd[cmd.class.name].count += 1
 					@performance_by_cmd[cmd.class.name].total += cmd_execution_time
 				end
-			rescue e : RuntimeException
+			rescue e
 				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
 				STDERR.puts e.to_s
 				{% if ! flag?(:release) %}
