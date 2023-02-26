@@ -61,7 +61,7 @@ A more general overview:
 - `src/build` does the parsing etc. and is mostly complete
 - `src/run/runner` and `src/run/thread` are worth looking into, this is the heart of the application and where global and thread state is stored
 - `src/cmd` contains all commands exposed to the user.
-- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse), `crystal-gobject` for Gtk (`Gui`, `MsgBox`, `gui.cr`) and Atspi (control handling, `at-spi.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings, `x11.cr`).
+- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse), `gi-crystal` for Gtk (`Gui`, `MsgBox`, `gui.cr`) and Atspi (control handling, `at-spi.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings, `x11.cr`).
 
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
