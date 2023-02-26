@@ -1,0 +1,4 @@
+libxdo.so*
+linuxdeploy-x86_64.AppImage
+linuxdeploy-plugin-gtk.sh
+*.AppImage*

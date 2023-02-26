@@ -1,3 +1,4 @@
+# IfInString, var, SearchString
 class Cmd::ControlFlow::IfInString < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 2 end

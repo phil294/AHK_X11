@@ -1,5 +1,5 @@
 require "./win-util"
-
+# WinActivate [, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::X11::Window::WinActivate < Cmd::Base
 	def self.min_args; 0 end
 	def self.max_args; 4 end

@@ -25,7 +25,7 @@ This project is usable, but WORK IN PROGRESS.
 
 [AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux.
 
-More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[crystal-gobject](https://github.com/jhass/crystal-gobject)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 60% of work is done. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
+More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[gi-crystal](https://github.com/hugopl/gi-crystal)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 60% of work is done. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
 
 Note that because of the old version of the spec (at least for now), many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. More to read: [Project goals](https://github.com/phil294/AHK_X11/issues/8)
 
@@ -125,11 +125,12 @@ Also planned, even though it's not part of 1.0.24 spec:
 
 ## Installation
 
+**[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)**. Make the downloaded file executable and you should be good to go.
+
 Prerequisites:
-- X11 and GTK are the only dependencies. You most likely have them already. Wayland support would be cool too some day.
+- X11 is the only dependency. You most likely have them already. Wayland support would be cool too some day.
 - Old distros like Debian *before* 10 (Buster) or Ubuntu *before* 18.04 are not supported ([reason](https://github.com/jhass/crystal-gobject/issues/73#issuecomment-661235729)). Otherwise, it should not matter what system you use.
 
-Then, you can download the latest binary from the [release section](https://github.com/phil294/AHK_X11/releases). Make the downloaded file executable and you should be good to go.
 
 There is no auto updater yet! (but planned) You will probably want to get the latest version then and again.
 
@@ -153,7 +154,7 @@ There are different ways to use it.
 
 #### Accessibility
 
-All commands or command options related to Controls (e.g. ControlClick or WinGetText) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
+All commands or command options related to Controls (e.g. `ControlClick` or `WinGetText`) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
 
 #### Focus stealing prevention
 
@@ -180,50 +181,12 @@ Some Linux distros offer a configurable setting for focus stealing prevention. U
 
 #### Incompatibilities with Windows versions
 
-Like covered above, AHK_X11 is vastly different to modern Windows-AutoHotkey because it is 1. *missing its more recent features* and 2. there are *still several features missing*. Apart from that, there are a few minor *incompatibilities* between AHK_X11 and the then-Windows-AutoHotkey 1.0.24:
+Like covered above, AHK_X11 is vastly different to modern Windows-AutoHotkey because 1. its spec is *missing its more recent features* and 2. there are *still several features missing*. Apart from that, there are a few minor *incompatibilities* between AHK_X11 and the then-Windows-AutoHotkey 1.0.24:
 - `#NoEnv` is the default, this means, to access environment variables, you'll have to use `EnvGet`.
 - All arguments are always evaluated only at runtime, even if they are static. This can lead to slightly different behavior or error messages at runtime vs. build time.
 - Several more small subtle differences highlighted in green throughout the docs page
 
 Besides, it should be noted that un[documented](https://phil294.github.io/AHK_X11) == undefined.
-
-## Development
-
-These are the steps required to build this project locally, such as if you want to contribute to the project. Please open an issue if anything doesn't work.
-
-**YOU DO <EM>NOT</EM> NEED TO FOLLOW THESE STEPS AS AN AUTOHOTKEY DEVELOPER**. Do do that, download AHK_X11 - see **INSTALLATION** ABOVE. Then you can start scripting. The below steps are for DEVELOPING IN **CRYSTAL LANGUAGE**.
-
-1. Install development versions of prerequisites.
-    1. Ubuntu 20.04 and up:
-        1. Dependencies
-            ```
-            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev
-            ```
-        1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
-    1. Arch Linux:
-        ```
-        sudo pacman -S crystal shards gcc libxkbcommon libxinerama libxtst gtk3 gc
-        ```
-1. `git clone https://github.com/phil294/AHK_X11`
-1. `cd AHK_X11`
-1. `shards install`
-1. Run various library tweaks with `./setup_dependencies.sh`. This is mostly WIP and hacked together, so if anything doesn't work, please open an issue.
-1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.<br>Read on for a cross-distro compatible build.
-1. To make AHK_X11 maximally portable, various dependencies should be statically linked. This is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Here is an overview of all dependencies. All of this was tested on Ubuntu 18.04. (Update: this entire section is still correct, but not future proof and WIP, see [#24](https://github.com/phil294/AHK_X11/issues/24))
-    - Should be statically linked:
-        - `libxdo`. Additionally to the above reasons, it isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible) and may introduce even more breaking changes in the future. Also, we fix a rarely occurring fatal error here (probably Crystal-specific?). So,
-            - clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there,
-            - in `xdo.c`, after `data = xdo_get_window_property_by_atom(xdo, wid, request, &nitems, &type, &size);`, add another `if(data == NULL) return XDO_ERROR;`
-            - run `make clean && make libxdo.a` and then copy the file `libxdo.a` into our `static` folder (create if it doesn't exist yet).
-        - Dependencies of `libxdo`: `libxkbcommon`, `libXtst`, `libXi`, `libXinerama` and `libXext`. The static libraries should be available from your package manager dependencies installed above so normally there's nothing you need to do.
-        - Other (crystal dependencies?), also via package manager: `libevent_pthreads`, `libevent`, and `libpcre`
-        - `libgc` is currently shipped and linked automatically by Crystal itself so there is no need for it
-        - `libssl` and `libcrypto` because Ubuntu 22.04 introduced an abi version bump
-    - Stays dynamically linked:
-        - `libgtk-3` and its dependencies, because afaik Gtk is installed everywhere, even on Qt-based distros. If you know of any common distribution that does not include Gtk libs by default please let me know. Gtk does also not officially support static linking. `libgtk-3`, `libgd_pixbuf-2.0`, `libgio-2.0`, `libgobject-2.0`, `libglib-2.0`, `libgobject-2.0`
-        - glibc / unproblematic libraries according to [this list](https://github.com/AppImage/pkg2appimage/blob/master/excludelist): `libX11`, `libm`, `libpthread`, `librt`, `libdl`.
-1. All in all, once you have `libxdo.a` inside the folder `static`, the following builds the final binary which should be very portable: `shards build -Dpreview_mt --link-flags="-no-pie -L$PWD/static -Wl,-Bstatic -lxdo -lxkbcommon -lXinerama -lXext -lXtst -lXi -levent_pthreads -levent -lpcre -Wl,-Bdynamic"`. When not in development, increase optimizations and runtime speed by adding `--release`. The resulting binary is about 4.7 MiB in size.
-1. Attach the installer with `bin/ahk_x11 --compile src/installer.ahk tmp && mv tmp bin/ahk_x11`. Explanation: The installer is not shipped separately and instead bundled with the binary by doing this. Bundling is the same thing as compiling a script as a user. As you can see, it is possible to repeatedly compile a binary, with each script being appended at the end each time. Only the last one actually executed - and only if no params are passed to the program. There's no point in compiling multiple times, but it allows us to ship a default script (the installer) for when no arguments are passed. In other words, this is possible for a user: `ahk_x11 --compile script1.ahk && ./script1 --compile script2.ahk && ./script2` but no one will ever do that.
 
 ## Performance
 
@@ -252,34 +215,16 @@ prints something like:
 [{"send", count: 1000, total: 00:00:00.530032328>},
  {"loop", count: 1001, total: 00:00:00.000206347>}]
 ```
+Note that the internal code around executing commands takes about 10 µs between two every commands and you can't do anything about it and this *not* measured / included in the benchmark command's output. This can actually be the bottleneck in some scripts and should probably be improved
 
 More tips:
 - Some values are cached internally while the thread is running, so repeated commands may run faster
-- The first time an AtSpi-related command (Control*, WinGetText, ... see "Accessibility" section in the docs) runs, the interface needs to be initialized which can take some time (0-5s)
-- Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so typically e.g. the matching criteria `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`.
+- The first time an AtSpi-related command (`Control`-*, `WinGetText`, ... see "Accessibility" section above) runs, the interface needs to be initialized which can take some time (0-5s)
+- Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so e.g. `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`. So for many window operations you might want to do a single `WinGet, win_id, ID` beforehand and then reuse that `%win_id`.
 
 ## Contributing
 
-If you feel like it, you are welcome to contribute! The language in use, Crystal, is resembling Ruby syntax also great for beginners.
-
-This program has a very modular structure due to its nature which should make it easier to add features. Most work pending is just implementing commands, as almost everything more complicated is now bootstrapped. Simply adhere to the 2004 spec chm linked above. There's documentation blocks all across the source.
-
-Commands behave mostly autonomous. See for example [`src/cmd/file/file-copy.cr`](https://github.com/phil294/AHK_X11/blob/master/src/cmd/file/file-copy.cr): All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
-Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `thread.runner.get_user_var`, `thread.get_var` and `thread.runner.set_user_var`.
-
-GUI: Several controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are helpful.
-
-A more general overview:
-- `src/build` does the parsing etc. and is mostly complete
-- `src/run/runner` and `src/run/thread` are worth looking into, this is the heart of the application and where global and thread state is stored
-- `src/cmd` contains all commands exposed to the user.
-- There's *three* libraries included which somehow interact with the X server: `x_do.cr` for automatization (window, keyboard, mouse), `crystal-gobject` for Gtk (`Gui`, `MsgBox`, `gui.cr`) and Atspi (control handling, `at-spi.cr`), and `x11-cr` for low-level X interaction (hotkeys, hotstrings, `x11.cr`).
-
-There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
-
-While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see [`Run::Thread`](https://github.com/phil294/AHK_X11/blob/master/src/run/thread.cr) docs).
-
-Current commits are collected in the `development` branch and then merged into `master` for each release.
+If you want to help with AHK_X11 development or prefer to build from source instead of using the prebuilt binaries, detailed build instructions are to be found in [./build/README.md](./build/README.md).
 
 ## Issues
 

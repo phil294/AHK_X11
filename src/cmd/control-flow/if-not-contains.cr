@@ -1,3 +1,4 @@
+# If var not contains value1,value2,...
 class Cmd::ControlFlow::IfNotContains < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 2 end

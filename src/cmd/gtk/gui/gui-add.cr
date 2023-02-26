@@ -1,3 +1,4 @@
+# Add, ControlType [, Options, Text]
 class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 4 end
@@ -12,47 +13,40 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 		g_label = opt["g"]?.try &.[:v].downcase
 		run_g_label = ->{
 			if g_label
-				begin
-					runner.add_thread g_label, 0
-				rescue e
-					STDERR.puts e # TODO: Add application-global logger which shows popop
-					# (can't allow exceptions here because we're on the GUI thread)
-				end
+				runner.add_thread g_label, 0
 			end
 		}
 		
-		thread.runner.display.gui.gui(thread, gui_id, no_wait: true) do |gui|
+		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
 			when "edit"
 				if opt["r"]?.try &.[:n].try &.> 1
-					widget = ::Gtk::ScrolledWindow.new vexpand: true, hexpand: false, shadow_type: ::Gtk::ShadowType::IN
+					widget = ::Gtk::ScrolledWindow.new vexpand: true, hexpand: false, shadow_type: ::Gtk::ShadowType::In
 					buffer = ::Gtk::TextBuffer.new
 					text_view = ::Gtk::TextView.new_with_buffer buffer
 					text_view.accepts_tab = false
-					text_view.wrap_mode = ::Gtk::WrapMode::WORD_CHAR
+					text_view.wrap_mode = ::Gtk::WrapMode::WordChar
 					text_view.margin = 5
 					widget.add text_view
 					text_view.buffer.set_text text, -1
-					text_view.buffer.connect "changed", run_g_label
+					text_view.buffer.changed_signal.connect run_g_label
 				else
 					widget = ::Gtk::Entry.new
 					widget.text = text
-					widget.connect "changed", run_g_label
+					widget.changed_signal.connect run_g_label
 				end
 			when "button" # TODO: "default" stuff from docs
 				widget = ::Gtk::Button.new label: text
-				widget.connect "clicked", run_g_label
+				widget.clicked_signal.connect run_g_label
 				button_click_label = "button" + text.gsub(/[ &\n\r]/, "").downcase
-				widget.on_clicked do
-					begin runner.add_thread button_click_label, 0
-					rescue
-					end
+				widget.clicked_signal.connect do
+					runner.add_thread button_click_label, 0
 				end
 			when "checkbox"
 				widget = ::Gtk::CheckButton.new label: text
 				widget.active = true if opt["checked"]?
-				widget.connect "toggled", run_g_label
+				widget.toggled_signal.connect run_g_label
 			when "dropdownlist", "ddl"
 				widget = ::Gtk::ComboBoxText.new
 				text.split('|').each_with_index do |option, i|
@@ -63,24 +57,24 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					end
 				end
 				widget.active = (opt["choose"][:n] || 1) - 1 if opt["choose"]?
-				widget.connect "changed", run_g_label
+				widget.changed_signal.connect run_g_label
 			when "picture", "pic"
 				widget = ::Gtk::Image.new_from_file text
 				widget.has_window = true
-				widget.events = ::Gdk::EventMask::BUTTON_PRESS_MASK.to_i
-				widget.connect "button-press-event", run_g_label
+				widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
+				widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
 			else
 				widget = ::Gtk::Label.new text
 				widget.has_window = true
-				widget.events = ::Gdk::EventMask::BUTTON_PRESS_MASK.to_i
-				widget.connect "button-press-event", run_g_label
+				widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
+				widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
 			end
 
-			widget.override_background_color(::Gtk::StateFlags::NORMAL, gui.control_color) if gui.control_color
+			widget.override_background_color(::Gtk::StateFlags::Normal, gui.control_color) if gui.control_color
 
 			if opt["v"]?
 				alt_submit = !! opt["altsubmit"]?
-				gui.var_control_info[opt["v"][:v]] = Run::Gui::ControlInfo.new widget, alt_submit
+				gui.var_control_info[opt["v"][:v]] = Run::Gtk::ControlInfo.new widget, alt_submit
 			end
 
 			gui.padding = 7 if gui.padding == 0 # TODO:
@@ -152,8 +146,6 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			gui.last_x = x
 			gui.last_y = y
 			gui.last_widget = widget
-			# https://github.com/jhass/crystal-gobject/issues/105
-			gui.widgets << widget
 		end
 	end
 end

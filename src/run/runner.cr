@@ -69,10 +69,13 @@ module Run
 		def initialize(*, @builder, @script_file, @headless)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
-			script = @script_file ? @script_file.not_nil! : Path[Process.executable_path || ""].expand
+			script = @script_file ? @script_file.not_nil! : Path[binary_path].expand
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
+		end
+		private def binary_path()
+			ENV["APPIMAGE"]? || Process.executable_path || raise RuntimeException.new "Cannot determine binary path"
 		end
 		def run
 			@settings.persistent ||= (! @builder.hotkeys.empty? || ! @builder.hotstrings.empty?)
@@ -95,17 +98,18 @@ module Run
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
-		def add_thread(cmd : Cmd::Base | String, priority) : Thread
-			if cmd.is_a?(String)
-				cmd_ = @labels[cmd]?
-				raise RuntimeException.new "Label '#{cmd}' not found" if ! cmd_
-				cmd = cmd_
-			end
+		def add_thread(cmd : Cmd::Base, priority) : Thread
 			thread = Thread.new(self, cmd, priority, @default_thread_settings)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
 			@run_thread_channel.send(nil) if i == @threads.size - 1
 			thread
+		end
+		# :ditto:
+		def add_thread(cmd_str : String, priority) : Thread?
+			cmd = @labels[cmd_str]?
+			return nil if ! cmd
+			add_thread(cmd, priority)
 		end
 
 		# Forever continuously figures out the "current thread" (`@threads.last`) and
@@ -120,9 +124,9 @@ module Run
 				while thread = @threads.last?
 					if ! @headless
 						if thread.paused
-							display.gui.thread_pause
+							display.gtk.thread_pause
 						else
-							display.gui.thread_unpause
+							display.gtk.thread_unpause
 						end
 					end
 					select
@@ -152,16 +156,12 @@ module Run
 
 		def reload
 			STDERR.puts "Reloading..."
-			bin_path = Process.executable_path
-			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
-			p = Process.new bin_path, ARGV, chdir: @initial_working_dir
+			p = Process.new binary_path, ARGV, chdir: @initial_working_dir
 			exit_app 0
 		end
 
 		def launch_window_spy
-			bin_path = Process.executable_path
-			raise RuntimeException.new "Cannot determine binary path" if ! bin_path
-			p = Process.new bin_path, ["--windowspy"], chdir: @initial_working_dir
+			p = Process.new binary_path, ["--windowspy"], chdir: @initial_working_dir
 		end
 
 		private def auto_execute_section_ended
@@ -207,7 +207,7 @@ module Run
 			down = var.downcase
 			case down
 			when "clipboard"
-				display.gui.clipboard do |clip|
+				display.gtk.clipboard do |clip|
 					clip.set_text(value, -1)
 					clip.store
 				end
@@ -245,7 +245,7 @@ module Run
 			when "a_now" then Time.local.to_YYYYMMDDHH24MISS
 			when "a_nowutc" then Time.utc.to_YYYYMMDDHH24MISS
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
-			when "clipboard" then display.gui.clipboard &.wait_for_text
+			when "clipboard" then display.gtk.clipboard &.wait_for_text
 			when "a_screenwidth" then display.adapter.display.default_screen.width.to_s
 			when "a_screenheight" then display.adapter.display.default_screen.height.to_s
 			when "a_username" then Hacks.username
@@ -288,8 +288,8 @@ module Run
 				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
 				::exit
 			when SingleInstance::Prompt
-				response = display.gui.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
-				::exit if response != Gui::MsgBoxButton::Yes
+				response = display.gtk.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
+				::exit if response != Gtk::MsgBoxButton::Yes
 				Process.signal(Signal::HUP, already_running)
 			end
 		end
@@ -300,10 +300,10 @@ module Run
 			@suspension = mode.as(Bool)
 			if mode
 				display.suspend
-				display.gui.suspend
+				display.gtk.suspend
 			else
 				display.unsuspend
-				display.gui.unsuspend
+				display.gtk.unsuspend
 			end
 		end
 		def pause_thread(mode = nil, *, self_is_thread = true)
@@ -314,7 +314,7 @@ module Run
 			if mode
 				if underlying_thread
 					underlying_thread.pause
-					display.gui.thread_pause if ! @headless
+					display.gtk.thread_pause if ! @headless
 				end
 			else
 				underlying_thread.unpause if underlying_thread

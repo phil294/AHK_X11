@@ -1,3 +1,4 @@
+# PixelSearch, OutputVarX, OutputVarY, X1, Y1, X2, Y2, ColorID [, Variation, RGB]
 class Cmd::Misc::PixelSearch < Cmd::Base
 	def self.min_args; 7 end
 	def self.max_args; 9 end
@@ -21,15 +22,13 @@ class Cmd::Misc::PixelSearch < Cmd::Base
 		variation = args[7]?.try &.to_i? || 0
 		w = x2 - x1 + 1
 		h = y2 - y1 + 1
-		thread.runner.display.gui.act do
+		thread.runner.display.gtk.act do
 			# https://docs.gtk.org/gdk-pixbuf/class.Pixbuf.html#image-data
 			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x1, y1, w, h)
-			next "2" if ! pixbuf || pixbuf.bits_per_sample != 8 || pixbuf.colorspace != GdkPixbuf::Colorspace::RGB || pixbuf.width != w || pixbuf.height != h || x1 < 0 || y1 < 0
+			next "2" if ! pixbuf || pixbuf.bits_per_sample != 8 || pixbuf.colorspace != GdkPixbuf::Colorspace::Rgb || pixbuf.width != w || pixbuf.height != h || x1 < 0 || y1 < 0
 			row_stride = pixbuf.rowstride
 			n_channels = pixbuf.n_channels
-			# alternatively, `pixbuf.pixels[0]` but that's not an indexable so for a nicer interface:
-			pixels = LibGdkPixbuf.pixbuf_get_pixels(pixbuf.to_unsafe_pixbuf, out _)
-			next "2" if pixels.null?
+			pixels = pixbuf.pixels
 			is_match = false
 			h.times do |y|
 				w.times do |x|
@@ -42,7 +41,7 @@ class Cmd::Misc::PixelSearch < Cmd::Base
 						match_x = x + x1
 						match_y = y + y1
 						if thread.settings.coord_mode_pixel == ::Run::CoordMode::RELATIVE
-							match_y, match_x = Cmd::X11::Window::Util.coord_screen_to_relative(thread, match_y, match_x)
+							match_x, match_y = Cmd::X11::Window::Util.coord_screen_to_relative(thread, match_x, match_y)
 						end
 						thread.runner.set_user_var(out_x, match_x.to_s) if ! out_x.empty?
 						thread.runner.set_user_var(out_y, match_y.to_s) if ! out_y.empty?

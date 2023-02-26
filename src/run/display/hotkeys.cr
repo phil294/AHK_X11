@@ -13,7 +13,7 @@ module Run
 				handle_event(key_event, keysym, char, is_paused)
 			end
 			@runner.display.on_pause { pause }
-			@runner.display.on_suspend { resume }
+			@runner.display.on_resume { resume }
 			@runner.display.on_suspend { suspend }
 			@runner.display.on_unsuspend { unsuspend }
 		end

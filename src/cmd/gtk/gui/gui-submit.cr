@@ -1,3 +1,4 @@
+# Submit [, NoHide]
 class Cmd::Gtk::Gui::GuiSubmit < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 2 end
@@ -5,18 +6,13 @@ class Cmd::Gtk::Gui::GuiSubmit < Cmd::Base
 		gui_id = args[0]
 		no_hide = args[1]? && args[1].downcase == "nohide"
 		
-		thread.runner.display.gui.gui(thread, gui_id) do |gui|
+		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			gui.var_control_info.each do |var_name, info|
 				ctrl = info.control
 				value = case
 				when ctrl.is_a?(::Gtk::Entry) then ctrl.text
 				when ctrl.is_a?(::Gtk::ScrolledWindow) then
-					text_buffer = ctrl.children.next.unsafe_as(::Gtk::TextView).buffer
-					iter_start = ::Gtk::TextIter.new
-					iter_end = ::Gtk::TextIter.new
-					text_buffer.start_iter iter_start
-					text_buffer.end_iter iter_end
-					text_buffer.text(iter_start, iter_end, true)
+					ctrl.children[0].unsafe_as(::Gtk::TextView).buffer.text
 				when ctrl.is_a?(::Gtk::CheckButton) then
 					ctrl.active ? "1" : "0"
 				when ctrl.is_a?(::Gtk::ComboBoxText) then

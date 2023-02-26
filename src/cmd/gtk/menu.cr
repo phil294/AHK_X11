@@ -1,9 +1,10 @@
+# Menu, MenuName, Cmd [, P3, P4, P5, FutureUse]
 class Cmd::Gtk::Gui::Menu < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 5 end
 	def run(thread, args)
 		raise Run::RuntimeException.new "MenuName has to be TRAY" if args[0].downcase != "tray"
-		thread.runner.display.gui.tray do |tray, tray_menu|
+		thread.runner.display.gtk.tray do |tray, tray_menu|
 			case args[1].downcase
 			when "add"
 				name = args[2]?
@@ -14,12 +15,8 @@ class Cmd::Gtk::Gui::Menu < Cmd::Base
 				else
 					label = name if label.empty?
 					item = ::Gtk::MenuItem.new_with_label name
-					item.on_activate do
-						begin
-							thread.runner.add_thread label.downcase, priority
-						rescue e
-							STDERR.puts e # TODO:
-						end
+					item.activate_signal.connect do
+						thread.runner.add_thread label.downcase, priority
 					end
 					tray_menu.append item
 				end
@@ -38,7 +35,7 @@ class Cmd::Gtk::Gui::Menu < Cmd::Base
 				end
 				tray.from_pixbuf = icon_pixbuf
 				# TODO: how to skip this line? (so that icon_pixbuf= above already sets the one in gui because we're in `with self` here)
-				thread.runner.display.gui.icon_pixbuf = icon_pixbuf
+				thread.runner.display.gtk.icon_pixbuf = icon_pixbuf
 			when "noicon"
 				thread.runner.set_global_built_in_static_var("A_IconFile", "")
 				tray.from_pixbuf = nil

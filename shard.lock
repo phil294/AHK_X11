@@ -1,5 +1,9 @@
 version: 2.0
 shards:
+  atspi:
+    git: https://github.com/phil294/atspi.cr.git
+    version: 0.12.0+git.commit.dc31620f1cc66f9fce2f4d0ed3114dc22a15ccf1
+
   cron_parser:
     git: https://github.com/kostya/cron_parser.git
     version: 0.4.0
@@ -8,17 +12,22 @@ shards:
     git: https://github.com/crystal-community/future.cr.git
     version: 1.0.0
 
-  gobject:
-    git: https://github.com/jhass/crystal-gobject.git
-    version: 0.10.0
+  gi-crystal:
+    git: https://github.com/hugopl/gi-crystal.git
+    # TODO https://github.com/hugopl/gi-crystal/issues/70
+    version: 0.15.0+git.commit.3610c6cc103dcd02c8cff50c9b74c52b07f11d7c
 
-  malloc_pthread_shim:
-    git: https://github.com/jhass/crystal-malloc_pthread_shim.git
-    version: 0.1.0
+  gtk3:
+    git: https://github.com/phil294/gtk3.cr.git
+    version: 0.12.0+git.commit.56f5d0ad696e8a16c7cfe094a1c505d4ec556aa7
 
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
     version: 2.0.7
+
+  version_from_shard:
+    git: https://github.com/hugopl/version_from_shard.git
+    version: 1.2.5
 
   x11:
     git: https://github.com/tamasszekeres/x11-cr.git

@@ -64,14 +64,10 @@ Clock:
 	ctrl_h =
 	ctrl_txt =
 	win_missing_atspi = 0
-	win_right = win_x
-	win_right += %win_w%
-	win_bottom = win_y
-	win_bottom += %win_h%
 	if mouse_x_win >= 0
 		if mouse_y_win >= 0
-			if mouse_x_win < %win_right%
-				if mouse_y_win < %win_bottom%
+			if mouse_x_win < %win_w%
+				if mouse_y_win < %win_h%
 					MouseGetPos, , , , ctrl_nn
 	if ctrl_nn <>
 	{

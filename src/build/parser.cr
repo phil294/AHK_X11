@@ -168,12 +168,11 @@ module Build
 				# Gui accepts many subcommands. Instead of duplicating parsing logic into a generic
 				# `Gui` cmd, instead join together (e.g. `GuiAdd`) and parse line again with that.
 				# All subcommands exist as standalone commands and expect the gui id as 1st arg.
+				# GUI, sub-command [, Param2, Param3, Param4]
 				split = args.split(',', 2).map &.strip
 				sub_instruction = split[0]? || ""
 				rest_args = split[1]? || ""
-				match = sub_instruction.match(/(?:(\S+)\s*:\s*)?(.*)/).not_nil!
-				gui_id = match[1]? || "1"
-				sub_cmd = match[2]
+				gui_id, sub_cmd = Parser.gui_sub_instruction_to_id_and_cmd(sub_instruction)
 				raise "Gui subcommand missing" if sub_cmd.empty?
 				if sub_cmd.starts_with?('-') || sub_cmd.starts_with?('+')
 					rest_args = sub_cmd
@@ -227,5 +226,11 @@ module Build
 			end
 		end
 
+		def self.gui_sub_instruction_to_id_and_cmd(sub_instruction)
+			match = sub_instruction.match(/(?:(\S+)\s*:\s*)?(.*)/).not_nil!
+			gui_id = match[1]? || "1"
+			sub_cmd = match[2]
+			return gui_id, sub_cmd
+		end
 	end
 end

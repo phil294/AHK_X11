@@ -1,5 +1,5 @@
 require "../window/win-util"
-
+# ControlGetText, OutputVar [, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
 class Cmd::X11::Mouse::ControlGetText < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 6 end

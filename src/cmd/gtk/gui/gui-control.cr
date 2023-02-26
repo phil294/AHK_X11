@@ -1,14 +1,13 @@
+# GuiControl, Sub-command, ControlID [, Param3]
 class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 3 end
 	def self.sets_error_level; true end
 	def run(thread, args)
-		match = args[0].match(/(?:(\S+)\s*:\s*)?(.*)/).not_nil!
-		gui_id = match[1]? || "1"
-		sub_cmd = match[2]
+		gui_id, sub_cmd = Build::Parser.gui_sub_instruction_to_id_and_cmd(args[0])
 		control_var_name = args[1]
 		value = args[2]? || ""
-		thread.runner.display.gui.gui(thread, gui_id) do |gui|
+		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			control_info = gui.var_control_info[control_var_name]
 			next "1" if ! control_info
 			ctrl = control_info.control
@@ -24,8 +23,7 @@ class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 						ctrl.label = value
 					end
 				when ::Gtk::ScrolledWindow
-					text_buffer = ctrl.children.next.unsafe_as(::Gtk::TextView).buffer
-					text_buffer.set_text(value, -1)
+					ctrl.children[0].unsafe_as(::Gtk::TextView).buffer.text = value
 				when ::Gtk::Button, ::Gtk::Label
 					ctrl.label = value
 				when ::Gtk::Entry

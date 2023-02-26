@@ -1,3 +1,4 @@
+# RegExReplace, OutputVar, InputVar, RegExSearchText [, ReplaceText, ReplaceAll?]
 class Cmd::String::RegExReplace < Cmd::Base
 	def self.min_args; 3 end
 	def self.max_args; 5 end

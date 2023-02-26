@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Window Spy
+Exec=ahk_x11 --windowspy
+Icon=ahk_x11
+Terminal=false
+Type=Application
+Categories=GTK;Utility;Development
+Comment=AHK_X11: AutoHotkey for Linux - Window Spy is a tool to help with ahk_x11 scripting.

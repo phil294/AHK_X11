@@ -4,7 +4,7 @@ class Util::AhkString
 	# This allows computation of pseudo-variable values at runtime, such as %A_Now%.
 	def self.parse_string(str, escape_char : Char, *, no_variable_substitution = false)
 		escape = false
-		var_start = nil
+		current_var_name : String::Builder? = nil
 		String.build do |build|
 			str.each_char_with_index do |char, i|
 				if ! escape && char == escape_char
@@ -22,21 +22,22 @@ class Util::AhkString
 						end
 						build << char
 					elsif ! no_variable_substitution && char == '%'
-						if var_start.nil?
-							var_start = i + 1
+						if ! current_var_name
+							current_var_name = String::Builder.new
 						else
-							var_name = str[var_start..i-1]
-							var = yield var_name
+							var = yield current_var_name.to_s
+							current_var_name = nil
 							build << var
-							var_start = nil
 						end
-					elsif var_start.nil?
+					elsif current_var_name
+						current_var_name << char
+					else
 						build << char
 					end
 					escape = false
 				end
 			end
-			raise Run::RuntimeException.new "missing ending percent sign. Line content: '#{str}'" if var_start
+			raise Run::RuntimeException.new "missing ending percent sign. Line content: '#{str}'" if current_var_name
 		end
 	end
 	# Parses all `^+c{Tab up}` etc., including normal keys, and yields the key infos.

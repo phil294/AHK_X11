@@ -1,5 +1,5 @@
 require "../window/win-util"
-
+# ControlClick, Control-or-Pos [, WinTitle, WinText, WhichButton, ClickCount, Options, ExcludeTitle, ExcludeText]
 class Cmd::X11::Mouse::ControlClick < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 8 end
@@ -18,7 +18,7 @@ class Cmd::X11::Mouse::ControlClick < Cmd::Base
 				if acc
 					count.times do
 						s = at_spi.click(acc)
-						return "1" if ! s
+						next "1" if ! s
 					end
 					true
 				end

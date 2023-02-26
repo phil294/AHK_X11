@@ -2907,7 +2907,7 @@ MsgBox, clipboard = %clipboard%
 return</pre>
         </div>
       </div>
-      <div class="calibreMain rm">
+      <div class="calibreMain tbd">
         <div class="calibreEbookContent">
           <a id="EnvSet.htm" href="#EnvSet.htm">#</a> <h2 class="calibre17">EnvSet</h2>
           <hr size="2" class="calibre24" />
@@ -2941,6 +2941,7 @@ return</pre>
           <p class="calibre8"> This command exists separately from <a href="#SetEnv.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetEnv</a> because unlike AutoIt2, AutoHotkey does not store its variables in the environment. This is because performance would be worse and also because the OS limits environment variables to 32K (AutoHotkey variables, including the <a href="#Clipboard.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">clipboard</a>, are essentially unlimited in size).</p>
           <p class="calibre8">Unless <a href="#EnvUpdate.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvUpdate</a> is used, an <a href="#Variables.htm__env" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">environment variable</a> set in this way will only be accessible to programs that the script spawns via <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> or <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>.  Once the script terminates, the variables will cease to exist.</p>
           <p class="calibre8">Note: An EnvGet command is not provided because referencing a blank or undefined variable will automatically trigger that behavior. For example, in the following line, the value of the ProgramFiles variable (if undefined in the script) will be fetched from the environment: <br class="calibre12" /> TargetFile = %ProgramFiles%\Something\setup.ini </p>
+          <p class="calibre8 x11">Use this to export variables to be accessed by sub processes spawned by Run / RunWait.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#EnvUpdate.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvUpdate</a>, <a href="#SetEnv.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetEnv</a>, <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a>, <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a> </p>
@@ -10961,6 +10962,8 @@ return</pre>
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8">While RunWait is in a waiting state, new <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">threads</a> can be launched via <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkey</a>, <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">custom menu item</a>, or <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">timer</a>.</p>
+          <p class="calibre8">To launch a program with environment variables set, use <a href="#EnvSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvSet</a>. Just prefixing them like `Run, VAR=VALUE cmd` won't work.</p>
+          <p class="calibre8 x11">Native shell features like redirect (>) or background jobs (&) are not available. Also, ahk variables can not span multiple params. For example, if variable abc contains spaces, then `Run, %abc%` would treat the whole contents of abc as the command path and not split it up. If you really need to work around this, you can invoke the shell directly, e.g. Run, bash -c 'bash code...'.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#RunAs.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunAs</a>, <a href="#Process.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Process</a>, <a href="#Exit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Exit</a></p>

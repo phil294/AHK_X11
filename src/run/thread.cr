@@ -1,5 +1,5 @@
 require "x_do"
-require "./display/gui"
+require "./display/gtk"
 require "./display"
 require "../util/ahk-string"
 
@@ -12,7 +12,7 @@ module Run
 	# see Thread.settings
 	private struct ThreadSettings
 		property last_found_window : XDo::Window?
-		property msgbox_response : Gui::MsgBoxButton?
+		property msgbox_response : Gtk::MsgBoxButton?
 		property coord_mode_tooltip = CoordMode::RELATIVE
 		property coord_mode_pixel = CoordMode::RELATIVE
 		property coord_mode_mouse = CoordMode::RELATIVE
@@ -119,13 +119,17 @@ module Run
 			stack_i = @stack.size - 1
 
 			begin
+				{% if ! flag?(:release) %}
+					STDOUT.print "[debug] run[#{@id}]: #{cmd.class.name} "
+				{% end %}
+
 				parsed_args = cmd.args.map do |arg|
 					Util::AhkString.parse_string(arg, @runner.settings.escape_char) do |var_name_lookup|
 						get_var(var_name_lookup)
 					end
 				end
 				{% if ! flag?(:release) %}
-					puts "[debug] run[#{@id}]: #{cmd.class.name} #{parsed_args.to_s}"
+					puts parsed_args.to_s
 				{% end %}
 
 				start = Time.monotonic
@@ -138,13 +142,13 @@ module Run
 					@performance_by_cmd[cmd.class.name].count += 1
 					@performance_by_cmd[cmd.class.name].total += cmd_execution_time
 				end
-			rescue e : RuntimeException
+			rescue e
 				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
 				STDERR.puts e.to_s
 				{% if ! flag?(:release) %}
 					e.inspect_with_backtrace(STDERR)
 				{% end %}
-				@runner.display.gui.msgbox msg
+				@runner.display.gtk.msgbox msg
 				@done = true
 				@exit_code = 2 # TODO: ???
 				return @exit_code

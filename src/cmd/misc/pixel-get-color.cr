@@ -1,3 +1,4 @@
+# PixelGetColor, OutputVar, X, Y [, RGB]
 class Cmd::Misc::PixelGetColor < Cmd::Base
 	def self.min_args; 3 end
 	def self.max_args; 4 end
@@ -10,13 +11,13 @@ class Cmd::Misc::PixelGetColor < Cmd::Base
 			x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
 		end
 		rgb = ((args[3]?.try &.downcase) || "") == "rgb"
-		thread.runner.display.gui.act do
+		thread.runner.display.gtk.act do
 			pixbuf = Gdk.pixbuf_get_from_window(Gdk.default_root_window, x, y, 1, 1)
 			if pixbuf
 				color = [] of UInt8
 				# internal pixels storage is complex https://docs.gtk.org/gdk-pixbuf/class.Pixbuf.html#image-data
 				# but here we just need the first three bytes
-				pixbuf.pixels[0].each_slice(3) do |slice|
+				pixbuf.pixels.each_slice(3) do |slice|
 					color = slice
 					break
 				end

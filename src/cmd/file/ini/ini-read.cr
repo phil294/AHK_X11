@@ -1,4 +1,5 @@
 require "ini"
+# IniRead, OutputVar, Filename, Section, Key [, Default]
 class Cmd::File::IniRead < Cmd::Base
 	def self.min_args; 4 end
 	def self.max_args; 5 end

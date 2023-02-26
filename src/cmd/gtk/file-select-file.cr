@@ -1,3 +1,4 @@
+# FileSelectFile, OutputVar [, Options, RootDir, Prompt, Filter]
 class Cmd::Gtk::FileSelectFile < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 5 end
@@ -7,20 +8,20 @@ class Cmd::Gtk::FileSelectFile < Cmd::Base
 		root_dir = args[2]?
 		prompt = args[3]? || "Select File - " + thread.runner.get_global_var("a_scriptname").not_nil!
 		channel = Channel(::String).new
-		thread.runner.display.gui.act do
+		thread.runner.display.gtk.act do
 			if options.includes?('s')
-				action = ::Gtk::FileChooserAction::SAVE
+				action = ::Gtk::FileChooserAction::Save
 				do_overwrite_confirmation = true
 			else
-				action = ::Gtk::FileChooserAction::OPEN
+				action = ::Gtk::FileChooserAction::Open
 			end
 			dialog = ::Gtk::FileChooserDialog.new title: prompt, action: action, do_overwrite_confirmation: do_overwrite_confirmation
-			dialog.add_button "Cancel", ::Gtk::ResponseType::CANCEL.value
-			dialog.add_button (action == ::Gtk::FileChooserAction::SAVE ? "Save" : "Open"), ::Gtk::ResponseType::OK.value
+			dialog.add_button "Cancel", ::Gtk::ResponseType::Cancel.value
+			dialog.add_button (action == ::Gtk::FileChooserAction::Save ? "Save" : "Open"), ::Gtk::ResponseType::Ok.value
 			dialog.current_folder = root_dir if root_dir
-			dialog.on_response do |_, response_id|
+			dialog.response_signal.connect do |response_id|
 				response = ::Gtk::ResponseType.new(response_id)
-				filename = response == ::Gtk::ResponseType::OK ? (dialog.filename || "") : ""
+				filename = response == ::Gtk::ResponseType::Ok ? (dialog.filename.to_s || "") : ""
 				channel.send(filename)
 				dialog.destroy
 			end

@@ -1,3 +1,4 @@
+# if Var not between LowerBound and UpperBound
 class Cmd::ControlFlow::IfNotBetween < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 2 end
