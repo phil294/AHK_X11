@@ -46,7 +46,7 @@ assert:
 	StringLeft, test_var_value, %test_var%, 9999
 	If test_var_value <> %test_value%
 	{
-		fail_reason = X (%tests_run%/%N_TESTS%) %test_title%: '%test_var%' is '%test_var_value%' but should be '%test_value%'
+		fail_reason = ❌ (%tests_run%/%N_TESTS%) %test_title%: '%test_var%' is '%test_var_value%' but should be '%test_value%'
 		GoSub, fail
 	}
 	echo ✔ (%tests_run%/%N_TESTS%) %test_title%
@@ -82,7 +82,7 @@ timeout:
 	}
 return
 timeout_over:
-	fail_reason = X (%tests_run%/%N_TESTS%) %timeout_var%: Timeout!
+	fail_reason = ❌ (%tests_run%/%N_TESTS%) %timeout_var%: Timeout!
 	gosub fail
 return
 
