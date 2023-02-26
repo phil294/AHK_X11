@@ -119,13 +119,17 @@ module Run
 			stack_i = @stack.size - 1
 
 			begin
+				{% if ! flag?(:release) %}
+					STDOUT.print "[debug] run[#{@id}]: #{cmd.class.name} "
+				{% end %}
+
 				parsed_args = cmd.args.map do |arg|
 					Util::AhkString.parse_string(arg, @runner.settings.escape_char) do |var_name_lookup|
 						get_var(var_name_lookup)
 					end
 				end
 				{% if ! flag?(:release) %}
-					puts "[debug] run[#{@id}]: #{cmd.class.name} #{parsed_args.to_s}"
+					puts parsed_args.to_s
 				{% end %}
 
 				start = Time.monotonic
