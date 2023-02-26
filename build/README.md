@@ -66,5 +66,3 @@ A more general overview:
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
 While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see [`Run::Thread`](https://github.com/phil294/AHK_X11/blob/master/src/run/thread.cr) docs).
-
-Current commits are collected in the `development` branch and then merged into `master` for each release.
