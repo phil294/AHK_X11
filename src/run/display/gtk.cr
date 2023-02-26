@@ -316,7 +316,7 @@ module Run
 		def tooltip(tooltip_id : Int32, &block : ::Gtk::Window -> _)
 			if ! @tooltips[tooltip_id]?
 				act do
-					tooltip = ::Gtk::Window.new title: "AHK_X11 Tooltip #{tooltip_id.to_s}", window_position: ::Gtk::WindowPosition::Mouse, type_hint: ::Gdk::WindowTypeHint::Tooltip, accept_focus: false, can_focus: false, resizable: false, skip_taskbar_hint: true, type: ::Gtk::WindowType::Popup, modal: true, decorated: false
+					tooltip = ::Gtk::Window.new title: "AHK_X11 Tooltip #{tooltip_id.to_s}", window_position: ::Gtk::WindowPosition::Mouse, type_hint: ::Gdk::WindowTypeHint::Tooltip, accept_focus: false, can_focus: false, resizable: false, skip_taskbar_hint: true, type: ::Gtk::WindowType::Popup, decorated: false
 					tooltip.keep_above = true
 					txt = ::Gtk::Label.new "Label"
 					# doesn't work, is grey?:
