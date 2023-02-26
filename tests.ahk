@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 32
+N_TESTS = 39
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -311,17 +311,17 @@ gosub assert
 ;GUI, sub-command [, Param2, Param3, Param4]
 
 GuiControl, , gui_edit, edit txt 3
-controlgettext, edit_txt, text_0_2
-expect = guicontrol settext,edit_txt,edit txt 3
+gui submit, nohide
+expect = guicontrol settext,gui_edit,edit txt 3
 gosub assert
 
 ;;GuiControlGet, OutputVar [, Sub-command, ControlID, Param4]
 
-goto l_after_hotkey
+goto l_after_hotkey_a
 			hotkey_a:
 				hotkey_a_success = 1
 			return
-l_after_hotkey:
+l_after_hotkey_a:
 Hotkey, a, hotkey_a
 runwait, xdotool type a
 expect = hotkey a trigger,hotkey_a_success,1
@@ -482,3 +482,71 @@ gosub assert
 ;;WinWaitActive [, WinTitle, WinText, Seconds, ExcludeTitle, ExcludeText]
 ;;WinWaitClose, WinTitle, WinText, Seconds [, ExcludeTitle, ExcludeText]
 ;;WinWaitNotActive [, WinTitle, WinText, Seconds, ExcludeTitle, ExcludeText]
+
+; ### SEND/HOTKEY/HOTSTRING TESTS ###
+
+send {tab}^a{del} ; focus and reset
+sleep 10
+send 123
+sleep 10
+gui submit, nohide
+expect = send numbers - issue 22,gui_edit,123
+gosub assert
+
+send ^a{del}
+sleep 10
+send aBc
+sleep 10
+gui submit, nohide
+expect = send aBc - issue 13,gui_edit,aBc
+gosub assert
+
+send ^a{del}
+sleep 10
+send +d
+sleep 10
+gui submit, nohide
+expect = send +d,gui_edit,D
+gosub assert
+
+; TODO
+; send ^a{del}
+; sleep 10
+; send @
+; sleep 10
+; gui submit, nohide
+; expect = send @ - issue 32,gui_edit,@
+; gosub assert
+
+goto l_after_f2_hotkey
+			hotkey_f2:
+				hotkey_f2_success = 1
+			return
+l_after_f2_hotkey:
+hotkey, f2, hotkey_f2
+runwait, xdotool key F2
+expect = hotkey f2 lowercase,hotkey_f2_success,1
+gosub assert
+hotkey_f2_success =
+hotkey, f2, off
+hotkey, F2, hotkey_f2
+runwait, xdotool key F2
+expect = hotkey f2 uppercase,hotkey_f2_success,1
+gosub assert
+hotkey, F2, off
+
+goto l_after_shift_s_hotkey
+			hotkey_shift_s:
+				hotkey_shift_s_success = 1
+			return
+l_after_shift_s_hotkey:
+hotkey, +s, hotkey_shift_s
+runwait, xdotool key shift+s
+expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
+gosub assert
+hotkey_shift_s_success =
+hotkey, +s, off
+hotkey, +S, hotkey_shift_s
+runwait, xdotool key shift+s
+expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
+gosub assert
