@@ -8244,6 +8244,7 @@ return</pre>
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8 x11">Please note that due to a bug in AHK_X11, certain special characters cannot be sent with this command natively. You will have to add a + in front of them to simulate a SHIFT key press. Example: Instead of `Send, Yes{!}` you will have to do `Send, Yes+{!}` or just use SendRaw instead.</p>
           <p class="calibre8">SendRaw (available in v1.0.16+) sends the keystrokes in the <em class="calibre21">Keys</em> parameter exactly as they appear rather than translating {Enter} to an ENTER keystroke, ^c to Control-C, etc.<br class="calibre12" />
             <br class="calibre12" /> The "Send" command syntax is similar to that of ScriptIt and the Visual Basic "SendKeys" command. Characters are sent as written with the exception of the following characters:<br class="calibre12" />
             <br class="calibre12" />
