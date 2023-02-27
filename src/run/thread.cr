@@ -221,7 +221,7 @@ module Run
 		def parse_key_combinations(str, *, implicit_braces = false)
 			Util::AhkString.parse_key_combinations(str, @runner.settings.escape_char, implicit_braces: implicit_braces)
 		end
-		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool -> _)
+		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool, XDo::Button? -> _)
 			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.display.adapter.as(Run::X11), &block) # TODO: type cast etc
 		end
 

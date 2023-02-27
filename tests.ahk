@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 39
+N_TESTS = 40
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -550,3 +550,9 @@ hotkey, +S, hotkey_shift_s
 runwait, xdotool key shift+s
 expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
 gosub assert
+
+Send, {LButton}
+sleep 10
+expect = send {lbutton},gui_button_clicked_success,1
+gosub assert
+gui_button_clicked_success =

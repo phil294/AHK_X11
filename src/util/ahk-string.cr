@@ -47,14 +47,29 @@ class Util::AhkString
 	def self.parse_key_combinations_to_charcodemap(str, escape_char : Char, x11 : Run::X11, implicit_braces = false)
 		self.parse_key_combinations(str, escape_char, implicit_braces: implicit_braces) do |combo|
 			key_map = XDo::LibXDo::Charcodemap.new
-			key_map.code = x11.keysym_to_keycode(combo.keysym)
-			key_map.modmask = combo.modifiers
+			mouse_button : XDo::Button? = nil
+			if combo.keysym < 10
+				mouse_button = case combo.keysym
+				when 1 then XDo::Button::Left
+				when 2 then XDo::Button::Middle
+				when 3 then XDo::Button::Right
+				when 4 then XDo::Button::ScrollUp
+				when 5 then XDo::Button::ScrollDown
+				when 6 then XDo::Button::ScrollLeft
+				when 7 then XDo::Button::ScrollRight
+				when 8 then XDo::Button::Button8
+				when 9 then XDo::Button::Button9
+				end
+			else
+				key_map.code = x11.keysym_to_keycode(combo.keysym)
+				key_map.modmask = combo.modifiers
+			end
 			combo.repeat.times do
 				if combo.down || ! combo.up
-					yield [key_map], true
+					yield [key_map], true, mouse_button
 				end
 				if combo.up || ! combo.down
-					yield [key_map], false
+					yield [key_map], false, mouse_button
 				end
 			end
 		end
