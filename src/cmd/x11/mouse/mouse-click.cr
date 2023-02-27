@@ -8,6 +8,8 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 		when "middle", "m" then XDo::Button::Middle
 		when "wheelup", "wu" then XDo::Button::ScrollUp
 		when "wheeldown", "wd" then XDo::Button::ScrollDown
+		when "wheelleft", "wl" then XDo::Button::ScrollLeft
+		when "wheelright", "wr" then XDo::Button::ScrollRight
 		when "xbutton1", "x1" then XDo::Button::Button8
 		when "xbutton2", "x2" then XDo::Button::Button9
 		else XDo::Button::Left
