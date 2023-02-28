@@ -226,7 +226,7 @@ More tips:
 
 ## Contributing
 
-If you want to help with AHK_X11 development or prefer to build from source instead of using the prebuilt binaries, detailed build instructions are to be found in [./build/README.md](./build/README.md).
+If you want to help with AHK_X11 development or prefer to build from source instead of using the prebuilt binaries, detailed build instructions are to be found in [./build/README.md](./build).
 
 ## Issues
 
