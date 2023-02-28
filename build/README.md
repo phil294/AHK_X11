@@ -42,7 +42,7 @@ The released binaries are special because they need to be portable. We achieve t
 1. Do the same steps as listed in "For local testing": Install dependencies etc.
 1. Get `linuxdeploy-x86_64.AppImage` from https://github.com/linuxdeploy/linuxdeploy/, into this `build` folder
 1. Get `linuxdeploy-plugin-gtk.sh` from https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh
-1. In that same file, *delete the line* `export GTK_THEME="$APPIMAGE_GTK_THEME" # Custom themes are broken` (this is a temporary fix)
+1. In that same file, *delete the line* `export GTK_THEME="$APPIMAGE_GTK_THEME" # Custom themes are broken` (this is a temporary fix ([issue](https://github.com/linuxdeploy/linuxdeploy-plugin-gtk/issues/39)))
 1. Instead of `shards build`, run `./build.sh`. This also does shards build, but it adds the `--release` flag (slower compilation, faster output binary) and does the AppImage magic and attaches the installer.
 1. Find your final binary `ahk_x11-[version]-x86_64.AppImage` in the `build` folder. It's about 30 MiB in size.
 
@@ -50,12 +50,12 @@ The released binaries are special because they need to be portable. We achieve t
 
 If you feel like it, you are welcome to contribute! The language in use, Crystal, is resembling Ruby syntax and consequently also great for beginners.
 
-This program has a very modular structure due to its nature which should make it easier to add features. Most work pending is just implementing commands, as almost everything more complicated is now bootstrapped. Simply adhere to the 2004 spec chm linked above. There's documentation blocks all across the source.
+This program has a very modular structure due to its nature which should make it easier to add features. Most work pending is just implementing commands, as almost everything more complicated is now bootstrapped. Simply adhere to the 2004 spec that is the documentation for ahk_x11 (the large html file). There's documentation blocks all across the source.
 
 Commands behave mostly autonomous. See for example [`src/cmd/file/file-copy.cr`](https://github.com/phil294/AHK_X11/blob/master/src/cmd/file/file-copy.cr): All that is needed for most commands is `min_args`, `max_args`, the `run` implementation and the correct class name: The last part of the class name (here `FileCopy`) is automatically inferred to be the actual command name in scripts.
 Regarding `run`: Anything can happen here, but several commands will access the `thread` or `thread.runner`, mostly for `thread.runner.get_user_var`, `thread.get_var` and `thread.runner.set_user_var`.
 
-GUI: Several controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and `lib/gobject/src/gtk/gobject-cache-gtk.cr` are helpful.
+GUI: Several controls and their options still need to be translated into GTK. For that, both the [GTK Docs for C](https://docs.gtk.org/gtk3) and the files in `lib/gi-crystal/src/auto/gtk-3.0/` will be helpful.
 
 A more general overview:
 - `src/build` does the parsing etc. and is mostly complete
