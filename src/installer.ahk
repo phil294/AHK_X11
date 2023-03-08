@@ -2,6 +2,12 @@
 
 Echo, Starting graphical installer. Please see --help for more options.
 
+If A_IsAdmin = 1
+{
+	MsgBox, It seems you are running this installer for AHK_X11 with administrator permission. This is currently not supported, so please don't do that.`n`nThis means you probably ran the installer with "sudo". Please omit the sudo and try again.`n`nThe installer will exit now.
+	ExitApp
+}
+
 app_name = ahk_x11
 app_ext = ahk
 app_comment = AHK_X11: AutoHotkey for Linux
