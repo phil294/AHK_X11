@@ -125,7 +125,7 @@ Also planned, even though it's not part of 1.0.24 spec:
 
 ## Installation
 
-**[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)**. Make the downloaded file executable and you should be good to go.
+**[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)**. Make the downloaded file executable ([how?](https://askubuntu.com/a/484719/378854)) and you should be good to go: Just double click it *or* run it in the console without arguments (**without** sudo).
 
 Prerequisites:
 - X11 is the only dependency. You most likely have them already. Wayland support would be cool too some day.
