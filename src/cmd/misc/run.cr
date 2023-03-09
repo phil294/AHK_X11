@@ -27,8 +27,13 @@ class Cmd::Misc::Run < Cmd::Base
 			cmd = "setsid"
 			params = args
 		end
+		
+		# AppImage/linuxdeploy-plugin-gtk sets several env vars *for the main binary itself*
+		# but we need to prevent those overrides from being inherited by spawned sub processes
+		# because it changes appearance and can even prevent proper functionality in some cases
+		env = { "GTK_DATA_PREFIX" => nil, "GDK_BACKEND" => nil, "XDG_DATA_DIRS" => nil, "GSETTINGS_SCHEMA_DIR" => nil, "GI_TYPELIB_PATH" => nil, "GTK_EXE_PREFIX" => nil, "GTK_PATH" => nil, "GTK_IM_MODULE_FILE" => nil, "GDK_PIXBUF_MODULE_FILE" => nil }
 		begin
-			p = Process.new(cmd, params, chdir: chdir, output: stdout_m, error: stderr_m)
+			p = Process.new(cmd, params, chdir: chdir, output: stdout_m, error: stderr_m, env: env)
 		rescue e : IO::Error
 			return false, "", ""
 		end
