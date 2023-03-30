@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 43
+N_TESTS = 48
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -292,12 +292,12 @@ FileDelete, %tmp_file%2
 ;;FormatTime, OutputVar [, YYYYMMDDHH24MISS, Format]
 
 Send {a down}
-sleep 10
+sleep 20
 GetKeyState, a_state, a
 expect = getkeystate,a_state,D
 gosub assert
 send {a up}
-sleep 10
+sleep 20
 GetKeyState, a_state, a
 expect = getkeystate,a_state,U
 gosub assert
@@ -323,7 +323,7 @@ goto l_after_hotkey_a
 			return
 l_after_hotkey_a:
 Hotkey, a, hotkey_a
-runwait, xdotool type a
+runwait, xdotool type --delay=0 a
 expect = hotkey a trigger,hotkey_a_success,1
 gosub assert
 Hotkey, a, OFF
@@ -350,7 +350,7 @@ Hotkey, a, OFF
 goto l_input
 			input_send_key:
 				settimer, input_send_key, OFF
-				runwait xdotool type b
+				runwait xdotool type --delay=0 b
 			return
 l_input:
 settimer, input_send_key, 1
@@ -362,11 +362,11 @@ keys =
 goto l_input_extended
 			input_send_key_extended:
 				settimer, input_send_key_extended, OFF
-				runwait xdotool type abc.
+				runwait xdotool type --delay=0 abc.
 				runwait xdotool key space
-				runwait xdotool type xy
+				runwait xdotool type --delay=0 xy
 				runwait xdotool key BackSpace
-				runwait xdotool type yz
+				runwait xdotool type --delay=0 yz
 			return
 l_input_extended:
 settimer, input_send_key_extended, 1
@@ -399,7 +399,7 @@ _errorlevel =
 ;Menu, MenuName, Cmd [, P3, P4, P5, FutureUse]
 
 MouseClick, L, 45, 80
-sleep 10
+sleep 20
 expect = click gui button,gui_button_clicked_success,1
 gosub assert
 gui_button_clicked_success =
@@ -518,37 +518,86 @@ gosub assert
 ; ### SEND/HOTKEY/HOTSTRING TESTS ###
 
 send {tab}^a{del} ; focus and reset
-sleep 10
+sleep 20
 send 123
-sleep 10
+sleep 20
 gui submit, nohide
 expect = send numbers - issue 22,gui_edit,123
 gosub assert
 
 send ^a{del}
-sleep 10
+sleep 20
 send aBc
-sleep 10
+sleep 20
 gui submit, nohide
 expect = send aBc - issue 13,gui_edit,aBc
 gosub assert
 
 send ^a{del}
-sleep 10
+sleep 20
 send +d
-sleep 10
+sleep 20
 gui submit, nohide
 expect = send +d,gui_edit,D
 gosub assert
 
 ; TODO
 ; send ^a{del}
-; sleep 10
+; sleep 20
 ; send @
-; sleep 10
+; sleep 20
 ; gui submit, nohide
 ; expect = send @ - issue 32,gui_edit,@
 ; gosub assert
+
+goto l_hotstring_tests
+			test_hotstring:
+				send ^a{del}
+				sleep 10
+				runwait xdotool type --delay=0 %hotstring_input%
+				loop
+				{
+					x = %a_index%
+					sleep 10
+					gui submit, nohide
+					if gui_edit = %hotstring_output%
+						break
+					if a_index > 50
+						break
+				}
+				expect = hotstring testhotstringbtw,gui_edit,%hotstring_output%
+				gosub assert
+			return
+l_hotstring_tests:
+
+; ::testhotstringbtw::by the way
+hotstring_input = .testhotstringbtw.
+hotstring_output = .by the way.
+gosub test_hotstring
+
+; TODO: case detection doesn't work when input comes from xdotool but with normal typing it does
+; hotstring_input = .testhotstringcAsE.
+; hotstring_output = .sensitive.
+; gosub test_hotstring
+
+hotstring_input = .testhotstringcase.
+hotstring_output = .testhotstringcase.
+gosub test_hotstring
+
+; :r:testhotstringraw::^a
+hotstring_input = .testhotstringraw.
+hotstring_output = .^a.
+gosub test_hotstring
+
+; :o:testhotstringbs::{bs}
+hotstring_input = .testhotstringbs.
+hotstring_output = 
+gosub test_hotstring
+
+; :*:testhotstringnoendchar::immediate
+hotstring_input = .testhotstringnoendchar
+hotstring_output = .immediate
+gosub test_hotstring
 
 goto l_after_f2_hotkey
 			hotkey_f2:
@@ -584,7 +633,18 @@ expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
 gosub assert
 
 Send, {LButton}
-sleep 10
+sleep 20
 expect = send {lbutton},gui_button_clicked_success,1
 gosub assert
 gui_button_clicked_success =
+
+Return
+
+; ### ### ###
+
+; TODO: hotstring with _ in it doesn't work
+::testhotstringbtw::by the way
+:C:testhotstringcAsE::sensitive
+:r:testhotstringraw::^a
+:o:testhotstringbs::{bs}
+:*:testhotstringnoendchar::immediate
