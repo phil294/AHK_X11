@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 40
+N_TESTS = 43
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -357,6 +357,34 @@ settimer, input_send_key, 1
 Input, keys, v l1 t1
 expect = input,keys,b
 gosub assert
+keys =
+
+goto l_input_extended
+			input_send_key_extended:
+				settimer, input_send_key_extended, OFF
+				runwait xdotool type abc.
+				runwait xdotool key space
+				runwait xdotool type xy
+				runwait xdotool key BackSpace
+				runwait xdotool type yz
+			return
+l_input_extended:
+settimer, input_send_key_extended, 1
+Input, keys, *t1, {esc}, abc , xyz
+_errorlevel = %errorlevel%
+expect = input extended errorlevel,_errorlevel,Match
+gosub assert
+expect = input extended keys,keys,abc. xyz
+gosub assert
+keys =
+_errorlevel =
+
+Input, keys, t0.00001, {esc}
+_errorlevel = %errorlevel%
+expect = input timeout,_errorlevel,Timeout
+gosub assert
+keys =
+_errorlevel =
 
 ;;InputBox, OutputVar [, Title, Prompt, HIDE, Width, Height, X, Y, Font, Timeout, Default]
 ;;KeyHistory
