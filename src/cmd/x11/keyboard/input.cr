@@ -48,17 +48,18 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 		end
 
 		buf = ""
-		listener = thread.runner.display.register_key_listener do |key_event, keysym, char, is_paused| # TODO: inconsistency: KeyEvent/char vs. KeyCombination.key_name
+		listener = thread.runner.display.register_key_listener do |key_event, is_paused|
 			next if is_paused && ignore_generated_input
-			next if key_event.type != ::X11::KeyPress
-			end_key = end_keys.find { |k| k.keysym == keysym }
+			next if ! key_event.down
+			end_key = end_keys.find { |k| k.keysym == key_event.keysym }
 			if end_key
 				next channel.send("EndKey:#{end_key.key_name}")
 			end
-			if ! ignore_backspace && char == '\b' # ::X11::XK_BackSpace
+			if ! ignore_backspace && key_event.keysym == ::X11::XK_BackSpace
 				buf = buf.empty? ? "" : buf[...-1]
 				next
 			end
+			char = key_event.text
 			next if ! char
 			buf += char
 			match = match_phrases.index do |phrase|

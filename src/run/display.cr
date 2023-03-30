@@ -29,7 +29,7 @@ module Run
 
 		def run(*, hotstrings, hotkeys)
 			spawn do
-				@adapter.run key_handler: ->handle_event(::X11::KeyEvent, UInt64, Char?)
+				@adapter.run key_handler: ->handle_event(KeyCombination)
 			end
 			@hotstrings.run
 			hotstrings.each { |h| @hotstrings.add h }
@@ -101,16 +101,15 @@ module Run
 			@unsuspend_listeners.each &.call
 		end
 
-		# TODO: put keysym and char into key_event in callers?
-		private def handle_event(key_event, keysym, char)
+		private def handle_event(key_event)
 			@key_listeners.each do |sub|
 				spawn same_thread: true do
-					sub.call(key_event, keysym, char, @is_paused)
+					sub.call(key_event, @is_paused)
 				end
 			end
 		end
-		@key_listeners = [] of Proc(::X11::KeyEvent, UInt64, Char?, Bool, Nil)
-		def register_key_listener(&block : ::X11::KeyEvent, UInt64, Char?, Bool -> _)
+		@key_listeners = [] of Proc(KeyCombination, Bool, Nil)
+		def register_key_listener(&block : KeyCombination, Bool -> _)
 			@key_listeners << block
 			block
 		end

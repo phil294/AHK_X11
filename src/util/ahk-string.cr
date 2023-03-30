@@ -77,7 +77,7 @@ class Util::AhkString
 	# :ditto:
 	def self.parse_key_combinations(str, escape_char : Char, *, implicit_braces = false)
 		escape = false
-		modifiers = 0_u32
+		modifiers = 0_u8
 		str = str.sub("<^>!", "\0")
 		iter = str.each_char
 		while (char = iter.next) != Iterator::Stop::INSTANCE
@@ -138,9 +138,9 @@ class Util::AhkString
 					{% if ! flag?(:release) %}
 						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
 					{% end %}
-					yield Run::KeyCombination.new(key_name.downcase, keysym.to_u64, modifiers, up, down, repeat)
+					yield Run::KeyCombination.new(key_name.downcase, nil, keysym.to_u64, modifiers, up, down, repeat)
 
-					modifiers = 0_u32
+					modifiers = 0_u8
 				end
 			end
 		end

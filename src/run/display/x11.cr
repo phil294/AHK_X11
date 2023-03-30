@@ -215,7 +215,7 @@ module Run
 			end
 		end
 
-		@key_handler : Proc(::X11::KeyEvent, UInt64, Char?, Nil)?
+		@key_handler : Proc(KeyCombination, Nil)?
 		def run(*, key_handler)
 			@key_handler = key_handler
 			if record = @record
@@ -259,16 +259,16 @@ module Run
 			return if record_data.category != Xtst::LibXtst::RecordInterceptDataCategory::FromServer.value
 			type, keycode, repeat = record_data.data
 			state = record_data.data[28]
-			return if repeat == 1
-			_key_event = ::X11::KeyEvent.new
-			_key_event.display = @display
-			_key_event.type = type
-			_key_event.keycode = keycode
-			_key_event.state = state
 			if keycode < 9 # mouse button
+				up = type == ::X11::ButtonRelease
 				# pretend that keysym = keycode
-				@key_handler.not_nil!.call(_key_event, keycode.to_u64, nil)
+				@key_handler.not_nil!.call(KeyCombination.new("[mouse]", nil, keycode.to_u64, state, up, !up, 1, keycode))
 			else
+				_key_event = ::X11::KeyEvent.new
+				_key_event.display = @display
+				_key_event.type = type
+				_key_event.keycode = keycode
+				_key_event.state = state
 				handle_key_event(_key_event)
 			end
 		end
@@ -277,7 +277,8 @@ module Run
 			lookup = key_event.lookup_string
 			char = lookup[:string][0]?
 			keysym = lookup[:keysym]
-			@key_handler.not_nil!.call(key_event, keysym, char)
+			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
+			@key_handler.not_nil!.call(KeyCombination.new("[kbd]", char, keysym, key_event.state.to_u8, up, !up, 1, key_event.keycode.to_u8))
 		end
 
 		def grab_hotkey(hotkey)

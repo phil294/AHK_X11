@@ -13,8 +13,8 @@ module Run
 		end
 
 		def run
-			@runner.display.register_key_listener do |key_event, keysym, char, is_paused|
-				handle_event(key_event, keysym, char, is_paused)
+			@runner.display.register_key_listener do |key_event, is_paused|
+				handle_event(key_event, is_paused)
 			end
 		end
 
@@ -31,23 +31,23 @@ module Run
 		@candidate : Hotstring? = nil
 		@modifier_keysyms : StaticArray(Int32, 13) = StaticArray[::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Caps_Lock, ::X11::XK_Shift_Lock, ::X11::XK_Meta_L, ::X11::XK_Meta_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R, ::X11::XK_Super_L, ::X11::XK_Super_R, ::X11::XK_Num_Lock]
 
-		def handle_event(key_event, keysym, char, is_paused)
+		def handle_event(key_event, is_paused)
 			return if is_paused
-			up = key_event.type == ::X11::KeyPress || key_event.type == ::X11::ButtonPress
-			return if ! up
+			return if ! key_event.up
+			char = key_event.text
 			prev_candidate = @candidate
 			@candidate = nil
 			if ! char
-				if @modifier_keysyms.includes? keysym
+				if @modifier_keysyms.includes? key_event.keysym
 					# left/right buttons etc. should cancel current buffer but modifiers not: keep
 					@candidate = prev_candidate
 				else
 					@key_buff_i = 0_u8
 				end
 			else
-				normal_keypress = (::X11::ControlMask | ::X11::Mod1Mask | ::X11::Mod4Mask | ::X11::Mod5Mask) & key_event.state == 0
+				normal_keypress = (::X11::ControlMask | ::X11::Mod1Mask | ::X11::Mod4Mask | ::X11::Mod5Mask) & key_event.modifiers == 0
 				if normal_keypress
-					if char == '\b' # ::X11::XK_BackSpace
+					if key_event.keysym == ::X11::XK_BackSpace
 						@key_buff_i -= 1 if @key_buff_i > 0
 					elsif @end_chars.includes?(char)
 						@key_buff_i = 0_u8
