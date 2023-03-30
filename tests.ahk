@@ -454,7 +454,11 @@ gosub assert
 ;;WinGetActiveTitle, OutputVar
 
 WinGetClass, class
-expect = wingetclass,class,AppRun.wrapped ; Ahk_x11
+EnvGet, is_appimage, APPIMAGE
+if is_appimage =
+	expect = wingetclass,class,Ahk_x11
+else
+	expect = wingetclass,class,AppRun.wrapped
 gosub assert
 
 WinGetText, txt
