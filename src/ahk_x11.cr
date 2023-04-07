@@ -34,15 +34,22 @@ def build_error(msg)
 	if msg.is_a?(Exception)
 		msg.inspect_with_backtrace(STDERR)
 	end
+	STDERR.flush
 	msg = "#{msg}\n\nThe program will exit."
 	if ! HEADLESS
 		gtk = Run::Gtk.new "AHK_X11"
 		spawn gtk.run
 		gtk.msgbox msg
 	end
-	abort msg
+	# Sometimes somehow Crystal::AtExitHandlers never finish so we cannot use abort/exit
+	Process.exit(1)
 end
-# TODO: fiber unhandled exception handler set to build_errow somehow?
+
+Hacks.set_fiber_on_unhandled_exception do |ex|
+	ex = Exception.new("Internal AHK_X11 error :-(\n\nPlease report it to https://github.com/phil294/ahk_x11/issues.\n\nDetails:\n#{ex.message}\n#{ex.backtrace}", ex.cause)
+	STDERR.print "Unhandled exception in spawn: "
+	build_error(ex)
+end
 
 def filename_to_path(filename)
 	filename = filename[7..] if filename.starts_with?("file://")
