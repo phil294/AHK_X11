@@ -15,7 +15,7 @@ This project is usable, but WORK IN PROGRESS.
 
 **Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
 
-[**Direct download**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11.zip) (all Linux distributions, x86_64, single executable)
+[**Direct download**](https://github.com/phil294/AHK_X11/releases/download/0.5.1/ahk_x11-0.5.1-x86_64.AppImage) (all Linux distributions, x86_64, single executable)
 
 [**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
 
