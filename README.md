@@ -11,7 +11,7 @@ AutoHotkey for Linux.
 
 This project is usable, but WORK IN PROGRESS.
 
-**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://discord.com/invite/autohotkey-115993023636176902)'s #ahk_x11 channel.
+**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://autohotkey.com/discord/)'s #ahk_x11 channel.
 
 **Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
 
