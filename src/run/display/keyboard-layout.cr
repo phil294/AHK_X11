@@ -23,11 +23,11 @@ class KeyboardLayout
 			x11_keymap = `setxkbmap -print | grep xkb_symbols | awk '{print $4}' | awk -F"+" '{print $2}'`
 			names =
 				if ! x11_keymap.empty?
-					layout, variant = x11_keymap.split(/[()]/)
+					keymap_split = x11_keymap.strip.split(/[()]/)
 					{% if ! flag?(:release) %}
-						puts "[debug] Evdev key lookup: X11 keymap: #{layout}, #{variant}"
+						puts "[debug] Evdev key lookup: X11 keymap: #{keymap_split}"
 					{% end %}
-					LibXKBCommon::RuleNames.new(layout: layout, variant: variant)
+					LibXKBCommon::RuleNames.new(layout: keymap_split[0], variant: keymap_split[1]?.try &.to_unsafe || Pointer(UInt8).null)
 				else
 					LibXKBCommon::RuleNames.new(layout: nil)
 				end
