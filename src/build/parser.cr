@@ -1,5 +1,6 @@
 require "../cmd/**"
 require "../run/display/hotstring"
+require "../run/key-combination"
 
 module Build
 	class ParsingException < Exception end
@@ -15,7 +16,8 @@ module Build
 			end
 
 		getter cmds = [] of Cmd::Base
-		getter hotkeys = [] of Run::Hotkey
+		# TODO: several classes might be better put in neither run nor build folder
+		getter hotkey_definitions = [] of Run::HotkeyDefinition
 		getter hotstrings = [] of Run::Hotstring
 		getter comment_flag = ";"
 		getter runner_settings = Run::RunnerSettings.new
@@ -106,6 +108,10 @@ module Build
 						raise Exception.new ((e.message || "") + "\n#Include line: #{i}"), e.cause
 					end
 				end
+			# fixme: change to something cross os-portable?
+			elsif first_word == "#inputdevice"
+				param = args.strip.downcase
+				@runner_settings.input_interface = param == "xtest" ? Run::InputInterface::XTest : param == "xgrab" ? Run::InputInterface::XGrab : param == "evdev" ? Run::InputInterface::Evdev : param == "off" ? Run::InputInterface::Off : nil
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
@@ -139,7 +145,7 @@ module Build
 				csv_args = [var_name, arg2]
 				@cmds << cmd_class.new line_no, csv_args
 			elsif line_content.includes?("::")
-				add_line "Return", line_no if @hotstrings.empty? && @hotkeys.empty?
+				add_line "Return", line_no if @hotstrings.empty? && @hotkey_definitions.empty?
 				label, instant_action = line_content.split(/(?<=.)::/, limit: 2)
 				if label.starts_with?(":") # Hotstring
 					match = label.match(/^:([^:]*):([^:]+)$/)
@@ -158,7 +164,9 @@ module Build
 					end
 				else # Hotkey
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					@hotkeys << Run::Hotkey.new label, priority: 0, escape_char: @runner_settings.escape_char
+					key_combo = Util::AhkString.parse_key_combinations(label.gsub("*","").gsub("~",""), @runner_settings.escape_char, implicit_braces: true)[0]?
+					raise Run::RuntimeException.new "Hotkey '#{label}' not understood" if ! key_combo
+					@hotkey_definitions << Run::HotkeyDefinition.new(label, key_combo, 0)
 					if ! instant_action.empty?
 						add_line "#{instant_action}", line_no
 						add_line "Return", line_no

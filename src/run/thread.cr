@@ -11,7 +11,8 @@ module Run
 
 	# see Thread.settings
 	private struct ThreadSettings
-		property last_found_window : XDo::Window?
+		# Is the window ID (X11) or the hash (see ThreadCache) of the top level accessible (Wayland)
+		property last_found_window : UInt64?
 		property msgbox_response : Gtk::MsgBoxButton?
 		property coord_mode_tooltip = CoordMode::RELATIVE
 		property coord_mode_pixel = CoordMode::RELATIVE
@@ -23,8 +24,8 @@ module Run
 
 	# see Thread.cache
 	private struct ThreadCache
-		getter top_level_accessible_by_window_id = {} of UInt64 => ::Atspi::Accessible
-		getter accessible_by_class_nn_by_window_id = {} of UInt64 => Hash(String, ::Atspi::Accessible)
+		getter top_level_accessible_by_hash = {} of UInt64 => ::Atspi::Accessible
+		getter accessible_by_class_nn_by_top_level_accessible = {} of UInt64 => Hash(String, ::Atspi::Accessible)
 	end
 
 	class CmdPerformance
@@ -84,6 +85,9 @@ module Run
 			@@id_counter += 1
 			@id = @@id_counter
 			@stack << start
+			{% if ! flag?(:release) %}
+				STDOUT.puts "[debug] new thread[#{@id}]"
+			{% end %}
 		end
 
 		# Spawns the `do_next` fiber if it isn't running already and returns the result channel.
@@ -142,7 +146,7 @@ module Run
 					@performance_by_cmd[cmd.class.name].count += 1
 					@performance_by_cmd[cmd.class.name].total += cmd_execution_time
 				end
-			rescue e
+			rescue e : RuntimeException
 				msg = "Runtime error in line #{cmd.line_no+1}:\n#{e.message}.\n\nThe current thread will exit."
 				STDERR.puts e.to_s
 				{% if ! flag?(:release) %}
@@ -220,9 +224,6 @@ module Run
 
 		def parse_key_combinations(str, *, implicit_braces = false)
 			Util::AhkString.parse_key_combinations(str, @runner.settings.escape_char, implicit_braces: implicit_braces)
-		end
-		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool, XDo::Button? -> _)
-			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.display.adapter.as(Run::X11), &block) # TODO: type cast etc
 		end
 
 		def parse_letter_options(str, &block : Char, Float64? -> _)

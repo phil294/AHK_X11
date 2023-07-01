@@ -9,8 +9,8 @@ module Run
 		end
 
 		def run
-			@runner.display.register_key_listener do |key_event, is_paused|
-				handle_event(key_event, is_paused)
+			@runner.display.register_key_listener do |key_event, keysym, is_paused|
+				handle_event(key_event, keysym, is_paused)
 			end
 			@runner.display.on_pause { pause }
 			@runner.display.on_resume { resume }
@@ -19,9 +19,11 @@ module Run
 		end
 
 		@hotkeys = [] of Hotkey
-		def add(hotkey, subscribe = true)
-			# apparently keycodes are display-dependent so they can't be determined at build time. TODO: check this or change, fix type cast:
-			hotkey.keycode = @runner.display.adapter.as(X11).keysym_to_keycode(hotkey.keysym)
+		def add(hotkey_definition : HotkeyDefinition, subscribe = true)
+			cmd = @runner.labels[hotkey_definition.label.downcase]
+			keysym = @runner.display.adapter.key_combination_to_keysym(hotkey_definition)
+			raise Run::RuntimeException.new "key name '#{hotkey_definition.key_name}' not found" if ! keysym
+			hotkey = Hotkey.new(hotkey_definition, cmd, keysym, 0)
 			if subscribe
 				@hotkeys << hotkey
 			end
@@ -35,19 +37,23 @@ module Run
 				@hotkeys.delete hotkey
 			end
 		end
-		def add_or_update(*, hotkey_label, cmd_label, priority, active_state = nil)
-			if cmd_label
-				cmd = @runner.labels[cmd_label]?
-				raise RuntimeException.new "Add or update Hotkey: Label '#{cmd_label}' not found" if ! cmd
+		def add_or_update(*, key_str, label, priority, active_state = nil)
+			if label
+				cmd = @runner.labels[label]?
+				raise RuntimeException.new "Add or update Hotkey: Label '#{label}' not found" if ! cmd
 			end
-			hotkey = @hotkeys.find { |h| h.key_str == hotkey_label }
+			hotkey = @hotkeys.find { |h| h.key_str == key_str }
 			if hotkey
 				remove(hotkey)
 				active_state = hotkey.active if active_state.nil?
 			else
-				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{hotkey_label}" if ! cmd_label
-				hotkey = Hotkey.new(cmd.not_nil!, hotkey_label, priority: priority, escape_char: @runner.settings.escape_char)
-				hotkey.exempt_from_suspension = cmd.is_a?(Cmd::Misc::Suspend)
+				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{key_str}" if ! label
+				# these two lines are duplicate with parser
+				key_combo = Util::AhkString.parse_key_combinations(key_str.gsub("*","").gsub("~",""), @runner.settings.escape_char, implicit_braces: true)[0]?
+				raise RuntimeException.new "Hotkey '#{key_str}' not understood" if ! key_combo
+				keysym = @runner.display.adapter.key_combination_to_keysym(key_combo)
+				raise RuntimeException.new "Hotkey '#{key_str}' not understood" if ! keysym
+				hotkey = Hotkey.new(key_str, label, key_combo, cmd.not_nil!, keysym, priority)
 				@hotkeys << hotkey
 				active_state = true if active_state.nil?
 			end
@@ -62,22 +68,26 @@ module Run
 			hotkey
 		end
 
-		def handle_event(key_event, is_paused)
+		def handle_event(key_event, keysym, is_paused)
 			return if is_paused
 
 			hotkey = @hotkeys.find do |hotkey|
 				hotkey.active &&
-				hotkey.keysym == key_event.keysym &&
-				hotkey.up == key_event.up &&
-				(hotkey.modifier_variants.any? &.== key_event.modifiers) &&
+				hotkey.keysym == keysym &&
+				(hotkey.up ? key_event.up : key_event.down) &&
+				hotkey.modifiers_match(key_event.modifiers) &&
 				(! @runner.display.suspended || hotkey.exempt_from_suspension)
 			end
 			if hotkey
-				if ! hotkey.up && ! hotkey.no_grab
-					# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
-					key_map = XDo::LibXDo::Charcodemap.new
-					key_map.code = hotkey.keycode
-					@runner.display.x_do.keys_raw [key_map], pressed: false, delay: 0
+				# FIXME: test if still works with new conditions, and write tests if they don't exist yet,
+				# including expected failing test such as `f::echo 1,send g`
+				if @runner.display.adapter_x11? && ! hotkey.up && ! hotkey.no_grab && (hotkey.cmd.is_a?(Cmd::X11::Keyboard::Send) || Cmd::X11::Keyboard::SendRaw)
+					@runner.display.adapter_x11.key_combination_to_charcodemap(hotkey) do |key_map, pressed, mouse_button|
+						if ! mouse_button
+							# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
+							@runner.display.x_do.keys_raw key_map, pressed: false, delay: 0
+						end
+					end
 				end
 				hotkey.trigger(@runner)
 			end

@@ -13,7 +13,9 @@ This project is usable, but WORK IN PROGRESS.
 
 **Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://discord.com/invite/autohotkey-115993023636176902)'s #ahk_x11 channel.
 
-**Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
+Supports both X11 **AND** Wayland, but the latter is very experimental. Please read the **Wayland** section below if you're intending on using that.
+
+!!!!!!!!!!YOU ARE CURRENTLY ON THE EXPERIMENTAL WAYLAND / EVDEV BRANCH. EXPECT BUGS EVERYWHERE!!!!!!!!!!
 
 [**Direct download**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11.zip) (all Linux distributions, x86_64, single executable)
 
@@ -128,9 +130,7 @@ Also planned, even though it's not part of 1.0.24 spec:
 **[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)**. Make the downloaded file executable ([how?](https://askubuntu.com/a/484719/378854)) and you should be good to go: Just double click it *or* run it in the console without arguments (**without** sudo).
 
 Prerequisites:
-- X11 is the only dependency. You most likely have them already. Wayland support would be cool too some day.
-- Old distros like Debian *before* 10 (Buster) or Ubuntu *before* 18.04 are not supported ([reason](https://github.com/jhass/crystal-gobject/issues/73#issuecomment-661235729)). Otherwise, it should not matter what system you use.
-
+- *Nothing*, except that old distros like Debian *before* 10 (Buster) or Ubuntu *before* 18.04 are not supported ([reason](https://github.com/jhass/crystal-gobject/issues/73#issuecomment-661235729)). Otherwise, it should not matter what system you use.
 
 There is no auto updater yet! (but planned) You will probably want to get the latest version then and again.
 
@@ -151,6 +151,33 @@ There are different ways to use it.
     - Run Window Spy with `./ahk_x11 --windowspy`
     - Hashbang supported if first line starts with `#!`
     - You can disable graphical commands by manually unsetting the DISPLAY variable. Example: `DISPLAY= ./ahk_x11 <<< 'Echo abc'` just prints `abc` to the console (`Echo` command is a special ahk_x11-only command). The only advantage is faster startup time.
+
+## Wayland (evdev)
+
+You can skip this section if you're using X11. If you're on Ubuntu 22.04 and up, you can switch back from Wayland to X11 using this ([link](https://askubuntu.com/q/1410256)).
+
+Generally, on X11 everything will be less painful and just work™, mostly because our Wayland support isn't mature yet. You are welcome to try it out though.
+
+As a prerequisite, you will need to give yourself elevated input permission: You need to be part of the `input` group, e.g. by typing `sudo usermod -aG input $USER` in a terminal and then *relogging*. (Note that if you want to `setcap` instead, it [won't work](https://github.com/AppImage/AppImageKit/issues/881#issuecomment-1493039417) because the binary is an AppImage).
+
+STATE OF THE WAYLAND / EVDEV BRANCH:
+
+- Most commands work perfectly fine, e.g. `Send`. `Send` should actually work even *better* than on X11 right now for special keys (temporarily)
+- Certain commands don't work at all: E.g. `WinMaximize`
+- Certain commands work only partially: E.g. `ControlSendRaw` only works when you give it a specific control handle. `MouseMove` and `MouseGetPos` only works reliably in relative mode. `WinGetText` works but you can't specify window class anymore, only matching by name or `ahk_pid` is available.
+- Certain commands only work once you've set up accessibility settings completely, see **Accessbility** below. That's because Wayland has no concept of "Windows" on its own.
+- Certain functionality is not **yet** implemented for Wayland, such as Hotkey grabbing (without `~`)
+- WindowSpy is currently broken and it is unclear how/when this can be fixed
+
+The html docs currently don't reflect the differences and difficulties when dealing with Wayland. Many command descriptions are still due to be updated accordingly.
+
+There is a small automated tests file (`tests.ahk`) but nothing works properly right now.
+
+More than 100 `todo`s and `fixme`s all over the source code right now, they all need to be fixed before this branch can be merged into master.
+
+Even if you're on X11, it's possible to try out Wayland features by specifying the AHK_X11-specific directive `#InputDevice`: Add `#InputDevice evdev` anywhere in your script to switch. Alternative values are `xtest` (default on X11), `xgrab` (legacy X11) or `off`.
+
+In case you're wondering - the `X11` in `AHK_X11` is indeed a bit unfortunate as the name predates the addition of Wayland support, but as you can see, compatibility has been added and renaming the whole project because of that is probably not a good idea.
 
 ### Caveats
 
@@ -222,7 +249,7 @@ Note that the internal code around executing commands takes about 10 µs between
 More tips:
 - Some values are cached internally while the thread is running, so repeated commands may run faster
 - The first time an AtSpi-related command (`Control`-*, `WinGetText`, ... see "Accessibility" section above) runs, the interface needs to be initialized which can take some time (0-5s)
-- Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so e.g. `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`. So for many window operations you might want to do a single `WinGet, win_id, ID` beforehand and then reuse that `%win_id`.
+- Searching for windows is slow. Querying the active window or specifying an ID is not. For example, `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`. So for many window operations you might want to do a single `WinGet, win_id, ID` beforehand and then reuse that `%win_id%`.
 
 ## Contributing
 

@@ -27,7 +27,11 @@ class Cmd::Gtk::Gui::Tooltip < Cmd::Base
 						x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x.not_nil!, y.not_nil!)
 					end
 				else
-					x, y = thread.runner.display.x_do.mouse_location
+					if thread.runner.display.is_x11
+						x, y = thread.runner.display.x_do.mouse_location
+					else
+						x = y = 0
+					end
 				end
 				tooltip.move x.not_nil!, y.not_nil!
 				tooltip.show_all

@@ -6,8 +6,7 @@ class Cmd::X11::Window::WinSet < Cmd::Base
 	def run(thread, args)
 		sub_cmd = args[0].downcase
 		value = args[1].downcase
-		x11_dpy = thread.runner.display.adapter.as(Run::X11).display
-		Util.match(thread, args[2..], empty_is_last_found: true, a_is_active: true) do |win|
+		Util.match_win(thread, args[2..]) do |win|
 			case sub_cmd
 			when "alwaysontop"
 				action = case value
@@ -17,19 +16,24 @@ class Cmd::X11::Window::WinSet < Cmd::Base
 				end
 				win.set_state(action, "above")
 			when "bottom"
+				x11_dpy = thread.runner.display.adapter_x11.display
 				# For some reason libxdo windowlower cmd PR has not been merged:
 				# https://github.com/jordansissel/xdotool/pull/108
 				# so we need to run native x11
 				x11_dpy.lower_window(win.window)
 				x11_dpy.sync(false)
 			when "transparent"
+				x11_dpy = thread.runner.display.adapter_x11.display
+				atom = x11_dpy.intern_atom("_NET_WM_WINDOW_OPACITY", false)
 				if value == "off"
-					x11_dpy.delete_property(win.window, x11_dpy.intern_atom("_NET_WM_WINDOW_OPACITY", false))
+					x11_dpy.delete_property(win.window, atom)
 				else
 					opacity_factor = (value.to_f? || 255_f64).clamp(0_f64, 255_f64) / 255
-					x11_dpy.change_property(win.window, x11_dpy.intern_atom("_NET_WM_WINDOW_OPACITY", false), ::X11::C::XA_CARDINAL.to_u64, ::X11::C::PropModeReplace, Slice.new(1, (opacity_factor * 0xffffffff).to_u32.unsafe_as(Int32)))
+					opacity_value = (opacity_factor * 0xffffffff).to_u32.unsafe_as(Int32)
+					x11_dpy.change_property(win.window, atom, ::X11::C::XA_CARDINAL.to_u64, ::X11::C::PropModeReplace, Slice.new(1, opacity_value))
 				end
 				x11_dpy.sync(false)
+			# fixme make this possible again by alternative matching method via gui +lastfound
 			when "transcolor"
 				color = value.split(' ')[0].downcase
 				gui = thread.runner.display.gtk.guis.find do |gui_id, gui_info|

@@ -9,7 +9,7 @@ class Cmd::X11::Window::WinGetPos < Cmd::Base
 		out_y = args[1]?
 		out_w = args[2]?
 		out_h = args[3]?
-		found = Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true) do |win|
+		found = Util.match_win(thread, match_conditions) do |win|
 			x, y = win.location
 			w, h = win.size
 			thread.runner.set_user_var(out_x, x.to_s) if out_x

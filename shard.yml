@@ -27,3 +27,5 @@ dependencies:
     github: phil294/gtk3.cr
   atspi:
     github: phil294/atspi.cr
+  evdev:
+    github: nickbclifford/evdev.cr

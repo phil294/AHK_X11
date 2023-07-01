@@ -21,6 +21,11 @@
         "Thunar",
         "ungrab",
         "XFCE",
-        "xtst"
+        "xtst",
+        "evdev",
+        "xtest",
+        "keymap",
+        "uinput",
+        "charcodemap"
     ]
 }

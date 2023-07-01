@@ -38,9 +38,12 @@ module Cmd
 			{{ @type.all_subclasses }}
 		end
 
+		# TODO: why doesn't this work?? p! @hotkeys[0] prints all properties of the cmd chain including @args and so on even though we override it here
 		def inspect
-			"#{self.class.name}\n    @#{pointerof(@line_no)} line_no #{@line_no}\n    next: #{@next.class.name}\n    je: #{je.class.name}\n    jne: #{jne.class.name}"
+			"#{self.class.name}, @#{pointerof(@line_no)} line_no #{@line_no}, next: #{@next.class.name}, je: #{je.class.name}, jne: #{jne.class.name}"
 		end
-
+		def to_s(io)
+			io << inspect
+		end
 	end
 end

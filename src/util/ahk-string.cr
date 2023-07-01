@@ -44,40 +44,9 @@ class Util::AhkString
 	# When *implicit_braces* is set, there should be no `{}` around key names and
 	# thus everything is treated as a single key press (such as Hotkey definitions).
 	# In this case, `a b` would be an error, when it otherwise wouldn't.
-	def self.parse_key_combinations_to_charcodemap(str, escape_char : Char, x11 : Run::X11, implicit_braces = false)
-		self.parse_key_combinations(str, escape_char, implicit_braces: implicit_braces) do |combo|
-			key_map = XDo::LibXDo::Charcodemap.new
-			mouse_button : XDo::Button? = nil
-			if combo.keysym < 10
-				mouse_button = case combo.keysym
-				when 1 then XDo::Button::Left
-				when 2 then XDo::Button::Middle
-				when 3 then XDo::Button::Right
-				when 4 then XDo::Button::ScrollUp
-				when 5 then XDo::Button::ScrollDown
-				when 6 then XDo::Button::ScrollLeft
-				when 7 then XDo::Button::ScrollRight
-				when 8 then XDo::Button::Button8
-				when 9 then XDo::Button::Button9
-				end
-			else
-				key_map.code = x11.keysym_to_keycode(combo.keysym)
-				key_map.modmask = combo.modifiers
-			end
-			combo.repeat.times do
-				if combo.down || ! combo.up
-					yield [key_map], true, mouse_button
-				end
-				if combo.up || ! combo.down
-					yield [key_map], false, mouse_button
-				end
-			end
-		end
-	end
-	# :ditto:
 	def self.parse_key_combinations(str, escape_char : Char, *, implicit_braces = false)
 		escape = false
-		modifiers = 0_u8
+		modifiers = Run::KeyCombination::Modifiers.new
 		str = str.sub("<^>!", "\0")
 		iter = str.each_char
 		while (char = iter.next) != Iterator::Stop::INSTANCE
@@ -92,11 +61,11 @@ class Util::AhkString
 					key_name = char.to_s
 				else
 					case char
-					when '^' then modifiers |= ::X11::ControlMask
-					when '+' then modifiers |= ::X11::ShiftMask
-					when '!' then modifiers |= ::X11::Mod1Mask
-					when '#' then modifiers |= ::X11::Mod4Mask
-					when '\0' then modifiers |= ::X11::Mod5Mask
+					when '^' then modifiers.ctrl = true
+					when '+' then modifiers.shift = true
+					when '!' then modifiers.alt = true
+					when '#' then modifiers.win = true
+					when '\0' then modifiers.altgr = true
 					when '$' then
 					else
 						if implicit_braces || char == '{'
@@ -124,32 +93,25 @@ class Util::AhkString
 				end
 				escape = false
 				if key_name
-					if key_name.size == 1 && key_name.upcase != key_name.downcase
-						if modifiers & ::X11::ShiftMask == ::X11::ShiftMask
-							key_name = key_name.upcase
-						elsif key_name.upcase == key_name
-							modifiers |= ::X11::ShiftMask
-						end
-					end
-					keysym = Run::X11.ahk_key_name_to_keysym(key_name)
-					# TODO: why the typecheck / why not in x11.cr?
-					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
-
 					{% if ! flag?(:release) %}
-						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
+						puts "[debug] #{key_name}"
 					{% end %}
-					yield Run::KeyCombination.new(key_name.downcase, nil, keysym.to_u64, modifiers, up, down, repeat)
-
-					modifiers = 0_u8
+					yield Run::KeyCombination.new(key_name.downcase, text: nil, modifiers: modifiers, up: up, down: down, repeat: repeat)
+					modifiers = Run::KeyCombination::Modifiers.new
 				end
 			end
 		end
 	end
 	# :ditto:
+	# Returns empty array on parse error
 	def self.parse_key_combinations(str, escape_char : Char, *, implicit_braces = false)
 		combos = [] of Run::KeyCombination
-		self.parse_key_combinations(str, escape_char, implicit_braces: implicit_braces) do |combo|
-			combos << combo
+		begin
+			self.parse_key_combinations(str, escape_char, implicit_braces: implicit_braces) do |combo|
+				combos << combo if combo
+			end
+		rescue e : Run::RuntimeException
+			return [] of Run::KeyCombination
 		end
 		combos
 	end

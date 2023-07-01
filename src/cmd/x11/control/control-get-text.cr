@@ -9,16 +9,17 @@ class Cmd::X11::Mouse::ControlGetText < Cmd::Base
 		class_nn_or_text = args[1]? || return
 		args.delete_at(0)
 		args.delete_at(0)
-		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
-			txt = thread.runner.display.at_spi do |at_spi|
-				acc = at_spi.find_descendant(thread, win, class_nn_or_text)
+		success = false
+		Cmd::X11::Window::Util.match_top_level_accessible(thread, args) do |tl_acc|
+			thread.runner.display.at_spi do |at_spi|
+				acc = at_spi.find_descendant_of_top_level_accessible(thread, tl_acc, class_nn_or_text)
 				if acc
-					at_spi.get_text(acc) || ""
+					txt = at_spi.get_text(acc) || ""
+					thread.runner.set_user_var(out_var, txt)
+					success = true
 				end
 			end
-			return "1" if ! txt
-			thread.runner.set_user_var(out_var, txt)
 		end
-		"0"
+		return success ? "0" : "1"
 	end
 end

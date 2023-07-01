@@ -41,7 +41,8 @@ module Run
 			if @automatic_backspacing
 				runner.display.pause do
 					(@abbrev.size + (@immediate ? 0 : 1)).times do
-						runner.display.x_do.keys "BackSpace", delay: 0
+						# TODO: allow passing BS as keysym const somehow here
+						runner.display.adapter.send [KeyCombination.new("BackSpace", text: nil, modifiers: KeyCombination::Modifiers.new, up: true, down: true, repeat: 1)]
 						sleep @delay.milliseconds if @delay != -1
 					end
 				end

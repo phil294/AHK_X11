@@ -12,9 +12,9 @@ class Cmd::X11::Mouse::ControlClick < Cmd::Base
 		args.delete_at(2) if args[2]?
 		args.delete_at(2) if args[2]?
 
-		Cmd::X11::Window::Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
+		Cmd::X11::Window::Util.match_top_level_accessible(thread, args) do |tl_acc|
 			success = thread.runner.display.at_spi do |at_spi|
-				acc = at_spi.find_descendant(thread, win, class_nn_or_text)
+				acc = at_spi.find_descendant_of_top_level_accessible(thread, tl_acc, class_nn_or_text)
 				if acc
 					count.times do
 						s = at_spi.click(acc)

@@ -6,8 +6,9 @@ class Cmd::X11::Window::WinClose < Cmd::Base
 	def run(thread, args)
 		match_conditions = args
 		match_conditions.delete_at(2) if args.size >= 3
-		Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: true) do |win|
-		win.quit!
+		# todo docs evdev: use winkill or processkill(?) instead
+		Util.match_win(thread, match_conditions) do |win|
+			win.quit!
 		end
 	end
 end

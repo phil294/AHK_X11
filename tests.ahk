@@ -648,3 +648,5 @@ Return
 :r:testhotstringraw::^a
 :o:testhotstringbs::{bs}
 :*:testhotstringnoendchar::immediate
+
+F11::ExitApp

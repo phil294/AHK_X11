@@ -11,6 +11,16 @@ module Run
 		Ignore
 		Off
 	end
+	enum InputInterface
+		# X11 with Record Extension, the preferred and default way under X11.
+		XTest
+		# X11 without Record Extension, only captures down presses of non-~ hotkeys ("grabbed" keys)
+		XGrab
+		# Kernel input device driver. Requires elevated process privilege. This is the default for Wayland systems.
+		Evdev
+		# Disable any kind of hotkey, hotstring, input, send command. Related commands will throw an error.
+		Off
+	end
 
 	# see `Thread.settings` for scope explanation.
 	# Some RunnerSettings are constant (never changed) because they are set in parser only.
@@ -19,6 +29,7 @@ module Run
 		property escape_char = '`'
 		property hotstring_end_chars = ['-', '(', ')', '[', ']', '{', '}', ':', ';', '\'', '"', '/', '\\', ',', '.', '?', '!', '\n', ' ', '\t', '\r']
 		property single_instance : SingleInstance?
+		property input_interface : InputInterface?
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -78,10 +89,10 @@ module Run
 			ENV["APPIMAGE"]? || Process.executable_path || raise RuntimeException.new "Cannot determine binary path"
 		end
 		def run
-			@settings.persistent ||= (! @builder.hotkeys.empty? || ! @builder.hotstrings.empty?)
+			@settings.persistent ||= (! @builder.hotkey_definitions.empty? || ! @builder.hotstrings.empty?)
 			if ! @headless
 				@display = Display.new self
-				@display.not_nil!.run hotstrings: @builder.hotstrings, hotkeys: @builder.hotkeys
+				@display.not_nil!.run hotstrings: @builder.hotstrings, hotkey_definitions: @builder.hotkey_definitions
 				if ! @settings.single_instance
 					@settings.single_instance = @settings.persistent ? SingleInstance::Prompt : SingleInstance::Off
 				end
@@ -246,8 +257,9 @@ module Run
 			when "a_nowutc" then Time.utc.to_YYYYMMDDHH24MISS
 			when "a_tickcount" then Time.monotonic.total_milliseconds.round.to_i.to_s
 			when "clipboard" then display.gtk.clipboard &.wait_for_text
-			when "a_screenwidth" then display.adapter.display.default_screen.width.to_s
-			when "a_screenheight" then display.adapter.display.default_screen.height.to_s
+			when "a_screenwidth" then display.adapter.screen_width.to_s
+			when "a_screenheight" then display.adapter.screen_height.to_s
+			# todo a_mousex? is now available as adapter getter
 			when "a_username" then Hacks.username
 			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
 			when "a_computername" then `uname -n`

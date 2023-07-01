@@ -12,7 +12,7 @@ These are the steps required to build this project locally, such as if you want 
     1. Ubuntu 20.04 and up:
         1. Dependencies
             ```
-            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev
+            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev meson libevdev-dev bison doxygen libcap-dev
             ```
         1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
     1. Arch Linux:
@@ -26,7 +26,14 @@ These are the steps required to build this project locally, such as if you want 
 1. Remove the `private` from `private getter xdo_p : LibXDo::XDo*` in `lib/x_do/src/x_do.cr` (this is a temporary fix)
 1. Add `require "../g_lib-2.0/g_lib"` to the top of `lib/gtk4/lib/gi-crystal/src/auto/xlib-2.0/xlib.cr` (this is a temporary fix)
 1. In `lib/gtk4/lib/gi-crystal/src/auto/gtk-3.0/gtk.cr`, replace all usages of `Glib::String` with `::String` (this is a temporary fix)
-1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.
+1. A custom build of `libxkbcommon` is required so we can look up keyboard layouts under Wayland. Clone `https://github.com/phil294/libxkbcommon` somewhere, in there, run:
+    `meson setup build -Denable-x11=false -Dxkb-config-root=/usr/share/X11/xkb -Dx-locale-root=/usr/share/X11/locale`
+    and
+    `ninja -C build`
+    and move `build/libxkbcustom.a` into this very build folder.
+    Alternatively if you're not planning on running Wayland you could remove all LibXkbCustom logic and its dependents from the source.
+1. Perhaps it's also necessary to copy `libxkbcommon.so.1.0.0` as `libxkbcommon.so.1` because Ubuntu 20.04 version is missing some features (stuff is untested here and quite obviously still a lot of WIP)
+1. Now everything is ready for local use with `shards build -Dpreview_mt --link-flags="$PWD/build/libxkbcustom.a -lxkbcommon -lwayland-client"`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.
 1. Find your final binary in the `./bin` folder, it's about 4 MiB in size.
 
 ### For making release-like binaries

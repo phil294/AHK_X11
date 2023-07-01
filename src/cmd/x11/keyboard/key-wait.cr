@@ -14,7 +14,8 @@ class Cmd::X11::Keyboard::KeyWait < Cmd::Base
 			when 't' then timeout = n
 			end
 		end
-		keysym = thread.parse_key_combinations(key_name, implicit_braces: true)[0]?.try &.keysym
+		combo = thread.parse_key_combinations(key_name, implicit_braces: true)[0]?
+		keysym = thread.runner.display.adapter.key_combination_to_keysym(combo) if combo
 		raise Run::RuntimeException.new "Key #{key_name} not found" if ! keysym
 		is_pressed = thread.runner.display.pressed_keys.includes?(keysym)
 		return "0" if down ? is_pressed : !is_pressed

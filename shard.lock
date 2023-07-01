@@ -8,13 +8,16 @@ shards:
     git: https://github.com/kostya/cron_parser.git
     version: 0.4.0
 
+  evdev:
+    git: https://github.com/nickbclifford/evdev.cr.git
+    version: 0.1.0+git.commit.7254b3fc679e2860b1e829a27d32e3d676d9f4dc
+
   future:
     git: https://github.com/crystal-community/future.cr.git
     version: 1.0.0
 
   gi-crystal:
     git: https://github.com/hugopl/gi-crystal.git
-    # TODO https://github.com/hugopl/gi-crystal/issues/70
     version: 0.15.0+git.commit.3610c6cc103dcd02c8cff50c9b74c52b07f11d7c
 
   gtk3:

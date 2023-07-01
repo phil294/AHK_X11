@@ -5,12 +5,18 @@ class Cmd::X11::Keyboard::GetKeyState < Cmd::Base
 	def run(thread, args)
 		out_var, key_name = args
 		mode = ""
+		combo = thread.parse_key_combinations(key_name, implicit_braces: true).try &.[0]?
 		keysym = nil
-		begin
-			keysym = thread.parse_key_combinations(key_name, implicit_braces: true)[0]?.try &.keysym
-		rescue e : Run::RuntimeException
+		if combo
+			keysym = thread.runner.display.adapter.key_combination_to_keysym(combo)
+			if keysym
+				if thread.runner.display.pressed_keys.includes?(keysym)
+					mode = "D"
+				else
+					mode = "U"
+				end
+			end
 		end
-		mode = thread.runner.display.pressed_keys.includes?(keysym) ? "D" : "U" if keysym
 		thread.runner.set_user_var(out_var, mode)
 	end
 end

@@ -20,78 +20,89 @@ module Run
 			@is_init = true
 		end
 
-		# Finds the first x11 window-like accessible corresponding to the window's pid and name
-		# or size or `nil` if no match was found.
-		private def find_window(thread, win, include_hidden = false)
+		# Finds the first window-like accessible that matches one of the windows (or window-like on Wayland).
+		# No results caching here.
+		def find_top_level_accessible(thread, windows, match_text = nil, exclude_text = nil, include_hidden = false)
 			init
-			wid = win.window
-			thread.cache.accessible_by_class_nn_by_window_id[wid] ||= {} of String => ::Atspi::Accessible
-			frame = thread.cache.top_level_accessible_by_window_id[wid]?
-			return frame if frame
-			window_name = win.name
-			if window_name.nil?
-				# Happens only rarely e.g. when clicking rapidly. The window is gone and a `.pid` would segfault.
-				return nil
-			end
-			pid = win.pid
-			app = each_app do |app|
-				break app if app.process_id == pid
-			end
-			if app
-				# There is no match by window XID (https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/21),
-				# so bland comparison by title or size is necessary:
-				tl_children = [] of ::Atspi::Accessible
-				each_child(app, include_hidden: include_hidden) do |tl_child|
-					tl_children << tl_child if top_level_window?(tl_child)
+			apps = all_apps
+			# There is no match by window XID (https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/21),
+			# so bland comparison by pid or title or size is necessary, even on X11:
+			pids = windows
+				.map { |w| w.pid }
+				.reject &.nil?
+			if ! pids.empty?
+				app = apps.find do |a|
+					pids.includes?(a.process_id)
 				end
-				return nil if tl_children.empty?
-				name_matches = tl_children.select { |t| t.name == window_name }
-				if name_matches.size == 1
-					# False positives *are* possible here, e.g. if the popup has the same window title
-					# as another window of the same PID while the popup has no atspi title (e.g.
-					# the default in ahk guis, see below)
-					frame = name_matches.first
-				elsif name_matches.size > 1
-					tl_children = name_matches
-				end
-				if ! frame
-					# Some windows have no or missing title in atspi. Example: Gtk alerts, such as our
-					# MsgBox. So the window title match won't help here. Also, there can be multiple
-					# windows. So we fall back to approximating sizes. Cannot strictly compare sizes
-					# because these may differ depending on decorations...
-					win_w, win_h = win.size
-					window_size = (win_w + win_h).to_i
-					tl_children.sort! { |t1, t2|
-						t1_e = t1.extents(::Atspi::CoordType::Screen)
-						t2_e = t2.extents(::Atspi::CoordType::Screen)
-						(window_size - t1_e.width - t1_e.height).abs - (window_size - t2_e.width - t2_e.height).abs
-					}
-					frame = tl_children.first
-				end
+				return nil if ! app
+				apps = [ app ]
 			end
-			if frame
-				thread.cache.top_level_accessible_by_window_id[wid] = frame
-				return frame
+			return nil if apps.empty?
+			tl_children = apps.flat_map { |app|
+				children(app, include_hidden: include_hidden).select { |tl_child|
+					top_level_window?(tl_child) } }
+			return nil if tl_children.empty?
+			return tl_children.first if tl_children.size == 1
+			names = windows
+				.map { |w| w.name }
+				.reject &.nil?
+			if ! names.empty?
+				tl_children.select! { |t| names.includes?(t.name) }
 			end
-			nil
+			# False positives *are* possible here, e.g. if the popup has the same window title
+			# as another window of the same PID while the popup has no atspi title (e.g.
+			# the default in ahk guis, see below)
+			return tl_children.first if tl_children.size == 1
+			if match_text && ! match_text.empty? || exclude_text && ! exclude_text.empty?
+				tl_children.select! do |tl_child|
+					win_texts = get_all_texts_of_top_level_accessible(thread, tl_child, include_hidden: false)
+					next false if ! win_texts
+					if match_text && ! match_text.empty?
+						next false if ! win_texts.index &.includes?(match_text)
+					end
+					if exclude_text && ! exclude_text.empty?
+						next false if win_texts.index &.includes?(exclude_text)
+					end
+					true
+				end
+				return tl_children.first if tl_children.size == 1
+			end
+			win_with_size = windows.find &.size
+			if win_with_size
+				# Some windows have no or missing title in atspi. Example: Gtk alerts, such as our
+				# MsgBox. So the window title match didn't help here. Also, there can be multiple
+				# windows or caller passed multiple.
+				# So we fall back to approximating sizes. Cannot strictly compare sizes
+				# because these may differ depending on decorations...
+				win_w, win_h = win_with_size.size.not_nil!
+				window_size = (win_w + win_h).to_i
+				tl_children.sort! { |t1, t2|
+					t1_e = t1.extents(::Atspi::CoordType::Screen)
+					t2_e = t2.extents(::Atspi::CoordType::Screen)
+					(window_size - t1_e.width - t1_e.height).abs - (window_size - t2_e.width - t2_e.height).abs
+				}
+			end
+			return tl_children.first?
 		end
-		# Finds the first match for *text_or_class_NN* inside *win* or `nil` if
+		# Finds the first match for *text_or_class_NN* inside *top_level_accessible* or `nil` if
 		# no match was found.
-		def find_descendant(thread, win, text_or_class_NN, include_hidden = false)
+		def find_descendant_of_top_level_accessible(thread, top_level_accessible, text_or_class_NN, include_hidden = false)
 			return nil if text_or_class_NN.empty?
 			descendant : ::Atspi::Accessible? = nil
-
-			accessible = find_window(thread, win, include_hidden)
-			return nil if ! accessible
+			# TODO: when an error throws here (e.g. missing hash key), this should result in an unexpected error and abort
+			# but instead it's caught by display (as expected) and re-thrown as runtime error instead, AND
+			# TODO: its stack trace is missing the info of the error line
+			cache_accessible_by_class_nn = thread.cache.accessible_by_class_nn_by_top_level_accessible[top_level_accessible.hash]
 
 			class_NN_role, class_NN_path = from_class_NN(text_or_class_NN)
 			if class_NN_role
-				class_NN = text_or_class_NN
 				# This is 99% a class_NN. These are essentially control paths so we can try to
 				# get the control without searching.
-				descendant = thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN]?
+				class_NN = text_or_class_NN
+				descendant = cache_accessible_by_class_nn[class_NN]?
 				return descendant if descendant
-				k = accessible
+
+				k = top_level_accessible
 				path_valid = class_NN_path.each do |i|
 					break false if i > k.child_count - 1
 					k = k.child_at_index(i)
@@ -100,7 +111,7 @@ module Run
 					descendant = k
 				end
 				if descendant
-					thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN] = descendant.not_nil!
+					cache_accessible_by_class_nn[class_NN] = descendant.not_nil!
 					return descendant
 				else
 					# Also stop here: Don't support actual class_NN-like text matches (very unlikely)
@@ -134,8 +145,8 @@ module Run
 			# # match_none = ::Atspi::CollectionMatchType::NONE
 			# # null = Pointer(Void).null
 			# # rule = ::Atspi::MatchRule.new(::Atspi::StateSet.new([] of UInt32), match_none, pointerof(null), match_none, [] of String, match_none, [] of String, match_none, false)
-			# # matches = accessible.matches(rule, Atspi::CollectionSortOrder::CANONICAL, 5, true)
-			each_descendant(thread, win, include_hidden: include_hidden) do |acc, _, acc_class_NN|
+			# # matches = top_level_accessible.matches(rule, Atspi::CollectionSortOrder::CANONICAL, 5, true)
+			each_descendant_of_top_level_accessible(thread, top_level_accessible, include_hidden: include_hidden) do |acc, _, acc_class_NN|
 				is_match = get_text(acc) == text
 				if is_match
 					descendant = acc
@@ -149,13 +160,11 @@ module Run
 		end
 		# Finds the most specific accessible that contains the screen-wide coordinate. and combine both
 		# Cannot use relative coords because they are usually baloney in atspi.
-		def find_descendant(thread, win, *, x, y, include_hidden = false)
-			accessible = find_window(thread, win, include_hidden)
-			return nil, nil if ! accessible
+		def find_descendant_of_top_level_accessible(thread, top_level_accessible, *, x, y, include_hidden = false)
 			# Fast; most of the time, it returns the accurate deepest child, but sometimes
 			# it just returns the first child even though that one has many descendants itself
 			# e.g. xfce4-appfinder
-			top_match = accessible.accessible_at_point(x, y, ::Atspi::CoordType::Screen)
+			top_match = top_level_accessible.accessible_at_point(x, y, ::Atspi::CoordType::Screen)
 			return nil, nil if ! top_match
 			# If we went the completely manual way, class_NN would already be known to us,
 			# but the shortcut made this impossible, so we now need to reverse look it up (up to now)
@@ -168,7 +177,7 @@ module Run
 			match_nest_level = -1
 			# ...that's why we need to check for more children and go the manual way too.
 			# If the previous shortcut weren't available, we'd have to apply this to
-			# `accessible` directly, but this way, it is usually very fast.
+			# `top_level_accessible` directly, but this way, it is usually very fast.
 			# This is in contrast to find-by-text (see comment inside find_descendant above)
 			# where manual seems to be the only way.
 			iter_descendants(match, nil, false) do |acc, path, class_NN, nest_level|
@@ -199,25 +208,22 @@ module Run
 			end
 			match_class_NN = to_class_NN(match_path, match.role_name)
 			
-			thread.cache.accessible_by_class_nn_by_window_id[win.window][match_class_NN] = match
+			thread.cache.accessible_by_class_nn_by_top_level_accessible[top_level_accessible.hash][match_class_NN] = match
 			{% if ! flag?(:release) %}
 				puts "[debug] find_descendant name:#{match.name}, role:#{match.role}, classNN:#{match_class_NN}, text:#{match ? get_text(match) : ""}, actions:#{get_actions(match)[1]}, selectable:#{selectable?(match)}. top_match_path:#{top_match_path}, match_path:#{match_path}, top_match role:#{top_match.role}, top_match name:#{top_match.name}"
 			{% end %}
 			return match, match_class_NN
 		end
-		def each_app
+		def all_apps
 			init
 			desktop = ::Atspi.desktop(0)
 			# it's common for the top level window to not have the visible property
 			# even when it *is*, so as an exception, we also include hidden.
 			# child_count>0 at least filters out the nonsense: This is the same
 			# approach taken by Accerciser.
-			each_child(desktop, include_hidden: true) do |app|
-				next if app.child_count == 0
-				yield app
-			end
+			children(desktop, include_hidden: true).select &.child_count.>(0)
 		end
-		def each_child(accessible, *, max = nil, include_hidden = false)
+		def children(accessible, *, max = nil, include_hidden = false)
 			accessible.child_count.times do |i|
 				break if max && i > max
 				child = accessible.child_at_index(i)
@@ -229,16 +235,23 @@ module Run
 				yield child, i
 			end
 		end
+		def children(accessible, *, max = nil, include_hidden = false)
+			accs = [] of ::Atspi::Accessible
+			children(accessible, max: max, include_hidden: include_hidden) do |a|
+				accs << a
+			end
+			accs
+		end
 		# The block is run for every descendant and must return either:
 		# `true`: Continue and traverse the children of this accessible;
 		# `false`: Continue but skip the children of this accessible, so continue on
 		#     to the next sibling or parent;
 		# `nil`: Stop.
-		def each_descendant(thread, win, *, include_hidden = false, max_children = nil, skip_non_interactive = false, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
-			accessible = find_window(thread, win, include_hidden)
-			return if ! accessible
-			iter_descendants(accessible, max_children, include_hidden) do |desc, path, class_NN, nest_level|
-				thread.cache.accessible_by_class_nn_by_window_id[win.window][class_NN] = desc
+		def each_descendant_of_top_level_accessible(thread, top_level_accessible, *, include_hidden = false, max_children = nil, skip_non_interactive = false, &block : ::Atspi::Accessible, Array(Int32), String, Int32 -> Bool?)
+			return if ! top_level_accessible
+			cache_accessible_by_class_nn = thread.cache.accessible_by_class_nn_by_top_level_accessible[top_level_accessible.hash]
+			iter_descendants(top_level_accessible, max_children, include_hidden) do |desc, path, class_NN, nest_level|
+				cache_accessible_by_class_nn[class_NN] = desc
 				if skip_non_interactive
 					next true if ! interactive?(desc)
 				end
@@ -253,7 +266,7 @@ module Run
 			response = yield accessible, path, class_NN, nest_level
 			return nil if response == nil
 			if response
-				each_child(accessible, max: max_children, include_hidden: include_hidden) do |child, i|
+				children(accessible, max: max_children, include_hidden: include_hidden) do |child, i|
 					response = iter_descendants(child, max_children, include_hidden, nest_level + 1, path + [i], &block)
 					break if response == nil
 				end
@@ -321,9 +334,9 @@ module Run
 		# returns an array of recursive text strings, no duplication present.
 		# only 1,000 descendant nodes are queried each to not kill performance completely
 		# with windows with very large lists (e.g. Gtk tables: each cell is a child of the table)
-		def get_all_texts(thread, win, *, include_hidden)
+		def get_all_texts_of_top_level_accessible(thread, accessible, *, include_hidden)
 			strings = [] of ::String
-			each_descendant(thread, win, include_hidden: include_hidden, max_children: 1000) do |descendant, _, class_NN|
+			each_descendant_of_top_level_accessible(thread, accessible, include_hidden: include_hidden, max_children: 1000) do |descendant, _, class_NN|
 				text = get_text(descendant)
 				strings << text if text
 				true
@@ -435,7 +448,7 @@ module Run
 
 		# Get x,y,w,h of an accessible. Like `accessible.extents(::Atspi::CoordType::WINDOW)`,
 		# but more reliable.
-		def get_pos(thread, win, accessible)
+		def get_pos(accessible)
 			# Most applications properly implement window-relative extents. There are two problems
 			# with those:
 			# 1. Those coordinates can be faulty (i.e., not match the actual coordinate in the window)
@@ -454,12 +467,14 @@ module Run
 			w = ext.width
 			h = ext.height
 			# Takes about 0.1 ms, so there's no point in caching this just yet (see also Thread.cache)
-			loc = win.location
-			begin
-				return x - loc[0], y - loc[1], w, h
-			rescue
-				return -1, -1, w, h
-			end
+			# FIXME. broken now. also how does this whole function behave/should behave on wayland anyway?
+			return x, y, w, h
+			# loc = win.location
+			# begin
+			# 	return x - loc[0], y - loc[1], w, h
+			# rescue
+			# 	return -1, -1, w, h
+			# end
 		end
 	end
 end

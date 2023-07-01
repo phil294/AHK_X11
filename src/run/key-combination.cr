@@ -1,15 +1,24 @@
 module Run
-	# Similar to ::X11::KeyEvent, but more basic and some ahk-specific info too
+	# The combination of ONE "normal" key and optional modifiers and up/down/repeat.
+	# Does *not* support prefix keys like `Space & ^a`.
+	# Similar to `::X11::KeyEvent`.
 	class KeyCombination
+		class Modifiers
+			property shift = false
+			property ctrl = false
+			property alt = false
+			property win = false
+			property altgr = false
+			def to_s(io)
+				io << "shift:#{shift},ctrl:#{ctrl},alt:#{alt},win:#{win},altrgr:#{altgr}"
+			end
+		end
 		getter key_name = ""
 		getter text : Char?
-		getter keysym = 0_u64
-		getter modifiers = 0_u8
+		getter modifiers = Modifiers.new
 		getter repeat = 0
 		getter up = false
 		getter down = false
-		property keycode = 0_u8
-		def initialize(@key_name, @text, @keysym, @modifiers, @up, @down, @repeat) end
-		def initialize(@key_name, @text, @keysym, @modifiers, @up, @down, @repeat, @keycode) end
+		def initialize(@key_name, *, @text, @modifiers, @up, @down, @repeat) end
 	end
 end

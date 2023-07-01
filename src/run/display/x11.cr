@@ -27,51 +27,55 @@ module X11::C
 		}}
 	end
 	# these are ahk-specific
+	# List of x11 keysyms: lib/x11/src/x11/c/keysymdef.cr
+	#   or https://github.com/xkbcommon/libxkbcommon/blob/master/include/xkbcommon/xkbcommon-keysyms.h
+	# List of ahk key names: https://www.autohotkey.com/docs/v1/KeyList
+	# TODO move out of x11.cr
 	def self.ahk_key_name_to_keysym_custom
 		{
-			"enter" => XK_Return,
-			"esc" => XK_Escape,
-			"bs" => XK_BackSpace,
-			"del" => XK_Delete,
-			"ins" => XK_Insert,
-			"pgup" => XK_Page_Up,
-			"pgdn" => XK_Page_Down,
-			"printscreen" => XK_Print,
+			# Mouse
 
-			# Could not find the constants for these
+			# Could not find the constants for these. There most likely are none;
+			# mouse buttons need special handling in the adapters so they can be treated like keys
 			"lbutton" => 1,
 			"rbutton" => 3,
 			"mbutton" => 2,
+			"xbutton1" => 8,
+			"xbutton2" => 9,
 			"wheeldown" => 5,
 			"wheelup" => 4,
 			"wheelleft" => 6, # [v1.0.48+]
 			"wheelright" => 7, # [v1.0.48+]
-			"xbutton1" => 8,
-			"xbutton2" => 9,
+			
+			# Keyboard
 
-			# TODO: Joystick buttons
+			# General Keys
+			"capslock" => XK_Caps_Lock,
+			"space" => XK_space,
+			"tab" => XK_Tab,
+			"enter" => XK_Return,
+			"return" => XK_Return,
+			"escape" => XK_Escape,
+			"esc" => XK_Escape,
+			"backspace" => XK_BackSpace,
+			"bs" => XK_BackSpace,
 
-			# The following special keys were determined either using `xev` or with https://github.com/qtile/qtile/blob/master/libqtile/backend/x11/xkeysyms.py (x11 must have them somewhere too??). TODO: These are mostly untested out of a loack of fitting keyboard.
-			"volume_mute" => 0x1008ff12, # XF86AudioMute
-			"volume_down" => 0x1008ff11, # XF86AudioLowerVolume
-			"volume_up" => 0x1008ff13, # XF86AudioRaiseVolume
-			"browser_back" => 0x1008ff26, # XF86Back
-			"browser_forward" => 0x1008ff27, # XF86Forward
-			"browser_refresh" => 0x1008ff73, # XF86Reload
-			"browser_search" => 0x1008ff1b, # XF86Search
-			"browser_homepage" => 0x1008ff18, # XF86HomePage
-			"browser_stop" => 0x1008FF28, # XF86Stop
-			"browser_favorites" => 0x1008FF30, # XF86Favorites
-			"media_next" => 0x1008FF17, # XF86AudioNext
-			"media_prev" => 0x1008FF16, # XF86AudioPrev
-			"media_stop" => 0x1008FF15, # XF86AudioStop
-			"media_play_pause" => 0x1008FF14, # XF86AudioPlay ?or? XF86AudioPause 0x1008FF31
-			"launch_mail" => 0x1008FF19, # XF86Mail
-			"launch_media" => 0x1008FF32, # XF86AudioMedia
-			"launch_app1" => 0x1008FF5D, # XF86Explorer
-			"launch_app2" => 0x1008FF1D, # XF86Calculator
-			"ctrlbreak" => XK_Break,
-			"sleep" => 0x1008FF2F, # XF86Sleep
+			# Cursor Control Keys
+			"scrolllock" => XK_Scroll_Lock,
+			"delete" => XK_Delete,
+			"del" => XK_Delete,
+			"insert" => XK_Insert,
+			"ins" => XK_Insert,
+			"home" => XK_Home,
+			"end" => XK_End,
+			"pgup" => XK_Page_Up,
+			"pgdn" => XK_Page_Down,
+			"up" => XK_Up,
+			"down" => XK_Down,
+			"left" => XK_Left,
+			"right" => XK_Right,
+
+			# Numpad Keys
 			"numpaddiv" => XK_KP_Divide,
 			"numpadmult" => XK_KP_Multiply,
 			"numpadadd" => XK_KP_Add,
@@ -99,7 +103,15 @@ module X11::C
 			"numpad8" => XK_KP_8,
 			"numpad9" => XK_KP_9,
 			"numpaddot" => XK_KP_Decimal,
-			"appskey" => XK_Menu,
+			"numlock" => XK_Num_Lock,
+
+			# Function Keys
+			# FIXME: doesn't compile for some reason
+			# {% for n in [1..24] %}
+			# 	"F{{n}}" => XK_KP_F{{n}},
+			# {% end %}
+
+			# Modifier Keys
 			"lwin" => XK_Super_L,
 			"rwin" => XK_Super_R,
 			"control" => XK_Control_L,
@@ -114,10 +126,42 @@ module X11::C
 			"alt" => XK_Alt_L,
 			"lalt" => XK_Alt_L,
 			"ralt" => XK_Alt_R,
-			"scrolllock" => XK_Scroll_Lock,
-			"capslock" => XK_Caps_Lock,
-			"numlock" => XK_Num_Lock,
 
+			# Multimedia Keys
+			# These were determined either using `xev` or with https://github.com/qtile/qtile/blob/master/libqtile/backend/x11/xkeysyms.py (x11 must have them somewhere too??). TODO: These are mostly untested out of a lack of a fitting keyboard.
+			"volume_mute" => 0x1008ff12, # XF86AudioMute
+			"volume_down" => 0x1008ff11, # XF86AudioLowerVolume
+			"volume_up" => 0x1008ff13, # XF86AudioRaiseVolume
+			"browser_back" => 0x1008ff26, # XF86Back
+			"browser_forward" => 0x1008ff27, # XF86Forward
+			"browser_refresh" => 0x1008ff73, # XF86Reload
+			"browser_search" => 0x1008ff1b, # XF86Search
+			"browser_homepage" => 0x1008ff18, # XF86HomePage
+			"browser_stop" => 0x1008FF28, # XF86Stop
+			"browser_favorites" => 0x1008FF30, # XF86Favorites
+			"media_next" => 0x1008FF17, # XF86AudioNext
+			"media_prev" => 0x1008FF16, # XF86AudioPrev
+			"media_stop" => 0x1008FF15, # XF86AudioStop
+			"media_play_pause" => 0x1008FF14, # XF86AudioPlay ?or? XF86AudioPause 0x1008FF31
+			"launch_mail" => 0x1008FF19, # XF86Mail
+			"launch_media" => 0x1008FF32, # XF86AudioMedia
+			"launch_app1" => 0x1008FF5D, # XF86Explorer
+			"launch_app2" => 0x1008FF1D, # XF86Calculator
+
+			# Other Keys
+			"appskey" => XK_Menu,
+			"printscreen" => XK_Print,
+			"ctrlbreak" => XK_Break,
+			"pause" => XK_Pause,
+			"break" => XK_Pause,
+			"help" => XK_Help,
+			"sleep" => 0x1008FF2F, # XF86Sleep
+
+			# Joystick
+			# TODO
+
+
+			# todo: outdated:
 			# Printable non-letters, symbols ;%@ etc.: Often their unicode ord is equal
 			# to the keysym so the fallback should work. Below are only known exceptions
 			"\n" => XK_Return,
@@ -133,34 +177,38 @@ module Run
 	# Responsible for registering hotkeys to the X11 server,
 	# listening to all events and calling threads on hotkey trigger
 	# and calling given event listeners.
-	class X11 < DisplayAdapter
-		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else
+	class X11
+		include DisplayAdapter
+		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else. TODO
 
 		@root_win = 0_u64
 		@record_context : ::Xtst::LibXtst::RecordContext?
 		@record : ::Xtst::RecordExtension?
 		getter display : ::X11::Display
 		getter root_win : ::X11::Window
+		@x_do : XDo
 		# Multiple threads can access this X11 instance, but to avoid dead locks surrounding
 		# the blocking event loop, every state altering method needs to be synchronized with mutex:
 		@mutex = Mutex.new
 
-		def initialize
+		def initialize(@x_do, xtest : Bool)
 			set_error_handler
 
 			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
 
-			begin
-				@record = record = ::Xtst::RecordExtension.new
-				record_range = record.create_range
-				record_range.device_events.first = ::X11::KeyPress
-				record_range.device_events.last = ::X11::ButtonRelease
-				@record_context = record.create_context(record_range)
-			rescue e
-				# TODO: msgbox?
-				STDERR.puts e
-				STDERR.puts "The script will continue but some features (esp. Hotstrings) may not work. Please also consider opening an issue at github.com/phil294/ahk_x11 and tell us about your system details."
+			if xtest
+				begin
+					@record = record = ::Xtst::RecordExtension.new
+					record_range = record.create_range
+					record_range.device_events.first = ::X11::KeyPress
+					record_range.device_events.last = ::X11::ButtonRelease
+					@record_context = record.create_context(record_range)
+				rescue e
+					# TODO: msgbox?
+					STDERR.puts e
+					STDERR.puts "The script will continue but some features (esp. Hotstrings) may not work. Please also consider opening an issue at github.com/phil294/ahk_x11 and tell us about your system details."
+				end
 			end
 		end
 
@@ -170,22 +218,19 @@ module Run
 			@record.not_nil!.close if @record
 		end
 
-		def keysym_to_keycode(sym : UInt64)
-			@display.keysym_to_keycode(sym)
-		end
-
 		# See comments inside `ahk_key_name_to_keysym_generic` for why this is necessary.
 		# Esp. for stuff like `Input` with many EndKeys parameter, this cache is quite
 		# useful, as it speed it up from 0.2s by factor 1,000
-		@@ahk_key_name_to_keysym_cache = {} of String => (Int32 | Bool)
+		@ahk_key_name_to_keysym_cache = {} of String => (Int32 | Bool)
 
-		def self.ahk_key_name_to_keysym(key_name)
+		# TODO: unify with evdev? or better, only use evdev's implementation? but with cache
+		private def ahk_key_name_to_keysym(key_name)
 			return nil if key_name.empty?
-			cached = @@ahk_key_name_to_keysym_cache[key_name]?
+			cached = @ahk_key_name_to_keysym_cache[key_name]?
 			return cached if cached
 			lookup = ::X11::C.ahk_key_name_to_keysym_custom[key_name]? || ::X11::C.ahk_key_name_to_keysym_generic[key_name]? || ::X11::C.ahk_key_name_to_keysym_custom[key_name.downcase]? || ::X11::C.ahk_key_name_to_keysym_generic[key_name.downcase]?
 			if lookup
-				@@ahk_key_name_to_keysym_cache[key_name] = lookup
+				@ahk_key_name_to_keysym_cache[key_name] = lookup
 				return lookup
 			end
 			return nil if key_name.size > 1
@@ -194,8 +239,135 @@ module Run
 			# This fallback may fail but it's very likely this is the correct match now.
 			# This is the normal path for special chars like . @ $ etc.
 			ord = char.ord
-			@@ahk_key_name_to_keysym_cache[key_name] = ord
+			@ahk_key_name_to_keysym_cache[key_name] = ord
 			ord
+		end
+
+		def key_combination_to_keysym(key_combo) : UInt64?
+			key_name = key_combo.key_name
+			if key_name.size == 1 && key_name.upcase != key_name.downcase && key_combo.modifiers.shift
+				key_name = key_name.upcase
+			end
+			keysym = self.ahk_key_name_to_keysym(key_name)
+			return nil if ! keysym || ! keysym.is_a?(Int32)
+			keysym.to_u64
+		end
+
+		private def modifiers_to_modmask(modifiers)
+			mask = 0_u8
+			mask |= ::X11::ControlMask if modifiers.ctrl
+			mask |= ::X11::ShiftMask   if modifiers.shift
+			mask |= ::X11::Mod1Mask    if modifiers.alt
+			mask |= ::X11::Mod4Mask    if modifiers.win
+			mask |= ::X11::Mod5Mask    if modifiers.altgr
+			mask
+		end
+		private def modmask_to_modifiers(mask)
+			modifiers = KeyCombination::Modifiers.new
+			modifiers.ctrl = true  if mask & ::X11::ControlMask == ::X11::ControlMask
+			modifiers.shift = true if mask & ::X11::ShiftMask == ::X11::ShiftMask
+			modifiers.alt = true   if mask & ::X11::Mod1Mask == ::X11::Mod1Mask
+			modifiers.win = true   if mask & ::X11::Mod4Mask == ::X11::Mod4Mask
+			modifiers.altgr = true if mask & ::X11::Mod5Mask == ::X11::Mod5Mask
+			modifiers
+		end
+
+		def mouse_keysym_to_button(keysym)
+			case keysym
+			when 2 then XDo::Button::Middle
+			when 3 then XDo::Button::Right
+			when 4 then XDo::Button::ScrollUp
+			when 5 then XDo::Button::ScrollDown
+			when 6 then XDo::Button::ScrollLeft
+			when 7 then XDo::Button::ScrollRight
+			when 8 then XDo::Button::Button8
+			when 9 then XDo::Button::Button9
+			else XDo::Button::Left
+			end
+		end
+
+		def key_combination_to_charcodemap(combo)
+			
+			# TODO: not very precise, is missing shift for @#$ etc.
+			# this should probably work much differently
+			# also bad because object modification but it's really only because of the current x11 logic
+			# fixme: use evdev key lookup?
+			if combo.key_name.size == 1 && combo.key_name.upcase != combo.key_name.downcase && ! combo.modifiers.shift && combo.key_name.upcase == combo.key_name
+				combo.modifiers.shift = true
+			end
+
+			keysym = key_combination_to_keysym(combo)
+			raise Run::RuntimeException.new "Key '#{combo.key_name}' not known" if ! keysym
+			key_map = XDo::LibXDo::Charcodemap.new
+			mouse_button : XDo::Button? = nil
+			if keysym < 10
+				# todo perhaps rm this function again and use the next bigger one?
+				mouse_button = mouse_keysym_to_button(keysym)
+			else
+				key_map.code = @display.keysym_to_keycode(keysym)
+				key_map.modmask = modifiers_to_modmask(combo.modifiers)
+			end
+			combo.repeat.times do
+				if combo.down || ! combo.up
+					yield [key_map], true, mouse_button
+				end
+				if combo.up || ! combo.down
+					yield [key_map], false, mouse_button
+				end
+			end
+		end
+
+		def send(key_combos)
+			@x_do.clear_active_modifiers @x_do.active_modifiers
+			key_combos.each do |combo|
+				key_combination_to_charcodemap(combo) do |key_map, pressed, mouse_button|
+					if mouse_button
+						if pressed
+							@x_do.mouse_down mouse_button
+						else
+							@x_do.mouse_up mouse_button
+						end
+					else
+						@x_do.keys_raw key_map, pressed: pressed, delay: 0
+					end
+				end
+			end
+		end
+
+		def send_raw(text)
+			@x_do.clear_active_modifiers @x_do.active_modifiers
+			@x_do.type text
+		end
+
+		def mouse_move(thread, x : Int32?, y : Int32?, relative : Bool)
+			x_current, y_current, screen = @x_do.mouse_location
+			x ||= x_current
+			y ||= y_current
+			if relative
+				@x_do.move_mouse x, y
+			else
+				if thread.settings.coord_mode_mouse == ::Run::CoordMode::RELATIVE
+					x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
+				end
+				@x_do.move_mouse x, y, screen
+			end
+		end
+		def mouse_pos : Tuple(UInt32, UInt32)
+			x, y, _, _ = @x_do.mouse_location
+			return x.to_u32, y.to_u32
+		end
+		def mouse_down(mouse_keysym : Int32)
+			@x_do.mouse_down mouse_keysym_to_button(mouse_keysym)
+		end
+		def mouse_up(mouse_keysym : Int32)
+			@x_do.mouse_up mouse_keysym_to_button(mouse_keysym)
+		end
+
+		def screen_width : UInt32
+			@display.default_screen.width.to_u32
+		end
+		def screen_height : UInt32
+			@display.default_screen.height.to_u32
 		end
 
 		# Makes sure the program doesn't exit when a Hotkey is not free for grabbing
@@ -215,7 +387,7 @@ module Run
 			end
 		end
 
-		@key_handler : Proc(KeyCombination, Nil)?
+		@key_handler : Proc(KeyCombination, UInt64, Nil)?
 		def run(*, key_handler)
 			@key_handler = key_handler
 			if record = @record
@@ -261,8 +433,9 @@ module Run
 			state = record_data.data[28]
 			if keycode < 9 # mouse button
 				up = type == ::X11::ButtonRelease
-				# pretend that keysym = keycode
-				@key_handler.not_nil!.call(KeyCombination.new("[mouse]", nil, keycode.to_u64, state, up, !up, 1, keycode))
+				modifiers = modmask_to_modifiers(state)
+				keysym = keycode.to_u64 # pretend so we can treat mouse and key uniquely
+				@key_handler.not_nil!.call(KeyCombination.new("[mouse]", text: nil, modifiers: modifiers, up: up, down: !up, repeat: 1), keysym)
 			else
 				_key_event = ::X11::KeyEvent.new
 				_key_event.display = @display
@@ -278,16 +451,44 @@ module Run
 			char = lookup[:string][0]?
 			keysym = lookup[:keysym]
 			up = key_event.type == ::X11::KeyRelease || key_event.type == ::X11::ButtonRelease
-			@key_handler.not_nil!.call(KeyCombination.new("[kbd]", char, keysym, key_event.state.to_u8, up, !up, 1, key_event.keycode.to_u8))
+			modifiers = modmask_to_modifiers(key_event.state)
+			@key_handler.not_nil!.call(KeyCombination.new("[kbd]", text: char, modifiers: modifiers, up: up, down: !up, repeat: 1), keysym)
 		end
 
+		@@available_modifier_combinations : Array(Int32)
+		# TODO: this can probably be done much easier, it's just all possible combinations of all possible sizes >= 1 of all relevant modifiers. Could actually also be a macro except that then you'd need the integers directly, not the X11 synonyms
+		@@available_modifier_combinations =
+			[1,2,3,4,5].reduce([] of Array(Int32)) do |all, i|
+				[::X11::ControlMask, ::X11::ShiftMask, ::X11::Mod1Mask, ::X11::Mod4Mask, ::X11::Mod5Mask, ::X11::Mod2Mask].combinations(i).each do |mod_combo|
+					all << mod_combo
+				end
+				all
+			end.map &.reduce(0) do |all, v|
+				all |= v
+				all
+			end
+		def modifier_variants(hotkey)
+			variants = [] of UInt32
+			hotkey_modmask = modifiers_to_modmask(hotkey.modifiers)
+			variants << hotkey_modmask
+			variants << (hotkey_modmask | ::X11::Mod2Mask.to_u32)
+			if hotkey.wildcard
+				@@available_modifier_combinations.each do |other|
+					if ! variants.includes? (hotkey_modmask | other)
+						variants << (hotkey_modmask | other)
+					end
+				end
+			end
+			variants
+		end
 		def grab_hotkey(hotkey)
 			@mutex.lock
-			hotkey.modifier_variants.each do |mod|
-				if hotkey.keysym < 10
-					@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
+			modifier_variants(hotkey).each do |mod|
+				keysym = hotkey.keysym
+				if keysym && keysym < 10
+					@display.grab_button(keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
 				else
-					@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
+					@display.grab_key(@display.keysym_to_keycode(hotkey.keysym), mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
 			@mutex.unlock
@@ -295,8 +496,8 @@ module Run
 		end
 		def ungrab_hotkey(hotkey)
 			@mutex.lock
-			hotkey.modifier_variants.each do |mod|
-				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
+			modifier_variants(hotkey).each do |mod|
+				@display.ungrab_key(@display.keysym_to_keycode(hotkey.keysym), mod, grab_window: @root_win)
 			end
 			@mutex.unlock
 			flush_event_queue

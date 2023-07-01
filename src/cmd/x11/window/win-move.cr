@@ -12,7 +12,7 @@ class Cmd::X11::Window::WinMove < Cmd::Base
 		args.delete_at(2)
 		args.delete_at(2) if args[2]?
 		args.delete_at(2) if args[2]?
-		Util.match(thread, args, empty_is_last_found: true, a_is_active: true) do |win|
+		Util.match_win(thread, args) do |win|
 			win.move x, y
 			win.resize w, h if w && h
 		end

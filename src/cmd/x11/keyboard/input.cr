@@ -37,6 +37,9 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 		end
 
 		end_keys = thread.parse_key_combinations(args[2]? || "")
+		end_keysyms = end_keys.map do |combo|
+			thread.runner.display.adapter.key_combination_to_keysym(combo)
+		end
 
 		match_phrases = (args[3]? || "").gsub(",,", "\0").split(",").map &.gsub("\0", ",")
 
@@ -48,14 +51,14 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 		end
 
 		buf = ""
-		listener = thread.runner.display.register_key_listener do |key_event, is_paused|
+		listener = thread.runner.display.register_key_listener do |key_event, keysym, is_paused|
 			next if is_paused && ignore_generated_input
 			next if ! key_event.down
-			end_key = end_keys.find { |k| k.keysym == key_event.keysym }
-			if end_key
-				next channel.send("EndKey:#{end_key.key_name}")
+			end_key_i = end_keysyms.index &.== keysym
+			if end_key_i # TODO: test
+				next channel.send("EndKey:#{end_keys[end_key_i].key_name}")
 			end
-			if ! ignore_backspace && key_event.keysym == ::X11::XK_BackSpace
+			if ! ignore_backspace && keysym == ::X11::XK_BackSpace
 				buf = buf.empty? ? "" : buf[...-1]
 				next
 			end

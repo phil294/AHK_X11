@@ -13,6 +13,8 @@ class Cmd::Gtk::Gui::GuiOption < Cmd::Base
 						::Gdk::WindowTypeHint::Menu :
 						::Gdk::WindowTypeHint::Normal
 				when "toolwindow" then gui.window.skip_taskbar_hint = ! i[:minus]
+				# FIXME: https://github.com/phil294/vimium-everywhere/issues/3
+				# type_hint: ::Gdk::WindowTypeHint::Tooltip, accept_focus: false, can_focus: false
 				end
 			end
 		end

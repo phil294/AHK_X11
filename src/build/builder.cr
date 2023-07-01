@@ -7,13 +7,13 @@ module Build
 		getter linker = Linker.new
 		getter start : Cmd::Base? = nil
 		getter labels = {} of String => Cmd::Base
-		getter hotkeys = [] of Run::Hotkey
+		getter hotkey_definitions = [] of Run::HotkeyDefinition
 		getter hotstrings = [] of Run::Hotstring
 		getter runner_settings = Run::RunnerSettings.new
 
 		def build(lines : Indexable(String))
 			@parser.parse_into_cmds! lines
-			@hotkeys = @parser.hotkeys
+			@hotkey_definitions = @parser.hotkey_definitions
 			@hotstrings = @parser.hotstrings
 			@runner_settings = @parser.runner_settings
 
@@ -22,10 +22,6 @@ module Build
 			@labels = @linker.labels
 
 			# This can only really be done once the linker has finished
-			@hotkeys.each do |hotkey|
-				hotkey.cmd = @labels[hotkey.key_str.downcase]
-				hotkey.exempt_from_suspension = hotkey.cmd.is_a?(Cmd::Misc::Suspend)
-			end
 			@hotstrings.each do |hotstring|
 				hotstring.cmd = @labels[hotstring.label.downcase]
 			end

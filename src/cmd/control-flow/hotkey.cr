@@ -3,7 +3,7 @@ class Cmd::ControlFlow::Hotkey < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 3 end
 	def run(thread, args)
-		key_name = args[0]
+		key_str = args[0]
 		label_arg = args[1]?
 		options = args[2]? || ""
 
@@ -29,6 +29,6 @@ class Cmd::ControlFlow::Hotkey < Cmd::Base
 			end
 		end
 
-		thread.runner.display.hotkeys.add_or_update(cmd_label: label, hotkey_label: key_name, priority: priority, active_state: active_state)
+		thread.runner.display.hotkeys.add_or_update(label: label, key_str: key_str, priority: priority, active_state: active_state)
 	end
 end
