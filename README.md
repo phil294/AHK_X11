@@ -15,7 +15,7 @@ This project is usable, but WORK IN PROGRESS.
 
 **Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
 
-[**Direct download**](https://github.com/phil294/ahk_x11/releases/latest/download/ahk_x11.zip) (all Linux distributions, x86_64, single executable)
+[**Direct download**](https://github.com/phil294/AHK_X11/releases/download/0.5.1/ahk_x11-0.5.1-x86_64.AppImage) (all Linux distributions, x86_64, single executable)
 
 [**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
 
@@ -145,6 +145,7 @@ There are different ways to use it.
 2. Command line
     - Either: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
     - Or: Pass code from stdin, e.g. `echo $'var = 123\nMsgBox %var%' | ./ahk_x11`
+    - If you once installed with the graphical installer, the binary is also to be found at `~/.local/bin/ahk_x11.AppImage`
     - Once your script's auto-execute section has finished, you can also interactively execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
     - When you don't want to pass a script and jump to this mode directly, you can specify `--repl` instead (implicit `#Persistent`).
     - Compile scripts with `./ahk_x11 --compile "path/script.ahk"`
