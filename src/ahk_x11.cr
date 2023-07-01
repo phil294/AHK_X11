@@ -17,7 +17,7 @@ fun main(argc : Int32, argv : UInt8**) : Int32
 	LibC.setenv("CRYSTAL_WORKERS", "3", 1)
 
 	# https://github.com/crystal-lang/crystal/issues/11952#issuecomment-1216955886
-	LibC.setenv("ahk_x11_LC_ALL_backup", ENV["LC_ALL"], 1)
+	LibC.setenv("ahk_x11_LC_ALL_backup", ENV["LC_ALL"]? || "en_US.UTF-8", 1)
 	LibC.setenv("LC_ALL", "en_US.UTF-8", 1)
 
 	Crystal.main(argc, argv)
