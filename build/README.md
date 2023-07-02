@@ -24,7 +24,6 @@ These are the steps required to build this project locally, such as if you want 
 1. `shards install`
 1. `bin/gi-crystal`
 1. Remove the `private` from `private getter xdo_p : LibXDo::XDo*` in `lib/x_do/src/x_do.cr` (this is a temporary fix)
-1. Add `require "../g_lib-2.0/g_lib"` to the top of `lib/gtk4/lib/gi-crystal/src/auto/xlib-2.0/xlib.cr` (this is a temporary fix)
 1. In `lib/gtk4/lib/gi-crystal/src/auto/gtk-3.0/gtk.cr`, replace all usages of `Glib::String` with `::String` (this is a temporary fix)
 1. A custom build of `libxkbcommon` is required so we can look up keyboard layouts under Wayland. Clone `https://github.com/phil294/libxkbcommon` somewhere, in there, run:
     `meson setup build -Denable-x11=false -Dxkb-config-root=/usr/share/X11/xkb -Dx-locale-root=/usr/share/X11/locale`
