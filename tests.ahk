@@ -61,6 +61,7 @@ Return
 
 fail:
 	echo %fail_reason%
+	msgbox %fail_reason%
 	exitapp 1
 Return
 
