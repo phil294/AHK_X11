@@ -43,6 +43,7 @@ module Run
 			GC.enable
 			GC.collect
 			@act_mutex.unlock
+			# TODO: sub stack trace is lost here, e.g. if thrown somewhere inside gui-show
 			raise exception if exception
 			result.as(T)
 		end
@@ -107,10 +108,14 @@ module Run
 				[MsgBoxButton::OK, MsgBoxButton::Cancel]
 			else [MsgBoxButton::OK]
 			end
-			# TODO: Deletable=false removes the x button but pressing Escape still works and returns delete(cancel) event response... wasn't easily fixable when I researched this.
+			# Deletable=false removes the x button but pressing Escape still works and returns delete(cancel) event response.
+			# Wasn't easily fixable when I researched this.
 			deletable = buttons.includes?(MsgBoxButton::Cancel)
-			# TODO: Setting message_type does not show an image on many distros, only on Ubuntu: https://discourse.gnome.org/t/gtk3-message-dialog-created-with-gtk-message-dialog-new-shows-no-icon-on-fedora/8607
-			# Setting dialog.image does not work either. The only solution appears to be to switch to ::Gtk::Dialog and add text and image manually (refer to Ubuntu patch from link).
+			# Note that setting message_type does not show an image on many distros, only on Ubuntu: https://discourse.gnome.org/t/gtk3-message-dialog-created-with-gtk-message-dialog-new-shows-no-icon-on-fedora/8607
+			# Setting dialog.image does not work either. The only native fix appears to be to switch to ::Gtk::Dialog
+			# and add text and image manually (refer to Ubuntu patch from link).
+			# However, since ahk_x11 is now officially always packaged using AppImage, built on *Ubuntu* 20.04, the
+			# images will correctly appear everywhere, always.
 			message_type = case
 			when options & MsgBoxOptions::Icon_Info.value == MsgBoxOptions::Icon_Info.value
 				::Gtk::MessageType::Info
