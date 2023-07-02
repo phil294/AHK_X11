@@ -190,7 +190,7 @@ module Run
 			end
 			return nil if key_name.size > 1
 			char = key_name[0]
-			return nil if char >= 'A' && char < 'Z' || char >= 'a' && char <= 'z'
+			return nil if char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z'
 			# This fallback may fail but it's very likely this is the correct match now.
 			# This is the normal path for special chars like . @ $ etc.
 			ord = char.ord
