@@ -183,12 +183,11 @@ class Util::AhkString
 	# Every word is also treated as a single letter + body as a second entry.
 	# e.g. `+center ab8cd2` returns (pseudo) `{ "center" => {plus: true}, "c" => {v: "enter", plus: true}, "abcd" => {n: 82}, "a" => {v: "b8cd2"} }`
 	def self.parse_word_options(str, escape_char : Char)
-		ret = {} of String => NamedTuple(n: Int32?, v: String, minus: Bool, plus: Bool)
+		ret = {} of String => NamedTuple(n: Int64?, v: String, minus: Bool, plus: Bool)
 		str.split().each do |part|
 			minus = false
 			plus = false
 			n = ""
-			i = 1
 			word = ""
 			part.each_char do |char|
 				case char
@@ -196,13 +195,19 @@ class Util::AhkString
 				when '+' then plus = true
 				when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 					n += char
+				when 'x'
+					if n[-1]? == '0'
+						n += 'x'
+					else
+						word += char
+					end
 				else
 					word += char
 				end
 			end
 			down = word.downcase
 			ret[down] = ret[part[0].downcase.to_s] = {
-				n: n.to_i? || nil,
+				n: n.to_i64?(prefix: true) || nil,
 				v: part[1..]? || "",
 				minus: minus,
 				plus: plus

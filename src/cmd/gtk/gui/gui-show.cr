@@ -14,10 +14,10 @@ class Cmd::Gtk::Gui::GuiShow < Cmd::Base
 			thread.parse_word_options(options).each do |v, i|
 				n = i[:n]
 				case v
-				when "w" then w = n if n
-				when "h" then h = n if n
-				when "x" then x = n if n
-				when "y" then y = n if n
+				when "w" then w = n.to_i if n
+				when "h" then h = n.to_i if n
+				when "x" then x = n.to_i if n
+				when "y" then y = n.to_i if n
 				end
 			end
 			gui.window.set_default_size w, h

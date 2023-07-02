@@ -56,7 +56,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 						widget.append_text option
 					end
 				end
-				widget.active = (opt["choose"][:n] || 1) - 1 if opt["choose"]?
+				widget.active = ((opt["choose"][:n] || 1_i64) - 1).to_i if opt["choose"]?
 				widget.changed_signal.connect run_g_label
 			when "picture", "pic"
 				widget = ::Gtk::Image.new_from_file text
@@ -94,13 +94,13 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			# end
 			x = case
 			when opt["xp"]?
-				gui.last_x + (opt["xp"][:n] || 0) * (opt["xp"][:minus] ? -1 : 1)
+				gui.last_x + (opt["xp"][:n] || 0).to_i * (opt["xp"][:minus] ? -1 : 1)
 			when opt["xm"]?
-				gui.padding + (opt["xm"][:n] || 0) * (opt["xm"][:minus] ? -1 : 1)
+				gui.padding + (opt["xm"][:n] || 0).to_i * (opt["xm"][:minus] ? -1 : 1)
 			when opt["xs"]?
-				gui.last_section_x + (opt["xs"][:n] || 0) * (opt["xs"][:minus] ? -1 : 1)
+				gui.last_section_x + (opt["xs"][:n] || 0).to_i * (opt["xs"][:minus] ? -1 : 1)
 			when opt["x"]?
-				x_ = opt["x"][:n] || 0
+				x_ = (opt["x"][:n] || 0).to_i
 				# x_ += gui.last_x + last_w if opt["x"][:plus]
 				# x_ = gui.last_x + last_w - x_ if opt["x"][:minus]
 				x_
@@ -114,13 +114,13 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 
 			y = case
 			when opt["yp"]?
-				gui.last_y + (opt["yp"][:n] || 0) * (opt["yp"][:minus] ? -1 : 1)
+				gui.last_y + (opt["yp"][:n] || 0).to_i * (opt["yp"][:minus] ? -1 : 1)
 			when opt["ym"]?
-				gui.padding + (opt["ym"][:n] || 0) * (opt["ym"][:minus] ? -1 : 1)
+				gui.padding + (opt["ym"][:n] || 0).to_i * (opt["ym"][:minus] ? -1 : 1)
 			when opt["ys"]?
-				gui.last_section_y + (opt["ys"][:n] || 0) * (opt["ys"][:minus] ? -1 : 1)
+				gui.last_section_y + (opt["ys"][:n] || 0).to_i * (opt["ys"][:minus] ? -1 : 1)
 			when opt["y"]?
-				opt["y"][:n] || 0
+				(opt["y"][:n] || 0).to_i
 			else
 				if gui.last_y == 0
 					gui.padding
@@ -134,8 +134,8 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				gui.last_section_y = y
 			end
 
-			w = opt["w"]?.try &.[:n] || -1
-			h = opt["h"]?.try &.[:n] || -1
+			w = (opt["w"]?.try &.[:n] || -1).to_i
+			h = (opt["h"]?.try &.[:n] || -1).to_i
 			if w > -1 || h > -1
 				widget.style_context.add_class("no-padding")
 			end
