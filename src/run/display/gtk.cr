@@ -286,13 +286,26 @@ module Run
 			end
 		end
 		getter guis = {} of String => GuiInfo
+		# This is necessary to be able to pass flags to the Gui Gtk Window *at creation time*, because
+		# the respective flags can't be set again at a later time.
+		# This is a rare occurrence and currently only necessary to set the type to Popup.
+		# Note that this is different from properties that can only be set before a window is *shown*.
+		# For that, the only thing that matters is the ordering of ahk commands.
+		class GuiCreationInfo
+			property type : ::Gtk::WindowType
+			def initialize(*, @type)
+			end
+		end
+		# :ditto:
+		getter guis_creation_info = {} of String => GuiCreationInfo
 		# Yields (and if not yet exists, creates) the gui info referring to *gui_id*,
 		# including the `window`, and passes the block on to the GTK idle thread so
 		# you can run GTK code with it.
 		def gui(thread, gui_id, &block : GuiInfo -> _)
 			if ! @guis[gui_id]?
 				act do
-					window = ::Gtk::Window.new title: @default_title, window_position: ::Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: false
+					type = @guis_creation_info[gui_id]?.try &.type || ::Gtk::WindowType::Toplevel
+					window = ::Gtk::Window.new title: @default_title, window_position: ::Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: false, type: type
 					# , border_width: 20
 					fixed = ::Gtk::Fixed.new
 					window.add fixed
