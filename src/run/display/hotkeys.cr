@@ -74,7 +74,8 @@ module Run
 				(! @runner.display.suspended || hotkey.exempt_from_suspension)
 			end
 			if hotkey
-				if ! hotkey.up && ! hotkey.no_grab
+				# TODO: auto test for this
+				if ! hotkey.up && ! hotkey.no_grab && (hotkey.cmd.is_a?(Cmd::X11::Keyboard::Send) || hotkey.cmd.is_a?(Cmd::X11::Keyboard::SendRaw))
 					# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
 					key_map = XDo::LibXDo::Charcodemap.new
 					key_map.code = hotkey.keycode
