@@ -14,20 +14,27 @@ shards:
 
   gi-crystal:
     git: https://github.com/hugopl/gi-crystal.git
-    # TODO https://github.com/hugopl/gi-crystal/issues/70
-    version: 0.15.0+git.commit.3610c6cc103dcd02c8cff50c9b74c52b07f11d7c
+    version: 0.16.0+git.commit.2874e31eaa7339cb4e0d6b504c19b872c0c202c4
+
+  gio:
+    git: https://github.com/hugopl/gio.cr.git
+    version: 0.1.0
 
   gtk3:
     git: https://github.com/phil294/gtk3.cr.git
-    version: 0.12.0+git.commit.56f5d0ad696e8a16c7cfe094a1c505d4ec556aa7
+    version: 0.14.0+git.commit.0c3f29395a7e543a17cda38b5bf9edf18765994d
+
+  harfbuzz:
+    git: https://github.com/hugopl/harfbuzz.cr.git
+    version: 0.1.0
+
+  pango:
+    git: https://github.com/hugopl/pango.cr.git
+    version: 0.2.0
 
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
     version: 2.0.7
-
-  version_from_shard:
-    git: https://github.com/hugopl/version_from_shard.git
-    version: 1.2.5
 
   x11:
     git: https://github.com/tamasszekeres/x11-cr.git
