@@ -145,6 +145,7 @@ There are different ways to use it.
 2. Command line
     - Either: Pass the script to execute as first parameter, e.g. `./ahk_x11 "path to your script.ahk"`
     - Or: Pass code from stdin, e.g. `echo $'var = 123\nMsgBox %var%' | ./ahk_x11`
+    - If you once installed with the graphical installer, the binary is also to be found at `~/.local/bin/ahk_x11.AppImage`
     - Once your script's auto-execute section has finished, you can also interactively execute arbitrary single line commands in the console. Code blocks aren't supported yet in that situation. Those single lines each run in their separate threads, which is why variables like `%ErrorLevel%` will always be `0`.
     - When you don't want to pass a script and jump to this mode directly, you can specify `--repl` instead (implicit `#Persistent`).
     - Compile scripts with `./ahk_x11 --compile "path/script.ahk"`
