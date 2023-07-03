@@ -7,10 +7,10 @@ class Cmd::Math::EnvDiv < Cmd::Base
 		var, div_value = args
 		current_value = thread.runner.get_user_var(var)
 		pure_int = ! current_value.includes?('.') && ! div_value.includes?('.')
-		div_value = div_value.to_f? || 0
-		current_value = current_value.to_f? || 0
+		div_value = div_value.to_f64? || 0
+		current_value = current_value.to_f64? || 0
 		new_value = current_value / div_value
-		new_value = new_value.to_i if pure_int
+		new_value = new_value.to_i64 if pure_int
 		new_value = new_value.to_s
 		thread.runner.set_user_var(var, new_value)
 	end

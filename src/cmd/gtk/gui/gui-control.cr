@@ -28,6 +28,21 @@ class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 					ctrl.label = value
 				when ::Gtk::Entry
 					ctrl.text = value
+				when ::Gtk::Image
+					pixbuf_before = ctrl.pixbuf
+					LibGtk.gtk_widget_get_size_request(ctrl.to_unsafe, out w, out h)
+					ctrl.from_file = value
+					if (pixbuf_after = ctrl.pixbuf) && (w > -1 || h > -1)
+						if w == -1
+							w = (h * pixbuf_after.width / pixbuf_after.height).to_i
+						elsif h  == -1
+							h = (w * pixbuf_after.height / pixbuf_after.width).to_i
+						end
+						pixbuf_after_scaled = pixbuf_after.scale_simple w, h, GdkPixbuf::InterpType::Bilinear
+						ctrl.pixbuf = pixbuf_after_scaled if pixbuf_after_scaled
+					end
+				else
+					raise Run::RuntimeException.new "GuiControl not yet supported for element of type #{ctrl.class}, sorry."
 				end
 			end
 		end
