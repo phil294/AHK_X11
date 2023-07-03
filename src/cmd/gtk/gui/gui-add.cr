@@ -7,7 +7,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 		type = args[1]
 		options = args[2]? || ""
 		text = args[3]? || ""
-		
+
 		opt = thread.parse_word_options options
 		runner = thread.runner
 		g_label = opt["g"]?.try &.[:v].downcase
@@ -16,7 +16,10 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				runner.add_thread g_label, 0
 			end
 		}
-		
+
+		w = opt["w"]?.try &.[:n] || -1
+		h = opt["h"]?.try &.[:n] || -1
+
 		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
@@ -63,6 +66,15 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				widget.has_window = true
 				widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
 				widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
+				if (pixbuf = widget.pixbuf) && (w > -1 || h > -1)
+					if w == -1
+						w = (h * pixbuf.width / pixbuf.height).to_i
+					elsif h  == -1
+						h = (w * pixbuf.height / pixbuf.width).to_i
+					end
+					pixbuf_scaled = pixbuf.scale_simple w, h, GdkPixbuf::InterpType::Bilinear
+					widget.pixbuf = pixbuf_scaled if pixbuf_scaled
+				end
 			else
 				widget = ::Gtk::Label.new text
 				widget.has_window = true
@@ -128,14 +140,12 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					gui.last_y + 12 + gui.padding # TODO:
 				end
 			end
-			
+
 			if opt["section"]?
 				gui.last_section_x = x
 				gui.last_section_y = y
 			end
 
-			w = opt["w"]?.try &.[:n] || -1
-			h = opt["h"]?.try &.[:n] || -1
 			if w > -1 || h > -1
 				widget.style_context.add_class("no-padding")
 			end
