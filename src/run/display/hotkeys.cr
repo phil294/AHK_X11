@@ -19,7 +19,7 @@ module Run
 		end
 
 		@hotkeys = [] of Hotkey
-		def add(hotkey, subscribe = true)
+		def add(hotkey, *, subscribe = true)
 			# apparently keycodes are display-dependent so they can't be determined at build time. TODO: check this or change, fix type cast:
 			hotkey.keycode = @runner.display.adapter.as(X11).keysym_to_keycode(hotkey.keysym)
 			if subscribe
@@ -29,7 +29,7 @@ module Run
 				@runner.display.adapter.grab_hotkey(hotkey)
 			end
 		end
-		def remove(hotkey, unsubscribe = true)
+		def remove(hotkey, *, unsubscribe = true)
 			@runner.display.adapter.ungrab_hotkey(hotkey)
 			if unsubscribe
 				@hotkeys.delete hotkey

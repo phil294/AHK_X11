@@ -518,7 +518,7 @@ gosub assert
 
 ; ### SEND/HOTKEY/HOTSTRING TESTS ###
 
-send {tab}^a{del} ; focus and reset
+send {tab}{tab}^a{del} ; focus and reset
 sleep 20
 send 123
 sleep 20

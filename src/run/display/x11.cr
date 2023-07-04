@@ -134,22 +134,30 @@ module Run
 	# listening to all events and calling threads on hotkey trigger
 	# and calling given event listeners.
 	class X11 < DisplayAdapter
-		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else
+		# include ::X11 # removed because of https://github.com/TamasSzekeres/x11-cr/issues/15 and who knows what else. < TODO: is resolved
 
 		@root_win = 0_u64
-		@record_context : ::Xtst::LibXtst::RecordContext?
-		@record : ::Xtst::RecordExtension?
+		@_NET_ACTIVE_WINDOW : ::X11::C::Atom
+		@last_active_window = 0_u64
 		getter display : ::X11::Display
 		getter root_win : ::X11::Window
 		# Multiple threads can access this X11 instance, but to avoid dead locks surrounding
 		# the blocking event loop, every state altering method needs to be synchronized with mutex:
 		@mutex = Mutex.new
+		@record_context : ::Xtst::LibXtst::RecordContext?
+		@record : ::Xtst::RecordExtension?
 
 		def initialize
 			set_error_handler
 
 			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
+			@_NET_ACTIVE_WINDOW = @display.intern_atom("_NET_ACTIVE_WINDOW", false)
+			root_win_attributes = ::X11::SetWindowAttributes.new
+			root_win_attributes.event_mask = ::X11::PropertyChangeMask
+			# So we get notified of active window change
+			@display.change_window_attributes(@root_win, ::X11::C::CWEventMask, root_win_attributes)
+			@last_active_window = active_window()
 
 			begin
 				@record = record = ::Xtst::RecordExtension.new
@@ -162,6 +170,11 @@ module Run
 				STDERR.puts e
 				STDERR.puts "The script will continue but some features (esp. Hotstrings) may not work. Please also consider opening an issue at github.com/phil294/ahk_x11 and tell us about your system details."
 			end
+		end
+
+		private def active_window
+			# TODO: manybe use @x_do.active_window if it's similarly fast?
+			@display.window_property(@root_win, @_NET_ACTIVE_WINDOW, 0_i64, 1_i64, false, ::X11::C::XA_WINDOW.to_u64)[:prop_return].unsafe_as(Pointer(UInt64)).value
 		end
 
 		def finalize
@@ -218,41 +231,56 @@ module Run
 		@key_handler : Proc(::X11::KeyEvent, UInt64, Char?, Nil)?
 		def run(*, key_handler)
 			@key_handler = key_handler
-			if record = @record
-				record.enable_context_async(@record_context.not_nil!) do |record_data|
-					handle_record_event(record_data)
-				end
-				record_fd = IO::FileDescriptor.new record.data_display.connection_number
-				loop do
-					# Although events from next_event aren't used in this case, this queue apparently
-					# still must always be empty. If not, the hotkeys aren't even grabbed.
-					flush_event_queue
-					record_fd.not_nil!.wait_readable
-					@mutex.lock
-					record.process_replies
-					@mutex.unlock
-				end
-			else
-				# Misses non-grabbed keys and mouse events. It could also be done this way
-				# (see old commits), but only unreliably and not worth the effort.
-				loop do
-					@mutex.lock
-					event = @display.next_event # Blocking!
-					@mutex.unlock
-					if event.is_a? ::X11::KeyEvent
-						handle_key_event(event)
+			record = @record
+			if record
+				spawn same_thread: true do
+					record.enable_context_async(@record_context.not_nil!) do |record_data|
+						handle_record_event(record_data)
+					end
+					record_fd = IO::FileDescriptor.new record.data_display.connection_number
+					loop do
+						record_fd.not_nil!.wait_readable
+						@mutex.lock
+						record.process_replies
+						@mutex.unlock
 					end
 				end
 			end
-		end
-
-		private def flush_event_queue
-			@mutex.lock
+			# Even if XTst Record obliterates the need to read key events, we still need to
+			# keep the event loop running or otherwise the hotkeys aren't even grabbed
+			# and use it to get updates on the active window.
+			event_fd = IO::FileDescriptor.new @display.connection_number
 			loop do
-				break if @display.pending == 0
-				@display.next_event
+				while @display.pending != 0
+					@mutex.lock
+					event = @display.next_event
+					if event.is_a?(::X11::PropertyEvent) && event.atom == @_NET_ACTIVE_WINDOW
+						# focussed_win = @display.input_focus[:focus] # https://stackoverflow.com/q/31800880, https://stackoverflow.com/q/60141048
+						active_win = active_window()
+						if active_win != @last_active_window
+							active_window_before = @last_active_window
+							@last_active_window = active_win
+							if active_win > 0
+								# The mutex doesn't protect against nonsense here yet but the chance for
+								# this to happen is fairly small
+								@mutex.unlock
+								@hotkeys.each { |h| ungrab_hotkey(h, from_window: active_window_before, unsubscribe: false) }
+								@hotkeys.each { |h| grab_hotkey(h, subscribe: false) }
+								@mutex.lock
+							end
+						end
+					end
+					@mutex.unlock
+					if ! record
+						# Misses non-grabbed keys and mouse events. It could also be done this way
+						# (see old commits), but only unreliably and not worth the effort.
+						if event.is_a? ::X11::KeyEvent
+							handle_key_event(event)
+						end
+					end
+				end
+				event_fd.wait_readable
 			end
-			@mutex.unlock
 		end
 
 		private def handle_record_event(record_data)
@@ -280,37 +308,44 @@ module Run
 			@key_handler.not_nil!.call(key_event, keysym, char)
 		end
 
-		def grab_hotkey(hotkey)
+		# It's easier to just grab on the root window once, but by repeatedly reattaching to the respectively currently
+		# active window, we avoid losing focus from the active window while a grabbed key is pressed down.
+		# https://stackoverflow.com/a/69216578/3779853
+		# This helps avoiding various popups and menus from auto-closing on hotkey press.
+		# Because of this, this driver needs to maintain its own list of hotkeys.
+		@hotkeys = [] of Hotkey
+		# :ditto:
+		def grab_hotkey(hotkey, *, subscribe = true)
 			@mutex.lock
+			@hotkeys << hotkey if subscribe
 			hotkey.modifier_variants.each do |mod|
 				if hotkey.keysym < 10
-					@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
+					@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @last_active_window, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
 				else
-					@display.grab_key(hotkey.keycode, mod, grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
+					@display.grab_key(hotkey.keycode, mod, grab_window: @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
 			@mutex.unlock
-			flush_event_queue
 		end
-		def ungrab_hotkey(hotkey)
+		# :ditto:
+		def ungrab_hotkey(hotkey, *, from_window = @last_active_window, unsubscribe = true)
 			@mutex.lock
+			@hotkeys.delete hotkey if unsubscribe
 			hotkey.modifier_variants.each do |mod|
-				@display.ungrab_key(hotkey.keycode, mod, grab_window: @root_win)
+				@display.ungrab_key(hotkey.keycode, mod, grab_window: from_window)
 			end
 			@mutex.unlock
-			flush_event_queue
 		end
+		# TODO: retest, also BlockInput command
 		def grab_keyboard
 			@mutex.lock
 			@display.grab_keyboard(grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
 			@mutex.unlock
-			flush_event_queue
 		end
 		def ungrab_keyboard
 			@mutex.lock
 			@display.ungrab_keyboard(time: ::X11::CurrentTime)
 			@mutex.unlock
-			flush_event_queue
 		end
 	end
 end
