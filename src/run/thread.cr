@@ -18,6 +18,7 @@ module Run
 		property coord_mode_mouse = CoordMode::RELATIVE
 		property coord_mode_caret = CoordMode::RELATIVE
 		property coord_mode_menu = CoordMode::RELATIVE
+		property detect_hidden_windows = false
 		property ahk_x11_track_performance = false
 	end
 
@@ -213,6 +214,9 @@ module Run
 			case var
 			when "a_index"
 				(@loop_stack.last?.try &.index || 0).to_s
+			when "a_detecthiddenwindows"
+				pp! @settings
+				@settings.detect_hidden_windows ? "On" : "Off"
 			else
 				nil
 			end

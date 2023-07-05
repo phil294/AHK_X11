@@ -23,11 +23,15 @@ class Cmd::X11::Window::Util
 				exclude_text = match_conditions[3]? || ""
 				current_desktop = thread.runner.display.x_do.desktop.to_i32
 
+				# Note: This can crash with "XGetWindowProperty failed!Invalid memory access (signal 11) at address 0x0 [...] xdo_get_desktop_for_window +120 in /usr/lib/libxdo
+				# Which is fixed with an xdotool fork (see build/README.md)
 				wins = thread.runner.display.x_do.search do
 					require_all
-					only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
-					# ^ link also explains the need for specifying desktop:
-					desktop current_desktop
+					if ! thread.settings.detect_hidden_windows
+						only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
+						# ^ link also explains the need for specifying desktop:
+						desktop current_desktop
+					end
 					if title.starts_with?("ahk_class ")
 						# TODO: these/name etc should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
 						window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
