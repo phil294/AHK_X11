@@ -336,10 +336,9 @@ module Run
 			end
 			@mutex.unlock
 		end
-		# TODO: retest, also BlockInput command
 		def grab_keyboard
 			@mutex.lock
-			@display.grab_keyboard(grab_window: @root_win, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
+			@display.grab_keyboard(grab_window: @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
 			@mutex.unlock
 		end
 		def ungrab_keyboard

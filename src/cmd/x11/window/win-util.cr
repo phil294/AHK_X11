@@ -16,7 +16,7 @@ class Cmd::X11::Window::Util
 				wid = title[7..].to_u64?
 				raise Run::RuntimeException.new "ahk_id must be a number" if ! wid
 				win = XDo::Window.new(thread.runner.display.x_do.xdo_p, wid)
-    			win = nil if ! win.name
+    			win = nil if ! win.name # avoids segfaults
 			else
 				text = match_conditions[1]? || ""
 				exclude_title = match_conditions[2]? || ""
