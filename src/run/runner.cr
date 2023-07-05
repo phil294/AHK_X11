@@ -268,30 +268,42 @@ module Run
 
 		def handle_single_instance
 			return if @settings.single_instance == SingleInstance::Off
-			search_for = (PROGRAM_NAME + " " + ARGV.join(" ")).strip
-			result = IO::Memory.new
+			already_running_pid = -1
+			# We don't check instance duplication when binary or path changes
+			script_identifier = (((ENV["ARGV0"]? || PROGRAM_NAME) + " " + ARGV.join(" ")).strip).gsub('/',"\\")
+			lock_path = "/tmp/ahk_x11 #{script_identifier}.lock"
+			lock = File.open(lock_path, "a+")
 			begin
-				Process.run("pgrep", ["--full", "--exact", search_for], output: result)
-			rescue e : IO::Error
-				STDERR.puts "Warning: Could not determine previously running instance because pgrep is not installed. Using SingleInstance OFF."
-				return
+				lock.flock_exclusive(blocking: false)
+      		rescue e
+        		already_running_pid = lock.gets_to_end.to_i
+    		end
+			if already_running_pid > -1
+				case @settings.single_instance
+				when SingleInstance::Force
+					Process.signal(Signal::HUP, already_running_pid)
+				when SingleInstance::Ignore
+					STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
+					::exit
+				when SingleInstance::Prompt
+					response = display.gtk.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: Gtk::MsgBoxOptions::Yes_No.value
+					::exit if response != Gtk::MsgBoxButton::Yes
+					Process.signal(Signal::HUP, already_running_pid)
+				end
+				start = Time.monotonic
+				while Process.exists?(already_running_pid)
+					if Time.monotonic - start > 1.second
+						raise "Failed to kill previous instance process with PID #{already_running_pid}"
+					end
+					sleep 10.milliseconds
+				end
+				# TODO: exceptions here aren't shown as popup?
+				lock.flock_exclusive(blocking: false)
 			end
-			already_running = result.to_s.chomp
-				.split('\n')
-				.select{|p| p != Process.pid.to_s }
-				.first?.try &.to_i?
-			return if ! already_running
-			case @settings.single_instance
-			when SingleInstance::Force
-				Process.signal(Signal::HUP, already_running)
-			when SingleInstance::Ignore
-				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
-				::exit
-			when SingleInstance::Prompt
-				response = display.gtk.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: Gtk::MsgBoxOptions::Yes_No.value
-				::exit if response != Gtk::MsgBoxButton::Yes
-				Process.signal(Signal::HUP, already_running)
-			end
+			# TODO: clean up on exit
+			lock.truncate
+			lock << Process.pid
+			lock.fsync
 		end
 
 		@suspension = false
