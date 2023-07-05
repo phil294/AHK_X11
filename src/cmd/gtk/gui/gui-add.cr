@@ -62,6 +62,12 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				widget.active = ((opt["choose"][:n] || 1_i64) - 1).to_i if opt["choose"]?
 				widget.changed_signal.connect run_g_label
 			when "picture", "pic"
+				# Shortest, non-canonical way: Doesn't work because when setting x/y the image is clipped (why????)
+				# widget.has_window = true
+				# widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
+				# widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
+				widget = ::Gtk::EventBox.new
+				widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
 				if text.starts_with?("icon:")
 					size = case w > 1 ? w : h > 1 ? h : 48
 					when 16 then ::Gtk::IconSize::Menu
@@ -71,23 +77,21 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					else
 						raise Run::RuntimeException.new "For Gui pictures with icon paths, the height/width needs to be either 16, 24, 32, 48 or unspecified."
 					end
-					widget = ::Gtk::Image.new_from_icon_name text[5..], size.value.to_i
+					img = ::Gtk::Image.new_from_icon_name text[5..], size.value.to_i
 				else
-					widget = ::Gtk::Image.new_from_file text
+					img = ::Gtk::Image.new_from_file text
 				end
-				widget.has_window = true
-				widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
-				widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
 				# Icon pictures have no pixbuf, so this applies only to external files
-				if (pixbuf = widget.pixbuf) && (w > -1 || h > -1)
+				if (pixbuf = img.pixbuf) && (w > -1 || h > -1)
 					if w == -1 || w == 1
 						w = (h * pixbuf.width / pixbuf.height).to_i
 					elsif h == -1 || h == 1
 						h = (w * pixbuf.height / pixbuf.width).to_i
 					end
 					pixbuf_scaled = pixbuf.scale_simple w, h, GdkPixbuf::InterpType::Bilinear
-					widget.pixbuf = pixbuf_scaled if pixbuf_scaled
+					img.pixbuf = pixbuf_scaled if pixbuf_scaled
 				end
+				widget.add img
 			else
 				widget = ::Gtk::Label.new text
 				widget.has_window = true
