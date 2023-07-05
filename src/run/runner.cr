@@ -288,7 +288,7 @@ module Run
 				STDERR.puts "Instance already running and #SingleInstance Ignore passed. Exiting."
 				::exit
 			when SingleInstance::Prompt
-				response = display.gtk.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: 4
+				response = display.gtk.msgbox "An older instance of this script is already running. Replace it with this instance?\nNote: To avoid this message, see #SingleInstance in the help file.", options: Gtk::MsgBoxOptions::Yes_No.value
 				::exit if response != Gtk::MsgBoxButton::Yes
 				Process.signal(Signal::HUP, already_running)
 			end

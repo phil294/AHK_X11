@@ -55,23 +55,24 @@ module Run
 			end
 		end
 
-		@[Flags]
-		private enum MsgBoxOptions
-			OK_Cancel
-			Abort_Retry_Ignore
-			# Yes_No_Cancel = 3 # 3 for some reason which is not the same as 1+2 so it needs special handling. Similar below
-			Yes_No
-			# Retry_Cancel # 5
-			Unused_8
+		# Can't use @[Flags] because some values are *not* strict 2^n
+		enum MsgBoxOptions
+			OK = 0
+			OK_Cancel = 1
+			Abort_Retry_Ignore = 2
+			Yes_No_Cancel = 3 # for some reason which is not the same as 1+2. Similar below
+			Yes_No = 4
+			Retry_Cancel = 5 # .
+			# Unused_8 = 8
 			Icon_Stop = 16
 			Icon_Question = 32
-			# Icon_Exclamation = 48
+			Icon_Exclamation = 48 # .
 			Icon_Info = 64
-			Unused_128
+			# Unused_128
 			Button_2_Default = 256
 			Button_3_Default = 512
-			Unused_1024
-			Unused_2048
+			# Unused_1024
+			# Unused_2048
 			Always_On_Top = 4096
 			# TODO: ?
 			Task_Modal = 8192
@@ -92,15 +93,12 @@ module Run
 		# If you don't see the popup, it may be because of focus stealing prevention from the
 		# window manager, please see the README.
 		def msgbox(text, options = 0, title = nil, timeout = nil)
-			msg_box_option_yes_no_cancel = MsgBoxOptions::OK_Cancel.value | MsgBoxOptions::Abort_Retry_Ignore.value
-			msg_box_option_retry_cancel = MsgBoxOptions::OK_Cancel.value | MsgBoxOptions::Yes_No.value
-			msg_box_option_icon_exclamation = MsgBoxOptions::Icon_Stop.value | MsgBoxOptions::Icon_Question.value
 			buttons = case
-			when options & msg_box_option_retry_cancel == msg_box_option_retry_cancel
+			when options & MsgBoxOptions::Retry_Cancel.value == MsgBoxOptions::Retry_Cancel.value
 				[MsgBoxButton::Retry, MsgBoxButton::Cancel]
 			when options & MsgBoxOptions::Yes_No.value == MsgBoxOptions::Yes_No.value
 				[MsgBoxButton::Yes, MsgBoxButton::No]
-			when options & msg_box_option_yes_no_cancel == msg_box_option_yes_no_cancel
+			when options & MsgBoxOptions::Yes_No_Cancel.value == MsgBoxOptions::Yes_No_Cancel.value
 				[MsgBoxButton::Yes, MsgBoxButton::No, MsgBoxButton::Cancel]
 			when options & MsgBoxOptions::Abort_Retry_Ignore.value == MsgBoxOptions::Abort_Retry_Ignore.value
 				[MsgBoxButton::Abort, MsgBoxButton::Retry, MsgBoxButton::Ignore]
@@ -119,7 +117,7 @@ module Run
 			message_type = case
 			when options & MsgBoxOptions::Icon_Info.value == MsgBoxOptions::Icon_Info.value
 				::Gtk::MessageType::Info
-			when options & msg_box_option_icon_exclamation == msg_box_option_icon_exclamation
+			when options & MsgBoxOptions::Icon_Exclamation.value == MsgBoxOptions::Icon_Exclamation.value
 				::Gtk::MessageType::Warning
 			when options & MsgBoxOptions::Icon_Question.value == MsgBoxOptions::Icon_Question.value
 				::Gtk::MessageType::Question
