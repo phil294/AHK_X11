@@ -31,7 +31,7 @@ These are the steps required to build this project locally, such as if you want 
 
 ### For making release-like binaries
 
-The released binaries are special because they need to be portable. We achieve this by using AppImage. Portability is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Below are the instructions on how to do this / how the released binaries are produced. It's all optional but recommended. Might automate this some day, but for now it's all manual.
+The released binaries are special because they need to be portable. We achieve this by using AppImage. Portability is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Below are the instructions on how to do this / how the released binaries are produced.
 
 1. Get on an Ubuntu 20.04 system, e.g. using Docker. 18.04 also works but Gtk 3.24 in 20.04 fixes the bug that ToolTips falsely grab focus
 1. `libxdo` isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible). Also, we fix a rarely occurring fatal error here (probably Crystal-specific?). So,
@@ -43,8 +43,10 @@ The released binaries are special because they need to be portable. We achieve t
 1. Get `linuxdeploy-x86_64.AppImage` from https://github.com/linuxdeploy/linuxdeploy/, into this `build` folder
 1. Get `linuxdeploy-plugin-gtk.sh` from https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh
 1. In that same file, *delete the line* `export GTK_THEME="$APPIMAGE_GTK_THEME" # Custom themes are broken` (this is a temporary fix ([issue](https://github.com/linuxdeploy/linuxdeploy-plugin-gtk/issues/39)))
-1. Instead of `shards build`, run `./build.sh`. This also does shards build, but it adds the `--release` flag (slower compilation, faster output binary) and does the AppImage magic and attaches the installer.
+1. Instead of `shards build`, run `./build.sh --release`. This also does shards build, but also does the AppImage magic and attaches the installer. The `--release` flag results in slower compilation and faster output binary.
 1. Find your final binary `ahk_x11-[version]-x86_64.AppImage` in the `build` folder. It's about 30 MiB in size.
+
+There's a script to call `./build.sh`, make a new release and publish it etc., it's `../release.sh`. You most likely can't run it yourself though.
 
 ## Contributing
 
@@ -66,3 +68,5 @@ A more general overview:
 There's also several `TODO:`s scattered around all source files mostly around technical problems that need some revisiting.
 
 While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see [`Run::Thread`](https://github.com/phil294/AHK_X11/blob/master/src/run/thread.cr) docs).
+
+There is a basic test script: `../tests.ahk`. Running it should complete without errors. It only covers the core functionality and a few edge cases right now, so the more tests we add, the better.

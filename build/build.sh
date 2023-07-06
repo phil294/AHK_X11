@@ -3,16 +3,15 @@ set -e
 
 cd "$(dirname "$0")"
 
-version=$(cat ../shard.yml |head -2 |tail -1 |cut -c10-)
+version=$(shards version)
 
 cd ..
 # Cannot overwrite CRYSTAL_LIBRARY_PATH because crystal#12380, need link-flag instead.
 # -no-pie prevents 
 shards build -Dpreview_mt --link-flags="-L$PWD/build" \
-  # -Dgc_none \
-  --release \
-# --debug
-# -Dgc_none
+  "$@"
+# Flags lik -Dgc_none or --release or --debug should be passed from outside
+
 cd build
 
 rm -rf AppDir
