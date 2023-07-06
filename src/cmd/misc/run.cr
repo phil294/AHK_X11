@@ -27,7 +27,7 @@ class Cmd::Misc::Run < Cmd::Base
 			cmd = "setsid"
 			params = args
 		end
-		
+
 		env = {
 			# AppImage/linuxdeploy-plugin-gtk sets several env vars *for the main binary itself*
 			# but we need to prevent those overrides from being inherited by spawned sub processes
@@ -101,7 +101,7 @@ class Cmd::Misc::Run < Cmd::Base
 			rescue
 			end
 		end
-		
+
 		if ! success && open
 			success, stdout, stderr = try_execute(thread, target_raw, chdir: pwd, stdout: !!output_stdout, stderr: !!output_stderr)
 		end

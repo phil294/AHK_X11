@@ -26,10 +26,10 @@ module Build
 		@resolved = false
 
 		abstract def initialize(conditional_cmd : Cmd::Base)
-		
+
 		# bottommost section, regardless if open or not
 		private abstract def active_section : ConditionalSection
-		
+
 		def start_block
 			raise "" if active_section.block_started || active_section.first_child
 			active_section.block_started = true
@@ -99,7 +99,7 @@ module Build
 			raise "" if @else_section || active_section.open?
 			@else_section = ConditionalSection.new Else.new(0, [] of String)
 		end
-		
+
 		private def link_all(next_cmd_outside : Cmd::Base? = nil)
 			@if_section.cmd.je = @if_section.first_child || next_cmd_outside
 			@if_section.last_child.try &.next = next_cmd_outside

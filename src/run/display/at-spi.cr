@@ -198,7 +198,7 @@ module Run
 				match_path = top_match_path + match_path
 			end
 			match_class_NN = to_class_NN(match_path, match.role_name)
-			
+
 			thread.cache.accessible_by_class_nn_by_window_id[win.window][match_class_NN] = match
 			{% if ! flag?(:release) %}
 				puts "[debug] find_descendant name:#{match.name}, role:#{match.role}, classNN:#{match_class_NN}, text:#{match ? get_text(match) : ""}, actions:#{get_actions(match)[1]}, selectable:#{selectable?(match)}. top_match_path:#{top_match_path}, match_path:#{match_path}, top_match role:#{top_match.role}, top_match name:#{top_match.name}"

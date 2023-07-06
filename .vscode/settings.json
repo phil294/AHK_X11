@@ -22,5 +22,6 @@
         "ungrab",
         "XFCE",
         "xtst"
-    ]
+    ],
+    "files.trimTrailingWhitespace": true
 }

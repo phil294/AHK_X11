@@ -42,7 +42,7 @@ class Cmd::X11::Window::Util
 
 				wins.select! do |win|
 					if ! exclude_title.empty?
-						return false if win.name.not_nil!.includes? exclude_title 
+						return false if win.name.not_nil!.includes? exclude_title
 					end
 					if ! text.empty? || ! exclude_text.empty?
 						win_texts = thread.runner.display.at_spi &.get_all_texts(thread, win, include_hidden: false)

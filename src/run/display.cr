@@ -136,7 +136,7 @@ module Run
 				end
 			end
 			STDERR.puts "AtSpi failed five times in a row. Last seen error:"
-			error.not_nil!.inspect_with_backtrace(STDERR)					
+			error.not_nil!.inspect_with_backtrace(STDERR)
 			return nil
 		end
 	end

@@ -21,7 +21,7 @@ module Cmd
 
 		def initialize(@line_no, @args)
 		end
-		
+
 		# *args* is like `@args`, but parsed (vars substituted).
 		# runner can be accessed via `thread.runner`.
 		# When `class.conditional`, the return value determines the next branch.
@@ -33,7 +33,7 @@ module Cmd
 		property next : Base?
 		property je : Base?
 		property jne : Base?
-		
+
 		def self.all_subclasses
 			{{ @type.all_subclasses }}
 		end

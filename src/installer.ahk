@@ -88,7 +88,7 @@ Install:
 	RunWait, desktop-file-install --dir=%A_Home%/.local/share/applications %app_name%-windowspy.desktop
 	FileDelete, %app_name%-windowspy.desktop
 
-	RunWait, update-desktop-database %A_Home%/.local/share/applications	
+	RunWait, update-desktop-database %A_Home%/.local/share/applications
 
 	MsgBox, Installation complete.
 Return
