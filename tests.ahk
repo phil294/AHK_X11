@@ -109,7 +109,7 @@ gosub assert
 
 ; helper gui for various interaction tests:
 gui -caption
-gui add, picture, x0 y0, assets/logo.png
+gui add, picture, x0 y0 h47 w-1, assets/logo.png
 gui add, button, x10 y50 ggui_button_clicked, btn txt 1
 gui add, edit, x20 y70 vgui_edit, edit txt 1
 gui +resize
@@ -217,7 +217,7 @@ expect = controlgetpos,x,0
 gosub assert
 expect = controlgetpos,y,0
 gosub assert
-expect = controlgetpos,w,48
+expect = controlgetpos,w,47
 gosub assert
 
 ControlGetText, edit_txt, edit txt 1
@@ -418,10 +418,10 @@ gosub assert
 
 coordmode, pixel, relative
 PixelGetColor, color, 26, 8, rgb
-expect = pixelgetcolor,color,7BC07B
+expect = pixelgetcolor,color,79BE79
 gosub assert
 
-PixelSearch, x, y, 0, 0, 100, 100, 0x7BC07B, 0, rgb
+PixelSearch, x, y, 0, 0, 100, 100, 0x79BE79, 0, rgb
 expect = pixelsearch,x,26
 gosub assert
 expect = pixelsearch,y,8
