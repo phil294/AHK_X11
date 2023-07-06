@@ -9,7 +9,7 @@ cd ..
 # Cannot overwrite CRYSTAL_LIBRARY_PATH because crystal#12380, need link-flag instead.
 # -no-pie prevents 
 shards build -Dpreview_mt --link-flags="-L$PWD/build" \
-  -Dgc_none \
+  # -Dgc_none \
   --release \
 # --debug
 # -Dgc_none
@@ -36,7 +36,6 @@ mv ahk_x11-x86_64.AppImage "$bin_name"
 # In other words, this is possible for a user:
 #     ahk_x11 --compile script1.ahk && ./script1 --compile script2.ahk && ./script2
 # but no one will ever do that.
-cp "$bin_name" "$bin_name".pre_installer
 ./"$bin_name" --compile ../src/installer.ahk tmp
 mv tmp "$bin_name"
 
