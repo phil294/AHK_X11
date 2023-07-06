@@ -215,7 +215,6 @@ module Run
 			when "a_index"
 				(@loop_stack.last?.try &.index || 0).to_s
 			when "a_detecthiddenwindows"
-				pp! @settings
 				@settings.detect_hidden_windows ? "On" : "Off"
 			else
 				nil
