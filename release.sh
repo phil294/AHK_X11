@@ -23,6 +23,10 @@ if grep -R -n -E '\s$' src; then
     echo 'trailing whitespace found'
     exit 1
 fi
+if grep -R -n 'p! ' src; then
+    echo 'p! found'
+    exit 1
+fi
 
 docker run --rm -it -v /b/ahk_x11:/a --privileged ahk_x11-builder-ubuntu.20.04 bash -c \
     'cd /a/build && ./build.sh --release'
