@@ -212,7 +212,7 @@ gui_button_clicked_success =
 ;;ControlGet, OutputVar, Cmd [, Value, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
 ;;ControlGetFocus, OutputVar [WinTitle, WinText, ExcludeTitle, ExcludeText]
 
-ControlGetPos, x, y, w, h, icon_0_0
+ControlGetPos, x, y, w, h, icon_0_0_0
 expect = controlgetpos,x,0
 gosub assert
 expect = controlgetpos,y,0
@@ -592,7 +592,7 @@ gosub test_hotstring
 
 ; :o:testhotstringbs::{bs}
 hotstring_input = .testhotstringbs.
-hotstring_output = 
+hotstring_output =
 gosub test_hotstring
 
 ; :*:testhotstringnoendchar::immediate
