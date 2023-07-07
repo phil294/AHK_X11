@@ -251,6 +251,7 @@ module Run
 			when "a_username" then Hacks.username
 			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
 			when "a_computername" then `uname -n`
+			when "a_issuspended" then @suspension ? "1" : "0"
 			else nil
 			end
 		end
