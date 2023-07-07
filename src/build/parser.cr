@@ -106,6 +106,9 @@ module Build
 						raise Exception.new ((e.message || "") + "\n#Include line: #{i}"), e.cause
 					end
 				end
+			elsif first_word.starts_with?("#maxthreadsperhotkey")
+				@runner_settings.max_threads_per_hotkey = args.to_u8? || 1_u8
+				raise "#MaxThreadsPerHotkey maximum value is 20" if @runner_settings.max_threads_per_hotkey > 20
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
@@ -158,7 +161,7 @@ module Build
 					end
 				else # Hotkey
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					@hotkeys << Run::Hotkey.new label, priority: 0, escape_char: @runner_settings.escape_char
+					@hotkeys << Run::Hotkey.new label, priority: 0, escape_char: @runner_settings.escape_char, max_threads: @runner_settings.max_threads_per_hotkey
 					if ! instant_action.empty?
 						add_line "#{instant_action}", line_no
 						add_line "Return", line_no

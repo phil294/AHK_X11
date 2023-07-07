@@ -19,6 +19,9 @@ module Run
 		property escape_char = '`'
 		property hotstring_end_chars = ['-', '(', ')', '[', ']', '{', '}', ':', ';', '\'', '"', '/', '\\', ',', '.', '?', '!', '\n', ' ', '\t', '\r']
 		property single_instance : SingleInstance?
+		# Can't be altered after parsing but we still need to remember this value somewhere
+		# for the dynamic creation of hotkeys.
+		property max_threads_per_hotkey = 1_u8
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own

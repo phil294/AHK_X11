@@ -324,7 +324,7 @@
                     <a class="tbd" href="#h_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>
                   </li>
                   <li>
-                    <a class="tbd" href="#h_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>
+                    <a href="#h_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>
                   </li>
                   <li>
                     <a href="#Hotkey.htm">Hotkey</a>
@@ -820,7 +820,7 @@
                 <a class="tbd" href="#h_MaxThreadsBuffer.htm">#MaxThreadsBuffer</a>
               </li>
               <li>
-                <a class="tbd" href="#h_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>
+                <a href="#h_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>
               </li>
               <li>
                 <a class="tbd" href="#h_NoTrayIcon.htm">#NoTrayIcon</a>
@@ -1100,7 +1100,7 @@ return</pre>
             <br class="calibre12" /> How can a repeating action be stopped without exiting the script?
           </h3>
           <p class="calibre8">To stop an action that is repeating inside a <a href="#Loop.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Loop</a>, consider the following example hotkey, which both starts and stops its own repeating action. In other words, pressing the hotkey once will start the Loop. Pressing the same hotkey again will stop it.</p>
-          <pre class="calibre22"><span class="tbd">#MaxThreadsPerHotkey</span> 3
+          <pre class="calibre22">#MaxThreadsPerHotkey 3
 #z::
 #MaxThreadsPerHotkey 1
 if KeepWinZRunning = y  ; This means an underlying <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">thread</a> is already running the loop below.
@@ -2840,7 +2840,7 @@ else
                 <td height="16" class="calibre4">Causes some or all <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkeys</a> to buffer rather than ignore keypresses when their <a href="#h_MaxThreadsPerHotkey.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxThreadsPerHotkey</a> limit has been reached.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#h_MaxThreadsPerHotkey.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxThreadsPerHotkey</a></td>
+                <td height="16" class="calibre4"><a href="#h_MaxThreadsPerHotkey.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxThreadsPerHotkey</a></td>
                 <td height="16" class="calibre4">Sets the maximum number of simultaneous <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">threads</a> per <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkey</a>.</td>
               </tr>
               <tr class="calibre3">
@@ -7502,7 +7502,7 @@ return
 #z::MsgBox, But not this one. </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="h_MaxThreadsPerHotkey.htm" href="#h_MaxThreadsPerHotkey.htm">#</a> <h2 class="calibre17">#MaxThreadsPerHotkey</h2>
           <hr size="2" class="calibre24" />

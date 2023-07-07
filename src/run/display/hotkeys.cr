@@ -46,7 +46,7 @@ module Run
 				active_state = hotkey.active if active_state.nil?
 			else
 				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{hotkey_label}" if ! cmd_label
-				hotkey = Hotkey.new(cmd.not_nil!, hotkey_label, priority: priority, escape_char: @runner.settings.escape_char)
+				hotkey = Hotkey.new(cmd.not_nil!, hotkey_label, priority: priority, escape_char: @runner.settings.escape_char, max_threads: @runner.settings.max_threads_per_hotkey)
 				hotkey.exempt_from_suspension = cmd.is_a?(Cmd::Misc::Suspend)
 				@hotkeys << hotkey
 				active_state = true if active_state.nil?
