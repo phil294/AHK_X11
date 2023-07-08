@@ -293,7 +293,7 @@ module Run
 			_key_event.type = type
 			_key_event.keycode = keycode
 			_key_event.state = state
-			if keycode <= 9 # mouse button
+			if type >= 4 # mouse button. keycode will be 1-9
 				# pretend that keysym = keycode
 				@key_handler.not_nil!.call(_key_event, keycode.to_u64, nil)
 			else
