@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 52
+N_TESTS = 53
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -242,6 +242,7 @@ expect = coordmode mousepos,x,10
 gosub assert
 expect = coordmode mousepos,y,20
 gosub assert
+CoordMode, Mouse, Relative
 
 ;;DetectHiddenText, On|Off
 ;;DetectHiddenWindows, On|Off
@@ -402,7 +403,7 @@ _errorlevel =
 ;Loop, Read, InputFile [, OutputFile, FutureUse]
 ;Menu, MenuName, Cmd [, P3, P4, P5, FutureUse]
 
-MouseClick, L, 45, 80
+MouseClick, L, 35, 60
 sleep 20
 expect = click gui button,gui_button_clicked_success,1
 gosub assert
@@ -688,12 +689,25 @@ gui submit, nohide
 expect = hotkey with send,gui_edit,efg
 gosub assert
 hotkey, a, off
+send ^a{del}
+sleep 10
 
 Send, {LButton}
 sleep 20
 expect = send {lbutton},gui_button_clicked_success,1
 gosub assert
 gui_button_clicked_success =
+
+clipboard = clp
+MouseClick, R, 62, 81 ; Context menu of text field
+sleep 20
+send p ; paste
+sleep 100
+gui submit, nohide
+expect = clipboard paste,gui_edit,clp
+gosub assert
+send ^a{del}
+sleep 10
 
 Return
 
@@ -705,3 +719,6 @@ Return
 :r:testhotstringraw::^a
 :o:testhotstringbs::{bs}
 :*:testhotstringnoendchar::immediate
+
+noop:
+return
