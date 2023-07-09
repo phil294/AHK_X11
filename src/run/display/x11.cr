@@ -229,6 +229,7 @@ module Run
 		end
 
 		@key_handler : Proc(::X11::KeyEvent, UInt64, Char?, Nil)?
+		@flush_event_queue = Channel(Nil).new
 		def run(*, key_handler)
 			@key_handler = key_handler
 			record = @record
@@ -249,7 +250,18 @@ module Run
 			# Even if XTst Record obliterates the need to read key events, we still need to
 			# keep the event loop running or otherwise the hotkeys aren't even grabbed
 			# and use it to get updates on the active window.
-			event_fd = IO::FileDescriptor.new @display.connection_number
+			spawn same_thread: true do
+				event_fd = IO::FileDescriptor.new @display.connection_number
+				loop do
+					# Instead of this, running `next_event` (blocking) in a loop also works but requires a separate thread.
+					# But that somehow messes up `::exit` so we don't do that.
+					# This very solution, `wait_readable`, has shown to *sometimes* be unreliable, i.e. hotkeys aren't
+					# grabbed properly because some pending events somehow aren't visible. To solve this,
+					# `flush_event_queue` is also called from a few other places.
+					event_fd.wait_readable
+					@flush_event_queue.send(nil)
+				end
+			end
 			loop do
 				while @display.pending != 0
 					@mutex.lock
@@ -263,10 +275,10 @@ module Run
 							if active_win > 0
 								# The mutex doesn't protect against nonsense here yet but the chance for
 								# this to happen is fairly small
-								@mutex.unlock
-								@hotkeys.each { |h| ungrab_hotkey(h, from_window: active_window_before, unsubscribe: false) }
-								@hotkeys.each { |h| grab_hotkey(h, subscribe: false) }
-								@mutex.lock
+								spawn same_thread: true do
+									@hotkeys.each { |h| ungrab_hotkey(h, from_window: active_window_before, unsubscribe: false) }
+									@hotkeys.each { |h| grab_hotkey(h, subscribe: false) }
+								end
 							end
 						end
 					end
@@ -279,7 +291,7 @@ module Run
 						end
 					end
 				end
-				event_fd.wait_readable
+				@flush_event_queue.receive
 			end
 		end
 
@@ -326,6 +338,7 @@ module Run
 				end
 			end
 			@mutex.unlock
+			@flush_event_queue.send(nil)
 		end
 		# :ditto:
 		def ungrab_hotkey(hotkey, *, from_window = @last_active_window, unsubscribe = true)
@@ -335,16 +348,19 @@ module Run
 				@display.ungrab_key(hotkey.keycode, mod, grab_window: from_window)
 			end
 			@mutex.unlock
+			@flush_event_queue.send(nil)
 		end
 		def grab_keyboard
 			@mutex.lock
 			@display.grab_keyboard(grab_window: @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
 			@mutex.unlock
+			@flush_event_queue.send(nil)
 		end
 		def ungrab_keyboard
 			@mutex.lock
 			@display.ungrab_keyboard(time: ::X11::CurrentTime)
 			@mutex.unlock
+			@flush_event_queue.send(nil)
 		end
 	end
 end
