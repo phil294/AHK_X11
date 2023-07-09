@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 50
+N_TESTS = 52
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -120,6 +120,9 @@ goto l_after_gui
 			return
 l_after_gui:
 sleep 10
+
+;;;;;;;;;;;;;;;;;;; TESTS ;;;;;;;;;;;;;;;;;;;
+
 ifwinnotexist, ahk_x11_test_gui
 {
 	fail_reason = gui win not exist
@@ -518,7 +521,7 @@ gosub assert
 
 ; ### SEND/HOTKEY/HOTSTRING TESTS ###
 
-send {tab}{tab}^a{del} ; focus and reset
+send {tab}^a{del} ; focus and reset
 sleep 20
 send 123
 sleep 20
@@ -566,7 +569,7 @@ goto l_hotstring_tests
 					if a_index > 50
 						break
 				}
-				expect = hotstring testhotstringbtw,gui_edit,%hotstring_output%
+				expect = hotstring %hotstring_input%,gui_edit,%hotstring_output%
 				gosub assert
 			return
 l_hotstring_tests:
@@ -599,6 +602,9 @@ gosub test_hotstring
 hotstring_input = .testhotstringnoendchar
 hotstring_output = .immediate
 gosub test_hotstring
+
+send ^a{del}
+sleep 10
 
 goto l_after_f2_hotkey
 			hotkey_f2:
@@ -654,6 +660,34 @@ runwait, xdotool click 9
 expect = hotkey xbutton2,hotkey_xbutton2_success,1
 gosub assert
 hotkey, xbutton2, off
+
+goto l_after_hotkey_with_send_hotkey
+			hotkey_hotkey_with_send:
+				send, bcd
+			return
+l_after_hotkey_with_send_hotkey:
+hotkey, a, hotkey_hotkey_with_send
+runwait, xdotool key a
+sleep 20
+gui submit, nohide
+expect = hotkey with send,gui_edit,bcd
+gosub assert
+hotkey, a, off
+send ^a{del}
+sleep 10
+goto l_after_hotkey_with_send_not_first_cmd_hotkey
+			hotkey_hotkey_with_send_not_first_cmd:
+				sleep 1
+				send, efg
+			return
+l_after_hotkey_with_send_not_first_cmd_hotkey:
+hotkey, a, hotkey_hotkey_with_send_not_first_cmd
+runwait, xdotool key a
+sleep 20
+gui submit, nohide
+expect = hotkey with send,gui_edit,efg
+gosub assert
+hotkey, a, off
 
 Send, {LButton}
 sleep 20

@@ -74,12 +74,16 @@ module Run
 				(! @runner.display.suspended || hotkey.exempt_from_suspension)
 			end
 			if hotkey
-				# TODO: auto test for this
-				if ! hotkey.up && ! hotkey.no_grab && (hotkey.cmd.is_a?(Cmd::X11::Keyboard::Send) || hotkey.cmd.is_a?(Cmd::X11::Keyboard::SendRaw))
-					# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
-					key_map = XDo::LibXDo::Charcodemap.new
-					key_map.code = hotkey.keycode
-					@runner.display.x_do.keys_raw [key_map], pressed: false, delay: 0
+				if ! hotkey.up && ! hotkey.no_grab
+					# Fixing https://github.com/jordansissel/xdotool/issues/210:
+					# Doing a `hotkey.keycode` UP event works great but breaks key remaps.
+					# Instead, the following magic seems to work reliably.
+					# Note that both grab and ungrab may fail / not work as expected but that's fine.
+					# This would better be placed at the *first* `Send`/`SendRaw` command on a per-hotkey
+					# basis, but since the performance penalty is negligible and it has no negative
+					# side effects, we just put it at the start of any grabbing hotkey trigger:
+					@runner.display.adapter.as(X11).grab_keyboard
+					@runner.display.adapter.as(X11).ungrab_keyboard
 				end
 				hotkey.trigger(@runner)
 			end
