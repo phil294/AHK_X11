@@ -75,8 +75,8 @@ module Run
 			end
 			if hotkey
 				if ! hotkey.up && ! hotkey.no_grab
-					# Fixing https://github.com/jordansissel/xdotool/issues/210:
-					# Doing a `hotkey.keycode` UP event works great but breaks key remaps.
+					# Fixing https://github.com/jordansissel/xdotool/issues/210: (also see Send/SendRaw)
+ 					# Doing a `hotkey.keycode` UP event works great but breaks key remaps.
 					# Instead, the following magic seems to work reliably.
 					# Note that both grab and ungrab may fail / not work as expected but that's fine.
 					# This would better be placed at the *first* `Send`/`SendRaw` command on a per-hotkey

@@ -66,10 +66,10 @@ class Util::AhkString
 			end
 			combo.repeat.times do
 				if combo.down || ! combo.up
-					yield [key_map], true, mouse_button
+					yield [key_map], true, mouse_button, combo
 				end
 				if combo.up || ! combo.down
-					yield [key_map], false, mouse_button
+					yield [key_map], false, mouse_button, combo
 				end
 			end
 		end

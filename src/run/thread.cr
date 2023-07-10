@@ -74,6 +74,7 @@ module Run
 		}
 		@stack = [] of Cmd::Base
 		getter priority = 0
+		getter hotkey : Hotkey? = nil
 		@exit_code = 0
 		getter done = false
 		@result_channel : Channel(Int32?)?
@@ -81,7 +82,7 @@ module Run
 		getter paused = false
 		getter loop_stack = [] of Cmd::ControlFlow::Loop
 		property performance_by_cmd = {} of String => CmdPerformance
-		def initialize(@runner, start, @priority, @settings)
+		def initialize(@runner, start, @priority, @settings, @hotkey)
 			@@id_counter += 1
 			@id = @@id_counter
 			@stack << start
@@ -224,7 +225,7 @@ module Run
 		def parse_key_combinations(str, *, implicit_braces = false)
 			Util::AhkString.parse_key_combinations(str, @runner.settings.escape_char, implicit_braces: implicit_braces)
 		end
-		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool, XDo::Button? -> _)
+		def parse_key_combinations_to_charcodemap(str, &block : Array(XDo::LibXDo::Charcodemap), Bool, XDo::Button?, KeyCombination -> _)
 			Util::AhkString.parse_key_combinations_to_charcodemap(str, @runner.settings.escape_char, @runner.display.adapter.as(Run::X11), &block) # TODO: type cast etc
 		end
 

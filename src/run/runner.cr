@@ -101,18 +101,18 @@ module Run
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
-		def add_thread(cmd : Cmd::Base, priority) : Thread
-			thread = Thread.new(self, cmd, priority, @default_thread_settings)
+		def add_thread(cmd : Cmd::Base, priority, hotkey : Hotkey? = nil) : Thread
+			thread = Thread.new(self, cmd, priority, @default_thread_settings, hotkey)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
 			@run_thread_channel.send(nil) if i == @threads.size - 1
 			thread
 		end
 		# :ditto:
-		def add_thread(cmd_str : String, priority) : Thread?
+		def add_thread(cmd_str : String, priority, *, hotkey : Hotkey? = nil) : Thread?
 			cmd = @labels[cmd_str]?
 			return nil if ! cmd
-			add_thread(cmd, priority)
+			add_thread(cmd, priority, hotkey)
 		end
 
 		# Forever continuously figures out the "current thread" (`@threads.last`) and

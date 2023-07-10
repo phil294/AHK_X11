@@ -520,45 +520,45 @@ gosub assert
 ;;WinWaitClose, WinTitle, WinText, Seconds [, ExcludeTitle, ExcludeText]
 ;;WinWaitNotActive [, WinTitle, WinText, Seconds, ExcludeTitle, ExcludeText]
 
-; ### SEND/HOTKEY/HOTSTRING TESTS ###
-
 send {tab}^a{del} ; focus and reset
 sleep 20
-send 123
-sleep 20
-gui submit, nohide
-expect = send numbers - issue 22,gui_edit,123
-gosub assert
 
-send ^a{del}
-sleep 20
-send aBc
-sleep 20
-gui submit, nohide
-expect = send aBc - issue 13,gui_edit,aBc
-gosub assert
+; ;;;;;;;;;;;;;;;;;
 
-send ^a{del}
-sleep 20
-send +d
-sleep 20
-gui submit, nohide
-expect = send +d,gui_edit,D
-gosub assert
+goto l_send_tests
+			test_send:
+				send %to_send%
+				sleep 20
+				gui submit, nohide
+				if to_send_output =
+					to_send_output = %to_send%
+				expect = send %to_send%,gui_edit,%to_send_output%
+				gosub assert
+				to_send_output =
+				send ^a{del}
+				sleep 20
+			return
+l_send_tests:
 
-; TODO
-; send ^a{del}
-; sleep 20
-; send @
-; sleep 20
-; gui submit, nohide
-; expect = send @ - issue 32,gui_edit,@
-; gosub assert
+to_send = 123
+gosub test_send
+
+to_send = aBc
+gosub test_send
+
+to_send = +d
+to_send_output = D
+gosub test_send
+
+; issue #32
+; TODO:
+; to_send = @
+; gosub test_send
+
+; ;;;;;;;;;;;;;;;
 
 goto l_hotstring_tests
 			test_hotstring:
-				send ^a{del}
-				sleep 10
 				runwait xdotool type --delay=0 %hotstring_input%
 				loop
 				{
@@ -572,6 +572,8 @@ goto l_hotstring_tests
 				}
 				expect = hotstring %hotstring_input%,gui_edit,%hotstring_output%
 				gosub assert
+				send ^a{del}
+				sleep 10
 			return
 l_hotstring_tests:
 
@@ -604,93 +606,80 @@ hotstring_input = .testhotstringnoendchar
 hotstring_output = .immediate
 gosub test_hotstring
 
-send ^a{del}
-sleep 10
+; ;;;;;;;;;;;;;;
 
-goto l_after_f2_hotkey
-			hotkey_f2:
-				hotkey_f2_success = 1
+goto l_hotkey_tests
+			hotkey_test_success:
+				hotkey_test_success = 1
 			return
-l_after_f2_hotkey:
-hotkey, f2, hotkey_f2
-runwait, xdotool key F2
-expect = hotkey f2 lowercase,hotkey_f2_success,1
-gosub assert
-hotkey_f2_success =
-hotkey, f2, off
-hotkey, F2, hotkey_f2
-runwait, xdotool key F2
-expect = hotkey f2 uppercase,hotkey_f2_success,1
-gosub assert
-hotkey, F2, off
+			test_hotkey_success:
+				hotkey, %key%, hotkey_test_success
+				runwait, bash -c 'xdotool %xdotool_run%',,,,xdotool_o,xdotool_e
+				expect = hotkey %key%,hotkey_test_success,1
+				gosub assert
+				hotkey_test_success =
+				hotkey, %key%, off
+			return
 
-goto l_after_shift_s_hotkey
-			hotkey_shift_s:
-				hotkey_shift_s_success = 1
+			hotkey_test_send:
+				if hokey_send_raw <>
+					sendraw, %hotkey_send%
+				else
+					send, %hotkey_send%
 			return
-l_after_shift_s_hotkey:
-hotkey, +s, hotkey_shift_s
-runwait, xdotool key shift+s
-expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
-gosub assert
-hotkey_shift_s_success =
-hotkey, +s, off
-hotkey, +S, hotkey_shift_s
-runwait, xdotool key shift+s
-expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
-gosub assert
+			test_hotkey_send:
+				hotkey %key%, hotkey_test_send
+				runwait, bash -c 'xdotool %xdotool_run%',,,,xdotool_o,xdotool_e
+				sleep 20
+				gui submit, nohide
+				expect = hotkey with send %key%:%hokey_send_raw%,gui_edit,%hotkey_send%
+				gosub assert
+				hotkey, %key%, off
+				send ^a{del}
+				sleep 10
+			return
+l_hotkey_tests:
+
+key = f2
+xdotool_run = key F2
+gosub test_hotkey_success
+
+key = F2
+xdotool_run = key F2
+gosub test_hotkey_success
+
+key = +s
+xdotool_run = key shift+s
+gosub test_hotkey_success
+
+key = +S
+xdotool_run = key shift+s
+gosub test_hotkey_success
 
 ; esc and xbutton2 share the same keycode:
-goto l_after_esc_hotkey
-			hotkey_esc:
-				hotkey_esc_success = 1
-			return
-l_after_esc_hotkey:
-hotkey, esc, hotkey_esc
-runwait, xdotool key Escape
-expect = hotkey esc,hotkey_esc_success,1
-gosub assert
-hotkey, esc, off
-goto l_after_xbutton2_hotkey
-			hotkey_xbutton2:
-				hotkey_xbutton2_success = 1
-			return
-l_after_xbutton2_hotkey:
-hotkey, xbutton2, hotkey_xbutton2
-runwait, xdotool click 9
-expect = hotkey xbutton2,hotkey_xbutton2_success,1
-gosub assert
-hotkey, xbutton2, off
+key = esc
+xdotool_run = key Escape
+gosub test_hotkey_success
 
-goto l_after_hotkey_with_send_hotkey
-			hotkey_hotkey_with_send:
-				send, bcd
-			return
-l_after_hotkey_with_send_hotkey:
-hotkey, a, hotkey_hotkey_with_send
-runwait, xdotool key a
-sleep 20
-gui submit, nohide
-expect = hotkey with send,gui_edit,bcd
-gosub assert
-hotkey, a, off
-send ^a{del}
-sleep 10
-goto l_after_hotkey_with_send_not_first_cmd_hotkey
-			hotkey_hotkey_with_send_not_first_cmd:
-				sleep 1
-				send, efg
-			return
-l_after_hotkey_with_send_not_first_cmd_hotkey:
-hotkey, a, hotkey_hotkey_with_send_not_first_cmd
-runwait, xdotool key a
-sleep 20
-gui submit, nohide
-expect = hotkey with send,gui_edit,efg
-gosub assert
-hotkey, a, off
-send ^a{del}
-sleep 10
+key = xbutton2
+xdotool_run = click 9
+gosub test_hotkey_success
+
+key = a
+xdotool_run = key a
+hotkey_send = bcd
+gosub test_hotkey_send
+
+; sending itself
+key = a
+hotkey_send = abc
+gosub test_hotkey_send
+hotkey_send = ade
+hokey_send_raw = raw
+gosub test_hotkey_send
+hokey_send_raw =
+
+; ;;;;;;;;;;
 
 Send, {LButton}
 sleep 20
@@ -708,6 +697,10 @@ expect = clipboard paste,gui_edit,clp
 gosub assert
 send ^a{del}
 sleep 10
+
+; Tests missing / need manual testing for now:
+; - Key remaps
+; - Vimium Everywhere with FF Context Menus
 
 Return
 
