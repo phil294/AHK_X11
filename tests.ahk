@@ -125,6 +125,20 @@ gosub timeout
 expect = test setup: timeout: reset timeout_var,test_setup_timeout_works,
 gosub assert
 
+var1 = v1
+expect = equality check,var1,%var1%
+gosub assert
+var1 =   v1  ; ; ;
+/*
+*/
+expect = equality check spaced,var1,v1
+gosub assert
+var1 = v1%a_space%
+expect = disparity check,var1,v1
+gosub assert_false
+expect = equality check spaced var,v1,%v1%
+gosub assert
+
 ; helper gui for various interaction tests:
 gui -caption
 gui add, picture, x0 y0 h47 w-1, assets/logo.png
