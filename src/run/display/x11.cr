@@ -354,7 +354,11 @@ module Run
 			@mutex.lock
 			@hotkeys.delete hotkey if unsubscribe
 			hotkey.modifier_variants.each do |mod|
-				@display.ungrab_key(hotkey.keycode, mod, grab_window: from_window)
+				if hotkey.keysym < 10
+					@display.ungrab_button(hotkey.keycode, mod, grab_window: @root_win)
+				else
+					@display.ungrab_key(hotkey.keycode, mod, grab_window: from_window)
+				end
 			end
 			@mutex.unlock
 			@flush_event_queue.send(nil)

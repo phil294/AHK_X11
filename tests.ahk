@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 55
+N_TESTS = 56
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -669,6 +669,10 @@ key = xbutton2
 xdotool_run = click 9
 gosub test_hotkey_success
 
+key = lbUTton
+xdotool_run = click 1
+gosub test_hotkey_success
+
 key = a
 xdotool_run = key a
 hotkey_send = bcd
@@ -685,7 +689,7 @@ hokey_send_raw =
 
 ; ;;;;;;;;;;
 
-Send, {LButton}
+Send, {LButTon}
 sleep 50
 expect = send {lbutton},gui_button_clicked_success,1
 gosub assert
