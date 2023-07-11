@@ -7,6 +7,7 @@ at_exit { GC.collect }
 module X11::C
 	# Infer a long list of key names from lib/x11/src/x11/c/keysymdef.cr, stripped from XK_ and underscores.
 	# Seems to be necessary because XStringToKeysym is always case sensitive (?)
+	# In our X11 key handling, we only deal with lowercase chars.
 	def self.ahk_key_name_to_keysym_generic
 		{{
 			@type.constants # TODO: possible to declare this outside of the module?
@@ -317,7 +318,15 @@ module Run
 			lookup = key_event.lookup_string
 			char = lookup[:string][0]?
 			keysym = lookup[:keysym]
-			@key_handler.not_nil!.call(key_event, keysym, char)
+			# We may have e.g. grabbed *a (so including Shift + lowercase a) but the reported
+			# event here will return Shift + uppercase A. We'll deal with lowercase only.
+			if char && char.downcase != char
+				char = char.downcase
+				keysym = Run::X11.ahk_key_name_to_keysym(char.to_s)
+				# TODO: like ahk-string.cr
+				raise Run::RuntimeException.new "Unexpected keysym #{keysym} is uppercase but can't be mapped to lowercase" if ! keysym || ! keysym.is_a?(Int32)
+			end
+			@key_handler.not_nil!.call(key_event, keysym.to_u64, char)
 		end
 
 		# It's easier to just grab on the root window once, but by repeatedly reattaching to the respectively currently

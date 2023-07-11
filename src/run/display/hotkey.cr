@@ -33,7 +33,7 @@ module Run
 			end
 
 		def init(escape_char)
-			key_combos = Util::AhkString.parse_key_combinations(@key_str.gsub("*","").gsub("~",""), escape_char, implicit_braces: true)
+			key_combos = Util::AhkString.parse_key_combinations(@key_str.downcase.gsub("*","").gsub("~",""), escape_char, implicit_braces: true)
 			raise Run::RuntimeException.new "Multiple keys aren't allowed for Hotkey definitions" if key_combos.size != 1 # TODO: probably impossible?
 			@key_name = key_combos[0].key_name
 			@keysym = key_combos[0].keysym

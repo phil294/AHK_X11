@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 53
+N_TESTS = 55
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -653,6 +653,10 @@ xdotool_run = key shift+s
 gosub test_hotkey_success
 
 key = +S
+xdotool_run = key shift+s
+gosub test_hotkey_success
+
+key = *s
 xdotool_run = key shift+s
 gosub test_hotkey_success
 

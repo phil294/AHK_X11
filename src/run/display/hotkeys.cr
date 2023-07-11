@@ -75,9 +75,10 @@ module Run
 			end
 			if hotkey
 				if ! hotkey.up && ! hotkey.no_grab
-					# Fixing https://github.com/jordansissel/xdotool/issues/210: (also see Send/SendRaw)
+					# Fixing https://github.com/jordansissel/xdotool/issues/210:
  					# Doing a `hotkey.keycode` UP event works great but breaks key remaps.
-					# Instead, the following magic seems to work reliably.
+					# Instead, the following magic seems to work reliably, as long as the hotkey key
+					# isn't sent itself (see Send for that other fix).
 					# Note that both grab and ungrab may fail / not work as expected but that's fine.
 					# This would better be placed at the *first* `Send`/`SendRaw` command on a per-hotkey
 					# basis, but since the performance penalty is negligible and it has no negative
@@ -113,6 +114,7 @@ module Run
 				end
 			end
 		end
+		# todo doesnt belong here
 		def block_input
 			@runner.display.adapter.grab_keyboard
 		end
