@@ -404,7 +404,7 @@ _errorlevel =
 ;Menu, MenuName, Cmd [, P3, P4, P5, FutureUse]
 
 MouseClick, L, 35, 60
-sleep 20
+sleep 50
 expect = click gui button,gui_button_clicked_success,1
 gosub assert
 gui_button_clicked_success =
@@ -686,7 +686,7 @@ hokey_send_raw =
 ; ;;;;;;;;;;
 
 Send, {LButton}
-sleep 20
+sleep 50
 expect = send {lbutton},gui_button_clicked_success,1
 gosub assert
 gui_button_clicked_success =
