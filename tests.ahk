@@ -711,8 +711,14 @@ xdotool_run = key a
 hotkey_send = bcd
 gosub test_hotkey_send
 
+key = ^a
+xdotool_run = key ctrl+a
+hotkey_send = kja
+gosub test_hotkey_send
+
 ; sending itself
 key = a
+xdotool_run = key a
 hotkey_send = abc
 gosub test_hotkey_send
 hotkey_send = ade
