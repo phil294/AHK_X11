@@ -7,8 +7,9 @@ module Run
 		getter repeat = 0
 		getter up = false
 		getter down = false
+		getter blind = false
 		property keycode = 0_u8
-		def initialize(@key_name, @keysym, @modifiers, @up, @down, @repeat)
+		def initialize(@key_name, @keysym, @modifiers, @up, @down, @repeat, *, @blind = false)
 		end
 	end
 end

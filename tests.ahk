@@ -665,9 +665,12 @@ goto l_hotkey_tests
 				runwait, bash -c 'xdotool %xdotool_run% --delay=0',,,,xdotool_o,xdotool_e
 				sleep 50
 				gui submit, nohide
-				expect = hotkey with send %key%:%hokey_send_raw%,gui_edit,%hotkey_send%
+				if hotkey_sent =
+					hotkey_sent = %hotkey_send%
+				expect = hotkey with send %key%:%hokey_send_raw%:%hotkey_sent%:%xdotool_run%,gui_edit,%hotkey_sent%
 				gosub assert
 				hotkey, %key%, off
+				hotkey_sent =
 				send ^a{del}
 				sleep 10
 			return
@@ -725,6 +728,23 @@ hotkey_send = ade
 hokey_send_raw = raw
 gosub test_hotkey_send
 hokey_send_raw =
+
+key = *s
+hotkey_send = {blind}v
+	xdotool_run = key shift+s
+	hotkey_sent = V
+	gosub test_hotkey_send
+
+	xdotool_run = key s
+	hotkey_sent = v
+	gosub test_hotkey_send
+
+	; TODO: somehow test {blind}: ^!s -> ^!v and ^+s => ^+v
+
+	xdotool_run = key ctrl+s
+	clipboard = clp
+	hotkey_sent = clp
+	gosub test_hotkey_send
 
 ; ;;;;;;;;;;
 

@@ -8266,6 +8266,18 @@ return</pre>
             <br class="calibre12" />
             <b class="calibre14"><u class="calibre20">N.B.  Windows does not allow the simulation of the "CTRL-ALT-DEL" combination!</u></b>
           </p>
+          <p class="calibre8"><strong id="Blind.htm" class="calibre14">Blind mode</strong></p>
+          <p id="blind">The Blind mode can be enabled with <code>{Blind}</code>, which gives the script more control by disabling a number of things that are normally done automatically to make things work as expected. <code>{Blind}</code> must be the first item in the string to enable the Blind mode. It has the following effects:</p>
+          <ul>
+            <li>The Blind mode avoids releasing the modifier keys (Alt, Ctrl, Shift, and Win) if they started out in the down position. For example, the hotkey <code>+s::Send {Blind}abc</code> would send ABC rather than abc because the user is holding down <kbd>Shift</kbd>.</li>
+            <li>Modifier keys are restored differently to allow a Send to turn off a hotkey's modifiers even if the user is still physically holding them down. For example, <code>^space::Send {Ctrl up}</code> automatically pushes <kbd>Ctrl</kbd> back down if the user is still physically holding <kbd>Ctrl</kbd>, whereas <code>^space::Send {Blind}{Ctrl up}</code> allows <kbd>Ctrl</kbd> to be logically up even though it is physically down.</li>
+            <li><a href="SetStoreCapslockMode.htm">SetStoreCapsLockMode</a> is ignored; that is, the state of <kbd>CapsLock</kbd> is not changed.</li>
+            <li class="tbd"><a href="_MenuMaskKey.htm">Menu masking</a> is disabled. That is, Send omits the extra keystrokes that would otherwise be sent in order to prevent: 1) Start Menu appearance during Win keystrokes (LWin/RWin); 2) menu bar activation during Alt keystrokes. However, the Blind mode does not prevent masking performed by the keyboard hook following activation of a hook hotkey.</li>
+            <li class="rm">Send does not wait for <kbd>Win</kbd> to be released even if the text contains an <kbd>L</kbd> keystroke. This would normally be done to prevent Send from triggering the system "lock workstation" hotkey (<kbd>Win</kbd>+<kbd>L</kbd>). See <a href="../Hotkeys.htm#win-l">Hotkeys</a> for details.</li>
+          </ul>
+          <p>The Blind mode is used internally when <a href="#Remap.htm">remapping a key</a>. For example, the remapping <code>a::b</code> would produce: 1) "b" when you type "a"; 2) uppercase "B" when you type uppercase "A"; and 3) <kbd>Ctrl</kbd>+<kbd>B</kbd> when you type <kbd>Ctrl</kbd>+<kbd>A</kbd>.</p>
+          <p><code>{Blind}</code> is not supported by SendRaw or <a href="ControlSend.htm">ControlSendRaw</a>; <span class="rm">use <code>{Blind}{Raw}</code> instead.</span></p>
+          <p class="tbd">The Blind mode is not completely supported by <a href="#SendPlayDetail">SendPlay</a>, especially when dealing with the modifier keys (Ctrl, Alt, Shift, and Win).</p>
           <table border="1" width="100%" class="calibre1">
             <tbody class="calibre2">
               <tr class="calibre3">

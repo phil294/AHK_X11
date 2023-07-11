@@ -5,8 +5,21 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 	def run(thread, args)
 		thread.runner.display.pause do # to prevent hotkey from triggering other hotkey or itself
 			active_modifiers = thread.runner.display.x_do.active_modifiers
+			# This is *always* necessary, even if we want to keep the modifiers in blind mode, in which
+			# case they are sent along yet again. Otherwise e.g. `^a::send {blind}b` fails. I don't know why.
+			# Perhaps it's also only Ctrl that needs to be released once for Ctrl+x hotkeys to work, because
+			# when I tested it, it didn't apply to Alt+x hotkeys.
 			thread.runner.display.x_do.clear_active_modifiers active_modifiers
+			blind = nil
 			thread.parse_key_combinations_to_charcodemap(args[0]) do |key_map, pressed, mouse_button, combo|
+				# Our parser allows for each char having their own `{blind}` modifier, but
+				# the specs only allow it at the very start:
+				if blind == nil
+					blind = combo.blind
+					if blind
+						thread.runner.display.x_do.set_active_modifiers active_modifiers
+					end
+				end
 				if mouse_button
 					if pressed
 						thread.runner.display.x_do.mouse_down mouse_button
@@ -25,12 +38,14 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 					thread.runner.display.x_do.keys_raw key_map, pressed: pressed, delay: 0
 				end
 			end
-			# We can't use `x_do.set_active_modifiers active_modifiers` here because while it would be
-			# the preferred method, it also does some `xdo_mouse_down()` internally, based on current input state.
-			# And when we've sent an `{LButton}` down+up event in the keys, the x11 server might still report for the button
-			# to be pressed down when the up event hasn't been processed yet by it, resulting in wrong input state and
-			# effectively a wrong button pressed again by libxdo.
-			thread.runner.display.x_do.keys_raw active_modifiers, pressed: false, delay: 0
+			if ! blind
+				# We can't use `x_do.set_active_modifiers active_modifiers` here like above because while it would be
+				# the preferred method, it also does some `xdo_mouse_down()` internally, based on current input state.
+				# And when we've sent an `{LButton}` down+up event in the keys, the x11 server might still report for the button
+				# to be pressed down when the up event hasn't been processed yet by it, resulting in wrong input state and
+				# effectively a wrong button pressed again by libxdo.
+				thread.runner.display.x_do.keys_raw active_modifiers, pressed: false, delay: 0
+			end
 		end
 	end
 end

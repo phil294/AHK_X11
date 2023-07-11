@@ -78,6 +78,7 @@ class Util::AhkString
 	def self.parse_key_combinations(str, escape_char : Char, *, implicit_braces = false)
 		escape = false
 		modifiers = 0_u32
+		blind = false
 		str = str.sub("<^>!", "\0")
 		iter = str.each_char
 		while (char = iter.next) != Iterator::Stop::INSTANCE
@@ -124,17 +125,22 @@ class Util::AhkString
 				end
 				escape = false
 				if key_name
-					if key_name.size == 1 && key_name.upcase != key_name.downcase && key_name.upcase == key_name
-						modifiers |= ::X11::ShiftMask
-					end
-					keysym = Run::X11.ahk_key_name_to_keysym(key_name)
-					# TODO: why the typecheck / why not in x11.cr?
-					raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
+					if key_name.downcase == "blind"
+						blind = true
+					else
+						if key_name.size == 1 && key_name.upcase != key_name.downcase && key_name.upcase == key_name
+							modifiers |= ::X11::ShiftMask
+						end
+						keysym = Run::X11.ahk_key_name_to_keysym(key_name)
+						# TODO: why the typecheck / why not in x11.cr?
+						raise Run::RuntimeException.new "key name '#{key_name}' not found" if ! keysym || ! keysym.is_a?(Int32)
 
-					{% if ! flag?(:release) %}
-						puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
-					{% end %}
-					yield Run::KeyCombination.new(key_name.downcase, keysym.to_u64, modifiers, up, down, repeat)
+						{% if ! flag?(:release) %}
+							puts "[debug] #{key_name}: #{keysym}/#{modifiers}" # TODO:
+						{% end %}
+						yield Run::KeyCombination.new(key_name.downcase, keysym.to_u64, modifiers, up, down, repeat, blind: blind)
+						blind = false
+					end
 
 					modifiers = 0_u32
 				end
