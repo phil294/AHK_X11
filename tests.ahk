@@ -44,9 +44,21 @@ assert:
 	StringMid, test_value, expect, %second_comma_pos%, 9999
 
 	StringLeft, test_var_value, %test_var%, 9999
-	If test_var_value <> %test_value%
+	test_success = 0
+	if assert_as_opposite <>
 	{
-		fail_reason = ❌ (%tests_run%/%N_TESTS%) %test_title%: '%test_var%' is '%test_var_value%' but should be '%test_value%'
+		if test_var_value != %test_value%
+			test_success = 1
+	} else {
+		if test_var_value = %test_value%
+			test_success = 1
+	}
+	If test_success != 1
+	{
+		if assert_as_opposite <>
+			fail_reason_not = not%a_space%
+		fail_reason = ❌ (%tests_run%/%N_TESTS%) %test_title%: '%test_var%' is '%test_var_value%' but should %fail_reason_not%be '%test_value%'
+		fail_reason_not =
 		GoSub, fail
 	}
 	echo ✔ (%tests_run%/%N_TESTS%) %test_title%
@@ -57,7 +69,13 @@ assert:
 	test_var =
 	test_value =
 	test_var_value =
+	assert_as_opposite =
+	test_success =
 Return
+assert_false:
+	assert_as_opposite = 1
+	gosub assert
+return
 
 fail:
 	echo %fail_reason%
