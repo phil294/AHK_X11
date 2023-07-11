@@ -43,8 +43,9 @@ module Build
 			{% if ! flag?(:release) %}
 				puts "[debug] #{line_no}: #{line}" # TODO: externalize / use logger
 			{% end %}
-			line_content = line.strip
+			line_content = line
 				.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
+				.strip
 			match = line_content
 				.match(/^\s*([^\s,]*)(\s*,?)(.*)$/).not_nil!
 			first_word_case_sensitive = match[1]
