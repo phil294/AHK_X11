@@ -646,7 +646,8 @@ goto l_hotkey_tests
 			return
 			test_hotkey_success:
 				hotkey, %key%, hotkey_test_success
-				runwait, bash -c 'xdotool %xdotool_run%',,,,xdotool_o,xdotool_e
+				runwait, bash -c 'xdotool %xdotool_run% --delay=0',,,,xdotool_o,xdotool_e
+				sleep 50
 				expect = hotkey %key%,hotkey_test_success,1
 				gosub assert
 				hotkey_test_success =
@@ -661,8 +662,8 @@ goto l_hotkey_tests
 			return
 			test_hotkey_send:
 				hotkey %key%, hotkey_test_send
-				runwait, bash -c 'xdotool %xdotool_run%',,,,xdotool_o,xdotool_e
-				sleep 20
+				runwait, bash -c 'xdotool %xdotool_run% --delay=0',,,,xdotool_o,xdotool_e
+				sleep 50
 				gui submit, nohide
 				expect = hotkey with send %key%:%hokey_send_raw%,gui_edit,%hotkey_send%
 				gosub assert
