@@ -19,6 +19,8 @@ module Run
 		property coord_mode_caret = CoordMode::RELATIVE
 		property coord_mode_menu = CoordMode::RELATIVE
 		property detect_hidden_windows = false
+		property key_delay = 10
+		property key_press_duration = -1
 		property ahk_x11_track_performance = false
 	end
 
@@ -217,6 +219,8 @@ module Run
 				(@loop_stack.last?.try &.index || 0).to_s
 			when "a_detecthiddenwindows"
 				@settings.detect_hidden_windows ? "On" : "Off"
+			when "a_keydelay"
+				@settings.key_delay.to_s
 			else
 				nil
 			end

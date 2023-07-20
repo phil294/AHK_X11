@@ -42,6 +42,11 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 					end
 					thread.runner.display.x_do.keys_raw key_map, pressed: pressed, delay: 0
 				end
+				if pressed
+					sleep thread.settings.key_press_duration.milliseconds if thread.settings.key_press_duration > -1
+				else
+					sleep thread.settings.key_delay.milliseconds if thread.settings.key_delay > -1
+				end
 			end
 			if ! blind
 				# We can't use `x_do.set_active_modifiers active_modifiers` here like above because while it would be

@@ -11,6 +11,11 @@ class Cmd::X11::Keyboard::ControlSend < Cmd::Base
 					if ! mouse_button
 						win.keys_raw key_map, pressed: pressed, delay: 0
 					end
+					if pressed
+						sleep thread.settings.key_press_duration.milliseconds if thread.settings.key_press_duration > -1
+					else
+						sleep thread.settings.key_delay.milliseconds if thread.settings.key_delay > -1
+					end
 				end
 			end
 		end

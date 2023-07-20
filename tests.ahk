@@ -5,6 +5,8 @@
 
 N_TESTS = 70
 
+SetKeyDelay, 0
+
 GoSub, run_tests
 if tests_run != %N_TESTS%
 {
