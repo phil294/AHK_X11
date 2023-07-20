@@ -1461,13 +1461,13 @@ Please note: This only works unreliably, and in the above example, LControl will
                 <p class="calibre8" />
               </li>
             </ul>
-          <div class="tbd">
+          <div>
             <h3 class="calibre7"><br class="calibre12" />
               <a id="Scripts.htm__cmd" href="#Scripts.htm__cmd" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Passing Command Line Parameters to a Script
             </h3>
-            <p class="calibre8">Scripts support command line parameters. The format is: <br class="calibre12" /> AutoHotkey.exe [<em class="calibre21">Switches</em>] [<em class="calibre21">Script Filename</em>] [<em class="calibre21">Script Parameters</em>]<br class="calibre12" /> CompiledScript.exe [<em class="calibre21">Switches</em>] [<em class="calibre21">Script Parameters</em>] </p>
-            <p class="calibre8"><em class="calibre21">Switches</em> can be zero or more of the following: <br class="calibre12" /> /f or /force -- Launch unconditionally, skipping any warning dialogs. <br class="calibre12" /> /r or /restart -- Indicate that the script is being restarted (this is also used by the Reload command, internally).<br class="calibre12" /> /ErrorStdOut -- Send syntax errors to stdout rather than displaying a dialog. See <a href="#h_ErrorStdOut.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#ErrorStdOut</a> for details.</p>
-            <p class="calibre8"><em class="calibre21">Script Filename</em> can be omitted if there are no Script Parameters. If omitted, it will run (or prompt you to create) AutoHotkey.ini in the current working directory.</p>
+            <p class="calibre8">Scripts support command line parameters. The format is: <br class="calibre12" /> ahk_x11 [<em class="calibre21">Switches</em>] [<em class="calibre21">Script Filename</em>] [<em class="calibre21">Script Parameters</em>]<br class="calibre12" /> CompiledScript [<em class="calibre21">Switches</em>] [<em class="calibre21">Script Parameters</em>] </p>
+            <p class="calibre8 tbd"><em class="calibre21">Switches</em> can be zero or more of the following: <br class="calibre12" /> /f or /force -- Launch unconditionally, skipping any warning dialogs. <br class="calibre12" /> /r or /restart -- Indicate that the script is being restarted (this is also used by the Reload command, internally).<br class="calibre12" /> /ErrorStdOut -- Send syntax errors to stdout rather than displaying a dialog. See <a href="#h_ErrorStdOut.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#ErrorStdOut</a> for details.</p>
+            <p class="calibre8"><em class="calibre21">Script Filename</em> can be omitted if there are no Script Parameters. If omitted, it will run <span class="rm">(or prompt you to create) AutoHotkey.ini in the current working directory.</span> <span class="x11">the installer</span>.</p>
             <p class="calibre8"><em class="calibre21">Script Parameters</em> can be any strings you want to pass into the script (but any string that contains spaces must be enclosed in double quotes). The script sees incoming parameters as the <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variables</a> %1%, %2%, and so on. In addition, %0% contains the number of parameters passed (0 if none).</p>
             <p class="calibre8">If the number of parameters passed into a script varies (perhaps due to the user dragging and dropping a set of files onto a compiled script), the following example can be used to extract them one by one:</p>
             <pre class="calibre22">Loop, %0%
@@ -1547,7 +1547,7 @@ Please note: This only works unreliably, and in the above example, LControl will
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td class="calibre4">1, 2, 3, etc. </td>
-                <td class="calibre4"><a id="CommandLine" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a><span class="tbd">These variables are automatically created whenever a script is launched with command line parameters. They can be changed and referenced just like normal variable names (for example: %1%). The variable %0% contains the number of parameters passed (0 if none). See the <a href="#Scripts.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script section</a> for details.</span></td>
+                <td class="calibre4"><a id="CommandLine" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>These variables are automatically created whenever a script is launched with command line parameters. They can be changed and referenced just like normal variable names (for example: %1%). The variable %0% contains the number of parameters passed (0 if none). See the <a href="#Scripts.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script section</a> for details.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_WorkingDir</td>

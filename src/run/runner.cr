@@ -229,7 +229,7 @@ module Run
 		end
 		# These are only set by the program. See also `built_in_static_vars`.
 		# `var` is case insensitive
-		private def get_global_built_in_computed_var(var)
+		private def get_global_built_in_computed_var(var) : String?
 			case var.downcase
 			when "a_yyyy", "a_year" then Time.local.year.to_s
 			when "a_mm", "a_mon" then Time.local.month.to_s(precision: 2)
@@ -252,7 +252,11 @@ module Run
 			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
 			when "a_computername" then `uname -n`
 			when "a_issuspended" then @suspension ? "1" : "0"
-			else nil
+			when "0" then (ARGV.size - (@script_file ? 1 : 0)).to_s
+			else
+				if i = var.to_i?
+					ARGV[i - (@script_file ? 0 : 1)]?
+				else nil end
 			end
 		end
 
