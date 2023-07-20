@@ -1,3 +1,4 @@
+require "../../util/exponential-back-off.cr"
 # ClipWait [, SecondsToWait]
 class Cmd::Misc::ClipWait < Cmd::Base
 	def self.min_args; 0 end
@@ -19,21 +20,9 @@ class Cmd::Misc::ClipWait < Cmd::Base
 		# to retrieve text, even when it's empty:
 		# thread.runner.display.gtk.clipboard &.wait_is_text_available
 		# So we need to resort to looping which you could also easily do with ahk code itself.
-		back_off_wait = 5.milliseconds
-		start = Time.monotonic
-		loop do
+		Util::ExponentialBackOff.back_off(initial_wait: 5.milliseconds, factor: 1.2, max_wait: 0.5.seconds, timeout: timeout) do
 			txt = gtk.clipboard &.wait_for_text || ""
-			if yield(txt)
-				break
-			end
-			if timeout
-				if Time.monotonic - start > timeout
-					return false
-				end
-			end
-			sleep back_off_wait
-			back_off_wait = ::Math.min(back_off_wait * 1.2, 0.5.seconds)
+			yield(txt)
 		end
-		true
 	end
 end
