@@ -584,7 +584,7 @@ gosub test_send
 
 ; issue #32
 ; TODO:
-; to_send = @
+; to_send = @_
 ; gosub test_send
 
 send {lshift down}
@@ -802,12 +802,12 @@ Clipboard =
 expect = clipboard unsetting,clipboard,
 gosub assert
 
-send clp_del_test
+send clp-del-test
 sleep 10
 Clipboard =
 Send, ^a^c
 ClipWait, 1
-expect = clipboard unsetting race condition,clipboard,clp_del_test
+expect = clipboard unsetting race condition,clipboard,clp-del-test
 gosub assert
 send ^a{del}
 sleep 10
