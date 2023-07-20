@@ -20,7 +20,7 @@ class Cmd::Misc::ClipWait < Cmd::Base
 		# to retrieve text, even when it's empty:
 		# thread.runner.display.gtk.clipboard &.wait_is_text_available
 		# So we need to resort to looping which you could also easily do with ahk code itself.
-		Util::ExponentialBackOff.back_off(initial_wait: 5.milliseconds, factor: 1.2, max_wait: 0.5.seconds, timeout: timeout) do
+		Util::ExponentialBackOff.back_off(initial_interval: 5.milliseconds, factor: 1.2, max_interval: 0.5.seconds, timeout: timeout) do
 			txt = gtk.clipboard &.wait_for_text || ""
 			yield(txt)
 		end

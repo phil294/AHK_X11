@@ -10,7 +10,7 @@ class Cmd::X11::Window::WinWait < Cmd::Base
 		seconds = 0.5 if seconds == 0
 		match_conditions = args
 		match_conditions.delete_at(2)
-		match = ::Util::ExponentialBackOff.back_off(initial_wait: 20.milliseconds, factor: 1.15, max_wait: 0.8.seconds, timeout: seconds.seconds) do
+		match = ::Util::ExponentialBackOff.back_off(initial_interval: 20.milliseconds, factor: 1.15, max_interval: 0.8.seconds, timeout: seconds.seconds) do
 			Util.match(thread, match_conditions, empty_is_last_found: false, a_is_active: false) do |win|
 				thread.settings.last_found_window = win
 			end
