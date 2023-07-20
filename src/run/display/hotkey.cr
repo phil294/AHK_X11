@@ -43,7 +43,7 @@ module Run
 			@no_grab = true if @key_str.includes? '~'
 			@modifier_variants << @modifiers
 			@modifier_variants << (@modifiers | ::X11::Mod2Mask.to_u32)
-			if @key_str.includes? '*'
+			if @key_str.includes? '*' # wildcard
 				@@available_modifier_combinations.each do |other|
 					if ! @modifier_variants.includes? (modifiers | other)
 						@modifier_variants << (@modifiers | other)

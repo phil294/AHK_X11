@@ -161,11 +161,27 @@ module Build
 						add_line "Return", line_no
 					end
 				else # Hotkey
-					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
-					@hotkeys << Run::Hotkey.new label, priority: 0, escape_char: @runner_settings.escape_char, max_threads: @runner_settings.max_threads_per_hotkey
 					if ! instant_action.empty?
-						add_line "#{instant_action}", line_no
-						add_line "Return", line_no
+						instant_action_first_word = instant_action.split(/[\s,]/)[0].downcase
+						if ! @@cmd_class_by_name[instant_action_first_word]?
+							remap_key = instant_action_first_word
+							label = "*" + label
+						end
+					end
+					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
+					hotkey = Run::Hotkey.new label, priority: 0, escape_char: @runner_settings.escape_char, max_threads: @runner_settings.max_threads_per_hotkey
+					@hotkeys << hotkey
+					if ! instant_action.empty?
+						if remap_key
+							add_line "Send, {blind}{#{remap_key} down}", line_no
+							add_line "Return", line_no
+							add_line "#{label} up::", line_no
+							add_line "Send, {blind}{#{remap_key} up}", line_no
+							add_line "Return", line_no
+						else
+							add_line "#{instant_action}", line_no
+							add_line "Return", line_no
+						end
 					end
 				end
 			elsif first_word == "gui"

@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 56
+N_TESTS = 68
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -560,7 +560,7 @@ sleep 20
 goto l_send_tests
 			test_send:
 				send %to_send%
-				sleep 20
+				sleep 50
 				gui submit, nohide
 				if to_send_output =
 					to_send_output = %to_send%
@@ -586,6 +586,15 @@ gosub test_send
 ; TODO:
 ; to_send = @
 ; gosub test_send
+
+send {lshift down}
+sleep 20
+to_send = revert-modifiers
+gosub test_send
+GetKeyState, shift_state, lshift
+expect = revert modifiers after send,shift_state,D
+gosub assert
+send {lshift up}
 
 ; ;;;;;;;;;;;;;;;
 
@@ -639,6 +648,13 @@ hotstring_output = .immediate
 gosub test_hotstring
 
 ; ;;;;;;;;;;;;;;
+
+runwait xdotool key --delay=0 ctrl+shift+alt+s
+sleep 100
+expect = hotkey with inline command,gui_button_clicked_success,1
+gosub assert
+gui_button_clicked_success =
+send {tab}
 
 goto l_hotkey_tests
 			hotkey_test_success:
@@ -714,10 +730,13 @@ xdotool_run = key a
 hotkey_send = bcd
 gosub test_hotkey_send
 
-key = ^a
-xdotool_run = key ctrl+a
-hotkey_send = kja
-gosub test_hotkey_send
+; This functionality works but the test doesn't because xdotool cannot reliably send
+; Ctrl down and up again it seems. Same with shift. Try doing `xdotool keydown shift_l`
+; in a terminal - it works but only the first time and doesn't cooperate with the keyboard.
+; key = ^a
+; xdotool_run = key ctrl+a
+; hotkey_send = kja
+; gosub test_hotkey_send
 
 ; sending itself
 key = a
@@ -746,6 +765,20 @@ hotkey_send = {blind}v
 	hotkey_sent = clp
 	gosub test_hotkey_send
 
+; remap tests
+runwait, xdotool keydown bracketleft
+sleep 20
+GetKeyState, bracket_state, ]
+expect = remap getkeystate down,bracket_state,D
+gosub assert
+runwait, xdotool keyup bracketleft
+sleep 20
+GetKeyState, bracket_state, ]
+expect = remap getkeystate up,bracket_state,U
+gosub assert
+send ^a{del}
+sleep 10
+
 ; ;;;;;;;;;;
 
 Send, {LButTon}
@@ -766,7 +799,6 @@ send ^a{del}
 sleep 10
 
 ; Tests missing / need manual testing for now:
-; - Key remaps
 ; - Vimium Everywhere with FF Context Menus
 
 Return
@@ -779,6 +811,10 @@ Return
 :r:testhotstringraw::^a
 :o:testhotstringbs::{bs}
 :*:testhotstringnoendchar::immediate
+
+^+!s::MouseClick, L
+
+[::]
 
 noop:
 return

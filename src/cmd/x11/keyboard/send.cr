@@ -35,6 +35,11 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 						hotkey_key_up.code = hotkey.keycode
 						thread.runner.display.x_do.keys_raw [hotkey_key_up], pressed: false, delay: 0
 					end
+					if [::X11::XK_Control_L, ::X11::XK_Control_R, ::X11::XK_Shift_L, ::X11::XK_Shift_R, ::X11::XK_Alt_L, ::X11::XK_Alt_R].includes?(combo.keysym)
+						# TODO: this is just a workaround so that e.g. `Send, {Ctrl up}` doesn't fail due to
+						# the `set_active_modifiers` at the end. Rework this once on evdev branch.
+						blind = true
+					end
 					thread.runner.display.x_do.keys_raw key_map, pressed: pressed, delay: 0
 				end
 			end
@@ -44,7 +49,7 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 				# And when we've sent an `{LButton}` down+up event in the keys, the x11 server might still report for the button
 				# to be pressed down when the up event hasn't been processed yet by it, resulting in wrong input state and
 				# effectively a wrong button pressed again by libxdo.
-				thread.runner.display.x_do.keys_raw active_modifiers, pressed: false, delay: 0
+				thread.runner.display.x_do.keys_raw active_modifiers, pressed: true, delay: 0
 			end
 		end
 	end

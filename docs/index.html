@@ -17831,26 +17831,131 @@ return
           </ul>
         </div>
       </div>
+</div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Remap.htm" href="#Remap.htm">#</a>
-          <h2 class="calibre9"><span class="calibre23">Remapping Keyboard, Joystick, and Mouse </span></h2>
-          <div class="calibre42">
-            <hr size="2" class="calibre24" />
-            <p class="calibre8">There are two approaches to remapping: the simple and the comprehensive. The simple method uses the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command to simulate input in place of the key or button you wish to remap. In this example, four of the left hand letter keys are converted from the QWERTY layout to Dvorak. This is not something you would necessarily do -- since there are utilities and operating system features more suitable for changing keyboard layout -- it just illustrates the technique:</p>
-            <p class="calibre8">#UseHook ; Needed for remapping keys to each other, e.g. A becomes B, and B becomes A. <br class="calibre12" /> s::Send, o<br class="calibre12" /> d::Send, e<br class="calibre12" /> f::Send, u<br class="calibre12" /> g::Send, i<br class="calibre12" /> +s::Send, O ; the plus sign indicates the shift key <br class="calibre12" /> +d::Send, E <br class="calibre12" /> +f::Send, U <br class="calibre12" /> +g::Send, I<br class="calibre12" /> Rwin::return ; This line disables the right windows key.</p>
-            <p class="calibre8">(See the <a href="#KeyList.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">key list</a> for a complete list of supported keys and mouse/joystick buttons)<br class="calibre12" /> (See also: <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Hotkeys</a>)</p>
-            <p class="calibre8"> </p>
-            <p class="calibre8">The comprehensive method of remapping is useful when you want the substitution to be more complete, which is helpful for holding a key down in a game. It is also appropriate for mouse buttons and modifiers such as SHIFT, which have special behavior when they are held down. This first example makes a modifier key (Right-ALT) become a different modifier (CONTROL):</p>
-            <p class="calibre8">*RAlt:: ; The asterisk makes the remapping more complete on XP/2k/NT.<br class="calibre12" /> Send, {Control down}<br class="calibre12" /> KeyWait, RAlt ; Wait for the key to be released.<br class="calibre12" /> Send, {Control up}<br class="calibre12" /> return</p>
-            <p class="calibre8"><br class="calibre12" /> This next example makes the accent key (upper left corner of most English keyboards) <strong class="calibre14">become</strong> the left mouse button. The left mouse button itself is not changed:</p>
-            <p class="calibre8">*`::<br class="calibre12" /> MouseClick, left, , , 1, 0, D ; Hold down the left mouse button.<br class="calibre12" /> KeyWait, `` ; Wait for the key to be released.<br class="calibre12" /> ; Above requires double-accent due accent being the <a href="#h_EscapeChar.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">escape character</a>.<br class="calibre12" /> MouseClick, left, , , 1, 0, U ; Release the mouse button.<br class="calibre12" /> return</p>
-            <p class="calibre8"><br class="calibre12" /> Finally, <a href="#JoystickMouse.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">this script</a> converts a joystick into a two-button mouse by remapping its buttons and axis control.<br class="calibre12" />
-              <br class="calibre12" /> You can try out one of these examples by copying it into a new text file such as "Remap.ahk", then launching the file.
-            </p>
-          </div>
+          <h1>Remapping Keys <span class="headnote">(Keyboard, Mouse and Controller)</span></h1>
+
+<h2 id="intro">Introduction</h2>
+<p><strong>Limitation:</strong> AutoHotkey's remapping feature described below is generally not as pure and effective as remapping directly via the <span class="rm">Windows registry</span> <span class="x11">X keyboard extension XKB, see for example <a href="https://wiki.archlinux.org/title/X_keyboard_extension">here</a></span>.</p>
+<h2 id="Remap">Remapping the Keyboard and Mouse</h2>
+<p>The syntax for the built-in remapping feature is <code>OriginKey::DestinationKey</code>. For example, a <a href="../Scripts.htm">script</a> consisting only of the following line would make <kbd>A</kbd> behave like <kbd>B</kbd>:</p>
+<pre>a::b</pre>
+<p>The above example does not alter <kbd>B</kbd> itself. <kbd>B</kbd> would continue to send the "b" keystroke unless you remap it to something else as shown in the following example:</p>
+<pre>a::b
+b::a</pre>
+<p>The examples above use lowercase, which is recommended for most purposes because it also remaps the corresponding uppercase letters (that is, it will send uppercase when <kbd>CapsLock</kbd> is "on" or <kbd>Shift</kbd> is held down). By contrast, specifying an uppercase letter on the right side forces uppercase. For example, the following line would produce an uppercase B when you type either "a" or "A" (as long as <kbd>CapsLock</kbd> is off):</p>
+<pre>a::B</pre>
+<p id="blind-pitfall">However, a remapping opposite to the one above would not work as one might expect, as a remapping never "releases" the modifier keys which are used to trigger it. For example, <code>A::b</code> is typically equivalent to <code>A::B</code> and <code>^a::b</code> is equivalent to <code>^a::^b</code>. This is because each remapping <a href="#actually">internally uses {Blind}</a> to allow the key or key combination to be combined with other modifiers.</p>
+
+<h3 id="RemapMouse">Mouse Remapping</h3>
+<p>To remap the mouse instead of the keyboard, use the same approach. For example:</p>
+<table class="info">
+  <tr>
+    <th style="min-width: 11em;">Example</th>
+    <th abbr="Descr">Description</th>
+  </tr>
+  <tr>
+    <td><code>MButton::Shift</code></td>
+    <td>Makes the middle button behave like <kbd>Shift</kbd>.</td>
+  </tr>
+  <tr>
+    <td><code>XButton1::LButton</code></td>
+    <td>Makes the fourth mouse button behave like the left mouse button.</td>
+  </tr>
+  <tr>
+    <td><code>RAlt::RButton</code></td>
+    <td>Makes the right <kbd>Alt</kbd> behave like the right mouse button.</td>
+  </tr>
+</table>
+
+<h3 id="other-useful-remappings">Other Useful Remappings</h3>
+<table class="info">
+  <tr>
+    <th style="min-width: 11em;">Example</th>
+    <th abbr="Descr">Description</th>
+  </tr>
+  <tr>
+    <td><code>CapsLock::Ctrl</code></td>
+    <td>Makes <kbd>CapsLock</kbd> become <kbd>Ctrl</kbd>. <span class="x11">Doesn't work great currently; the CapsLock functionality cannot be disabled.</span> To retain the ability to turn <kbd>CapsLock</kbd> on and off, add the remapping <code>+CapsLock::CapsLock</code> first. This toggles <kbd>CapsLock</kbd> on and off when you hold down <kbd>Shift</kbd> and press <kbd>CapsLock</kbd>. Because both remappings allow additional modifier keys to be held down, the more specific <code>+CapsLock::CapsLock</code> remapping must be placed first for it to work.</td>
+  </tr>
+  <tr>
+    <td><code class="tbd">XButton2::^LButton</code></td>
+    <td>Makes the fifth mouse button (XButton2) produce a control-click.</td>
+  </tr>
+  <tr>
+    <td><code>RAlt::AppsKey</code></td>
+    <td>Makes the right <kbd>Alt</kbd> become <kbd>Menu</kbd> (which is the key that opens the context menu).</td>
+  </tr>
+  <tr>
+    <td><code>RCtrl::RWin</code></td>
+    <td>Makes the right <kbd>Ctrl</kbd> become the right <kbd>Win</kbd>.</td>
+  </tr>
+  <tr>
+    <td><code>Ctrl::Alt</code></td>
+    <td>Makes both <kbd>Ctrl</kbd> behave like <kbd>Alt</kbd>. However, see <a href="#AltTab">alt-tab issues</a>.</td>
+  </tr>
+  <tr>
+    <td><code class="tbd">^x::^c</code></td>
+    <td>Makes <kbd>Ctrl</kbd>+<kbd>X</kbd> produce <kbd>Ctrl</kbd>+<kbd>C</kbd>. It also makes <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>X</kbd> produce <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>C</kbd>, etc.</td>
+  </tr>
+  <tr>
+    <td><code>RWin::Return</code></td>
+    <td>Disables the right <kbd>Win</kbd> by having it simply <a href="../lib/Return.htm">return</a>.</td>
+  </tr>
+</table>
+<p>You can try out any of these examples by copying them into a new text file such as "Remap.ahk", then launching the file.</p>
+<p>See the <a href="../KeyList.htm">Key List</a> for a complete list of key and mouse button names.</p>
+<h2 id="remarks">Remarks</h2>
+<p>The directives <a href="../lib/_IfWinActive.htm">#IfWinActive/Exist</a> can be used to make selected remappings active only in the windows you specify. For example:</p>
+<pre>#IfWinActive ahk_class Notepad
+a::b  <em>; Makes the 'a' key send a 'b' key, but only in Notepad.</em>
+#IfWinActive  <em>; This puts subsequent remappings and hotkeys in effect for all windows.</em></pre>
+<p>Remapping a key or button is "complete" in the following respects:</p>
+<ul>
+  <li>Holding down a modifier such as <kbd>Ctrl</kbd> or <kbd>Shift</kbd> while typing the origin key will put that modifier into effect for the destination key. For example, <code>b::a</code> would produce <kbd>Ctrl</kbd>+<kbd>A</kbd> if you press <kbd>Ctrl</kbd>+<kbd>B</kbd>.</li>
+  <li><kbd>CapsLock</kbd> generally affects remapped keys in the same way as normal keys.</li>
+  <li>The destination key or button is held down for as long as you continue to hold down the origin key. However, some games do not support remapping; in such cases, the keyboard and mouse will behave as though not remapped.</li>
+  <li>Remapped keys will auto-repeat while being held down (except keys remapped to become mouse buttons).</li>
+</ul>
+
+<p id="actually">When a script is launched, each remapping is translated into a pair of <a href="../Hotkeys.htm">hotkeys</a>. For example, a script containing <code>a::b</code> actually contains the following two hotkeys instead:</p>
+<pre>*<strong>a</strong>::
+<span class="tbd">SetKeyDelay -1   <em>; If the destination key is a mouse button, SetMouseDelay is used instead.</em></span>
+Send <a href="../lib/Send.htm#blind">{Blind}</a>{<strong>b</strong> Down<span class="tbd">R</span>}  <em>; <a href="../lib/Send.htm#DownR">DownR</a> is like Down except that other Send commands in the script won't assume "b" should stay down during their Send.</em>
+return
+
+*<strong>a up</strong>::
+<span class="tbd">SetKeyDelay -1  <em>; See note below for why press-duration is not specified with either of these SetKeyDelays.</em></span>
+Send {Blind}{<strong>b</strong> up}
+return</pre>
+<p>Since remappings are translated into hotkeys as described above, the <a href="../lib/Suspend.htm">Suspend</a> command affects them. Similarly, the <a href="../lib/Hotkey.htm">Hotkey</a> command can disable or modify a remapping. For example, the following two commands would disable the remapping <code>a::b</code>.</p>
+<pre>Hotkey, *a, Off
+Hotkey, *a up, Off</pre>
+<p class="tbd">In addition to the keys and mouse buttons on the <a href="../KeyList.htm">Key List</a> page, the source key may also be a virtual key (VKnn) or scan code (SCnnn) as described on the <a href="../KeyList.htm#SpecialKeys">special keys</a> page. The same is true for the destination key except that it may optionally specify a scan code after the virtual key. For example, <code>sc01e::vk42sc030</code> is equivalent to <code>a::b</code> on most keyboard layouts.</p>
+<p>To disable a key rather than remapping it, make it a hotkey that simply <a href="../lib/Return.htm">returns</a>. For example, <code>F1::return</code> would disable <kbd>F1</kbd>.</p>
+<h2 id="moving-the-mouse-cursor">Moving the Mouse Cursor via the Keyboard</h2>
+<p>The keyboard can be used to move the mouse cursor as demonstrated by the fully-featured <a href="../scripts/index.htm#NumpadMouse">Keyboard-To-Mouse script</a>. Since that script offers smooth cursor movement, acceleration, and other features, it is the recommended approach if you plan to do a lot of mousing with the keyboard. By contrast, the following example is a simpler demonstration:</p>
+<pre>*#up::MouseMove, 0, -10, 0, R  <em>; Win+UpArrow hotkey =&gt; Move cursor upward</em>
+*#Down::MouseMove, 0, 10, 0, R  <em>; Win+DownArrow =&gt; Move cursor downward</em>
+*#Left::MouseMove, -10, 0, 0, R  <em>; Win+LeftArrow =&gt; Move cursor to the left</em>
+*#Right::MouseMove, 10, 0, 0, R  <em>; Win+RightArrow =&gt; Move cursor to the right</em>
+
+*&lt;#RCtrl::  <em>; LeftWin + RightControl =&gt; Left-click (hold down Control/Shift to Control-Click or Shift-Click).</em>
+SendEvent {Blind}{LButton down}
+KeyWait RCtrl  <em>; Prevents keyboard auto-repeat from repeating the mouse click.</em>
+SendEvent {Blind}{LButton up}
+return
+
+*&lt;#AppsKey::  <em>; LeftWin + AppsKey =&gt; Right-click</em>
+SendEvent {Blind}{RButton down}
+KeyWait AppsKey  <em>; Prevents keyboard auto-repeat from repeating the mouse click.</em>
+SendEvent {Blind}{RButton up}
+return</pre>
         </div>
       </div>
+<div class="tbd">
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Seek_Search.htm" href="#Seek_Search.htm">#</a>

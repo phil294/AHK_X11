@@ -315,7 +315,13 @@ module Run
 		end
 
 		private def handle_key_event(key_event)
+			state_bck = key_event.state
+			# We want to receive a usable char even when e.g. Ctrl is pressed, currently only
+			# because of the shift/uppercase detection below. Shift needs to stay in state though
+			# to differentiate e.g. 2 vs @.
+			key_event.state = key_event.state & ::X11::ShiftMask
 			lookup = key_event.lookup_string
+			key_event.state = state_bck
 			char = lookup[:string][0]?
 			keysym = lookup[:keysym]
 			# We may have e.g. grabbed *a (so including Shift + lowercase a) but the reported
