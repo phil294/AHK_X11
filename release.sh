@@ -36,6 +36,11 @@ fi
 echo 'validate html'
 pause
 
+echo 'update shard.yml version'
+pause
+
+version=$(shards version)
+
 docker run --rm -it -v /b/ahk_x11:/a --privileged ahk_x11-builder-ubuntu.20.04 bash -c \
     'cd /a/build && ./build.sh --release'
 
@@ -56,11 +61,6 @@ changes=$(micro <<< "$changes")
 [ -z "$changes" ] && exit 1
 echo changes:
 echo "$changes"
-
-echo 'update shard.yml version'
-pause
-
-version=$(shards version)
 
 git add README.md ||:
 git add shard.yml
