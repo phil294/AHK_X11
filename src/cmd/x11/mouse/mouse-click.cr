@@ -3,6 +3,9 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 7 end
 	def run(thread, args)
+		parse_run(thread, args)
+	end
+	protected def parse_run(thread, args)
 		button = case args[0].downcase
 		when "right", "r" then XDo::Button::Right
 		when "middle", "m" then XDo::Button::Middle
@@ -33,12 +36,12 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 		end
 		relative = args[6]?.try &.downcase == "r"
 		thread.runner.display.pause do
+			if relative
+				thread.runner.display.x_do.move_mouse x, y
+			else
+				thread.runner.display.x_do.move_mouse x, y, screen
+			end
 			count.times do
-				if relative
-					thread.runner.display.x_do.move_mouse x, y
-				else
-					thread.runner.display.x_do.move_mouse x, y, screen
-				end
 				thread.runner.display.x_do.mouse_down button if ! up
 				thread.runner.display.x_do.mouse_up button if ! down
 			end
