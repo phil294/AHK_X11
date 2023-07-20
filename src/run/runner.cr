@@ -3,6 +3,7 @@ require "./timer"
 require "./display/hotkey"
 require "../cmd/base"
 require "system/user"
+require "../util/lcid-mapping"
 
 module Run
 	enum SingleInstance
@@ -269,6 +270,7 @@ module Run
 			when "a_issuspended" then @suspension ? "1" : "0"
 			when "a_iscompiled" then @is_compiled ? "1" : ""
 			when "a_timeidle" then (Time.monotonic - display.last_event_received).total_milliseconds.round.to_i.to_s
+			when "a_language" then Util::LcidMapping.mapping[ENV["LANG"].split('.')[0]]? || ""
 			when "0" then (ARGV.size - (@script_file ? 1 : 0)).to_s
 			else
 				if i = var.to_i?
