@@ -226,6 +226,18 @@ There are different ways to use it.
 
 ### Caveats
 
+#### Remapping mouse
+
+You can't send / remap mouse buttons when triggered by another mouse button's `{Down}` event. For example:
+
+```ahk
+F1::LButton ; Works!
+RButton up::Send {LButton} ; Works!
+RButton::Send {LButton} ; DOES NOT WORK
+RButton::LButton ; DOES NOT WORK
+```
+
+
 #### Accessibility
 
 All commands or command options related to Controls (e.g. `ControlClick` or `WinGetText`) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
