@@ -115,14 +115,21 @@ class Cmd::Misc::Run < Cmd::Base
 			thread.runner.set_user_var(output_stderr, stderr) if output_stderr && ! output_stderr.empty?
 		end
 
+		error_level = nil
 		if opt["useerrorlevel"]?
-			thread.set_thread_built_in_static_var("ErrorLevel", success ? "0" : "ERROR")
+			error_level = success ? "0" : "ERROR"
 		else
 			if ! success
 				raise ::Run::RuntimeException.new "Failed attempt to launch program or document: #{target}"
 			elsif @wait
-				thread.set_thread_built_in_static_var("ErrorLevel", success.to_s)
+				error_level = success.to_s
 			end
+		end
+		if error_level
+			thread.set_thread_built_in_static_var("ErrorLevel", error_level)
+			{% if ! flag?(:release) %}
+				puts "[debug] ErrorLevel[#{thread.id}][Run]: #{error_level}"
+			{% end %}
 		end
 
 		if output_var_pid && ! output_var_pid.empty? && ! @wait && success.is_a?(Int64)
