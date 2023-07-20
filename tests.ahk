@@ -3,7 +3,7 @@
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 68
+N_TESTS = 70
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -794,6 +794,20 @@ send p ; paste
 sleep 100
 gui submit, nohide
 expect = clipboard paste,gui_edit,clp
+gosub assert
+send ^a{del}
+sleep 10
+
+Clipboard =
+expect = clipboard unsetting,clipboard,
+gosub assert
+
+send clp_del_test
+sleep 10
+Clipboard =
+Send, ^a^c
+ClipWait, 1
+expect = clipboard unsetting race condition,clipboard,clp_del_test
 gosub assert
 send ^a{del}
 sleep 10
