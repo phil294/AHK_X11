@@ -62,6 +62,7 @@ module Run
 		property current_input_channel : Channel(String)?
 		@builder : Build::Builder
 		getter script_file : Path?
+		getter is_compiled : Bool
 		getter headless : Bool
 		@display : Display?
 		def display
@@ -69,7 +70,7 @@ module Run
 			@display.not_nil!
 		end
 
-		def initialize(*, @builder, @script_file, @headless)
+		def initialize(*, @builder, @script_file, @is_compiled, @headless)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
 			script = @script_file ? @script_file.not_nil! : Path[binary_path].expand
@@ -257,6 +258,7 @@ module Run
 			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
 			when "a_computername" then `uname -n`
 			when "a_issuspended" then @suspension ? "1" : "0"
+			when "a_iscompiled" then @is_compiled ? "1" : ""
 			when "0" then (ARGV.size - (@script_file ? 1 : 0)).to_s
 			else
 				if i = var.to_i?

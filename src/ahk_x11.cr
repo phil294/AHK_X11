@@ -59,6 +59,7 @@ end
 script_file = nil
 version = {{ read_file("./shard.yml").split("\n")[1][9..] }}
 lines = Compiler.new.extract.try &.split('\n')
+is_compiled = !! lines
 if ! lines
 	# Only needed for installer script, this can't (yet) really be part of ahk code. TODO: rm on exit
 	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
@@ -104,7 +105,7 @@ rescue e : Build::SyntaxException | Build::ParsingException
 end
 
 begin
-	runner = Run::Runner.new builder: builder, script_file: script_file, headless: HEADLESS
+	runner = Run::Runner.new builder: builder, script_file: script_file, is_compiled: is_compiled, headless: HEADLESS
 	runner.run
 rescue e : Run::RuntimeException
 	build_error e
