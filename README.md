@@ -9,40 +9,119 @@ AutoHotkey for Linux.
 `MsgBox, AHK_X11` (*)
 </div>
 
-This project is usable, but WORK IN PROGRESS.
+- **Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://autohotkey.com/discord/)'s #ahk_x11 channel.
+- **Requires X11**, does not work with Wayland yet ([details](https://github.com/phil294/AHK_X11/issues/2#issuecomment-1616051073)). This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
+- [**Direct Download**](https://github.com/phil294/AHK_X11/releases/latest) (all Linux distributions, x86_64, single executable)
+- [**Full Documentation**](https://phil294.github.io/AHK_X11) (single HTML page)
+- [**Go to Installation Instructions**](#installation)
+- [**Demo Video**](https://raw.githubusercontent.com/phil294/AHK_X11/master/assets/demo.mp4): Installation, script creation, compilation
 
-**Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://autohotkey.com/discord/)'s #ahk_x11 channel.
+[AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux. This README mostly tells you about the differences between Win AHK and AHK_X11. If you have no prior experience with AutoHotkey, read [the docs tailored to this project](https://phil294.github.io/AHK_X11).
 
-**Requires X11**, does not work with Wayland yet. This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
+Still, here is a brief peek at the syntax. (click the arrows)
 
-[**Direct download**](https://github.com/phil294/AHK_X11/releases/download/0.5.1/ahk_x11-0.5.1-x86_64.AppImage) (all Linux distributions, x86_64, single executable)
+- <details><summary>Hotkeys and Hotstrings</summary>
 
-[**FULL DOCUMENTATION**](https://phil294.github.io/AHK_X11) (single HTML page)
+    ```ahk
+    ; hotstrings - expand 'btw' to 'By the way' as you type
+    ::btw::By the way
 
-[**Go to installation instructions**](#installation)
+    ; hotkeys - press winkey-z to go to Google
+    #z::Run http://google.com
+    ```
+    </details>
+- <details><summary>Modify clipboard</summary>
 
-[**DEMO VIDEO**](https://raw.githubusercontent.com/phil294/AHK_X11/master/assets/demo.mp4): Installation, script creation, compilation
+    ```ahk
+    ; copy text to the clipboard, modify it, paste it back
+    ^+k:: ; ctrl-shift-k
+    ClipSave = %Clipboard% ; store current clipboard
+    Clipboard = ; clear the clipboard
+    Send ^c ; copy selected text
+    ClipWait, 1 ; wait up to a second for content
+    ; wrap it in html-tags
+    Clipboard = <i>%Clipboard%</i>
+    Send ^v ; paste
+    Sleep 500 ; wait for OS to complete paste
+    Clipboard = ClipSave ; restore old clipboard content
+    ClipSave = ; clear variable
+    Return
+    ```
+    </details>
+- <details><summary>GUIs</summary>
 
-[AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux.
+    ```ahk
+    ; Easy to make GUIs
+    Gui, Add, Text,, Enter your name
+    Gui, Add, Edit, w150 vName
+    Gui, Add, Button, gSayHello, OK
+    Gui, Show
+    Return
 
-More specifically: A very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up with [Crystal](https://crystal-lang.org/)/[libxdo](https://github.com/jordansissel/xdotool)/[gi-crystal](https://github.com/hugopl/gi-crystal)/[x11-cr](https://github.com/TamasSzekeres/x11-cr/)/[x_do.cr](https://github.com/woodruffw/x_do.cr), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 60% of work is done. This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time.
+    SayHello:
+    Gui, Submit, NoHide
+    MsgBox Hello %Name%
+    ExitApp
+    ```
+    </details>
+- <details><summary>Window management</summary>
 
-Note that because of the old version of the spec (at least for now), many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. More to read: [Project goals](https://github.com/phil294/AHK_X11/issues/8)
+    ```ahk
+    ^!n::  ; Ctrl+Alt+N
+    IfWinExist, Firefox
+    {
+        WinActivate
+        WinWaitActive
+        width = %A_ScreenWidth%
+        width /= 2
+        WinMove, , , 0, 0, %width%, 300
+    }
+    ```
+    </details>
+- <details><summary>User interaction</summary>
 
-You can use AHK_X11 to create stand-alone binaries with no dependencies, including full functionality like Hotkeys and GUIs. (just like on Windows)
+    ```ahk
+    ; Yes/No with Question icon
+    MsgBox, 36, , Continue?
+    IfMsgBox, No
+        ExitApp
+    InputBox, output, , Say something
+    TrayTip, You said:, %output%
+    ```
+    </details>
+- <details><summary>Pseudo Arrays</summary>
+
+    ```ahk
+    ; Pseudo Arrays
+    Colors = Red,Green,Blue
+    StringSplit, ColorArray, Colors, `,
+    Loop, %ColorArray0%
+    {
+        StringTrimLeft, this_color, ColorArray%a_index%, 0
+        MsgBox, Color %A_Index% = %this_color%
+    }
+    ```
+    As can be seen from the code sample, array logic isn't particularly great with classic AHK syntax, but it works.
+    </details>
+
+
+AHK_X11 is a very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up in [Crystal](https://crystal-lang.org/), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 80% of work of getting there is done, but even at 100%, because of the old version of the spec (at least for now), many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. More to read: [Project goals](https://github.com/phil294/AHK_X11/issues/8)
+
+This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time. You can use AHK_X11 to create stand-alone binaries with no dependencies, including full functionality like Hotkeys and GUIs. (just like on Windows)
 
 Please also check out [Keysharp](https://bitbucket.org/mfeemster/keysharp/), a WIP fork of [IronAHK](https://github.com/Paris/IronAHK/tree/master/IronAHK), another complete rewrite of AutoHotkey in C# that tries to be compatible with multiple OSes and support modern, v2-like AHK syntax with much more features than this one. In comparison, AHK_X11 is a lot less ambitious and more compact, and Linux only.
 
 Features:
 - [x] Hotkeys
 - [x] Hotstrings
-- [x] Window management (but some commands are still missing)
+- [x] Key remappings
+- [x] Window management
 - [x] Send keys
 - [x] Control mouse
-- [x] File management (but some commands are still missing)
-- [x] GUIs (partially done)
+- [x] File management
+- [x] GUIs
 - [x] One-click compile script to portable stand-alone executable
-- [x] Scripting: labels, flow control: If/Else, Loop
+- [x] Scripting: labels, flow control: Loop, IfWinExists, etc.
 - [x] Window Spy
 - [x] Graphical installer (optional)
 - [x] Context menu and compilation just like on Windows
@@ -52,10 +131,10 @@ Besides:
 
 AHK_X11 can be used completely without a terminal. You can however if you want use it console-only too. Graphical commands are optional, it also runs headless.
 
-<details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>FULL DOCUMENTATION HERE</b></a>.</summary>
+<details><summary>*Click here* to see which commands are implemented and which are missing. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>full documentation here</b></a>. Generally speaking, everything important is done.</summary>
 
 ```diff
-DONE      ?% (125/220):
+DONE      57% (126/220):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -75,11 +154,11 @@ DONE      ?% (125/220):
 + WinWaitClose, WinWaitActive, WinWaitNotActive, DriveSpaceFree, FileGetSize, FileRecycle,
 + FileRecycleEmpty, SplitPath, StringSplit
 
-NEW       ?% (9/220): (not part of spec or from a more recent version)
+NEW       4% (9/220): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet, Click @@
 @@ ahk_x11_track_performance_start, ahk_x11_track_performance_stop @@
 
-REMOVED   ?% (11/220):
+REMOVED   5% (11/220):
 # ### Those that simply make no sense in Linux:
 # EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook,
 # #InstallMouseHook, #UseHook, Loop (registry)
@@ -88,31 +167,19 @@ REMOVED   ?% (11/220):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (71/220): alphabetically
-- BlockInput, Control, ControlFocus, ControlGet, ControlGetFocus,
-- ControlMove,
-- DetectHiddenText, DetectHiddenWindows, Drive, DriveGet,
-- FileCopyDir, FileCreateShortcut,
-- FileInstall, FileGetAttrib, FileGetShortcut, FileGetTime, FileGetVersion,
-- FileMove, FileMoveDir, FileRemoveDir,
-- FormatTime, GroupActivate, GroupAdd,
-- GroupClose, GroupDeactivate, GuiControlGet,
-- If var is [not] type,
-- KeyHistory, ListHotkeys, ListLines, ListVars,
-- OnExit,
-- Process, Progress, SetBatchLines,
-- SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat,
-- SetNumlockState, SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode,
-- SetWinDelay, SoundGetWaveVolume,
-- SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, StatusBarGetText,
-- StatusBarWait, StringCaseSense,
-- SysGet, Thread, Transform, WinActivateBottom,
-- WinGetActiveStats, WinGetActiveTitle,
-- WinMenuSelectItem,
-- WinSet,
-- #CommentFlag, #ErrorStdOut, #EscapeChar,
-- #HotkeyInterval, #HotkeyModifierTimeout, #MaxHotkeysPerInterval, #MaxMem,
-- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #WinActivateForce
+TO DO     32% (71/220): alphabetically
+- BlockInput, Control, ControlFocus, ControlGet, ControlGetFocus, ControlMove, DetectHiddenText,
+- DetectHiddenWindows, Drive, DriveGet, FileCopyDir, FileCreateShortcut, FileInstall, FileGetAttrib,
+- FileGetShortcut, FileGetTime, FileGetVersion, FileMove, FileMoveDir, FileRemoveDir, FormatTime,
+- GroupActivate, GroupAdd, GroupClose, GroupDeactivate, GuiControlGet, If var is [not] type,
+- KeyHistory, ListHotkeys, ListLines, ListVars, OnExit, Process, Progress, SetBatchLines,
+- SetCapslockState, SetControlDelay, SetDefaultMouseSpeed, SetFormat, SetNumlockState,
+- SetScrollLockState, SetStoreCapslockMode, SetTitleMatchMode, SetWinDelay, SoundGetWaveVolume,
+- SoundSetWaveVolume, SplashImage, SplashTextOn, SplashTextOff, StatusBarGetText, StatusBarWait,
+- StringCaseSense, SysGet, Thread, Transform, WinActivateBottom, WinGetActiveStats, WinGetActiveTitle,
+- WinMenuSelectItem, WinSet, #CommentFlag, #ErrorStdOut, #EscapeChar, #HotkeyInterval,
+- #HotkeyModifierTimeout, #MaxHotkeysPerInterval, #MaxMem, #MaxThreads, #MaxThreadsBuffer,
+- #MaxThreadsPerHotkey, #WinActivateForce
 
 Also planned, even though it's not part of 1.0.24 spec:
 - ImageSearch
@@ -236,6 +303,14 @@ If you want to help with AHK_X11 development or prefer to build from source inst
 ## Issues
 
 For bugs and feature requests, please open up an issue, or check the Discord or [Forum](https://www.autohotkey.com/boards/viewtopic.php?f=81&t=106640).
+
+## Notable dependencies
+
+- Gtk 3
+- [libxdo](https://github.com/jordansissel/xdotool)
+- [gi-crystal](https://github.com/hugopl/gi-crystal)
+- [x11-cr](https://github.com/TamasSzekeres/x11-cr/)
+- [x_do.cr](https://github.com/woodruffw/x_do.cr)
 
 ## License
 
