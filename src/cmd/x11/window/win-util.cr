@@ -64,6 +64,7 @@ class Cmd::X11::Window::Util
 			# Somehow, most (all?) window manager commands like close! or minimize!
 			# fail unless there is some other, arbitrary x11 request being sent after...
 			# no idea why, also independent of libxdo version. This call works around it.
+			# TODO: thread.runner.display.adapter.display.flush ?
 			thread.runner.display.x_do.focused_window sane: false
 		end
 		!!win

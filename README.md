@@ -55,7 +55,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>FULL DOCUMENTATION HERE</b></a>.</summary>
 
 ```diff
-DONE      ?% (116/220):
+DONE      ?% (117/220):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -72,6 +72,7 @@ DONE      ?% (116/220):
 + PixelSearch, #Include, InputBox, ClipWait, EnvSet, SetKeyDelay, SetMouseDelay, MouseClickDrag,
 + #NoTrayIcon, TrayTip, Random, Shutdown, RunAs, SoundGet, SoundSet, SoundPlay, Sort,
 + StringTrimLeft, StringTrimRight, WinMinimizeAll, WinMinimizeAllUndo, WinSetTitle, WinWait,
++ WinWaitClose
 
 NEW       ?% (9/220): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet, Click @@
@@ -86,7 +87,7 @@ REMOVED   ?% (11/220):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (80/220): alphabetically
+TO DO     ?% (79/220): alphabetically
 - BlockInput, Control, ControlFocus, ControlGet, ControlGetFocus,
 - ControlMove,
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
@@ -108,7 +109,7 @@ TO DO     ?% (80/220): alphabetically
 - WinGetActiveStats, WinGetActiveTitle,
 - WinMenuSelectItem,
 - WinSet, WinWaitActive,
-- WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar,
+- WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar,
 - #HotkeyInterval, #HotkeyModifierTimeout, #MaxHotkeysPerInterval, #MaxMem,
 - #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #WinActivateForce
 
