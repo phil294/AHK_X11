@@ -5,7 +5,7 @@ class Cmd::String::StringLeft < Cmd::Base
 	def run(thread, args)
 		out_var, in_var, count = args
 		count = count.to_i?
-		text = thread.runner.get_user_var(in_var)
+		text = thread.get_var(in_var)
 		return if ! count || count < 1 || text.empty?
 		text = text[0, count]
 		return if ! text

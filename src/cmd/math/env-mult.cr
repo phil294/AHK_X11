@@ -5,7 +5,7 @@ class Cmd::Math::EnvMult < Cmd::Base
 
 	def run(thread, args)
 		var, mult_value = args
-		current_value = thread.runner.get_user_var(var)
+		current_value = thread.get_var(var)
 		pure_int = ! current_value.includes?('.') && ! mult_value.includes?('.')
 		mult_value = mult_value.to_f64? || 0
 		current_value = current_value.to_f64? || 0

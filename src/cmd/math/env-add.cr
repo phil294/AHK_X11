@@ -7,7 +7,7 @@ class Cmd::Math::EnvAdd < Cmd::Base
 		var, add_value = args
 		time_units = args[2]?
 
-		current_value = thread.runner.get_user_var(var)
+		current_value = thread.get_var(var)
 		pure_int = ! current_value.includes?('.') && ! add_value.includes?('.')
 		add_value = add_value.to_f64?
 

@@ -9,7 +9,7 @@ class Cmd::String::StringReplace < Cmd::Base
 		replace_text = args[3]? || ""
 		opt = (args[4]? || "").downcase
 		replace_all = opt == "1" || opt == "a" || opt == "all"
-		text = thread.runner.get_user_var(in_var)
+		text = thread.get_var(in_var)
 		if replace_all
 			replaced = text.gsub(search_text, replace_text)
 		else

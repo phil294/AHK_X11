@@ -11,7 +11,7 @@ class Cmd::String::StringMid < Cmd::Base
 		if ! count || count < 1
 			text = ""
 		else
-			text = thread.runner.get_user_var(in_var)
+			text = thread.get_var(in_var)
 			text = text[start, count]
 		end
 		thread.runner.set_user_var(out_var, text)
