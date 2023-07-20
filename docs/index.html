@@ -447,6 +447,9 @@
                 <a href="#EnvGet.htm">EnvGet</a>
               </li>
               <li>
+                <a href="#EnvSet.htm">EnvSet</a>
+              </li>
+              <li>
                 <a href="#Menu.htm">Menu</a>
               </li>
               <li>
@@ -2387,6 +2390,10 @@ else
                 <td height="16" class="calibre4">Retrieves an environment variable.</td>
               </tr>
               <tr class="calibre3">
+                <td height="16" class="calibre4"><a href="#EnvSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvSet</a></td>
+                <td height="16" class="calibre4">Sets an environment variable for usage in Run/RunWait.</td>
+              </tr>
+              <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#Loop.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Loop (normal) </a></td>
                 <td height="16" class="calibre4">Perform a series of command repeatedly: either the specified number of times or until <a href="#Break.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">break</a> is encountered. </td>
               </tr>
@@ -2918,7 +2925,7 @@ MsgBox, clipboard = %clipboard%
 return</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="EnvSet.htm" href="#EnvSet.htm">#</a> <h2 class="calibre17">EnvSet</h2>
           <hr size="2" class="calibre24" />
@@ -2949,10 +2956,9 @@ return</pre>
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8"> This command exists separately from <a href="#SetEnv.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetEnv</a> because unlike AutoIt2, AutoHotkey does not store its variables in the environment. This is because performance would be worse and also because the OS limits environment variables to 32K (AutoHotkey variables, including the <a href="#Clipboard.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">clipboard</a>, are essentially unlimited in size).</p>
-          <p class="calibre8">Unless <a href="#EnvUpdate.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvUpdate</a> is used, an <a href="#Variables.htm__env" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">environment variable</a> set in this way will only be accessible to programs that the script spawns via <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> or <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>.  Once the script terminates, the variables will cease to exist.</p>
-          <p class="calibre8">Note: An EnvGet command is not provided because referencing a blank or undefined variable will automatically trigger that behavior. For example, in the following line, the value of the ProgramFiles variable (if undefined in the script) will be fetched from the environment: <br class="calibre12" /> TargetFile = %ProgramFiles%\Something\setup.ini </p>
-          <p class="calibre8 x11">Use this to export variables to be accessed by sub processes spawned by Run / RunWait.</p>
+          <p class="calibre8"> <span class="rm">This command exists separately from <a href="#SetEnv.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetEnv</a> because unlike AutoIt2, AutoHotkey does not store its variables in the environment. This is because performance would be worse and also because the OS limits environment variables to 32K</span> (AutoHotkey variables, including the <a href="#Clipboard.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">clipboard</a>, are essentially unlimited in size).</p>
+          <p class="calibre8"><span class="rm">Unless <a href="#EnvUpdate.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvUpdate</a> is used,</span> an <a href="#Variables.htm__env" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">environment variable</a> set in this way will only be accessible to programs that the script spawns via <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> or <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>.  Once the script terminates, the variables will cease to exist.</p>
+          <p class="calibre8"><span class="rm">Note: An EnvGet command is not provided because referencing a blank or undefined variable will automatically trigger that behavior. For example, in the following line, the value of the ProgramFiles variable (if undefined in the script) will be fetched from the environment: <br class="calibre12" /> TargetFile = %ProgramFiles%\Something\setup.ini</span> <span class="x11">Use EnvGet to retrieve env vars. AHK_X11 behaves like #NoEnv in newer AHK versions by default.</span> </p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#EnvUpdate.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvUpdate</a>, <a href="#SetEnv.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetEnv</a>, <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a>, <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a> </p>
