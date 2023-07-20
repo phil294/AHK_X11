@@ -43,7 +43,6 @@ module Run
 			"a_endchar" => "",
 			"a_iconfile" => "",
 			"a_icontip" => "",
-			"a_home" => Path.home.to_s,
 			"a_scriptdir" => "",
 			"a_scriptname" => "",
 			"a_scriptfullpath" => "",
@@ -265,12 +264,16 @@ module Run
 			when "a_screenwidth" then display.adapter.display.default_screen.width.to_s
 			when "a_screenheight" then display.adapter.display.default_screen.height.to_s
 			when "a_username" then Hacks.username
-			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
 			when "a_computername" then `uname -n`
 			when "a_issuspended" then @suspension ? "1" : "0"
 			when "a_iscompiled" then @is_compiled ? "1" : ""
 			when "a_timeidle" then (Time.monotonic - display.last_event_received).total_milliseconds.round.to_i.to_s
 			when "a_language" then Util::LcidMapping.mapping[ENV["LANG"].split('.')[0]]? || ""
+			when "a_desktop" then `xdg-user-dir DESKTOP`.strip
+			when "a_startup" then `echo -n ${XDG_CONFIG_HOME:-~/.config}/autostart`.strip
+			when "a_mydocuments" then `xdg-user-dir DOCUMENTS`.strip
+			when "a_home" then Path.home.to_s
+			when "a_isadmin" then Hacks.username == "root" ? "1" : "0"
 			when "0" then (ARGV.size - (@script_file ? 1 : 0)).to_s
 			else
 				if i = var.to_i?
