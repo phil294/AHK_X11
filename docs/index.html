@@ -90,7 +90,7 @@
                 <a class="tbd" href="#DriveGet.htm">DriveGet</a>
               </li>
               <li>
-                <a class="tbd" href="#DriveSpaceFree.htm">DriveSpaceFree</a>
+                <a href="#DriveSpaceFree.htm">DriveSpaceFree</a>
               </li>
               <li>
                 <a href="#FileAppend.htm">FileAppend</a>
@@ -2123,7 +2123,7 @@ else
                 <td height="16" class="calibre4">Retrieves various types of information about the computer's drive(s).</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#DriveSpaceFree.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DriveSpaceFree</a></td>
+                <td height="16" class="calibre4"><a href="#DriveSpaceFree.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DriveSpaceFree</a></td>
                 <td height="16" class="calibre4">Retrieves the free disk space of a drive, in Megabytes.</td>
               </tr>
               <tr class="calibre3">
@@ -3146,7 +3146,7 @@ MsgBox All Drives: %list%`nSelected Drive: %folder%`nDrive Type: %type%`nStatus:
 </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="DriveSpaceFree.htm" href="#DriveSpaceFree.htm">#</a> <h2 class="calibre17">DriveSpaceFree</h2>
           <hr size="2" class="calibre24" />
@@ -3168,7 +3168,7 @@ MsgBox All Drives: %list%`nSelected Drive: %folder%`nDrive Type: %type%`nStatus:
               </tr>
               <tr class="calibre3">
                 <td width="15%" class="calibre4">path</td>
-                <td width="85%" class="calibre4">Path of drive to receive information from. Since NTFS supports mounted volumes and directory junctions, different amounts of free space might be available in different folders of the same "drive" in some cases.</td>
+                <td width="85%" class="calibre4">Path of drive to receive information from. <span class="rm">Since NTFS supports mounted volumes and directory junctions, different amounts of free space might be available in different folders of the same "drive" in some cases.</span></td>
               </tr>
             </tbody>
           </table>
@@ -3180,7 +3180,7 @@ MsgBox All Drives: %list%`nSelected Drive: %folder%`nDrive Type: %type%`nStatus:
           <p class="calibre8"><a href="#Drive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Drive</a>, <a href="#DriveGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DriveGet</a></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <p class="calibre8">DriveSpaceFree, FreeSpace, c:\<br class="calibre12" />
+          <p class="calibre8">DriveSpaceFree, FreeSpace, %A_Home%<br class="calibre12" />
           </p>
         </div>
       </div>
