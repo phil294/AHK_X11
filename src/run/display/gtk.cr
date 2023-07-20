@@ -153,6 +153,63 @@ module Run
 			end
 		end
 
+		def inputbox(title, prompt, hide, w, h, x, y, timeout, default)
+			title ||= @default_title
+			prompt ||= ""
+			w ||= 375
+			h ||= 189
+			timeout ||= 3_000_000_000_f64
+			channel = Channel(NamedTuple(status: MsgBoxButton, response: String)).new
+			gtk_window = act do
+				window = ::Gtk::Window.new title: title, window_position: ::Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: true
+				vbox = ::Gtk::Box.new orientation: ::Gtk::Orientation::Vertical
+				window.add vbox
+				lbl = ::Gtk::Label.new label: prompt, xalign: 0, yalign: 0, margin_left: 5, margin_top: 5
+				vbox.pack_start lbl, true, true, 0
+				entry = ::Gtk::Entry.new text: default, visibility: !hide, margin_left: 5, margin_right: 5
+				entry.activate_signal.connect do
+					channel.send({ status: MsgBoxButton::OK, response: entry.text })
+				end
+				vbox.pack_start entry, false, false, 5
+				hbox = ::Gtk::Box.new
+				vbox.pack_start hbox, false, false, 5
+				ok_btn = ::Gtk::Button.new label: "OK", width_request: 70
+				ok_btn.clicked_signal.connect do
+					channel.send({ status: MsgBoxButton::OK, response: entry.text })
+				end
+				hbox.pack_start ok_btn, true, false, 5
+				cancel_btn = ::Gtk::Button.new label: "Cancel", width_request: 70
+				cancel_btn.clicked_signal.connect do
+					channel.send({ status: MsgBoxButton::Cancel, response: entry.text })
+				end
+				hbox.pack_start cancel_btn, true, false, 5
+				window.key_press_event_signal.connect do |event|
+					if event.keyval == 65307 # Esc
+						channel.send({ status: MsgBoxButton::Cancel, response: entry.text })
+					end
+					false
+				end
+				window.destroy_signal.connect do
+					if ! channel.closed?
+						channel.send({ status: MsgBoxButton::Cancel, response: entry.text })
+					end
+				end
+				window.set_default_size w, h
+				window.move x, y if x && y
+				window.show_all
+				window
+			end
+			r = select
+			when response = channel.receive
+				response
+			when timeout(timeout.seconds)
+				{ status: MsgBoxButton::Timeout, response: "" }
+			end
+			channel.close
+			act { gtk_window.destroy }
+			r
+		end
+
 		@tray_menu : ::Gtk::Menu? = nil
 		@tray : ::Gtk::StatusIcon? = nil
 		property icon_pixbuf : GdkPixbuf::Pixbuf? = nil
