@@ -552,7 +552,7 @@
                 <a class="tbd" href="#SoundGetWaveVolume.htm">SoundGetWaveVolume</a>
               </li>
               <li>
-                <a class="tbd" href="#SoundPlay.htm">SoundPlay</a>
+                <a href="#SoundPlay.htm">SoundPlay</a>
               </li>
               <li>
                 <a href="#SoundSet.htm">SoundSet</a>
@@ -2598,7 +2598,7 @@ else
                 <td height="16" class="calibre4">Retrieves the wave output volume from a sound device.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#SoundPlay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SoundPlay</a></td>
+                <td height="16" class="calibre4"><a href="#SoundPlay.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SoundPlay</a></td>
                 <td height="16" class="calibre4">Play a sound, video, or other supported file type. </td>
               </tr>
               <tr class="calibre3">
@@ -11353,7 +11353,7 @@ if microphone_mute = Off
           <p class="calibre8"> SoundGetWaveVolume, OutputVar<br class="calibre12" /> MsgBox, The current wave output volume level is %OutputVar%`%.</p>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="SoundPlay.htm" href="#SoundPlay.htm">#</a> <h2 class="calibre17">SoundPlay</h2>
           <hr size="2" class="calibre24" />
@@ -11386,7 +11386,7 @@ if microphone_mute = Off
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">All Windows OSes should be able to play .wav files. However, other files (.mp3, .avi, etc.) might not be playable if the right codecs or features aren't installed on the OS.</p>
+          <p class="calibre8"><span class="rm">All Windows OSes should be able to play .wav files</span>. However, other files (.mp3, .avi, etc.) might not be playable if the right codecs or features aren't installed on the OS. <span class="x11">When in doubt, install the ffmpeg package for your system. It will guarantee that this command works with any type of audio/video file.</span></p>
           <p class="calibre8">If a file is playing and the current script or a different script plays a second file, the first file will be stopped so that the second one can play.</p>
           <p class="calibre8">To stop a file that is currently playing, use SoundPlay on a nonexistent filename as in this example: SoundPlay, Nonexistent.avi</p>
           <p class="calibre8">If the script is terminated, any currently-playing file that it started will stop.</p>

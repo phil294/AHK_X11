@@ -26,6 +26,7 @@ module Run
 		property no_tray_icon = false
 		property run_as_user : String? = nil
 		property run_as_password : String? = nil
+		property sound_play_pid : Int64? = nil
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -99,6 +100,11 @@ module Run
 				handle_single_instance
 			end
 			Fiber.yield
+			at_exit do
+				if sound_play_pid = @settings.sound_play_pid
+					Process.signal(Signal::KILL, sound_play_pid)
+				end
+			end
 			spawn same_thread: true { clock }
 			if (auto_execute_section = @builder.start)
 				@auto_execute_thread = add_thread auto_execute_section, "", 0
