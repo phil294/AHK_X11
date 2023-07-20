@@ -3,7 +3,7 @@ class Cmd::X11::Window::Util
 	# param `match_conditions` is those four `[, WinTitle, WinText, ExcludeTitle, ExcludeText]`
 	# from the docs that are used in various window commands,
 	# and can consequently also be an empty array.
-	def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active)
+	def self.match(thread, match_conditions, *, empty_is_last_found, a_is_active, force_detect_hidden_windows = false)
 		title = match_conditions[0]? || ""
 		if match_conditions.size == 0 || match_conditions.all? &.empty?
 			raise Run::RuntimeException.new "expected window matching arguments as 'last found window' cannot be inferred here" if ! empty_is_last_found
@@ -27,7 +27,7 @@ class Cmd::X11::Window::Util
 				# Which is fixed with an xdotool fork (see build/README.md)
 				wins = thread.runner.display.x_do.search do
 					require_all
-					if ! thread.settings.detect_hidden_windows
+					if ! thread.settings.detect_hidden_windows && ! force_detect_hidden_windows
 						only_visible # if not present, this can seem unpredictable and buggy to the user https://github.com/jordansissel/xdotool/issues/67#issuecomment-1193573254
 						# ^ link also explains the need for specifying desktop:
 						desktop current_desktop
