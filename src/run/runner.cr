@@ -211,7 +211,13 @@ module Run
 			case down
 			when "clipboard"
 				display.gtk.clipboard do |clip|
-					clip.set_text(value, -1)
+					if value.empty?
+						# clip.clear # Doesn't do anything
+						# clip.set_text("", 0) # Doesn't work outside of ahkx11 itself, even though https://stackoverflow.com/q/2418487 says so. Maybe a Crystal GIR bug?
+						clip.image = GdkPixbuf::Pixbuf.new # Ugly but works
+					else
+						clip.set_text(value, value.size)
+					end
 					clip.store
 				end
 			else

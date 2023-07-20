@@ -50,7 +50,7 @@ module Run
 
 		def clipboard(&block : ::Gtk::Clipboard -> _)
 			act do
-				clip = ::Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", true))
+				clip = ::Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", false))
 				block.call(clip)
 			end
 		end
