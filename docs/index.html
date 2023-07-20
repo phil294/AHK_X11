@@ -344,7 +344,7 @@
                 </ul>
               </li>
               <li>
-                <a class="tbd" href="#BlockInput.htm">BlockInput</a>
+                <a href="#BlockInput.htm">BlockInput</a>
               </li>
               <li>
                 <a href="#ControlSend.htm">ControlSend/ControlSendRaw</a>
@@ -426,7 +426,7 @@
                 <a class="tbd" href="#AutoTrim.htm">AutoTrim</a>
               </li>
               <li>
-                <a class="tbd" href="#BlockInput.htm">BlockInput</a>
+                <a href="#BlockInput.htm">BlockInput</a>
               </li>
               <li>
                 <a href="#CoordMode.htm">CoordMode</a>
@@ -2032,7 +2032,7 @@ else
                 <td height="16" class="calibre4">Determines whether <a href="#SetEnv.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetEnv and "var = value"</a> statements remove spaces and tabs.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#BlockInput.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">BlockInput</a></td>
+                <td height="16" class="calibre4"><a href="#BlockInput.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">BlockInput</a></td>
                 <td height="16" class="calibre4">Disables or enables the user's ability to interact with the computer via keyboard, mouse, and perhaps other input devices. </td>
               </tr>
               <tr class="calibre3">
@@ -7712,7 +7712,7 @@ return
           </table>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="BlockInput.htm" href="#BlockInput.htm">#</a> <h2 class="calibre17">BlockInput</h2>
           <hr size="2" class="calibre24" />
@@ -7735,51 +7735,20 @@ return
                   <p class="calibre8"><strong class="calibre14">On</strong>: The user is prevented from interacting with the computer (mouse and keyboard input has no effect). </p>
                   <p class="calibre8"><strong class="calibre14">Off</strong>: Input is re-enabled.</p>
                   <p class="calibre8"> </p>
-                  <p class="calibre8">In v1.0.19+, the following additional modes are available (except on Windows 95/98/Me). These modes operate independently of the above two modes. In other words, "BlockInput On" will continue to block input until "BlockInput Off" is used, even if one of the below modes is also in effect.</p>
-                  <p class="calibre8"><strong class="calibre14">Send</strong>: Input blocking is automatically enabled prior to each use of <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> or <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SendRaw</a>. This prevents any keystrokes physically typed by the user from disrupting the flow of simulated keystrokes. Input blocking is automatically turned back off after the command completes unless it was on beforehand.</p>
-                  <p class="calibre8"><strong class="calibre14">Mouse</strong>: Input blocking is automatically enabled prior to each use of <a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a>, <a href="#MouseClick.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClick</a>, or <a href="#MouseClickDrag.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClickDrag</a>. This prevents any physical mouse activity by the user from disrupting the simulated mouse events. Input blocking is automatically turned back off after the command completes unless it was on beforehand.</p>
-                  <p class="calibre8"><strong class="calibre14">SendAndMouse</strong>: A combination of the above two modes.</p>
-                  <p class="calibre8"><strong class="calibre14">Default</strong>: Turns off both the <em class="calibre21">Send</em> and the <em class="calibre21">Mouse</em> modes, but does not change the current state of input blocking. For example, if "BlockInput On" is currently in effect, using "BlockInput Default" will not turn it off. This is also true for "BlockInput Send|Mouse|SendAndMouse".</p>
+                  <span class="tbd">
+                    <p class="calibre8">In v1.0.19+, the following additional modes are available (except on Windows 95/98/Me). These modes operate independently of the above two modes. In other words, "BlockInput On" will continue to block input until "BlockInput Off" is used, even if one of the below modes is also in effect.</p>
+                    <p class="calibre8"><strong class="calibre14">Send</strong>: Input blocking is automatically enabled prior to each use of <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> or <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SendRaw</a>. This prevents any keystrokes physically typed by the user from disrupting the flow of simulated keystrokes. Input blocking is automatically turned back off after the command completes unless it was on beforehand.</p>
+                    <p class="calibre8"><strong class="calibre14">Mouse</strong>: Input blocking is automatically enabled prior to each use of <a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a>, <a href="#MouseClick.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClick</a>, or <a href="#MouseClickDrag.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClickDrag</a>. This prevents any physical mouse activity by the user from disrupting the simulated mouse events. Input blocking is automatically turned back off after the command completes unless it was on beforehand.</p>
+                    <p class="calibre8"><strong class="calibre14">SendAndMouse</strong>: A combination of the above two modes.</p>
+                    <p class="calibre8"><strong class="calibre14">Default</strong>: Turns off both the <em class="calibre21">Send</em> and the <em class="calibre21">Mouse</em> modes, but does not change the current state of input blocking. For example, if "BlockInput On" is currently in effect, using "BlockInput Default" will not turn it off. This is also true for "BlockInput Send|Mouse|SendAndMouse".</p>
+                  </span>
                 </td>
               </tr>
             </tbody>
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8"><strong class="calibre14">Note</strong>: In versions prior to 1.0.19, if BlockInput is ON, the ALT keypress cannot be sent by the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command. In later versions, input blocking is automatically and momentarily disabled whenever an ALT event is sent (then re-enabled afterward).</p>
-          <p class="calibre8">The table below shows how BlockInput behavior varies depending on Windows' version; however, pressing Ctrl+Alt+Del on any platform will re-enable input due to a Windows API feature.</p>
-          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
-            <tbody class="calibre2">
-              <tr class="calibre3">
-                <td width="37%" class="calibre4"><strong class="calibre14"><em class="calibre21">Operating System </em></strong></td>
-                <td width="63%" class="calibre4"><strong class="calibre14"><em class="calibre21">"BlockInput" Results </em></strong></td>
-              </tr>
-              <tr class="calibre3">
-                <td class="calibre4" />
-                <td class="calibre4" />
-              </tr>
-              <tr class="calibre3">
-                <td class="calibre4">Windows 95 </td>
-                <td class="calibre4">No effect. </td>
-              </tr>
-              <tr class="calibre3">
-                <td class="calibre4">Windows 98/Me</td>
-                <td class="calibre4">User input is blocked and AutoHotkey is <strong class="calibre14">unable</strong> to simulate input. </td>
-              </tr>
-              <tr class="calibre3">
-                <td class="calibre4">Windows NT 4 (<em class="calibre21">without </em> ServicePack 6) </td>
-                <td class="calibre4">No effect. </td>
-              </tr>
-              <tr class="calibre3">
-                <td class="calibre4">Windows NT 4 (<em class="calibre21">w</em><em class="calibre21">ith </em> ServicePack 6) </td>
-                <td class="calibre4">User input is blocked but AutoHotkey can simulate most input. </td>
-              </tr>
-              <tr class="calibre3">
-                <td class="calibre4">Windows 2000/XP</td>
-                <td class="calibre4">User input is blocked but AutoHotkey can simulate most input. </td>
-              </tr>
-            </tbody>
-          </table>
+          <p class="calibre8 rm"><strong class="calibre14">Note</strong>: In versions prior to 1.0.19, if BlockInput is ON, the ALT keypress cannot be sent by the <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> command. In later versions, input blocking is automatically and momentarily disabled whenever an ALT event is sent (then re-enabled afterward).</p>
           <p class="calibre8"> Note that commands such as <a href="#WinMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinMove</a> will still work on Windows 98/Me when BlockInput is enabled. <a href="#ControlSend.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ControlSend </a>might also work. </p>
           <p class="calibre8"> Input will be automatically enabled when the script closes. </p>
           <p class="calibre8"> </p>

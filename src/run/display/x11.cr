@@ -383,5 +383,25 @@ module Run
 			@mutex.unlock
 			@flush_event_queue.send(nil)
 		end
+		def grab_pointer
+			@mutex.lock
+			@display.grab_pointer(grab_window: @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime, event_mask: 0_u32, confine_to: 0_u64, cursor: 0_u64)
+			@mutex.unlock
+			@flush_event_queue.send(nil)
+		end
+		def ungrab_pointer
+			@mutex.lock
+			@display.ungrab_pointer(time: ::X11::CurrentTime)
+			@mutex.unlock
+			@flush_event_queue.send(nil)
+		end
+		def block_input
+			grab_keyboard
+			grab_pointer
+		end
+		def unblock_input
+			ungrab_keyboard
+			ungrab_pointer
+		end
 	end
 end
