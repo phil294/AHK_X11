@@ -141,7 +141,7 @@
                 <a href="#FileRead.htm">FileRead</a>
               </li>
               <li>
-                <a class="tbd" href="#FileRecycle.htm">FileRecycle</a>
+                <a href="#FileRecycle.htm">FileRecycle</a>
               </li>
               <li>
                 <a class="tbd" href="#FileRecycleEmpty.htm">FileRecycleEmpty</a>
@@ -1051,7 +1051,7 @@ if %MyVar% &gt; %MyVarLimit%  ; Wrong because MyVar should not have percent sign
             <li class="calibre11"><a href="#FileCopy.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileCopy</a>: Copy one or more files. <span class="tbd">Use <a href="#FileCopyDir.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileCopyDir</a> to copy an entire folder. </span></li>
             <li class="calibre11"><span class="tbd"><a href="#FileMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileMove</a>: Move or rename one or more files. Use <a href="#FileMoveDir.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileMoveDir</a> to move an entire folder. </span></li>
             <li class="calibre11"><span class=""><a href="#FileDelete.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileDelete</a>: Delete one or more files. Use <a href="#FileRemoveDir.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileRemoveDir</a> to delete an entire folder. </span></li>
-            <li class="calibre11"><span class="tbd"><a href="#FileRecycle.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileRecycle</a>: Send one or more files (or an entire folder) to the recycle bin.</span></li>
+            <li class="calibre11"><span class=""><a href="#FileRecycle.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileRecycle</a>: Send one or more files (or an entire folder) to the recycle bin.</span></li>
             <li class="calibre11"><span class=""><a href="#FileSelectFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFile</a> and <a href="#FileSelectFolder.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFolder</a>: Display a dialog for the user to pick a file or folder.</span></li>
             <li class="calibre11"><span class=""><a href="#FileSetAttrib.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSetAttrib</a> and <a href="#FileSetTime.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSetTime</a>: Change the attributes or timestamp of one or more files.</span></li>
             <li class="calibre11"><span class=""><a href="#IniRead.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IniRead</a>, <a href="#IniWrite.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IniWrite</a>, and <a href="#IniDelete.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IniDelete</a>: Create, access, and maintain standard-format INI files.</span></li>
@@ -2223,7 +2223,7 @@ else
                 <td height="16" class="calibre4"> Moves a directory and all sub-directories and files. It can also rename a directory.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#FileRecycle.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileRecycle</a></td>
+                <td height="16" class="calibre4"><a href="#FileRecycle.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileRecycle</a></td>
                 <td height="16" class="calibre4">Sends a file or directory to the recycle bin, if possible.</td>
               </tr>
               <tr class="calibre3">
@@ -4006,9 +4006,9 @@ return</pre>
 </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="FileRecycle.htm" href="#FileRecycle.htm">#</a> <h2 class="calibre17">FileRecycle</h2> [v1.0.09+]
+          <a id="FileRecycle.htm" href="#FileRecycle.htm">#</a> <h2 class="calibre17">FileRecycle</h2>
           <hr size="2" class="calibre24" />
           <p class="calibre8">Sends a file or directory to the recycle bin, if possible.</p>
           <table cellspacing="5" width="100%" class="calibre28">
@@ -4025,7 +4025,7 @@ return</pre>
               <tr class="calibre3">
                 <td width="15%" class="calibre4">FilePattern</td>
                 <td width="85%" class="calibre4">
-                  <p class="calibre8">The name of a single file or a wildcard pattern such as C:\Temp\*.tmp. <em class="calibre21">FilePattern </em>is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified.</p>
+                  <p class="calibre8">The name of a single file or a wildcard pattern such as /tmp/*.tmp. <em class="calibre21">FilePattern </em>is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified.</p>
                   <p class="calibre8">To recycle an entire directory, provide its name without a trailing backslash.</p>
                 </td>
               </tr>
@@ -4043,7 +4043,7 @@ return</pre>
           </p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <p class="calibre8"> FileRecycle, C:\temp files\*.tmp <br class="calibre12" />
+          <p class="calibre8"> FileRecycle, %A_Home%/temp files/*.tmp <br class="calibre12" />
           </p>
         </div>
       </div>
