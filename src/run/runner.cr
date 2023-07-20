@@ -93,7 +93,7 @@ module Run
 			Fiber.yield
 			spawn same_thread: true { clock }
 			if (auto_execute_section = @builder.start)
-				@auto_execute_thread = add_thread auto_execute_section, 0
+				@auto_execute_thread = add_thread auto_execute_section, "", 0
 			else
 				auto_execute_section_ended
 			end
@@ -101,18 +101,19 @@ module Run
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
-		def add_thread(cmd : Cmd::Base, priority, hotkey : Hotkey? = nil) : Thread
-			thread = Thread.new(self, cmd, priority, @default_thread_settings, hotkey)
+		def add_thread(cmd : Cmd::Base, label, priority, hotkey : Hotkey? = nil) : Thread
+			thread = Thread.new(self, cmd, label, priority, @default_thread_settings, hotkey)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
 			@run_thread_channel.send(nil) if i == @threads.size - 1
 			thread
 		end
 		# :ditto:
+		# TODO: cmd_str should be called label (?)
 		def add_thread(cmd_str : String, priority, *, hotkey : Hotkey? = nil) : Thread?
 			cmd = @labels[cmd_str]?
 			return nil if ! cmd
-			add_thread(cmd, priority, hotkey)
+			add_thread(cmd, cmd_str, priority, hotkey)
 		end
 
 		# Forever continuously figures out the "current thread" (`@threads.last`) and
@@ -183,7 +184,7 @@ module Run
 					end
 					begin
 						@builder.build [line]
-						add_thread @builder.start.not_nil!, 0 if @builder.start
+						add_thread @builder.start.not_nil!, "", 0 if @builder.start
 						Fiber.yield
 					rescue e
 						STDERR.puts e.message
@@ -270,7 +271,7 @@ module Run
 		def add_timer(label, period, priority)
 			cmd = @labels[label]?
 			raise RuntimeException.new "add timer: label '#{label}' not found" if ! cmd
-			timer = Timer.new(self, cmd, period, priority)
+			timer = Timer.new(self, cmd, label, period, priority)
 			@timers[label] = timer
 			timer
 		end

@@ -60,7 +60,7 @@ module Run
 				STDERR.puts "WARN: Skipping thread for hotkey press '#{key_str}' because #{@threads.size} threads are already running (max_threads==#{@max_threads}"
 				return
 			end
-			thread = runner.not_nil!.add_thread @cmd.not_nil!, @priority, hotkey: self
+			thread = runner.not_nil!.add_thread @cmd.not_nil!, @key_str, @priority, hotkey: self
 			@threads << thread
 		end
 	end

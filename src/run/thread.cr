@@ -75,6 +75,9 @@ module Run
 			"errorlevel" => "0"
 		}
 		@stack = [] of Cmd::Base
+		# Cannot save label onto Cmd::Base class directly because multiple labels may point to
+		# the same label. So we need a separate array or extend with another superclass.
+		@label_stack = [] of String
 		getter priority = 0
 		getter hotkey : Hotkey? = nil
 		@exit_code = 0
@@ -84,10 +87,11 @@ module Run
 		getter paused = false
 		getter loop_stack = [] of Cmd::ControlFlow::Loop
 		property performance_by_cmd = {} of String => CmdPerformance
-		def initialize(@runner, start, @priority, @settings, @hotkey)
+		def initialize(@runner, start, label, @priority, @settings, @hotkey)
 			@@id_counter += 1
 			@id = @@id_counter
 			@stack << start
+			@label_stack << label
 		end
 
 		# Spawns the `do_next` fiber if it isn't running already and returns the result channel.
@@ -176,6 +180,7 @@ module Run
 			if @stack[stack_i]? == cmd # not altered
 				if ! next_cmd
 					@stack.delete_at(stack_i) # thread finished
+					@label_stack.delete_at(stack_i)
 				else
 					@stack[stack_i] = next_cmd # proceed
 				end
@@ -187,18 +192,22 @@ module Run
 			cmd = @runner.labels[label]?
 			raise RuntimeException.new "gosub: target label '#{label}' does not exist" if ! cmd
 			@stack << cmd
+			@label_stack << label
 		end
 		def goto(label)
 			cmd = @runner.labels[label]?
 			raise RuntimeException.new "goto: target label '#{label}' does not exist" if ! cmd
 			@stack[@stack.size - 1] = cmd
+			@label_stack[@label_stack.size - 1] = label
 		end
 		def return
 			@stack.pop
+			@label_stack.pop
 		end
 		def exit(code)
 			@exit_code = code || 0
 			@stack.clear
+			@label_stack.clear
 		end
 
 		# Get the value of both thread-local and global values,
@@ -223,6 +232,8 @@ module Run
 				@settings.key_delay.to_s
 			when "a_linenumber"
 				(@stack.last.line_no + 1).to_s
+			when "a_thislabel"
+				@label_stack.last
 			else
 				nil
 			end

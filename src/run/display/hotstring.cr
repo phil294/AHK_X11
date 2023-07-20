@@ -47,7 +47,7 @@ module Run
 				end
 			end
 
-			runner.add_thread @cmd.not_nil!, @priority
+			runner.add_thread @cmd.not_nil!, @label, @priority
 		end
 	end
 end

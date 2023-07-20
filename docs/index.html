@@ -1574,6 +1574,10 @@ Please note: This only works unreliably, and in the above example, LControl will
                 <td class="calibre4"><a id="Variables.htm__LineNumber" href="#Variables.htm__LineNumber" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a>The number of the currently executing line within the script (or one of its #Include files). This line number will match the one shown by ListLines; it can be useful for error reporting such as this example: MsgBox Could not write to log file (line number %A_LineNumber%).</td>
               </tr>
               <tr class="calibre3">
+                <td class="calibre4">A_ThisLabel</td>
+                <td class="calibre4"><a id="Variables.htm__ThisLabel" href="#Variables.htm__ThisLabel" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a>The name of the label (subroutine) that is currently executing (blank if none); for example: MyLabel. It is updated whenever the script executes Gosub/Return or Goto. It is also updated for automatically-called labels such as timers, GUI threads, menu items, hotkeys, hotstrings, OnClipboardChange labels, and OnExit labels. However, A_ThisLabel is not updated when execution "falls into" a label from above; when that happens, A_ThisLabel retains its previous value. See also: A_ThisHotkey and IsLabel()</td>
+              </tr>
+              <tr class="calibre3">
                 <td class="calibre4">A_AhkVersion</td>
                 <td class="calibre4"><a id="Variables.htm__AhkVersion" href="#Variables.htm__AhkVersion" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="rm"> In versions prior to 1.0.22, this variable is blank. Otherwise, it contains the version of AutoHotkey that is running the script, such as 1.0.22. In the case of a <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">compiled script</a>, the version that was originally used to compile it is reported.</span><span class="x11"> Always contains 1.0.24.</span></td>
               </tr>
