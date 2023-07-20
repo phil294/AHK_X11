@@ -65,7 +65,7 @@ class Cmd::Misc::Run < Cmd::Base
 		elsif target_raw.starts_with?("explore ")
 			target_raw = target_raw[8..]
 			target = target[8..]
-			edit = true
+			edit = false
 		elsif target_raw.starts_with?("print ")
 			target_raw = "lp " + target_raw[6..]
 			target = "lp " + target[6..]
