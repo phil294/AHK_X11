@@ -403,5 +403,18 @@ module Run
 			ungrab_keyboard
 			ungrab_pointer
 		end
+
+		def show_desktop(show)
+			_NET_SHOWING_DESKTOP = @display.intern_atom("_NET_SHOWING_DESKTOP", false)
+    		event = ::X11::ClientMessageEvent.new
+			event.type = ::X11::C::ClientMessage
+    		event.window = @root_win
+    		event.message_type = _NET_SHOWING_DESKTOP
+    		event.format = 32
+			value = show ? 1_i64 : 0_i64
+			event.long_data = StaticArray[value, 0_i64, 0_i64, 0_i64, 0_i64]
+			@display.send_event(@root_win, false, ::X11::C::SubstructureRedirectMask | ::X11::C::SubstructureNotifyMask, event)
+			display.flush # <- I DON'T KNOW WHY BUT I WANT MY THREE HOURS BACK
+		end
 	end
 end
