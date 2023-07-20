@@ -34,10 +34,9 @@ These are the steps required to build this project locally, such as if you want 
 The released binaries are special because they need to be portable. We achieve this by using AppImage. Portability is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Below are the instructions on how to do this / how the released binaries are produced.
 
 1. Get on an Ubuntu 20.04 system, e.g. using Docker. 18.04 also works but Gtk 3.24 in 20.04 fixes the bug that ToolTips falsely grab focus
-1. `libxdo` isn't backwards compatible (e.g. Ubuntu 18.04 and 20.04 versions are incompatible). Also, we fix a rarely occurring fatal error here (probably Crystal-specific?). So,
+1. `libxdo`'s master branch includes changes not present in the recent releases, so we need to build it by hand:
 
     - clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there,
-    - in `xdo.c`, after `data = xdo_get_window_property_by_atom(xdo, wid, request, &nitems, &type, &size);`, add another `if(data == NULL) return XDO_ERROR;`
     - run `make clean && make` and then copy the files `libxdo.so` and `libxdo.so.3` into this very `build` folder.
 1. Do the same steps as listed in "For local testing": Install dependencies etc.
 1. Get `linuxdeploy-x86_64.AppImage` from https://github.com/linuxdeploy/linuxdeploy/, into this `build` folder
