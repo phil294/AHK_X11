@@ -207,11 +207,9 @@ class Util::AhkString
 					word += char
 				end
 			end
-			n = n.to_i64?(prefix: true)
-			key = word.downcase
-			key = n.to_s if key.empty? && n
-			ret[key] = ret[part[0].downcase.to_s] = {
-				n: n,
+			down = word.downcase
+			ret[down] = ret[part[0].downcase.to_s] = {
+				n: n.to_i64?(prefix: true) || nil,
 				v: part[1..]? || "",
 				minus: minus,
 				plus: plus
