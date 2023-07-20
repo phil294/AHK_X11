@@ -213,7 +213,7 @@ module Run
 			@built_in_static_vars[var.downcase] = value
 		end
 		# `var` is case sensitive
-		private def get_thread_built_in_computed_var(var)
+		private def get_thread_built_in_computed_var(var) : String?
 			case var
 			when "a_index"
 				(@loop_stack.last?.try &.index || 0).to_s
@@ -221,6 +221,8 @@ module Run
 				@settings.detect_hidden_windows ? "On" : "Off"
 			when "a_keydelay"
 				@settings.key_delay.to_s
+			when "a_linenumber"
+				(@stack.last.line_no + 1).to_s
 			else
 				nil
 			end
