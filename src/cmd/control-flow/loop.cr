@@ -68,19 +68,18 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 		when LoopType::Count
 			fin = @index > @count.not_nil!
 		when LoopType::Files
-			fin = @index > @files.size
-			if ! fin
-				match = @files[@index - 1]
-				file = ::File.new(match)
-				path = Path.new(match)
+			file = current_file
+			fin = ! current_file
+			if file
+				path = Path.new(file.path)
 				stat = uninitialized LibC::Stat
-				Crystal::System::File.stat(match.check_no_null_byte, pointerof(stat))
+				Crystal::System::File.stat(file.path.check_no_null_byte, pointerof(stat))
 				access_time = ::Time.new(stat.st_atim, ::Time::Location::UTC)
 				# st_ctim is not creation time. Creation time is not available on Crystal, see
 				# https://github.com/crystal-lang/crystal/issues/12416
 				# creation_time = ::Time.new(stat.st_ctim, ::Time::Location::UTC)
 				thread.runner.set_global_built_in_static_var("A_LoopFileName", path.basename)
-				thread.runner.set_global_built_in_static_var("A_LoopFileFullPath", match)
+				thread.runner.set_global_built_in_static_var("A_LoopFileFullPath", file.path)
 				thread.runner.set_global_built_in_static_var("A_LoopFileShortName", path.basename)
 				thread.runner.set_global_built_in_static_var("A_LoopFileDir", path.dirname)
 				thread.runner.set_global_built_in_static_var("A_LoopFileTimeModified", file.info.modification_time.to_YYYYMMDDHH24MISS)
@@ -123,5 +122,10 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 		@read_output_file.not_nil!.close if @read_output_file
 		@parse_iter = nil
 		thread.loop_stack.pop
+	end
+	def current_file
+		match = @files[@index - 1]?
+		return nil if ! match
+		::File.new(match)
 	end
 end

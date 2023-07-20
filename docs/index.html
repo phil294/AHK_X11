@@ -117,7 +117,7 @@
                 <a class="tbd" href="#FileGetShortcut.htm">FileGetShortcut</a>
               </li>
               <li>
-                <a class="tbd" href="#FileGetSize.htm">FileGetSize</a>
+                <a href="#FileGetSize.htm">FileGetSize</a>
               </li>
               <li>
                 <a href="#FileGetTime.htm">FileGetTime</a>
@@ -2203,7 +2203,7 @@ else
                 <td height="16" class="calibre4">Retrieves information about a shortcut (.lnk) file, such as its target file. </td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#FileGetSize.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileGetSize</a></td>
+                <td height="16" class="calibre4"><a href="#FileGetSize.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileGetSize</a></td>
                 <td height="16" class="calibre4">Retrieves the size of a file in bytes, KB, or MB. </td>
               </tr>
               <tr class="calibre3">
@@ -3622,7 +3622,7 @@ Transform, OutDir, Deref, %OutDir%  ; Resolve any environment variables, such as
 MsgBox %OutTarget%`n%OutDir%`n%OutArgs%`n%OutDesc%`n%OutIcon%`n%OutIconNum%`n%OutRunState%</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="FileGetSize.htm" href="#FileGetSize.htm">#</a> <h2 class="calibre17">FileGetSize</h2>
           <hr size="2" class="calibre24" />
@@ -3666,7 +3666,7 @@ MsgBox %OutTarget%`n%OutDir%`n%OutArgs%`n%OutDesc%`n%OutIcon%`n%OutIconNum%`n%Ou
           <p class="calibre8"><a href="#FileGetAttrib.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileGetAttrib</a>, <a href="#FileSetAttrib.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSetAttrib</a>, <a href="#FileGetTime.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileGetTime</a>, <a href="#FileSetTime.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSetTime</a>, <a href="#FileGetVersion.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileGetVersion</a>, <a href="#LoopFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">File-loop</a></p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <p class="calibre8"> FileGetSize, size, C:\My Documents\test.doc ; Retrieve the size in bytes.<br class="calibre12" /> FileGetSize, size, C:\My Documents\test.doc, K ; Retrieve the size in Kbytes.<br class="calibre12" />
+          <p class="calibre8"> FileGetSize, size, %A_Home%/test.doc ; Retrieve the size in bytes.<br class="calibre12" /> FileGetSize, size, /tmp/test.doc, K ; Retrieve the size in Kbytes.<br class="calibre12" />
           </p>
         </div>
       </div>
