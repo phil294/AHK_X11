@@ -26,6 +26,7 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 			end
 		end
 		count = args[3]?.try &.to_i? || 1
+		# For speed, see mouse-move.cr
 		up = down = false
 		case args[5]?.try &.downcase
 		when "d" then down = true
