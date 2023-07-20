@@ -23,8 +23,8 @@ class Cmd::X11::Mouse::ControlClick < Cmd::Base
 					true
 				end
 			end
-			return "1" if ! success
+			return success ? "0" : "1"
 		end
-		"0"
+		"1"
 	end
 end
