@@ -76,7 +76,7 @@
             <a href="#">Environment Management</a>
             <ul>
               <li>
-                <a class="tbd" href="#ClipWait.htm">ClipWait</a>
+                <a href="#ClipWait.htm">ClipWait</a>
               </li>
             </ul>
           </li>
@@ -432,7 +432,7 @@
                 <a href="#CoordMode.htm">CoordMode</a>
               </li>
               <li>
-                <a class="tbd" href="#ClipWait.htm">ClipWait</a>
+                <a href="#ClipWait.htm">ClipWait</a>
               </li>
               <li>
                 <a href="#Edit.htm">Edit</a>
@@ -2040,7 +2040,7 @@ else
                 <td height="16" class="calibre4">Exits (terminates) a <a href="#Loop.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">loop</a>. Valid only inside a <a href="#Loop.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">loop</a>.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#ClipWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ClipWait</a></td>
+                <td height="16" class="calibre4"><a href="#ClipWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ClipWait</a></td>
                 <td height="16" class="calibre4">Waits until the <a href="#Clipboard.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">clipboard</a> contains text or files.</td>
               </tr>
               <tr class="calibre3">
@@ -2871,7 +2871,7 @@ else
           <p class="calibre8"> </p>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="ClipWait.htm" href="#ClipWait.htm">#</a> <h2 class="calibre17">ClipWait</h2>
           <hr size="2" class="calibre24" />
@@ -2889,7 +2889,7 @@ else
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td width="15%" class="calibre4">SecondsToWait</td>
-                <td width="85%" class="calibre4">If omitted, the command will wait indefinitely. Otherwise, it will wait no longer than this many seconds (can contain a decimal point). Specifying 0 is the same as specifying 0.5.</td>
+                <td width="85%" class="calibre4">If omitted, the command will wait indefinitely. Otherwise, it will wait no longer than this many seconds (can contain a decimal point). <span class="rm">Specifying 0 is the same as specifying 0.5</span>.</td>
               </tr>
             </tbody>
           </table>
@@ -2898,7 +2898,7 @@ else
           <p class="calibre8">If the wait period expires, <a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> will be set to 1. Otherwise (i.e. the clipboard contains text), ErrorLevel is set to 0. </p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">It's better to use this command than a loop of your own that checks to see if this clipboard is blank. This is because the clipboard is never opened by this command, and thus it performs better and avoids any chance of interfering with another application that may be using the clipboard.</p>
+          <p class="calibre8">It's better to use this command than a loop of your own that checks to see if this clipboard is blank.<span class="rm"> This is because the clipboard is never opened by this command, and thus it performs better and avoids any chance of interfering with another application that may be using the clipboard.</span><span class="x11">This command checks for non-zero text contents in a loop with slight exponential back-off (max 0.5s).</span></p>
           <p class="calibre8">This command considers anything convertible to text (e.g. HTML) to be text. It also considers files, such as those copied in an Explorer window via Control-C, to be text. Such files are automatically converted to their filenames (with full path) whenever the <a href="#Clipboard.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">clipboard</a> variable (%clipboard%) is referred to in the script.</p>
           <p class="calibre8">While the command is in a waiting state, new <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">threads</a> can be launched via <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkey</a>, <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">custom menu item</a>, or <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">timer</a>.</p>
           <p class="calibre8"> </p>
@@ -7735,13 +7735,13 @@ return
                   <p class="calibre8"><strong class="calibre14">On</strong>: The user is prevented from interacting with the computer (mouse and keyboard input has no effect). </p>
                   <p class="calibre8"><strong class="calibre14">Off</strong>: Input is re-enabled.</p>
                   <p class="calibre8"> </p>
-                  <span class="tbd">
+                  <div class="tbd">
                     <p class="calibre8">In v1.0.19+, the following additional modes are available (except on Windows 95/98/Me). These modes operate independently of the above two modes. In other words, "BlockInput On" will continue to block input until "BlockInput Off" is used, even if one of the below modes is also in effect.</p>
                     <p class="calibre8"><strong class="calibre14">Send</strong>: Input blocking is automatically enabled prior to each use of <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Send</a> or <a href="#Send.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SendRaw</a>. This prevents any keystrokes physically typed by the user from disrupting the flow of simulated keystrokes. Input blocking is automatically turned back off after the command completes unless it was on beforehand.</p>
                     <p class="calibre8"><strong class="calibre14">Mouse</strong>: Input blocking is automatically enabled prior to each use of <a href="#MouseMove.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseMove</a>, <a href="#MouseClick.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClick</a>, or <a href="#MouseClickDrag.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseClickDrag</a>. This prevents any physical mouse activity by the user from disrupting the simulated mouse events. Input blocking is automatically turned back off after the command completes unless it was on beforehand.</p>
                     <p class="calibre8"><strong class="calibre14">SendAndMouse</strong>: A combination of the above two modes.</p>
                     <p class="calibre8"><strong class="calibre14">Default</strong>: Turns off both the <em class="calibre21">Send</em> and the <em class="calibre21">Mouse</em> modes, but does not change the current state of input blocking. For example, if "BlockInput On" is currently in effect, using "BlockInput Default" will not turn it off. This is also true for "BlockInput Send|Mouse|SendAndMouse".</p>
-                  </span>
+                  </div>
                 </td>
               </tr>
             </tbody>
