@@ -417,7 +417,7 @@
             <a href="#">Misc. Commands</a>
             <ul>
               <li>
-                <a class="tbd" href="#h_NoTrayIcon.htm">#NoTrayIcon</a>
+                <a href="#h_NoTrayIcon.htm">#NoTrayIcon</a>
               </li>
               <li>
                 <a href="#h_SingleInstance.htm">#SingleInstance</a>
@@ -829,7 +829,7 @@
                 <a href="#h_MaxThreadsPerHotkey.htm">#MaxThreadsPerHotkey</a>
               </li>
               <li>
-                <a class="tbd" href="#h_NoTrayIcon.htm">#NoTrayIcon</a>
+                <a href="#h_NoTrayIcon.htm">#NoTrayIcon</a>
               </li>
               <li>
                 <a href="#h_Persistent.htm">#Persistent</a>
@@ -1732,7 +1732,7 @@ Please note: This only works unreliably, and in the above example, LControl will
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_IconHidden</td>
-                <td class="calibre4 tbd"><a id="Variables.htm__IconHidden" href="#Variables.htm__IconHidden" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Contains 1 if the tray icon is currently hidden or 0 otherwise. The icon can be hidden via <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> or the <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Menu</a> command.</td>
+                <td class="calibre4"><a id="Variables.htm__IconHidden" href="#Variables.htm__IconHidden" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Contains 1 if the tray icon is currently hidden or 0 otherwise. The icon can be hidden via <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> or the <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Menu</a> command.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_IconTip</td>
@@ -2870,7 +2870,7 @@ else
                 <td height="16" class="calibre4">Sets the maximum number of simultaneous <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">threads</a> per <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkey</a>.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a></td>
+                <td height="16" class="calibre4"><a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a></td>
                 <td height="16" class="calibre4">Disables the showing of a tray icon.</td>
               </tr>
               <tr class="calibre3">
@@ -9395,7 +9395,7 @@ if var is time
           <pre class="calibre22">Transform, OutputVar, Asc, A  ; Get the ASCII code of the letter A.</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="h_NoTrayIcon.htm" href="#h_NoTrayIcon.htm">#</a> <h2 class="calibre17">#NoTrayIcon</h2>
           <hr size="2" class="calibre24" />
@@ -9415,7 +9415,7 @@ if var is time
           <p class="calibre8">Specifying this anywhere in a script will prevent the showing of a tray icon for that script when it is launched (even if the script is compiled into an EXE).</p>
           <p class="calibre8">If you use this for a script that has hotkeys, you might want to bind a hotkey to the <a href="#ExitApp.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ExitApp</a> command. Otherwise, there will be no easy way to exit the program (without restarting the computer or killing the process). Example: #x::ExitApp</p>
           <p class="calibre8">The tray icon can be made to disappear or reappear at any time during the execution of the script by using the command <em class="calibre21"><a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">menu</a>, tray, Icon</em> or <em class="calibre21"><a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">menu</a>, tray, NoIcon.</em> The only drawback of using the <em class="calibre21"><a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">menu</a>, tray, NoIcon </em>at the very top of the script is that the tray icon might be briefly visible when the script is first launched. To avoid that, use #NoTrayIcon instead.</p>
-          <p class="calibre8">In v1.0.13+, the built-in variable <strong class="calibre14">A_IconHidden</strong> contains 1 if the tray icon is currently hidden or 0 otherwise.</p>
+          <p class="calibre8">The built-in variable <strong class="calibre14">A_IconHidden</strong> contains 1 if the tray icon is currently hidden or 0 otherwise.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Menu</a>, <a href="#ExitApp.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ExitApp</a></p>
@@ -9697,8 +9697,8 @@ if var is time
           <p class="calibre8"> </p>
           <p class="calibre8"><u class="calibre20"><span class="calibre17">Change the Icon or ToolTip</span></u> (<em class="calibre21">MenuName</em> must be TRAY)</p>
           <p class="calibre8"><strong class="calibre14">Icon, FileName [, IconNumber]</strong> [v1.0.13+]: Changes the script's icon to one of the ones from <em class="calibre21">FileName</em> (<span class="rm">a .ico, .dll, or .exe file</span> <span class="x11">an image file such as .png or .gif. .jpg does not seem to work.</span>). <span class="rm">If <em class="calibre21">IconNumber</em> is omitted, it defaults to 1 (the first icon in the file)</span>. Specify an asterisk (*) for <em class="calibre21">FileName</em> to restore the script to its default icon. This setting affects the tray icon and the one displayed by <a href="#InputBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">InputBox</a>, <a href="#Progress.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Progress</a>, and <a href="#Gui.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">GUI</a> windows. <a href="#Scripts.htm__ahk2exe" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Compiled scripts</a> are also affected even if a custom icon was specified at the time of compiling. Note: Changing the icon will not unhide the tray icon if it was previously hidden by means such as <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a>; to do that, use "Menu, Tray, Icon" as described below. Also, the built-in variables <strong class="calibre14"><span class="rm">A_IconNumber</span></strong> and <strong class="calibre14">A_IconFile</strong> contain the number and name (with full path) of the current icon (both are blank if the icon is the default).</p>
-          <p class="calibre8"><span class="tbd"><strong class="calibre14">Icon </strong>(with no parameters) [v1.0.09+]: Creates the tray icon if it isn't already present. This will override <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> if that directive is also present in the script.</span></p>
-          <p class="calibre8"><strong class="calibre14">NoIcon</strong><strong class="calibre14"> </strong>Removes the tray icon if it exists. If this command is used at the very top of the script, the tray icon might be briefly visible when the script is launched. To prevent that, use <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> instead. <span class="tbd">In v1.0.13+, the built-in variable <strong class="calibre14">A_IconHidden</strong> contains 1 if the tray icon is currently hidden or 0 otherwise.</span></p>
+          <p class="calibre8"><strong class="calibre14">Icon </strong>(with no parameters): Creates the tray icon if it isn't already present. This will override <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> if that directive is also present in the script.</p>
+          <p class="calibre8"><strong class="calibre14">NoIcon</strong><strong class="calibre14"> </strong>Removes the tray icon if it exists. If this command is used at the very top of the script, the tray icon might be briefly visible when the script is launched. To prevent that, use <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> instead. The built-in variable <strong class="calibre14">A_IconHidden</strong> contains 1 if the tray icon is currently hidden or 0 otherwise.</p>
           <p class="calibre8"><strong class="calibre14">Tip [, Text] </strong>[v1.0.13+]: Changes the tray icon's tooltip -- which is displayed when the mouse hovers over it -- to be <em class="calibre21">Text</em>. To create a multi-line tooltip, use the linefeed character (`n) in between each line, e.g. Line1`nLine2. If <em class="calibre21">Text</em> is omitted, the tooltip is restored to its default text. The built-in variable <strong class="calibre14">A_IconTip</strong> contains the current text of the tooltip (blank if the text is at its default).</p>
           <p class="calibre8"> </p>
           <div class="tbd">

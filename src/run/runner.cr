@@ -22,6 +22,7 @@ module Run
 		# Can't be altered after parsing but we still need to remember this value somewhere
 		# for the dynamic creation of hotkeys.
 		property max_threads_per_hotkey = 1_u8
+		property no_tray_icon = false
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own
@@ -47,6 +48,7 @@ module Run
 			"a_scriptfullpath" => "",
 			"a_ahkversion" => "1.0.24",
 			"a_ostype" => "Linux",
+			"a_iconhidden" => "0"
 		}
 		@initial_working_dir = Dir.current
 		protected getter labels : Hash(String, Cmd::Base)
@@ -77,6 +79,7 @@ module Run
 			set_global_built_in_static_var "A_ScriptDir", script.dirname
 			set_global_built_in_static_var "A_ScriptName", script.basename
 			set_global_built_in_static_var "A_ScriptFullPath", script.to_s
+			set_global_built_in_static_var "A_IconHidden", @settings.no_tray_icon ? "1" : "0"
 		end
 		private def binary_path()
 			ENV["APPIMAGE"]? || Process.executable_path || raise RuntimeException.new "Cannot determine binary path"

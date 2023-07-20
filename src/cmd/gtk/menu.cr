@@ -36,8 +36,10 @@ class Cmd::Gtk::Gui::Menu < Cmd::Base
 				tray.from_pixbuf = icon_pixbuf
 				# TODO: how to skip this line? (so that icon_pixbuf= above already sets the one in gui because we're in `with self` here)
 				thread.runner.display.gtk.icon_pixbuf = icon_pixbuf
+				thread.runner.set_global_built_in_static_var("A_IconHidden", "0")
 			when "noicon"
 				thread.runner.set_global_built_in_static_var("A_IconFile", "")
+				thread.runner.set_global_built_in_static_var("A_IconHidden", "1")
 				tray.from_pixbuf = nil
 			when "tip"
 				new_tip = args[2]? || ""
