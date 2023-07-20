@@ -17,5 +17,6 @@ class Cmd::X11::Mouse::MouseMove < Cmd::Base
 				thread.runner.display.x_do.move_mouse x, y, screen
 			end
 		end
+		sleep thread.settings.mouse_delay.milliseconds if thread.settings.mouse_delay > -1
 	end
 end

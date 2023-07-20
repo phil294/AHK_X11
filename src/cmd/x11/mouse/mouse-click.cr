@@ -24,9 +24,6 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 			if thread.settings.coord_mode_mouse == ::Run::CoordMode::RELATIVE
 				x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
 			end
-		else
-			x = current_x
-			y = current_y
 		end
 		count = args[3]?.try &.to_i? || 1
 		up = down = false
@@ -36,14 +33,18 @@ class Cmd::X11::Mouse::MouseClick < Cmd::Base
 		end
 		relative = args[6]?.try &.downcase == "r"
 		thread.runner.display.pause do
-			if relative
-				thread.runner.display.x_do.move_mouse x, y
-			else
-				thread.runner.display.x_do.move_mouse x, y, screen
+			if x && y
+				if relative
+					thread.runner.display.x_do.move_mouse x, y
+				else
+					thread.runner.display.x_do.move_mouse x, y, screen
+				end
+				sleep thread.settings.mouse_delay.milliseconds if thread.settings.mouse_delay > -1
 			end
 			count.times do
 				thread.runner.display.x_do.mouse_down button if ! up
 				thread.runner.display.x_do.mouse_up button if ! down
+				sleep thread.settings.mouse_delay.milliseconds if thread.settings.mouse_delay > -1
 			end
 		end
 	end

@@ -21,6 +21,7 @@ module Run
 		property detect_hidden_windows = false
 		property key_delay = 10
 		property key_press_duration = -1
+		property mouse_delay = 10
 		property ahk_x11_track_performance = false
 	end
 
@@ -230,6 +231,8 @@ module Run
 				@settings.detect_hidden_windows ? "On" : "Off"
 			when "a_keydelay"
 				@settings.key_delay.to_s
+			when "a_mousedelay"
+				@settings.mouse_delay.to_s
 			when "a_linenumber"
 				(@stack.last.line_no + 1).to_s
 			when "a_thislabel"
