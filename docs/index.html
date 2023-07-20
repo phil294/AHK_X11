@@ -29,7 +29,7 @@
     <aside class="legend">
       <strong style="float:left;margin-right:4px;">Legend:</strong>
       <div class="x11"> Green, italic: AHK_X11 only</div>
-      <div class="rm">Grey, strikethrough: Removed because it makes no sense here</div>
+      <div class="rm">Grey, strikethrough: Removed because it makes no sense or is impossible</div>
       <div class="tbd">Red, strikethrough: Not yet supported, but should be. This is TODO.</div>
     </aside>
   </div>
@@ -295,7 +295,7 @@
                 <a href="#ToolTip.htm">ToolTip</a>
               </li>
               <li>
-                <a class="tbd" href="#TrayTip.htm">TrayTip</a>
+                <a href="#TrayTip.htm">TrayTip</a>
               </li>
             </ul>
           </li>
@@ -1935,12 +1935,12 @@ Please note: This only works unreliably, and in the above example, LControl will
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td class="calibre4">A_Cursor</td>
-                <td class="calibre4"><a id="Variables.htm__Cursor" href="#Variables.htm__Cursor" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="tbd"> The type of mouse cursor currently being displayed. It will be one of the following words: AppStarting, Arrow, Cross, Help, IBeam, Icon, No, Size, SizeAll, SizeNESW, SizeNS, SizeNWSE, SizeWE, UpArrow, Wait, Unknown. The acronyms used with the size-type cursors are compass directions, e.g. NESW = NorthEast+SouthWest. The hand-shaped cursors (pointing and grabbing) are classfied as Unknown. [requires v1.0.10+]</span></td>
+                <td class="calibre4"><a id="Variables.htm__Cursor" href="#Variables.htm__Cursor" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="rm"> The type of mouse cursor currently being displayed. It will be one of the following words: AppStarting, Arrow, Cross, Help, IBeam, Icon, No, Size, SizeAll, SizeNESW, SizeNS, SizeNWSE, SizeWE, UpArrow, Wait, Unknown. The acronyms used with the size-type cursors are compass directions, e.g. NESW = NorthEast+SouthWest. The hand-shaped cursors (pointing and grabbing) are classfied as Unknown. [requires v1.0.10+]</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_CaretX<br class="calibre12" /> A_CaretY</td>
                 <td class="calibre4">
-                  <div class="tbd">
+                  <div class="rm">
                     <p class="calibre8"><a id="Caret" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>The current X and Y coordinates of the caret (text insertion point). [requires v1.0.17+] The coordinates are relative to the active window unless <a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a> is used to make them relative to the entire screen. If there is no active window or the caret position cannot be determined, these variables are blank.</p>
                     <p class="calibre8">The following example script allows you to move the caret around to see its current position displayed in an auto-update tooltip. Note that some windows (e.g. certain versions of MS Word) report the same caret position regardless of its actual position.</p>
                     <p class="calibre8">#Persistent<br class="calibre12" /> SetTimer, WatchCaret, 100<br class="calibre12" /> return<br class="calibre12" /> WatchCaret:<br class="calibre12" /> display_y = %A_CaretY%<br class="calibre12" /> display_y -= 20 ; Move tooltip up a little so as not to hide the caret.<br class="calibre12" /> ToolTip, X%A_CaretX% Y%A_CaretY%, %A_CaretX%, %display_y%<br class="calibre12" /> return</p>
@@ -2710,7 +2710,7 @@ else
                 <td height="16" class="calibre4">Performs miscellaneous math functions and tasks such as ASCII/Unicode conversion and bitwise operations.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#TrayTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">TrayTip</a></td>
+                <td height="16" class="calibre4"><a href="#TrayTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">TrayTip</a></td>
                 <td height="16" class="calibre4">Creates a balloon message window near the tray icon (requires Windows 2000/XP+).</td>
               </tr>
               <tr class="calibre3">
@@ -7201,12 +7201,11 @@ return
 </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="TrayTip.htm" href="#TrayTip.htm">#</a> <h2 class="calibre17">TrayTip</h2> [v1.0.10+]
-          <p style="color: #005500 !important;text-decoration:none !important;">For now, please just use RunWait, notify-send title "text text"</p>
+          <a id="TrayTip.htm" href="#TrayTip.htm">#</a> <h2 class="calibre17">TrayTip</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Creates a balloon message window near the tray icon (requires Windows 2000/XP+).</p>
+          <p class="calibre8">Creates a balloon message window <span class="rm">near the tray icon</span> <span class="x11">Shows a popup, typically at the top right corner of the screen.</span> <span class="x11">Multiple notifications can be shown at the same time.</span></p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
@@ -7223,23 +7222,23 @@ return
               <tr class="calibre3">
                 <td class="calibre4">Title</td>
                 <td class="calibre4">
-                  <p class="calibre8">If all parameters are omitted, any TrayTip window currently displayed will be removed.</p>
-                  <p class="calibre8">Otherwise, this parameter is the title of the window, which can be up to 63 characters long (characters beyond this length are not shown).</p>
+                  <p class="calibre8">If all parameters are omitted, <span class="rm">any TrayTip window</span> <span class="x11">all existing TrayTip windows</span> currently displayed will be removed.</p>
+                  <p class="calibre8">Otherwise, this parameter is the title of the window, <span class="rm">which can be up to 63 characters long (characters beyond this length are not shown).</span></p>
                   <p class="calibre8">If <em class="calibre21">Title</em> is blank, the title line will be entirely omitted from the balloon window, making it vertically shorter.</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Text</td>
                 <td width="85%" class="calibre4">
-                  <p class="calibre8">The message to display, which appears beneath <em class="calibre21">Title</em>. Only the first 255 characters of <em class="calibre21">Text</em> will be displayed. Carriage return (`r) or linefeed (`n) may be used to create multiple lines of text. For example: Line1`nLine2 </p>
+                  <p class="calibre8">The message to display, which appears beneath <em class="calibre21">Title</em>. <span class="rm">Only the first 255 characters of <em class="calibre21">Text</em> will be displayed.</span> Carriage return (`r) or linefeed (`n) may be used to create multiple lines of text. For example: Line1`nLine2 </p>
                   <p class="calibre8">If this parameter is omitted or blank, any TrayTip window currently displayed will be removed. </p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td width="15%" class="calibre4">Seconds</td>
                 <td width="85%" class="calibre4">
-                  <p class="calibre8">The approximate number of seconds to display the window, after which it will be automatically removed by the OS. Specifying a number less than 10 or greater than 30 will usually cause the minimum (10) or maximum (30) display time to be used instead. If blank or omitted, the minimum time will usually be used. </p>
-                  <p class="calibre8">This setting is currently unreliable due to the nature of its handling by the OS. To have precise control over how long the TrayTip is displayed, use the <a href="#Sleep.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Sleep</a> command followed by TrayTip with no parameters, or use <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTimer</a> as illustrated in the Examples section below.</p>
+                  <p class="calibre8">The <span class="rm">approximate</span> number of seconds to display the window, after which it will be automatically removed by the OS. <span class="rm">Specifying a number less than 10 or greater than 30 will usually cause the minimum (10) or maximum (30) display time to be used instead.</span> <span class="rm">If blank or omitted, the minimum time will usually be used.</span> <span class="x11">If blank, the default OS-wide configured nofification duration will be used. If set to 0, it will never expire. If set to -1, the library default will be used which appears to be 10 seconds (?).</span> </p>
+                  <p class="calibre8"><span class="rm">This setting is currently unreliable due to the nature of its handling by the OS.</span> To have precise control over how long the TrayTip is displayed, use the <a href="#Sleep.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Sleep</a> command followed by TrayTip with no parameters, or use <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTimer</a> as illustrated in the Examples section below.</p>
                 </td>
               </tr>
               <tr class="calibre3">
@@ -7255,9 +7254,8 @@ return
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8"> TrayTip requires Windows 2000/XP+.</p>
-          <p class="calibre8">TrayTip windows cannot be shown if the script lacks a tray icon (via <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> or <em class="calibre21"><a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Menu</a>, tray, NoIcon</em>). Similarly, if the following REG_DWORD value exists and has been set to 0, TrayTip will not function:<br class="calibre12" /> HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced &gt;&gt; EnableBalloonTips</p>
-          <p class="calibre8">Windows XP usually plays a sound when displaying a balloon tip. This sound can be disabled by adding 16 to the <em class="calibre21">Options </em> parameter.</p>
+          <p class="calibre8 rm">TrayTip windows cannot be shown if the script lacks a tray icon (via <a href="#h_NoTrayIcon.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#NoTrayIcon</a> or <em class="calibre21"><a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Menu</a>, tray, NoIcon</em>). Similarly, if the following REG_DWORD value exists and has been set to 0, TrayTip will not function:<br class="calibre12" /> HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced &gt;&gt; EnableBalloonTips</p>
+          <p class="calibre8 rm">Windows XP usually plays a sound when displaying a balloon tip. This sound can be disabled by adding 16 to the <em class="calibre21">Options </em> parameter.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"> <strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#ToolTip.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ToolTip</a>, <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTimer</a>, <a href="#SplashTextOn.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SplashTextOn</a>, <a href="#MsgBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MsgBox</a>, <a href="#InputBox.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">InputBox</a>, <a href="#FileSelectFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFile</a>, <a href="#FileSelectFolder.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFolder</a></p>
@@ -7284,7 +7282,8 @@ Gosub, RefreshTrayTip  ; Call it once to get it started right away.
 return
 
 RefreshTrayTip:
-TrayTip, Refreshed TrayTip, This is a more permanent TrayTip., , 16
+TrayTip
+TrayTip, Refreshed TrayTip, This is a more permanent TrayTip.
 return
 
 </pre>

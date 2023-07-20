@@ -1,5 +1,6 @@
 require "gtk3"
 require "../../logo"
+require "notify"
 
 module Run
 	# Please note that all GUI logic needs to happen on the same worker thread where `run` was called
@@ -316,6 +317,7 @@ module Run
 				".to_slice)
 			end
 			init_menu(runner)
+			Notify.init @default_title
 		end
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!
