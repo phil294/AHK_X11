@@ -48,7 +48,9 @@ module Run
 			"a_scriptfullpath" => "",
 			"a_ahkversion" => "1.0.24",
 			"a_ostype" => "Linux",
-			"a_iconhidden" => "0"
+			"a_iconhidden" => "0",
+			"a_thishotkey" => "",
+			"a_priorhotkey" => "",
 		}
 		@initial_working_dir = Dir.current
 		protected getter labels : Hash(String, Cmd::Base)
@@ -109,6 +111,10 @@ module Run
 			thread = Thread.new(self, cmd, label, priority, @default_thread_settings, hotkey, gui_id, gui_control)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
+			if hotkey
+				set_global_built_in_static_var "A_PriorHotkey", @built_in_static_vars["a_thishotkey"]
+				set_global_built_in_static_var "A_ThisHotkey", hotkey.key_str
+			end
 			@run_thread_channel.send(nil) if i == @threads.size - 1
 			thread
 		end

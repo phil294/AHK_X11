@@ -55,7 +55,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary><strong>CLICK TO SEE WHICH COMMANDS ARE IMPLEMENTED AND WHICH ARE MISSING</strong>. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>FULL DOCUMENTATION HERE</b></a>.</summary>
 
 ```diff
-DONE      ?% (99/220):
+DONE      ?% (100/220):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -69,7 +69,8 @@ DONE      ?% (99/220):
 + WinMove, WinRestore, MouseGetPos, MouseMove, GetKeyState, KeyWait, ControlClick, WinGetText,
 + WinGetTitle, WinGetClass, PixelGetColor, CoordMode, GuiControl, ControlGetPos, ControlGetText,
 + WinGet, Input, Loop (parse a string), ToolTip, If var [not] in/contains MatchList, ControlSetText,
-+ PixelSearch, #Include, InputBox, ClipWait, EnvSet, SetKeyDelay, SetMouseDelay, MouseClickDrag
++ PixelSearch, #Include, InputBox, ClipWait, EnvSet, SetKeyDelay, SetMouseDelay, MouseClickDrag,
++ #NoTrayIcon
 
 NEW       ?% (9/220): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet, Click @@
@@ -84,7 +85,7 @@ REMOVED   ?% (11/220):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     ?% (97/220): alphabetically
+TO DO     ?% (96/220): alphabetically
 - BlockInput, Control, ControlFocus, ControlGet, ControlGetFocus,
 - ControlMove,
 - DetectHiddenText, DetectHiddenWindows, Drive, DriveGet, DriveSpaceFree,
@@ -108,7 +109,7 @@ TO DO     ?% (97/220): alphabetically
 - WinMinimizeAllUndo, WinSet, WinSetTitle, WinShow, WinWait, WinWaitActive,
 - WinWaitClose, WinWaitNotActive, #CommentFlag, #ErrorStdOut, #EscapeChar,
 - #HotkeyInterval, #HotkeyModifierTimeout, #MaxHotkeysPerInterval, #MaxMem,
-- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #NoTrayIcon, #WinActivateForce
+- #MaxThreads, #MaxThreadsBuffer, #MaxThreadsPerHotkey, #WinActivateForce
 
 Also planned, even though it's not part of 1.0.24 spec:
 - ImageSearch
