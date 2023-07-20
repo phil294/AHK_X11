@@ -54,6 +54,46 @@ module Run
 				block.call(clip)
 			end
 		end
+		def set_clipboard(text : String)
+			if text.empty?
+				clipboard do |clip|
+					# clip.clear # Doesn't do anything
+					# Doesn't work for access from outside of ahkx11 itself, even though https://stackoverflow.com/q/2418487 says so. Maybe a Crystal GIR bug?:
+					# clip.set_text("", 0)
+					# Ugly but works:
+					clip.image = GdkPixbuf::Pixbuf.new
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.empty?)
+					raise Run::RuntimeException.new "Unsetting Clipboard failed [1]"
+				end
+				# But even now that we have confirmation that it was unset, the clipboard is sometimes still
+				# in the process of being reported to the active window. Setting it to a text and then unsetting
+				# it again seems to resolve it somehow. All of this is necessary, putting a sleep of the same duration
+				# instead is not enough.
+				clipboard do |clip|
+					clip.set_text("_ahk_x11_clipboard_internal", 27)
+					clip.store
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.==("_ahk_x11_clipboard_internal"))
+					raise Run::RuntimeException.new "Unsetting Clipboard failed [2]"
+				end
+				clipboard do |clip|
+					clip.set_text("", 0)
+					clip.store
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.empty?)
+					raise Run::RuntimeException.new "Unsetting Clipboard failed [3]"
+				end
+			else
+				clipboard do |clip|
+					clip.set_text(text, text.size)
+					clip.store
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.==(text))
+					raise Run::RuntimeException.new "Setting Clipboard failed"
+				end
+			end
+		end
 
 		# Can't use @[Flags] because some values are *not* strict 2^n
 		enum MsgBoxOptions

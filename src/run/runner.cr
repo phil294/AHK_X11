@@ -210,16 +210,7 @@ module Run
 			down = var.downcase
 			case down
 			when "clipboard"
-				display.gtk.clipboard do |clip|
-					if value.empty?
-						# clip.clear # Doesn't do anything
-						# clip.set_text("", 0) # Doesn't work outside of ahkx11 itself, even though https://stackoverflow.com/q/2418487 says so. Maybe a Crystal GIR bug?
-						clip.image = GdkPixbuf::Pixbuf.new # Ugly but works
-					else
-						clip.set_text(value, value.size)
-					end
-					clip.store
-				end
+				display.gtk.set_clipboard(value)
 			else
 				return if @built_in_static_vars[down]? || get_global_built_in_computed_var(down)
 				{% if ! flag?(:release) %}
