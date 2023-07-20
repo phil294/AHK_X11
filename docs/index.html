@@ -590,7 +590,7 @@
                 <a class="tbd" href="#SetFormat.htm">SetFormat</a>
               </li>
               <li>
-                <a class="tbd" href="#Sort.htm">Sort</a>
+                <a href="#Sort.htm">Sort</a>
               </li>
               <li>
                 <a class="tbd" href="#StringCaseSense.htm">StringCaseSense</a>
@@ -2586,7 +2586,7 @@ else
                 <td height="16" class="calibre4">Waits the specified amount of time before continuing. </td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#Sort.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Sort</a></td>
+                <td height="16" class="calibre4"><a href="#Sort.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Sort</a></td>
                 <td height="16" class="calibre4">Arranges a variable's contents in alphabetical or numerical order.</td>
               </tr>
               <tr class="calibre3">
@@ -11869,7 +11869,7 @@ if active_title not contains metapad,Notepad
 	MsgBox But the file is not open in either Metapad or Notepad.</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Sort.htm" href="#Sort.htm">#</a> <h2 class="calibre17">Sort</h2> [v1.0.13+]
           <hr size="2" class="calibre24" />
@@ -11907,14 +11907,14 @@ if active_title not contains metapad,Notepad
           <p class="calibre8"><strong class="calibre14">N</strong>: Numeric sort: Each item is assumed to be a number rather than a string (for example, if this option is not present, the string 233 is considered to be less than the string 40 due to alphabetical ordering). Both decimal and hexadecimal strings (e.g. 0xF1) are considered to be numeric. Strings that don't start with a number are considered to be zero for the purpose of the sort. Numbers are treated as 64-bit signed values.</p>
           <p class="calibre8"><strong class="calibre14">Pn</strong>: Sorts items based on character position <strong class="calibre14">n</strong> (do not use hexadecimal for <strong class="calibre14">n</strong>). If this option is not present, <strong class="calibre14">n</strong> defaults to 1, which is the position of the first character. The sort compares each string to the others starting at its <strong class="calibre14">n</strong>th character. If <strong class="calibre14">n</strong> is greater than the length of any string, that string is considered to be blank for the purpose of the sort. When used with option <strong class="calibre14">N</strong> (numeric sort), the string's character position is used, which is not necessarily the same as the number's digit position.</p>
           <p class="calibre8"><strong class="calibre14">R</strong>: Sorts in reverse order (alphabetically or numerically depending on the other options).</p>
-          <p class="calibre8"><strong class="calibre14">Random</strong> [v1.0.24+]: Sorts in random order. This option causes all other options except <strong class="calibre14">D</strong> and <strong class="calibre14">Z</strong> to be ignored. Examples:<br class="calibre12" /> Sort, MyVar, Random<br class="calibre12" /> Sort, MyVar, Random Z D| </p>
+          <p class="calibre8"><strong class="calibre14">Random</strong> Sorts in random order. This option causes all other options except <strong class="calibre14">D</strong> and <strong class="calibre14">Z</strong> to be ignored. Examples:<br class="calibre12" /> Sort, MyVar, Random<br class="calibre12" /> Sort, MyVar, Random Z D| </p>
           <p class="calibre8"><strong class="calibre14">Z</strong>: To understand this option, consider a variable that contains RED`nGREEN`nBLUE`n. If the <strong class="calibre14">Z</strong> option is not present, the last linefeed (`n) is considered to be part of the last item, and thus there are only 3 items. But by specifying the Z option, the last linefeed (if present) will be considered to delimit a blank item at the end of the list, and thus there are 4 items (the last being blank).</p>
-          <p class="calibre8"><strong class="calibre14">\</strong> (backslash): Sorts items based on the substring that follows the last backslash in each. If an item has no backslash, the entire item is used as the substring. This option is useful for sorting bare filenames (i.e. excluding their paths). In the example below, the AAA.txt line is sorted above the BBB.txt line because their directories are ignored for the purpose of the sort:<br class="calibre12" /> C:\BBB\AAA.txt<br class="calibre12" /> C:\AAA\BBB.txt<br class="calibre12" /> Note: Options <strong class="calibre14">N</strong> and <strong class="calibre14">P</strong> are ignored when the backslash option is present. </p>
+          <p class="calibre8 tbd"><strong class="calibre14">\</strong> (backslash): Sorts items based on the substring that follows the last backslash in each. If an item has no backslash, the entire item is used as the substring. This option is useful for sorting bare filenames (i.e. excluding their paths). In the example below, the AAA.txt line is sorted above the BBB.txt line because their directories are ignored for the purpose of the sort:<br class="calibre12" /> C:\BBB\AAA.txt<br class="calibre12" /> C:\AAA\BBB.txt<br class="calibre12" /> Note: Options <strong class="calibre14">N</strong> and <strong class="calibre14">P</strong> are ignored when the backslash option is present. </p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
           <p class="calibre8">This command is typically use to sort a variable that contains a list of lines, with each line ending in a linefeed (`n) character.</p>
-          <p class="calibre8">If <em class="calibre21">VarName</em> is clipboard and the clipboard contains files (such as those copied from an open Explorer window), those files will be replaced with a sorted list of their filenames. In other words, after the operation, the clipboard will no longer contain the files themselves.</p>
-          <p class="calibre8">If VarName is an <a href="#Variables.htm__env" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">environment variable, </a>a script variable will be created to take its place. To put the sorted contents back into the environment variable and force the script to access it in the future, use this example:<br class="calibre12" /> VarSort, MyEnvVar<br class="calibre12" /> EnvSet, MyEnvVar, %MyEnvVar%<br class="calibre12" /> MyEnvVar = ; make the script's variable blank so that MyEnvVar will be retrieved from the environment in the future. </p>
+          <p class="calibre8 rm">If <em class="calibre21">VarName</em> is clipboard and the clipboard contains files (such as those copied from an open Explorer window), those files will be replaced with a sorted list of their filenames. In other words, after the operation, the clipboard will no longer contain the files themselves.</p>
+          <p class="calibre8 rm">If VarName is an <a href="#Variables.htm__env" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">environment variable, </a>a script variable will be created to take its place. To put the sorted contents back into the environment variable and force the script to access it in the future, use this example:<br class="calibre12" /> VarSort, MyEnvVar<br class="calibre12" /> EnvSet, MyEnvVar, %MyEnvVar%<br class="calibre12" /> MyEnvVar = ; make the script's variable blank so that MyEnvVar will be retrieved from the environment in the future. </p>
           <p class="calibre8">The maximum capacity of a variable can be increased via <a href="#h_MaxMem.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#MaxMem</a>.</p>
           <p class="calibre8">If a large variable was sorted and later its contents are no longer needed, you can free its memory by making it blank, e.g. MyVar = </p>
           <p class="calibre8"> </p>
