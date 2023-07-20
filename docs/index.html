@@ -532,7 +532,7 @@
                 <a href="#Run.htm">Run/RunWait</a>
               </li>
               <li>
-                <a class="tbd" href="#RunAs.htm">RunAs</a>
+                <a href="#RunAs.htm">RunAs</a>
               </li>
               <li>
                 <a class="tbd" href="#Shutdown.htm">Shutdown</a>
@@ -2506,8 +2506,8 @@ else
                 <td height="16" class="calibre4">Runs an external program.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#RunAs.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunAs</a></td>
-                <td height="16" class="calibre4">Specifies a set of user credentials to use for all subsequent uses of <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> and <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>. 2000/XP or later ONLY.</td>
+                <td height="16" class="calibre4"><a href="#RunAs.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunAs</a></td>
+                <td height="16" class="calibre4">Specifies a set of user credentials to use for all subsequent uses of <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> and <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>.</td>
               </tr>
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a></td>
@@ -11074,15 +11074,15 @@ Run, www.autohotkey.com ; i.e. any URL can be launched.
 Run, mailto:support@autohotkey.com  ; This should open the default e-mail application.</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="RunAs.htm" href="#RunAs.htm">#</a> <h2 class="calibre17">RunAs</h2> [v1.0.08+]
+          <a id="RunAs.htm" href="#RunAs.htm">#</a> <h2 class="calibre17">RunAs</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Specifies a set of user credentials to use for all subsequent uses of <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> and <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>. 2000/XP or later ONLY.</p>
+          <p class="calibre8">Specifies a set of user credentials to use for all subsequent uses of <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> and <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>. <span class="x11">Also works for graphical applications. Note: Using this command may lead to the specified password to appear in the task manager, visible to other programs.</span></p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">RunAs [, User, Password, Domain] </td>
+                <td height="48" class="calibre4">RunAs [, User, Password, <span class="rm">Domain</span>] </td>
               </tr>
             </tbody>
           </table>
@@ -11096,9 +11096,9 @@ Run, mailto:support@autohotkey.com  ; This should open the default e-mail applic
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">Password</td>
-                <td class="calibre4"><em class="calibre21">User</em>'s password.</td>
+                <td class="calibre4"><em class="calibre21">User</em>'s password. <span class="x11">Must not be blank.</span></td>
               </tr>
-              <tr class="calibre3">
+              <tr class="calibre3 rm">
                 <td class="calibre4">Domain</td>
                 <td class="calibre4">
                   <p class="calibre8"><em class="calibre21">User</em>'s domain. To use a local account, leave this blank. If that fails to work, try using @YourComputerName.</p>
@@ -11108,11 +11108,10 @@ Run, mailto:support@autohotkey.com  ; This should open the default e-mail applic
           </table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">Only Windows XP/2000 or later are supported; this command has no effect on other operating systems. NT4 users should install and use the SU command from the NT Resource Kit instead.</p>
           <p class="calibre8">This command does nothing other than notify AutoHotkey to use (or not use) alternate user credentials for all subsequent uses of <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> and <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a>.</p>
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is not changed by this command. If an invalid <em class="calibre21">User</em>, <em class="calibre21">Password</em>, or <em class="calibre21">Domain</em> is specified, <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> and <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a> will display an error message explaining the problem.</p>
           <p class="calibre8">While the RunAs feature is in effect, <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a> and <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a> will not able to launch documents, URLs, or system verbs. In other words, the file to be launched must be an executable file.</p>
-          <p class="calibre8"> The "Secondary Logon" service must be set to manual or automatic for this command to work (the OS should automatically start it upon demand if set to manual).</p>
+          <p class="calibre8 rm"> The "Secondary Logon" service must be set to manual or automatic for this command to work (the OS should automatically start it upon demand if set to manual).</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Run</a>, <a href="#Run.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">RunWait</a> </p>

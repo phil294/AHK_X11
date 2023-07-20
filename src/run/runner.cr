@@ -24,6 +24,8 @@ module Run
 		# for the dynamic creation of hotkeys.
 		property max_threads_per_hotkey = 1_u8
 		property no_tray_icon = false
+		property run_as_user : String? = nil
+		property run_as_password : String? = nil
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own
