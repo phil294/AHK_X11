@@ -88,8 +88,8 @@ class Cmd::ControlFlow::Loop < Cmd::Base
 				thread.runner.set_global_built_in_static_var("A_LoopFileTimeAccessed", access_time.to_YYYYMMDDHH24MISS)
 				# thread.runner.set_global_built_in_static_var("A_LoopFileAttrib", path.basename)
 				thread.runner.set_global_built_in_static_var("A_LoopFileSize", file.info.size.to_s)
-				thread.runner.set_global_built_in_static_var("A_LoopFileSizeKB", (file.info.size / 1024).to_s)
-				thread.runner.set_global_built_in_static_var("A_LoopFileSizeMB", (file.info.size / 1024 / 1024).to_s)
+				thread.runner.set_global_built_in_static_var("A_LoopFileSizeKB", (file.info.size / 1024).to_i.to_s)
+				thread.runner.set_global_built_in_static_var("A_LoopFileSizeMB", (file.info.size / 1024 / 1024).to_i.to_s)
 			end
 		when LoopType::Read
 			line = @read_input_file.not_nil!.gets
