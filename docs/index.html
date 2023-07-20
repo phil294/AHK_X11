@@ -403,7 +403,7 @@
                 <a href="#IfIs.htm">If var is [not] type</a>
               </li>
               <li>
-                <a class="tbd" href="#Random.htm">Random</a>
+                <a href="#Random.htm">Random</a>
               </li>
               <li>
                 <a class="tbd" href="#SetFormat.htm">SetFormat</a>
@@ -2478,7 +2478,7 @@ else
                 <td height="16" class="calibre4">Creates or modifies a window to display a progress bar.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#Random.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Random</a></td>
+                <td height="16" class="calibre4"><a href="#Random.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Random</a></td>
                 <td height="16" class="calibre4">Generates a pseudo-random number.</td>
               </tr>
               <tr class="calibre3">
@@ -9199,7 +9199,7 @@ if var is time
 	MsgBox, %var% is also a valid date-time.</pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Random.htm" href="#Random.htm">#</a> <h2 class="calibre17">Random</h2>
           <hr size="2" class="calibre24" />
@@ -9242,20 +9242,23 @@ if var is time
           <p class="calibre8"> Random, rand, 1, 10<br class="calibre12" /> Random, rand, 0.0, 1.0<br class="calibre12" />
             <br class="calibre12" />
           </p>
-          <p class="calibre8">Comments based on the original source</p>
-          <p class="calibre8">This function uses the Mersenne Twister random number generator, MT19937, written by Takuji Nishimura and Makoto Matsumoto, Shawn Cokus, Matthe Bellew and Isaku Wada.</p>
-          <p class="calibre8">The Mersenne Twister is an algorithm for generating random numbers. It was designed with consideration of the flaws in various other generators. The period, 2<sup class="calibre36">19937</sup>-1, and the order of equidistribution, 623 dimensions, are far greater. The generator is also fast; it avoids multiplication and division, and it benefits from caches and pipelines. For more information see the inventors' web page at http://www.math.keio.ac.jp/~matumoto/emt.html</p>
-          <p class="calibre8">Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura, All rights reserved.</p>
-          <p class="calibre8">Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
-          <ol class="calibre19">
-            <li class="calibre11">Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
-            <li class="calibre11">Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
-            <li class="calibre11">The names of its contributors may not be used to endorse or promote products derived from this software without specific prior written permission.</li>
-          </ol>
-          <p class="calibre8">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
-          <p class="calibre8">Do NOT use for CRYPTOGRAPHY without securely hashing several returned values together, otherwise the generator state can be learned after reading 624 consecutive values.</p>
-          <p class="calibre8">When you use this, send an email to: matumoto@math.keio.ac.jp with an appropriate reference to your work. It would be nice to CC: rjwagner@writeme.com and Cokus@math.washington.edu when you write.</p>
-          <p class="calibre8"><i class="calibre21">This above has been already been done for AutoHotkey, but if you use the Random command in a publicly distributed application, consider sending an e-mail to the above people to thank them for their efforts and generosity.</i></p>
+          <div class="rm">
+            <p class="calibre8">Comments based on the original source</p>
+            <p class="calibre8">This function uses the Mersenne Twister random number generator, MT19937, written by Takuji Nishimura and Makoto Matsumoto, Shawn Cokus, Matthe Bellew and Isaku Wada.</p>
+            <p class="calibre8">The Mersenne Twister is an algorithm for generating random numbers. It was designed with consideration of the flaws in various other generators. The period, 2<sup class="calibre36">19937</sup>-1, and the order of equidistribution, 623 dimensions, are far greater. The generator is also fast; it avoids multiplication and division, and it benefits from caches and pipelines. For more information see the inventors' web page at http://www.math.keio.ac.jp/~matumoto/emt.html</p>
+            <p class="calibre8">Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura, All rights reserved.</p>
+            <p class="calibre8">Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+            <ol class="calibre19">
+              <li class="calibre11">Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+              <li class="calibre11">Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+              <li class="calibre11">The names of its contributors may not be used to endorse or promote products derived from this software without specific prior written permission.</li>
+            </ol>
+            <p class="calibre8">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+            <p class="calibre8">Do NOT use for CRYPTOGRAPHY without securely hashing several returned values together, otherwise the generator state can be learned after reading 624 consecutive values.</p>
+            <p class="calibre8">When you use this, send an email to: matumoto@math.keio.ac.jp with an appropriate reference to your work. It would be nice to CC: rjwagner@writeme.com and Cokus@math.washington.edu when you write.</p>
+            <p class="calibre8"><i class="calibre21">This above has been already been done for AutoHotkey, but if you use the Random command in a publicly distributed application, consider sending an e-mail to the above people to thank them for their efforts and generosity.</i></p>
+
+          </div>
           <p class="calibre8"> </p>
         </div>
       </div>
@@ -11028,7 +11031,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">explore</td>
-                <td class="calibre4">Opens an instance of Explorer at the indicated folder. Example: Run, explore %ProgramFiles%. <ahk class="x11">You can do that, but folders are being opened just fine without this verb, so it's unnecessary.</ahk> </td>
+                <td class="calibre4">Opens an instance of Explorer at the indicated folder. Example: Run, explore %ProgramFiles%. <span class="x11">You can do that, but folders are being opened just fine without this verb, so it's unnecessary.</span> </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">edit</td>
