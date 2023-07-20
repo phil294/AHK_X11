@@ -7,7 +7,7 @@ version=$(shards version)
 
 cd ..
 # Cannot overwrite CRYSTAL_LIBRARY_PATH because crystal#12380, need link-flag instead.
-# -no-pie prevents 
+# -no-pie prevents
 shards build -Dpreview_mt --link-flags="-L$PWD/build" \
   "$@"
 # Flags lik -Dgc_none or --release or --debug should be passed from outside
@@ -24,18 +24,5 @@ rm -rf AppDir
 
 bin_name=ahk_x11-"$version"-x86_64.AppImage
 mv ahk_x11-x86_64.AppImage "$bin_name"
-
-# Attaching the installer:
-# The installer is not shipped separately and instead bundled with the binary by doing this.
-# Bundling is the same thing as compiling a script as a user.
-# It is possible to repeatedly compile a binary, with each script being appended at the end each time.
-# Only the last one actually executed - and only if no params are passed to the program.
-# There's no point in compiling multiple times, but it allows us to ship a default script (the installer)
-# for when no arguments are passed.
-# In other words, this is possible for a user:
-#     ahk_x11 --compile script1.ahk && ./script1 --compile script2.ahk && ./script2
-# but no one will ever do that.
-./"$bin_name" --compile ../src/installer.ahk tmp
-mv tmp "$bin_name"
 
 echo "success!"

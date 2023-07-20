@@ -58,39 +58,41 @@ end
 
 script_file = nil
 version = {{ read_file("./shard.yml").split("\n")[1][9..] }}
-if ARGV[0]?
-	if ARGV[0] == "-v" || ARGV[0] == "--version"
-		puts "AHK_X11 version: #{version}\nTargets to partially implement Classic Windows AutoHotkey specification: v1.0.24 (2004). AutoHotkey is a scripting language."
-		::exit
-	elsif ARGV[0] == "-h" || ARGV[0] == "--help"
-		puts "AHK_X11 is a Linux implementation for AutoHotkey classic version 1.0.24 (2004). Internal version: #{version}. Full up to date documentation can be found at https://phil294.github.io/AHK_X11/.\n\nPossible methods of invocation:\n\nahk_x11.AppImage \"path to script.ahk\"\nahk_x11.AppImage <<< $'MsgBox, 1\\nMsgBox, 2'\nahk_x11.AppImage --repl\nahk_x11.AppImage --windowspy\nahk_x11.AppImage --compile \"path to script.ahk\" \"optional: output executable file path\"\n\nAlternatively, just run the program without arguments to open the graphical installer. Once installed, you should be able to run and/or compile any .ahk file in your file manager by selecting it from the right click context menu."
-		::exit
-	elsif ARGV[0] == "--repl"
-		lines = ["#Persistent"]
-	elsif ARGV[0] == "--windowspy"
-		lines = {{ read_file("./src/window-spy.ahk").split("\n") }}
-	elsif ARGV[0] == "--compile"
-		build_error "Syntax: ahk_x11 --compile FILE_NAME [OUTPUT_FILENAME]" if ARGV.size < 2
-		Compiler.new.compile(filename_to_path(ARGV[1]), ARGV[2]? ? filename_to_path(ARGV[2]) : nil)
-		::exit
-	else
-		script_file = filename_to_path(ARGV[0])
-		begin
-			ahk_str = File.read(script_file)
-		rescue
-			build_error "File '#{ARGV[0]}' could not be read."
+lines = Compiler.new.extract.try &.split('\n')
+if ! lines
+	# Only needed for installer script, this can't (yet) really be part of ahk code. TODO: rm on exit
+	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
+	if ARGV[0]?
+		if ARGV[0] == "-v" || ARGV[0] == "--version"
+			puts "AHK_X11 version: #{version}\nTargets to partially implement Classic Windows AutoHotkey specification: v1.0.24 (2004). AutoHotkey is a scripting language."
+			::exit
+		elsif ARGV[0] == "-h" || ARGV[0] == "--help"
+			puts "AHK_X11 is a Linux implementation for AutoHotkey classic version 1.0.24 (2004). Internal version: #{version}. Full up to date documentation can be found at https://phil294.github.io/AHK_X11/.\n\nPossible methods of invocation:\n\nahk_x11.AppImage \"path to script.ahk\"\nahk_x11.AppImage <<< $'MsgBox, 1\\nMsgBox, 2'\nahk_x11.AppImage --repl\nahk_x11.AppImage --windowspy\nahk_x11.AppImage --compile \"path to script.ahk\" \"optional: output executable file path\"\n\nAlternatively, just run the program without arguments to open the graphical installer. Once installed, you should be able to run and/or compile any .ahk file in your file manager by selecting it from the right click context menu."
+			::exit
+		elsif ARGV[0] == "--repl"
+			lines = ["#Persistent"]
+		elsif ARGV[0] == "--windowspy"
+			lines = {{ read_file("./src/window-spy.ahk").split("\n") }}
+		elsif ARGV[0] == "--compile"
+			build_error "Syntax: ahk_x11 --compile FILE_NAME [OUTPUT_FILENAME]" if ARGV.size < 2
+			Compiler.new.compile(filename_to_path(ARGV[1]), ARGV[2]? ? filename_to_path(ARGV[2]) : nil)
+			::exit
+		else
+			script_file = filename_to_path(ARGV[0])
+			begin
+				ahk_str = File.read(script_file)
+			rescue
+				build_error "File '#{ARGV[0]}' could not be read."
+			end
+			lines = ahk_str.split(/\r?\n/)
 		end
-		lines = ahk_str.split(/\r?\n/)
-	end
-else
-	stdin = Hacks.get_all_stdin_if_available
-	if stdin
-		lines = stdin.split('\n')
 	else
-		lines = Compiler.new.extract.try &.split('\n')
-		abort "Argument missing." if ! lines
-		# Only needed for installer script, this can't (yet) really be part of ahk code. TODO: rm on exit
-		File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
+		stdin = Hacks.get_all_stdin_if_available
+		if stdin
+			lines = stdin.split('\n')
+		else
+			lines = {{ read_file("./src/installer.ahk").split("\n") }}
+		end
 	end
 end
 
