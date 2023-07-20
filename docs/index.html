@@ -555,7 +555,7 @@
                 <a class="tbd" href="#SoundPlay.htm">SoundPlay</a>
               </li>
               <li>
-                <a class="tbd" href="#SoundSet.htm">SoundSet</a>
+                <a href="#SoundSet.htm">SoundSet</a>
               </li>
               <li>
                 <a class="tbd" href="#SoundSetWaveVolume.htm">SoundSetWaveVolume</a>
@@ -2602,7 +2602,7 @@ else
                 <td height="16" class="calibre4">Play a sound, video, or other supported file type. </td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#SoundSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SoundSet</a></td>
+                <td height="16" class="calibre4"><a href="#SoundSet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SoundSet</a></td>
                 <td height="16" class="calibre4">Changes various settings of a sound device (master mute, master volume, etc.)</td>
               </tr>
               <tr class="calibre3">
@@ -11398,7 +11398,7 @@ if microphone_mute = Off
           <p class="calibre8"> SoundPlay, %SystemRoot%\Media\ding.wav</p>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="SoundSet.htm" href="#SoundSet.htm">#</a> <h2 class="calibre17">SoundSet</h2>
           <hr size="2" class="calibre24" />
@@ -11418,20 +11418,20 @@ if microphone_mute = Off
                 <td width="15%" class="calibre4">NewSetting</td>
                 <td width="85%" class="calibre4">
                   <p class="calibre8">Percentage number between -100 and 100 inclusive (it can be a floating point number). If the number begins with a plus or minus sign, the <strong class="calibre14">current setting </strong> will be adjusted up or down by the indicated amount. Otherwise, the setting will be set explicitly to the level indicated by <em class="calibre21">NewSetting</em>.</p>
-                  <p class="calibre8">For <em class="calibre21">ControlTypes</em> with only two possible settings -- namely ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, and BASSBOOST -- any positive number will turn on the setting and a zero will turn it off. <strong class="calibre14">However</strong>, if the number begins with a plus or minus sign, the setting will be toggled (set to the opposite of its current state).</p>
+                  <p class="calibre8">For <em class="calibre21">ControlTypes</em> with only two possible settings -- namely ONOFF, MUTE, <span class="tbd">MONO, LOUDNESS, STEREOENH, and BASSBOOST</span> -- any positive number will turn on the setting and a zero will turn it off. <strong class="calibre14">However</strong>, if the number begins with a plus or minus sign, the setting will be toggled (set to the opposite of its current state).</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ComponentType</td>
                 <td class="calibre4">
-                  <p class="calibre8">If omitted or blank, it defaults to the word MASTER. Otherwise, it can be one of the following words: MASTER (synonymous with SPEAKERS), DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, or ANALOG. If the sound device lacks the specified <em class="calibre21">ComponentType</em>, ErrorLevel will indicate the problem.</p>
+                  <p class="calibre8">If omitted or blank, it defaults to the word MASTER. Otherwise, it can be one of the following words: MASTER (synonymous with SPEAKERS), <span class="tbd">DIGITAL, LINE, MICROPHONE, SYNTH, CD, TELEPHONE, PCSPEAKER, WAVE, AUX, or ANALOG</span>. If the sound device lacks the specified <em class="calibre21">ComponentType</em>, ErrorLevel will indicate the problem.</p>
                   <p class="calibre8">The component labeled Auxiliary in some mixers might be accessible as ANALOG rather than AUX.</p>
                   <p class="calibre8">If a device has more than one instance of <em class="calibre21">ComponentType</em> (two of type LINE, for example) and you wish to use one other than the first, append a colon and a number to this parameter. For example: Analog:2 is the 2nd analog input.</p>
                 </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">ControlType</td>
-                <td class="calibre4">If omitted or blank, it defaults to VOLUME. Otherwise, it can be one of the following words: VOLUME (or VOL), ONOFF, MUTE, MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, or EQUALIZER. If the specified <em class="calibre21">ComponentType</em> lacks the specified <em class="calibre21">ControlType</em>, ErrorLevel will indicate the problem. </td>
+                <td class="calibre4">If omitted or blank, it defaults to VOLUME. Otherwise, it can be one of the following words: VOLUME (or VOL), ONOFF, MUTE, <span class="tbd">MONO, LOUDNESS, STEREOENH, BASSBOOST, PAN, QSOUNDPAN, BASS, TREBLE, or EQUALIZER</span>. If the specified <em class="calibre21">ComponentType</em> lacks the specified <em class="calibre21">ControlType</em>, ErrorLevel will indicate the problem. </td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">DeviceNumber</td>
@@ -11442,7 +11442,7 @@ if microphone_mute = Off
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">ErrorLevel</strong></p>
           <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 0 if the command succeeded. Otherwise, it is set to one of the following phrases:</p>
-          <table border="1" class="calibre1">
+          <table border="1" class="calibre1 tbd">
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td class="calibre4">Invalid Control Type or Component Type</td>

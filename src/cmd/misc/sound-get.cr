@@ -5,7 +5,7 @@ class Cmd::Misc::SoundGet < Cmd::Base
 	def self.sets_error_level; true end
 	def run(thread, args)
 		out_var = args[0]
-		on_off = args[2] && ["onoff","mute"].includes?(args[2].downcase)
+		on_off = args[2]? && ["onoff","mute"].includes?(args[2].downcase)
 		if on_off
 			is_on = `amixer get Master | tail -2 | grep -c '\\[on\\]'`.strip != "0"
 			if args[2].downcase == "mute"
