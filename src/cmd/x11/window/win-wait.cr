@@ -6,11 +6,11 @@ class Cmd::X11::Window::WinWait < Cmd::Base
 	def self.max_args; 5 end
 	def self.sets_error_level; true end
 	def run(thread, args)
-		seconds = args[2].to_f? || 0.5
+		seconds = args[2].to_f?
 		seconds = 0.5 if seconds == 0
 		match_conditions = args
 		match_conditions.delete_at(2)
-		match = ::Util::ExponentialBackOff.back_off(initial_interval: 20.milliseconds, factor: 1.15, max_interval: 0.8.seconds, timeout: seconds.seconds) do
+		match = ::Util::ExponentialBackOff.back_off(initial_interval: 20.milliseconds, factor: 1.15, max_interval: 0.8.seconds, timeout: seconds ? seconds.seconds : nil) do
 			Util.match(thread, match_conditions, empty_is_last_found: false, a_is_active: false) do |win|
 				thread.settings.last_found_window = win
 			end
