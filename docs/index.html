@@ -782,7 +782,7 @@
                 <a href="#WinWait.htm">WinWait</a>
               </li>
               <li>
-                <a class="tbd" href="#WinWaitActive.htm">WinWaitActive/WinWaitNotActive</a>
+                <a href="#WinWaitActive.htm">WinWaitActive/WinWaitNotActive</a>
               </li>
               <li>
                 <a href="#WinWaitClose.htm">WinWaitClose</a>
@@ -2810,7 +2810,7 @@ else
                 <td height="16" class="calibre4">Waits until the requested window exists.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#WinWaitActive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitActive</a></td>
+                <td height="16" class="calibre4"><a href="#WinWaitActive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitActive</a></td>
                 <td height="16" class="calibre4">Waits until the requested window is active.</td>
               </tr>
               <tr class="calibre3">
@@ -2818,7 +2818,7 @@ else
                 <td height="16" class="calibre4">Waits until the requested window does not exist.</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#WinWaitActive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitNotActive</a></td>
+                <td height="16" class="calibre4"><a href="#WinWaitActive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitNotActive</a></td>
                 <td height="16" class="calibre4">Waits until the requested window is not active.</td>
               </tr>
               <tr class="calibre3">
@@ -15014,7 +15014,7 @@ else
 </pre>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="WinWaitActive.htm" href="#WinWaitActive.htm">#</a> <h2 class="calibre17">WinWaitActive / WinWaitNotActive</h2>
           <hr size="2" class="calibre24" />
@@ -15061,6 +15061,7 @@ else
           <p class="calibre8">Both of these commands will update the <a href="#LastFoundWindow.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Last Found Window</a> if a qualified window is active when the command begins.</p>
           <p class="calibre8">Window titles and text are always case sensitive. Hidden windows are not detected unless <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a> has been turned on.</p>
           <p class="calibre8">While the command is in a waiting state, new <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">threads</a> can be launched via <a href="#Hotkeys.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">hotkey</a>, <a href="#Menu.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">custom menu item</a>, or <a href="#SetTimer.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">timer</a>.</p>
+          <p class="calibre8 x11">The seconds waited may not be very precise as the program internally merely does a loop with exponential back-off delay.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#WinWait.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWait</a>, <a href="#WinWaitClose.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinWaitClose</a>, <a href="#IfWinExist.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfWinExist</a>, <a href="#IfWinActive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfWinActive</a>, <a href="#SetTitleMatchMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SetTitleMatchMode</a>, <a href="#DetectHiddenWindows.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DetectHiddenWindows</a></p>
