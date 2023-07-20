@@ -11,9 +11,10 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 		opt = thread.parse_word_options options
 		runner = thread.runner
 		g_label = opt["g"]?.try &.[:v].downcase
+		gui_control_id = ""
 		run_g_label = ->{
 			if g_label
-				runner.add_thread g_label, 0
+				runner.add_thread g_label, 0, gui_id: gui_id, gui_control: gui_control_id
 			end
 		}
 
@@ -44,7 +45,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				widget.clicked_signal.connect run_g_label
 				button_click_label = "button" + text.gsub(/[ &\n\r]/, "").downcase
 				widget.clicked_signal.connect do
-					runner.add_thread button_click_label, 0
+					runner.add_thread button_click_label, 0, gui_id: gui_id
 				end
 			when "checkbox"
 				widget = ::Gtk::CheckButton.new label: text
@@ -102,8 +103,12 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			widget.override_background_color(::Gtk::StateFlags::Normal, gui.control_color) if gui.control_color
 
 			if opt["v"]?
+				variable = opt["v"][:v]
 				alt_submit = !! opt["altsubmit"]?
-				gui.var_control_info[opt["v"][:v]] = Run::Gtk::ControlInfo.new widget, alt_submit
+				gui.var_control_info[variable] = Run::Gtk::ControlInfo.new widget, alt_submit
+				gui_control_id = variable
+			else
+				gui_control_id = text[..63]
 			end
 
 			gui.padding = 7 if gui.padding == 0 # TODO:

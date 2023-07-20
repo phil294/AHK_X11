@@ -105,8 +105,8 @@ module Run
 
 		# add to the thread queue. Depending on priority and `@threads`, it may be picked up
 		# by the clock fiber immediately afterwards
-		def add_thread(cmd : Cmd::Base, label, priority, hotkey : Hotkey? = nil) : Thread
-			thread = Thread.new(self, cmd, label, priority, @default_thread_settings, hotkey)
+		def add_thread(cmd : Cmd::Base, label, priority, *, hotkey : Hotkey? = nil, gui_id : String? = nil, gui_control : String? = nil) : Thread
+			thread = Thread.new(self, cmd, label, priority, @default_thread_settings, hotkey, gui_id, gui_control)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
 			@run_thread_channel.send(nil) if i == @threads.size - 1
@@ -114,10 +114,10 @@ module Run
 		end
 		# :ditto:
 		# TODO: cmd_str should be called label (?)
-		def add_thread(cmd_str : String, priority, *, hotkey : Hotkey? = nil) : Thread?
+		def add_thread(cmd_str : String, priority, *, hotkey : Hotkey? = nil, gui_id : String? = nil, gui_control : String? = nil) : Thread?
 			cmd = @labels[cmd_str]?
 			return nil if ! cmd
-			add_thread(cmd, cmd_str, priority, hotkey)
+			add_thread(cmd, cmd_str, priority, hotkey: hotkey, gui_id: gui_id, gui_control: gui_control)
 		end
 
 		# Forever continuously figures out the "current thread" (`@threads.last`) and

@@ -81,6 +81,8 @@ module Run
 		@label_stack = [] of String
 		getter priority = 0
 		getter hotkey : Hotkey? = nil
+		getter gui_id : String? = nil
+		getter gui_control : String? = nil
 		@exit_code = 0
 		getter done = false
 		@result_channel : Channel(Int32?)?
@@ -88,7 +90,7 @@ module Run
 		getter paused = false
 		getter loop_stack = [] of Cmd::ControlFlow::Loop
 		property performance_by_cmd = {} of String => CmdPerformance
-		def initialize(@runner, start, label, @priority, @settings, @hotkey)
+		def initialize(@runner, start, label, @priority, @settings, @hotkey, @gui_id, @gui_control)
 			@@id_counter += 1
 			@id = @@id_counter
 			@stack << start
@@ -225,21 +227,15 @@ module Run
 		# `var` is case sensitive
 		private def get_thread_built_in_computed_var(var) : String?
 			case var
-			when "a_index"
-				(@loop_stack.last?.try &.index || 0).to_s
-			when "a_detecthiddenwindows"
-				@settings.detect_hidden_windows ? "On" : "Off"
-			when "a_keydelay"
-				@settings.key_delay.to_s
-			when "a_mousedelay"
-				@settings.mouse_delay.to_s
-			when "a_linenumber"
-				(@stack.last.line_no + 1).to_s
-			when "a_thislabel"
-				@label_stack.last
-			else
-				nil
-			end
+			when "a_index" then (@loop_stack.last?.try &.index || 0).to_s
+			when "a_detecthiddenwindows" then @settings.detect_hidden_windows ? "On" : "Off"
+			when "a_keydelay" then @settings.key_delay.to_s
+			when "a_mousedelay" then @settings.mouse_delay.to_s
+			when "a_linenumber" then (@stack.last.line_no + 1).to_s
+			when "a_thislabel" then @label_stack.last
+			when "a_gui" then @gui_id
+			when "a_guicontrol" then @gui_control
+			else nil end
 		end
 
 		def parse_key_combinations(str, *, implicit_braces = false)
