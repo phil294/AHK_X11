@@ -149,6 +149,8 @@ module Run
 		@record : ::Xtst::RecordExtension?
 
 		def initialize
+			::X11::C::X.init_threads # because otherwise crashes occur in some mysterious cases
+
 			set_error_handler
 
 			@display = ::X11::Display.new
