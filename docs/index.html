@@ -183,7 +183,7 @@
                 <a href="#SetWorkingDir.htm">SetWorkingDir</a>
               </li>
               <li>
-                <a class="tbd" href="#SplitPath.htm">SplitPath</a>
+                <a href="#SplitPath.htm">SplitPath</a>
               </li>
             </ul>
           </li>
@@ -2622,7 +2622,7 @@ else
                 <td height="16" class="calibre4">Closes the above window. </td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="tbd calibre4"><a href="#SplitPath.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SplitPath</a></td>
+                <td height="16" class="calibre4"><a href="#SplitPath.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">SplitPath</a></td>
                 <td height="16" class="calibre4">Separates a file name into its name, directory, extension, and drive.</td>
               </tr>
               <tr class="calibre3">
@@ -5011,15 +5011,15 @@ return</pre>
           </p>
         </div>
       </div>
-      <div class="calibreMain tbd">
+      <div class="calibreMain">
         <div class="calibreEbookContent">
-          <a id="SplitPath.htm" href="#SplitPath.htm">#</a> <h2 class="calibre17">SplitPath</h2> [v1.0.15+]
+          <a id="SplitPath.htm" href="#SplitPath.htm">#</a> <h2 class="calibre17">SplitPath</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Separates a file name into its name, directory, extension, and drive.</p>
+          <p class="calibre8">Separates a file name into its name, directory, extension<span class="rm">, and drive</span>.</p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">SplitPath, InputVar [, OutFileName, OutDir, OutExtension, OutNameNoExt, OutDrive]</td>
+                <td height="48" class="calibre4">SplitPath, InputVar [, OutFileName, OutDir, OutExtension, OutNameNoExt<span class="rm">, OutDrive</span>]</td>
               </tr>
             </tbody>
           </table>
@@ -5037,7 +5037,7 @@ return</pre>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">OutDir</td>
-                <td class="calibre4">Name of the variable in which to store the directory of the file, including drive letter or share name (if present). The final backslash is not included even if the file is located in a drive's root directory.</td>
+                <td class="calibre4">Name of the variable in which to store the directory of the file,<span class="rm"> including drive letter or share name (if present)</span>. The final backslash is not included <span class="rm">even if the file is located in a drive's root directory.</span></td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">OutExtension</td>
@@ -5047,7 +5047,7 @@ return</pre>
                 <td class="calibre4">OutNameNoExt</td>
                 <td class="calibre4">Name of the variable in which to store the file name without its path, dot and extension.</td>
               </tr>
-              <tr class="calibre3">
+              <tr class="calibre3 rm">
                 <td class="calibre4">OutDrive</td>
                 <td class="calibre4">Name of the variable in which to store the drive letter or server name of the file. If the file is on a local or mapped drive, the variable will be set to the drive letter followed by a colon. If the file is on a network path (UNC), the variable will be set to the share name, e.g. \\Workstation01</td>
               </tr>
@@ -5058,16 +5058,16 @@ return</pre>
           <p class="calibre8">Any of the output variables may be omitted if the corresponding information is not needed.</p>
           <p class="calibre8">If <em class="calibre21">InputVar</em> contains a filename with no path or just a relative path (e.g. Address List.txt), <em class="calibre21">OutDrive</em> will be made blank but all the other output variables will be set correctly. Similarly, if there is no path present, <em class="calibre21">OutDir</em> will be made blank; and if there is a path but no file name present, <em class="calibre21">OutFileName</em> and <em class="calibre21">OutNameNoExt</em> will be made blank.</p>
           <p class="calibre8">Actual files and directories in the file system are not checked by this command. It simply analyzes the string given in <em class="calibre21">InputVar</em>.</p>
-          <p class="calibre8">Wildcards (* and ?) and other characters illegal in filenames are treated the same as legal characters, with the exception of colon, backslash, and period (dot), which are processed according to their nature in delimiting the drive letter, directory, and extension of the file.</p>
+          <p class="calibre8">Wildcards (* and ?) and other characters illegal in filenames are treated the same as legal characters, with the exception of <span class="rm">colon, backslash</span> <span class="x11">slash</span>, and period (dot), which are processed according to their nature in delimiting the drive letter, directory, and extension of the file.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#StringSplit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringSplit</a>, <a href="#StringGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringGetPos</a>, <a href="#StringMid.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringMid</a>, <a href="#StringTrimLeft.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringTrimLeft</a>, <a href="#StringLeft.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringLeft</a>, <a href="#FileSelectFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFile</a>, <a href="#FileSelectFolder.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileSelectFolder</a> </p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <p class="calibre8">FullFileName = C:\My Documents\Address List.txt<br class="calibre12" />
+          <p class="calibre8">FullFileName = %A_Home%/My Documents/Address List.txt<br class="calibre12" />
             <br class="calibre12" /> ; To fetch only the bare filename:<br class="calibre12" /> SplitPath, FullFileName, name<br class="calibre12" />
             <br class="calibre12" /> ; Or, to fetch all info:<br class="calibre12" /> SplitPath, FullFileName, name, dir, ext, name_no_ext, drive<br class="calibre12" />
-            <br class="calibre12" /> ; The above will set the variables as follows:<br class="calibre12" /> ; name = Address List.txt<br class="calibre12" /> ; dir = C:\My Documents<br class="calibre12" /> ; ext = txt<br class="calibre12" /> ; name_no_ext = Address List<br class="calibre12" /> ; drive = C:
+            <br class="calibre12" /> ; The above will set the variables as follows:<br class="calibre12" /> ; name = Address List.txt<br class="calibre12" /> ; dir = /home/your-user-name/My Documents<br class="calibre12" /> ; ext = txt<br class="calibre12" /> ; name_no_ext = Address List<br class="calibre12" /> ; <span class="rm">drive = C:</span>
           </p>
         </div>
       </div>
