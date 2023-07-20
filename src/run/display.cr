@@ -101,8 +101,11 @@ module Run
 			@unsuspend_listeners.each &.call
 		end
 
+		getter last_event_received = Time.monotonic
+
 		# TODO: put keysym and char into key_event in callers?
 		private def handle_event(key_event, keysym, char)
+			@last_event_received = Time.monotonic
 			@key_listeners.each do |sub|
 				spawn same_thread: true do
 					sub.call(key_event, keysym, char, @is_paused)
