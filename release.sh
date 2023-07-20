@@ -36,7 +36,7 @@ fi
 echo 'validate html'
 pause
 
-echo 'update shard.yml version'
+echo 'update shard.yml version (no commit)'
 pause
 
 version=$(shards version)
@@ -53,14 +53,14 @@ pause
 pause
 
 git fetch
-changes=$(git log --reverse "$(git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/')
+release_message=$(git log --reverse "$(git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/')
 
-echo edit changelog
+echo edit release message
 pause
-changes=$(micro <<< "$changes")
-[ -z "$changes" ] && exit 1
-echo changes:
-echo "$changes"
+release_message=$(micro <<< "$release_message")
+[ -z "$release_message" ] && exit 1
+echo release_message:
+echo "$release_message"
 
 git add README.md ||:
 git add shard.yml
@@ -71,13 +71,13 @@ pause
 
 git push --tags origin master
 
-if [[ -z $version || -z $changes ]]; then
-    echo version/changes empty
+if [[ -z $version || -z $release_message ]]; then
+    echo version/release_message empty
     exit 1
 fi
 echo 'will create github release'
 pause
-gh release create "$version" --target master --title "$version" --notes "$changes" --verify-tag "$bin"
+gh release create "$version" --target master --title "$version" --notes "$release_message" --verify-tag "$bin"
 echo 'github release created'
 
 echo 'update dependent projects'
