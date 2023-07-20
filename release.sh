@@ -28,6 +28,14 @@ if grep -R -n 'p! ' src; then
     exit 1
 fi
 
+doc_validation_errors=$(tidy -errors -q docs/index.html 2>&1 | grep -v -- ' - Warning: ')
+if ! [ -z "$doc_validation_errors" ]; then
+    echo "docs/index.html contains invalid html:\n${doc_validation_errors}"
+    exit 1
+fi
+echo 'validate html'
+pause
+
 docker run --rm -it -v /b/ahk_x11:/a --privileged ahk_x11-builder-ubuntu.20.04 bash -c \
     'cd /a/build && ./build.sh --release'
 
