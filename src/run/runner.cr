@@ -234,6 +234,10 @@ module Run
 			when "a_yyyy", "a_year" then Time.local.year.to_s
 			when "a_mm", "a_mon" then Time.local.month.to_s(precision: 2)
 			when "a_dd", "a_mday" then Time.local.day.to_s(precision: 2)
+			when "a_mmmm" then Time.local.to_s("%B")
+			when "a_mmm"  then Time.local.to_s("%b")
+			when "a_dddd"  then Time.local.to_s("%A")
+			when "a_ddd"  then Time.local.to_s("%a")
 			when "a_wday" then (Time.local.day_of_week.value % 7 + 1).to_s
 			when "a_yday" then Time.local.day_of_year.to_s
 			when "a_yweek"
