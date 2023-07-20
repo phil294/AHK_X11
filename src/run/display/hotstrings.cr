@@ -53,7 +53,7 @@ module Run
 						@key_buff_i = 0_u8
 						if ! prev_candidate.nil?
 							@runner.set_global_built_in_static_var("A_EndChar", char.to_s)
-							prev_candidate.trigger(@runner)
+							prev_candidate.trigger(@runner, end_char_key_event: key_event)
 						end
 					else
 						@key_buff_i = 0_u8 if @key_buff_i > 29

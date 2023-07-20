@@ -37,13 +37,19 @@ module Run
 				other_keysyms.join[...other_size].downcase == @abbrev.downcase
 			end
 		end
-		def trigger(runner)
-			if @automatic_backspacing
-				runner.display.pause do
+		def trigger(runner, end_char_key_event = nil)
+			runner.display.pause do
+				if @automatic_backspacing
 					(@abbrev.size + (@immediate ? 0 : 1)).times do
 						runner.display.x_do.keys "BackSpace", delay: 0
 						sleep @delay.milliseconds if @delay != -1
 					end
+				end
+				if end_char_key_event
+					# Same xdotool workaround as in send.cr
+					end_char_key_up = XDo::LibXDo::Charcodemap.new
+					end_char_key_up.code = end_char_key_event.keycode
+					runner.display.x_do.keys_raw [end_char_key_up], pressed: false, delay: 0
 				end
 			end
 
