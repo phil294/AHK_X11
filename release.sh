@@ -28,7 +28,7 @@ if grep -R -n 'p! ' src; then
     exit 1
 fi
 
-doc_validation_errors=$(tidy -errors -q docs/index.html 2>&1 | grep -v -- ' - Warning: ')
+doc_validation_errors=$(tidy -errors -q docs/index.html 2>&1 | grep -v -- ' - Warning: ') ||:
 if ! [ -z "$doc_validation_errors" ]; then
     echo "docs/index.html contains invalid html:\n${doc_validation_errors}"
     exit 1
