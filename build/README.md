@@ -46,6 +46,16 @@ The released binaries are special because they need to be portable. We achieve t
 
 There's a script to call `./build.sh`, make a new release and publish it etc., it's `../release.sh`. You most likely can't run it yourself though.
 
+### Docker
+
+In the rare case that you want to use ahk_x11 containerized for headless purposes, you can find a working Dockerfile example in `./ahk_x11.alpine.Dockerfile`. Run it in the parent (main) directory like so:
+
+```bash
+cp .gitignore .dockerignore && \
+  docker build -t ahk_x11-alpine -f build/ahk_x11.alpine.Dockerfile . ; \
+  rm .dockerignore
+```
+
 ## Contributing
 
 If you feel like it, you are welcome to contribute! The language in use, Crystal, is resembling Ruby syntax and consequently also great for beginners.
