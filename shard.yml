@@ -16,8 +16,8 @@ dependencies:
   tasker:
       github: spider-gazelle/tasker
   x11:
-    github: TamasSzekeres/x11-cr
-    version: 1.1.1
+    github: phil294/x11-cr
+    branch: ahk_x11
   xtst:
     github: phil294/xtst-cr
   x_do:
