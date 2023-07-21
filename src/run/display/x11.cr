@@ -177,7 +177,7 @@ module Run
 
 		private def active_window
 			# TODO: manybe use @x_do.active_window if it's similarly fast?
-			@display.window_property(@root_win, @_NET_ACTIVE_WINDOW, 0_i64, 1_i64, false, ::X11::C::XA_WINDOW.to_u64)[:prop_return].unsafe_as(Pointer(UInt64)).value
+			@display.window_property(@root_win, @_NET_ACTIVE_WINDOW, 0_i64, 1_i64, false, ::X11::C::XA_WINDOW.to_u64)[:prop].unsafe_as(Pointer(UInt64)).value
 		end
 
 		def finalize

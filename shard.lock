@@ -41,8 +41,8 @@ shards:
     version: 2.1.4
 
   x11:
-    git: https://github.com/tamasszekeres/x11-cr.git
-    version: 1.1.1
+    git: https://github.com/phil294/x11-cr.git
+    version: 1.0.0+git.commit.5a937d647d8eac29106602fcdeb161a78eb3d59d
 
   x_do:
     git: https://github.com/phil294/x_do.cr.git
@@ -50,5 +50,5 @@ shards:
 
   xtst:
     git: https://github.com/phil294/xtst-cr.git
-    version: 1.0.0+git.commit.202d2aefd912355c78378789ca6ada082d835111
+    version: 1.0.0+git.commit.f731b708e1789d039258ecd62f7b0d1107a00b78
 

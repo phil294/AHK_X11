@@ -20,6 +20,7 @@ dependencies:
     branch: ahk_x11
   xtst:
     github: phil294/xtst-cr
+    branch: ahk_x11
   x_do:
     github: phil294/x_do.cr
     commit: 94f755a4f18a9a9820e9738b371cbe6b49731926
