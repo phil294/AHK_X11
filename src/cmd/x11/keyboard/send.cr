@@ -3,13 +3,22 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 	def self.min_args; 1 end
 	def self.max_args; 1 end
 	def run(thread, args)
+		hotkey = thread.hotkey
+		# TODO: tests for all tweaks
 		thread.runner.display.pause do # to prevent hotkey from triggering other hotkey or itself
 			active_modifiers = thread.runner.display.x_do.active_modifiers
-			# This is *always* necessary, even if we want to keep the modifiers in blind mode, in which
+			# Clearing is *always* necessary, even if we want to keep the modifiers in blind mode, in which
 			# case they are sent along yet again. Otherwise e.g. `^a::send {blind}b` fails. I don't know why.
 			# Perhaps it's also only Ctrl that needs to be released once for Ctrl+x hotkeys to work, because
 			# when I tested it, it didn't apply to Alt+x hotkeys.
 			thread.runner.display.x_do.clear_active_modifiers active_modifiers
+			if hotkey && ! hotkey.no_grab
+				active_modifiers.reject! do |mod|
+					# We don't want to restore a modifier if it came from the hotkey itself. This would
+					# essentially undo the grabbing.
+					mod.code == hotkey.keycode
+				end
+			end
 			blind = nil
 			thread.parse_key_combinations_to_charcodemap(args[0]) do |key_map, pressed, mouse_button, combo|
 				# Our parser allows for each char having their own `{blind}` modifier, but
@@ -27,7 +36,7 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 						thread.runner.display.x_do.mouse_up mouse_button
 					end
 				else
-					if (hotkey = thread.hotkey) && combo.keysym == hotkey.keysym && thread.runner.display.pressed_keys.includes?(combo.keysym)
+					if hotkey && combo.keysym == hotkey.keysym && thread.runner.display.pressed_keys.includes?(combo.keysym)
 						# https://github.com/jordansissel/xdotool/issues/210 (see also hotkeys.cr)
 						# Not a super great solution because for every key up/down combo of the hotkey, this will
 						# *always* send a second key up event now, but oh well it works
