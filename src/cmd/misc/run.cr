@@ -40,6 +40,8 @@ class Cmd::Misc::Run < Cmd::Base
 			# Cannot use pkexec because it doesn't allow running as other user without admin rights or
 			# gksu which isn't installed everywhere.
 			`xhost si:localuser:#{user_str}`
+			# Optimally, if the password is wrong, a proper error message should be shown, but this is a bit hard to implement here. Win ahk 1.0.24:
+			# "Error: Launch Error (possibly related to RunAs). The current thread will exit.\n\nSpecifically: Logon failure: unknown user name or bad password.\n\n\nLine#\n       003: RunAs,root,sdfasdf\n--->    004: RunWait,Notepad.exe\n     005:Exit"
 		else
 			cmd = args_str
 		end
