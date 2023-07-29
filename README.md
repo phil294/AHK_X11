@@ -274,6 +274,78 @@ Like covered above, AHK_X11 is vastly different to modern Windows-AutoHotkey bec
 
 Besides, it should be noted that un[documented](https://phil294.github.io/AHK_X11) == undefined.
 
+### Migrating a modern Windows AHK v1.1 script
+
+Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#legacy-syntax) used in AHK_X11, more modern Windows AHK v1.1+ *also* supports (and favors) expression syntax. So chances are you might have to adjust a few things. Here's a general guideline on how to convert modern to legacy code. If you're annoyed by this, feel free to contribute a more capable parser so we can also parse expressions. Please also let us know if you know of an automated conversion tool. Note that in AHK v2.x, legacy was entirely dropped.
+
+`MODERN` -> `LEGACY (AHK_X11)`
+- `x := 1` -> `x = 1`
+- `x := y` -> `x = %y%`
+- `b := a + 3` ->
+  ```ahk
+  b = %a%
+  b += 3
+  ```
+- `MsgBox, % "c plus 3 is " . c + 3 . "."` ->
+  ```ahk
+  new_c = %c%
+  new_c += 3
+  MsgBox, c plus 3 is %new_c%.
+  ```
+- `If(d == e && f == "x") {` ->
+  ```ahk
+  If d = %e%
+  {
+      If f = x
+      {
+  ```
+- `IfWinExist("Wikipedia, the free encyclopedia")` -> ``IfWinExist, Wikipedia`, the free encyclopedia``
+- ```ahk
+  ; Functions
+  Send, % Add(7,8)
+
+  Add(x, y) {
+      return x + y
+  }
+  ```
+  ->
+  ```ahk
+  add_first = 7
+  add_second = 8
+  GoSub, Add
+  Send, %result%
+  Return
+
+  Add:
+  result = %add_first%
+  result += %add_second%
+  Return
+  ```
+- `my_array := ["one", "two", "three"]` ->
+  ```ahk
+  my_array1 = one
+  my_array2 = two
+  my_array3 = three
+  ; (For Looping, see below)
+  ```
+- ```ahk
+  colors := "red,green,blue"
+  for index, color in StrSplit(colors, ",")
+      MsgBox % "Color number " index " is " color
+  ```
+  ->
+  ```ahk
+  colors = red,green,blue
+  StringSplit, color_array, colors, `,
+  Loop, %color_array0%
+  {
+      StringTrimLeft, this_color, color_array%A_Index%, 0
+      MsgBox, Color number %A_Index% is %this_color%
+  }
+  ```
+- `my_obj` := { key_a: 1, key_b: "value b" }` -> Doesn't exist. You'll have to use normal variables instead.
+- `class MyClass {}` -> Doesn't exist. You'll have to use normal variables instead.
+
 ## Performance
 
 AHK_X11 is an interpreted language, not a compiled one. This means that no compile time optimizations take place on your script code, apart from some validation and reference placements. Also, all variables are of type String. So you probably wouldn't want to use it for performance-critical applications. However, the tool itself is written in Crystal and thus compiled and optimized for speed, so everything should still be reasonably fast. The speed of some of the slower commands depends on either libxdo or X11 and it's not yet clear whether there is much room for improvement. Some tests run on a 3.5 GHz machine:
