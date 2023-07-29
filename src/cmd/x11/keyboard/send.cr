@@ -14,8 +14,8 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 			thread.runner.display.x_do.clear_active_modifiers active_modifiers
 			if hotkey && ! hotkey.no_grab
 				active_modifiers.reject! do |mod|
-					# We don't want to restore a modifier if it came from the hotkey itself. This would
-					# essentially undo the grabbing.
+					# We don't want to restore a modifier down below if it came from the hotkey itself.
+					# This would essentially undo the grabbing.
 					mod.code == hotkey.keycode
 				end
 			end
