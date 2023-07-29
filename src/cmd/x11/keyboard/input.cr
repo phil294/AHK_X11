@@ -40,20 +40,22 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 
 		match_phrases = (args[3]? || "").gsub(",,", "\0").split(",").map &.gsub("\0", ",")
 
-		channel = Channel(::String).new
-		thread.runner.current_input_channel = channel
+		channel_error_level = Channel(::String).new
+		thread.runner.current_input_channel = channel_error_level
 
 		if ! visible
 			thread.runner.display.hotkeys.block_input
 		end
 
 		buf = ""
+		last_key_event = nil
 		listener = thread.runner.display.register_key_listener do |key_event, keysym, char, is_paused| # TODO: inconsistency: KeyEvent/char vs. KeyCombination.key_name
 			next if is_paused && ignore_generated_input
 			next if key_event.type != ::X11::KeyPress
+			last_key_event = key_event
 			end_key = end_keys.find { |k| k.keysym == keysym }
 			if end_key
-				next channel.send("EndKey:#{end_key.key_name}")
+				next channel_error_level.send("EndKey:#{end_key.key_name}")
 			end
 			if ! ignore_backspace && char == '\b' # ::X11::XK_BackSpace
 				buf = buf.empty? ? "" : buf[...-1]
@@ -71,15 +73,15 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 				end
 			end
 			if match
-				next channel.send("Match")
+				next channel_error_level.send("Match")
 			end
 			if buf.size >= max
-				next channel.send("Max")
+				next channel_error_level.send("Max")
 			end
 		end
 
 		ret = select
-		when r = channel.receive
+		when r = channel_error_level.receive
 			r
 		# Neither Time::Span::MAX nor Time::Span::ZERO works here
 		when timeout(timeout ? timeout.not_nil!.seconds : 302400000.seconds)
@@ -89,6 +91,14 @@ class Cmd::X11::Keyboard::Input < Cmd::Base
 		thread.runner.current_input_channel = nil
 
 		thread.runner.display.unregister_key_listener(listener)
+
+		# TODO: tests (like hotstring.cr)
+		if last_key_event
+			# Same xdotool workaround as in hotstring.cr / send.cr
+			last_key_up = XDo::LibXDo::Charcodemap.new
+			last_key_up.code = last_key_event.not_nil!.keycode
+			thread.runner.display.x_do.keys_raw [last_key_up], pressed: false, delay: 0
+		end
 
 		if ! visible
 			thread.runner.display.hotkeys.unblock_input
