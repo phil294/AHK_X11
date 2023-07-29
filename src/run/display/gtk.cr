@@ -264,6 +264,7 @@ module Run
 				@tray = tray = ::Gtk::StatusIcon.new
 				@icon_pixbuf = @default_icon_pixbuf = bytes_to_pixbuf logo_blob
 				tray.from_pixbuf = @icon_pixbuf if ! runner.settings.no_tray_icon
+				tray.tooltip_text = @default_title
 
 				@tray_menu = tray_menu = ::Gtk::Menu.new
 
