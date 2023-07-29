@@ -14,8 +14,8 @@ pause() {
 echo update readme
 pause
 
-if ! [ -z "$(git status --porcelain)" ]; then
-    echo 'git working tree not clean'
+if ! [ -z "$(sc git status --porcelain)" ]; then
+    echo 'sc git working tree not clean'
     exit 1
 fi
 
@@ -52,8 +52,8 @@ pause
 "$bin" ./tests.ahk
 pause
 
-git fetch
-release_message=$(git log --reverse "$(git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/')
+sc git fetch
+release_message=$(sc git log --reverse "$(sc git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/')
 
 echo edit release message
 pause
@@ -62,14 +62,14 @@ release_message=$(micro <<< "$release_message")
 echo release_message:
 echo "$release_message"
 
-git add README.md ||:
-git add shard.yml
-git commit -m "$version"
-git tag "$version"
+sc git add README.md ||:
+sc git add shard.yml
+sc git commit -m "$version"
+sc git tag "$version"
 echo 'committed, tagged'
 pause
 
-git push --tags origin master
+sc git push --tags origin master
 
 if [[ -z $version || -z $release_message ]]; then
     echo version/release_message empty
