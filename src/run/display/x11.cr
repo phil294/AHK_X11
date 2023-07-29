@@ -272,16 +272,17 @@ module Run
 					if event.is_a?(::X11::PropertyEvent) && event.atom == @_NET_ACTIVE_WINDOW
 						# focussed_win = @display.input_focus[:focus] # https://stackoverflow.com/q/31800880, https://stackoverflow.com/q/60141048
 						active_win = active_window()
-						if active_win != @last_active_window
+						if active_win != @last_active_window && active_win > 0
+							{% if ! flag?(:release) %}
+								puts "[debug] x11: active window change to #{active_win}"
+							{% end %}
 							active_window_before = @last_active_window
 							@last_active_window = active_win
-							if active_win > 0
-								# The mutex doesn't protect against nonsense here yet but the chance for
-								# this to happen is fairly small
-								spawn same_thread: true do
-									@hotkeys.each { |h| ungrab_hotkey(h, from_window: active_window_before, unsubscribe: false) }
-									@hotkeys.each { |h| grab_hotkey(h, subscribe: false) }
-								end
+							# The mutex doesn't protect against nonsense here yet but the chance for
+							# this to happen is fairly small
+							spawn same_thread: true do
+								@hotkeys.each { |h| ungrab_hotkey(h, from_window: active_window_before, unsubscribe: false) }
+								@hotkeys.each { |h| grab_hotkey(h, subscribe: false) }
 							end
 						end
 					end
