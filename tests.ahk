@@ -188,7 +188,7 @@ ifwinnotexist, ahk_x11_test_gui, btn txt 1,banana,btn txt 2
 	fail_reason = gui win not exist 5
 	gosub fail
 }
-ifwinexist,,,ahk_x11_test_gui
+ifwinexist, ahk_x11_test_gui,,ahk_x11_test_gui
 {
 	fail_reason = gui win not exist 6
 	gosub fail
