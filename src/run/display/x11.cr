@@ -326,8 +326,8 @@ module Run
 			state_bck = key_event.state
 			# We want to receive a usable char even when e.g. Ctrl is pressed, currently only
 			# because of the shift/uppercase detection below. Shift needs to stay in state though
-			# to differentiate e.g. 2 vs @.
-			key_event.state = key_event.state & ::X11::ShiftMask
+			# to differentiate e.g. 2 vs @ and mod2 = num lock for num numbers # TODO < add auto num number hotkey test
+			key_event.state = key_event.state & (::X11::ShiftMask | ::X11::Mod2Mask)
 			lookup = key_event.lookup_string
 			key_event.state = state_bck
 			char = lookup[:string][0]?
