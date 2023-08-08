@@ -18,7 +18,7 @@ module Run
 		@runner : Runner
 
 		def initialize(@runner)
-			@adapter = X11.new
+			@adapter = X11.new(@runner)
 			@gtk = Gtk.new default_title: (@runner.get_global_var("a_scriptname") || "")
 			@at_spi = AtSpi.new
 			@x_do = XDo.new

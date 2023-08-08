@@ -27,6 +27,11 @@ module Run
 		property run_as_user : String? = nil
 		property run_as_password : String? = nil
 		property sound_play_pid : Int64? = nil
+		# Determines if hotkey = key or mouse and keyboard grabbing / blocking should happen on a
+		# root window (0) basis or wether we keep un- and re-grabbing the active window.
+		# The first solution always works but switches focus unnecessarily on key press, possibly closing
+		# active context menus etc. The second solution works great but messes up window focus on KDE on Solus Linux.
+		property x11_grab_from_root = false
 	end
 
 	# can start a completely fresh and isolated ahk execution instance with its own

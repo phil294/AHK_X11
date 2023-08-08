@@ -112,6 +112,8 @@ module Build
 				raise "#MaxThreadsPerHotkey maximum value is 20" if @runner_settings.max_threads_per_hotkey > 20
 			elsif first_word == "#notrayicon"
 				@runner_settings.no_tray_icon = true
+			elsif first_word == "#xgrabroot"
+				@runner_settings.x11_grab_from_root = true
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)

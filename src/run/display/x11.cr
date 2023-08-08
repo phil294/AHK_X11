@@ -147,8 +147,10 @@ module Run
 		@mutex = Mutex.new
 		@record_context : ::Xtst::LibXtst::RecordContext?
 		@record : ::Xtst::RecordExtension?
+		@runner : Run::Runner
+		@grab_from_root : Bool
 
-		def initialize
+		def initialize(@runner)
 			::X11::C::X.init_threads # because otherwise crashes occur in some mysterious cases
 
 			set_error_handler
@@ -161,6 +163,7 @@ module Run
 			# So we get notified of active window change
 			@display.change_window_attributes(@root_win, ::X11::C::CWEventMask, root_win_attributes)
 			@last_active_window = active_window()
+			@grab_from_root = @runner.settings.x11_grab_from_root
 
 			begin
 				@record = record = ::Xtst::RecordExtension.new
@@ -278,11 +281,13 @@ module Run
 							{% end %}
 							active_window_before = @last_active_window
 							@last_active_window = active_win
-							# The mutex doesn't protect against nonsense here yet but the chance for
-							# this to happen is fairly small
-							spawn same_thread: true do
-								@hotkeys.each { |h| ungrab_hotkey(h, from_window: active_window_before, unsubscribe: false) }
-								@hotkeys.each { |h| grab_hotkey(h, subscribe: false) }
+							if ! @grab_from_root
+								# The mutex doesn't protect against nonsense here yet but the chance for
+								# this to happen is fairly small
+								spawn same_thread: true do
+									@hotkeys.each { |h| ungrab_hotkey(h, from_window: active_window_before, unsubscribe: false) }
+									@hotkeys.each { |h| grab_hotkey(h, subscribe: false) }
+								end
 							end
 						end
 					end
@@ -343,6 +348,7 @@ module Run
 		# https://stackoverflow.com/a/69216578/3779853
 		# This helps avoiding various popups and menus from auto-closing on hotkey press.
 		# Because of this, this driver needs to maintain its own list of hotkeys.
+		# This behavior depends on `@grab_from_root`.
 		@hotkeys = [] of Hotkey
 		# :ditto:
 		def grab_hotkey(hotkey, *, subscribe = true)
@@ -352,7 +358,7 @@ module Run
 				if hotkey.keysym < 10
 					@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
 				else
-					@display.grab_key(hotkey.keycode, mod, grab_window: @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
+					@display.grab_key(hotkey.keycode, mod, grab_window: @grab_from_root ? @root_win : @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
 			@mutex.unlock
@@ -366,7 +372,7 @@ module Run
 				if hotkey.keysym < 10
 					@display.ungrab_button(hotkey.keycode, mod, grab_window: @root_win)
 				else
-					@display.ungrab_key(hotkey.keycode, mod, grab_window: from_window)
+					@display.ungrab_key(hotkey.keycode, mod, grab_window: @grab_from_root ? @root_win : from_window)
 				end
 			end
 			@mutex.unlock
@@ -374,7 +380,7 @@ module Run
 		end
 		def grab_keyboard
 			@mutex.lock
-			@display.grab_keyboard(grab_window: @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
+			@display.grab_keyboard(grab_window: @grab_from_root ? @root_win : @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
 			@mutex.unlock
 			@flush_event_queue.send(nil)
 		end
@@ -386,7 +392,7 @@ module Run
 		end
 		def grab_pointer
 			@mutex.lock
-			@display.grab_pointer(grab_window: @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime, event_mask: 0_u32, confine_to: 0_u64, cursor: 0_u64)
+			@display.grab_pointer(grab_window: @grab_from_root ? @root_win : @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime, event_mask: 0_u32, confine_to: 0_u64, cursor: 0_u64)
 			@mutex.unlock
 			@flush_event_queue.send(nil)
 		end
