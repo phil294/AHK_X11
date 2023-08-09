@@ -157,6 +157,9 @@ module Run
 
 			@display = ::X11::Display.new
 			@root_win = @display.root_window @display.default_screen_number
+			{% if ! flag?(:release) %}
+				puts "[debug] x11: root_win = #{@root_win}"
+			{% end %}
 			@_NET_ACTIVE_WINDOW = @display.intern_atom("_NET_ACTIVE_WINDOW", false)
 			root_win_attributes = ::X11::SetWindowAttributes.new
 			root_win_attributes.event_mask = ::X11::PropertyChangeMask
@@ -180,7 +183,11 @@ module Run
 
 		private def active_window
 			# TODO: manybe use @x_do.active_window if it's similarly fast?
-			@display.window_property(@root_win, @_NET_ACTIVE_WINDOW, 0_i64, 1_i64, false, ::X11::C::XA_WINDOW.to_u64)[:prop].unsafe_as(Pointer(UInt64)).value
+			win = @display.window_property(@root_win, @_NET_ACTIVE_WINDOW, 0_i64, 1_i64, false, ::X11::C::XA_WINDOW.to_u64)[:prop].unsafe_as(Pointer(UInt64)).value
+			{% if ! flag?(:release) %}
+				puts "[debug] x11: active window detection: #{win}"
+			{% end %}
+			win
 		end
 
 		def finalize
@@ -276,9 +283,6 @@ module Run
 						# focussed_win = @display.input_focus[:focus] # https://stackoverflow.com/q/31800880, https://stackoverflow.com/q/60141048
 						active_win = active_window()
 						if active_win != @last_active_window && active_win > 0
-							{% if ! flag?(:release) %}
-								puts "[debug] x11: active window change to #{active_win}"
-							{% end %}
 							active_window_before = @last_active_window
 							@last_active_window = active_win
 							if ! @grab_from_root
@@ -343,6 +347,16 @@ module Run
 			@key_handler.not_nil!.call(key_event, keysym.to_u64, char)
 		end
 
+		private def grab_window
+			# Last can be 0 in rare cases such as on Solus KDE after hotkey press of *other* script
+			# without grab_from_root set
+			if @grab_from_root || @last_active_window == 0
+				@root_win
+			else
+				@last_active_window
+			end
+		end
+
 		# It's easier to just grab on the root window once, but by repeatedly reattaching to the respectively currently
 		# active window, we avoid losing focus from the active window while a grabbed key is pressed down.
 		# https://stackoverflow.com/a/69216578/3779853
@@ -358,7 +372,7 @@ module Run
 				if hotkey.keysym < 10
 					@display.grab_button(hotkey.keysym.to_u32, mod, grab_window: @root_win, owner_events: true, event_mask: ::X11::ButtonPressMask.to_u32, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, confine_to: ::X11::None.to_u64, cursor: ::X11::None.to_u64)
 				else
-					@display.grab_key(hotkey.keycode, mod, grab_window: @grab_from_root ? @root_win : @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
+					@display.grab_key(hotkey.keycode, mod, grab_window: grab_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync)
 				end
 			end
 			@mutex.unlock
@@ -380,7 +394,7 @@ module Run
 		end
 		def grab_keyboard
 			@mutex.lock
-			@display.grab_keyboard(grab_window: @grab_from_root ? @root_win : @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
+			@display.grab_keyboard(grab_window: grab_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime)
 			@mutex.unlock
 			@flush_event_queue.send(nil)
 		end
@@ -392,7 +406,7 @@ module Run
 		end
 		def grab_pointer
 			@mutex.lock
-			@display.grab_pointer(grab_window: @grab_from_root ? @root_win : @last_active_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime, event_mask: 0_u32, confine_to: 0_u64, cursor: 0_u64)
+			@display.grab_pointer(grab_window: grab_window, owner_events: true, pointer_mode: ::X11::GrabModeAsync, keyboard_mode: ::X11::GrabModeAsync, time: ::X11::CurrentTime, event_mask: 0_u32, confine_to: 0_u64, cursor: 0_u64)
 			@mutex.unlock
 			@flush_event_queue.send(nil)
 		end
