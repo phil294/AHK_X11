@@ -19,6 +19,27 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 					mod.code == hotkey.keycode
 				end
 			end
+			# TODO:
+			# Reactivate and test this commented out section once on evdev branch, then remove the
+			# workaround applied further down (`blind = true`) because this properly replaces it
+			# # # Triggered for both manual user's keypresses *while* the send happens (due to SetKeyDelay) and
+			# # # the keys sent themselves below
+			# # key_listener = thread.runner.display.register_key_listener do |key_event, keysym, char, is_paused|
+			# # 	# this segfaults for no  fucking reason
+			# # 	next if type != ::X11::KeyRelease
+			# # 	modifier_key_up_index = active_modifiers.index do |mod|
+			# # 		# v these are keysyms but would have to be key codes in order for the comparison to work
+			# # 		[[::X11::XK_Control_L, ::X11::XK_Control_R], [::X11::XK_Shift_L, ::X11::XK_Shift_R], [::X11::XK_Alt_L, ::X11::XK_Alt_R]].index do |keys|
+			# # 			(keys.index &.== mod.code) && (keys.index &.== key_code)
+			# # 		end
+			# # 	end
+			# # 	if modifier_key_up_index
+			# # 		# This modifier was released either by us (e.g. `Send, {Ctrl Up}`) or the user while
+			# # 		# the sending took place, so it must not be pressed down again at the end with set_active_modifiers:
+			# # 		active_modifiers.delete_at(modifier_key_up_index)
+			# # 	end
+			# # end
+			# # ... further down: thread.runner.display.unregister_key_listener(key_listener)
 			blind = nil
 			thread.parse_key_combinations_to_charcodemap(args[0]) do |key_map, pressed, mouse_button, combo|
 				# Our parser allows for each char having their own `{blind}` modifier, but
@@ -40,6 +61,7 @@ class Cmd::X11::Keyboard::Send < Cmd::Base
 						# https://github.com/jordansissel/xdotool/issues/210 (see also hotkeys.cr)
 						# Not a super great solution because for every key up/down combo of the hotkey, this will
 						# *always* send a second key up event now, but oh well it works
+						# TODO: only do this once
 						hotkey_key_up = XDo::LibXDo::Charcodemap.new
 						hotkey_key_up.code = hotkey.keycode
 						thread.runner.display.x_do.keys_raw [hotkey_key_up], pressed: false, delay: 0
