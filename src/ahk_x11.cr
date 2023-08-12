@@ -80,6 +80,9 @@ if ! lines
 			::exit
 		else
 			script_file = filename_to_path(ARGV[0])
+			if ! Hacks.is_utf8_file_no_bom(script_file.to_s)
+				build_error "File '#{ARGV[0]}' does not appear to be a valid NO-BOM UTF-8 file! Other encodings aren't supported currently, sorry."
+			end
 			begin
 				ahk_str = File.read(script_file)
 			rescue

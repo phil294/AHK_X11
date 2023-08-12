@@ -34,6 +34,16 @@ class Hacks
 	def self.set_fiber_on_unhandled_exception(&block : Exception -> Nil)
 		@@fiber_on_unhandled_exception = block
 	end
+
+	# Crystal doesn't seem to support any such functionality?
+	def self.is_utf8_file_no_bom(path)
+		begin
+			return Process.run("iconv", ["-f", "utf8", path, "-t", "utf8"]).exit_code == 0 &&
+				! `file -b #{path}`.includes?("BOM")
+		rescue
+			return true
+		end
+	end
 end
 
 # https://github.com/crystal-lang/crystal/issues/13297
