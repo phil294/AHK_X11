@@ -11,7 +11,8 @@ class Cmd::X11::Window::WinWait < Cmd::Base
 		match_conditions = args
 		match_conditions.delete_at(2)
 		match = ::Util::ExponentialBackOff.back_off(initial_interval: 20.milliseconds, factor: 1.15, max_interval: 0.8.seconds, timeout: seconds ? seconds.seconds : nil) do
-			Util.match(thread, match_conditions, empty_is_last_found: false, a_is_active: false) do |win|
+			# a_is_active: Not documented but appears to have been the case according to MinimizeToTrayMenu.ahk (not verified in any win ahk version)
+			Util.match(thread, match_conditions, empty_is_last_found: false, a_is_active: true) do |win|
 				thread.settings.last_found_window = win
 			end
 		end

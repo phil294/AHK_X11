@@ -13,6 +13,7 @@ class Cmd::X11::Window::WinWaitNotActive < Cmd::Base
 		is_not_active = ::Util::ExponentialBackOff.back_off(initial_interval: 5.milliseconds, factor: 1.15, max_interval: 0.8.seconds, timeout: seconds ? seconds.seconds : nil) do
 			not_active = false
 			Util.match(thread, match_conditions, empty_is_last_found: true, a_is_active: false) do |win|
+				thread.settings.last_found_window = win
 				not_active = win != thread.runner.display.x_do.active_window
 			end
 			not_active
