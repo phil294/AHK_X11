@@ -14,6 +14,7 @@ class Cmd::X11::Mouse::ControlSetText < Cmd::Base
 				acc = at_spi.find_descendant(thread, win, class_nn_or_text)
 				if acc
 					at_spi.set_text(acc, new_text)
+					next true
 				end
 				false
 			end
