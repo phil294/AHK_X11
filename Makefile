@@ -10,6 +10,7 @@ download-appimage:
 		| cut -d : -f 2,3 \
 		| tr -d \" \
 		| wget -i - -O ahk_x11.AppImage
+	chmod +x ahk_x11.AppImage
 
 ahk_x11.AppImage: bin/ahk_x11 linuxdeploy-plugin-gtk.sh linuxdeploy-x86_64.AppImage
 	(cat /etc/lsb-release |grep "Ubuntu 20.04") || \
