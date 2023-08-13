@@ -32,7 +32,7 @@ The released binaries are special because they need to be portable. We achieve t
 1. Do the same steps as listed in "For local usage": Install dependencies etc.
 1. Run `make ahk_x11.AppImage`
 1. Find your final binary as `ahk_x11.AppImage`. It's about 30 MiB in size.
-1. You can then optionally either install it as usual for the current user by running directly *or* system-wide with `make install-appimage`. If you do the latter: Depending on your distribution, you might need to update the mime and desktop database with `sudo -i bash -c 'umask 0022 && update-mime-database /usr/share/mime && update-desktop-database'`.
+1. You can then optionally either install it as usual for the current user by running directly *or* system-wide with `make install-appimage`. If you do the latter: Depending on your distribution, you might need to update the mime and desktop database with `sudo -i bash -c 'umask 0022 && update-mime-database /usr/share/mime && update-desktop-database /usr/share/applications && gtk-update-icon-cache -f -t /usr/share/icons/hicolor'`.
 
 There's a script that does these things, makes a new release and publishes it etc., it's `./release.sh`. You most likely can't run it yourself though.
 
