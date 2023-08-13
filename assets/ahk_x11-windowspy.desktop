@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Window Spy
 Exec=ahk_x11 --windowspy
+MimeType=application/x-ahk_x11
 Icon=ahk_x11
 Terminal=false
 Type=Application

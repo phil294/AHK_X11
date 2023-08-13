@@ -80,6 +80,7 @@ Install:
 	FileAppend, [Desktop Entry]`n, %app_name%-windowspy.desktop
 	FileAppend, Name=Window Spy`n, %app_name%-windowspy.desktop
 	FileAppend, Exec=%binary_path% --windowspy`n, %app_name%-windowspy.desktop
+	FileAppend, MimeType=application/x-%app_name%`n, %app_name%-windowspy.desktop
 	FileAppend, Icon=application-x-%app_name%`n, %app_name%-windowspy.desktop
 	FileAppend, Terminal=false`n, %app_name%-windowspy.desktop
 	FileAppend, Type=Application`n, %app_name%-windowspy.desktop
