@@ -41,15 +41,18 @@ pause
 
 version=$(shards version)
 
-docker run --rm -it -v /b/ahk_x11:/a --privileged ahk_x11-builder-ubuntu.20.04 bash -c \
-    'cd /a/build && ./build.sh --release'
+docker run --rm -it -v /b/ahk_x11:/a -w /a --privileged ahk_x11-builder-ubuntu.20.04 \
+    make ahk_x11.AppImage
 
-bin=$(ls -tr build/*.AppImage | tail -1)
+bin=ahk_x11.AppImage
 cp "$bin" "$bin.release"
-echo "$bin"
+ls -la "$bin"
 pause
 
-"$bin" ./tests.ahk
+make test-appimage
+pause
+
+echo test installers
 pause
 
 sc git fetch

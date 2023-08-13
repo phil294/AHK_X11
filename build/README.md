@@ -21,34 +21,24 @@ These are the steps required to build this project locally, such as if you want 
         ```
 1. `git clone https://github.com/phil294/AHK_X11`
 1. `cd AHK_X11`
-1. `shards install`
-1. `bin/gi-crystal`
-1. Remove the `private` from `private getter xdo_p : LibXDo::XDo*` in `lib/x_do/src/x_do.cr` (this is a temporary fix)
-1. In `lib/gi-crystal/src/auto/gtk-3.0/gtk.cr`, replace all usages of `Glib::String` with `::String` (this is a temporary fix)
-1. Now everything is ready for local use with `shards build -Dpreview_mt`, *if* you have `libxdo` (xdotool) version 2021* upwards installed. For version 2016*, you'll need to upgrade this dependency somehow. One way to achieve this is explained below.
-1. Find your final binary in the `./bin` folder, it's about 4 MiB in size.
+1. `make bin/ahk_x11.dev`
+1. Find your final binary in the `./bin` folder, it's about 13 MiB in size. It's not optimized for speed yet. Please also note that if you compile an `.ahk` script with it, it will NOT be portable across systems! For that, read on below.
 
 ### For making release-like binaries
 
-The released binaries are special because they need to be portable. We achieve this by using AppImage. Portability is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be portable across various Linux distributions without ever requiring the user to install any dependencies. Below are the instructions on how to do this / how the released binaries are produced.
+The released binaries are special because they need to be portable. We achieve this by using AppImage. Portability is especially important because of the script compilation feature: You can use the binary to transform a script into a new stand-alone binary, and that resulting binary should be runnable in the future and across various Linux distributions without ever requiring the user to install any dependencies. Below are the instructions on how to do this / how the released binaries are produced.
 
 1. Get on an Ubuntu 20.04 system, e.g. using Docker. 18.04 also works but Gtk 3.24 in 20.04 fixes the bug that ToolTips falsely grab focus
-1. `libxdo`'s master branch includes changes not present in the recent releases, so we need to build it by hand:
-
-    - clone [xdotool](https://github.com/jordansissel/xdotool) somewhere, in there,
-    - run `make clean && make` and then copy the files `libxdo.so` and `libxdo.so.3` into this very `build` folder.
 1. Do the same steps as listed in "For local usage": Install dependencies etc.
-1. Get `linuxdeploy-x86_64.AppImage` from https://github.com/linuxdeploy/linuxdeploy/releases, into this `build` folder
-1. Get `linuxdeploy-plugin-gtk.sh` from https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh
-1. In that same file, *delete the line* `export GTK_THEME="$APPIMAGE_GTK_THEME" # Custom themes are broken` (this is a temporary fix ([issue](https://github.com/linuxdeploy/linuxdeploy-plugin-gtk/issues/39)))
-1. Instead of `shards build`, run `./build.sh --release`. This also does shards build, but also does the AppImage magic. The `--release` flag results in slower compilation but faster output binary.
-1. Find your final binary `ahk_x11-[version]-x86_64.AppImage` in the `build` folder. It's about 30 MiB in size.
+1. Run `make ahk_x11.AppImage`
+1. Find your final binary as `ahk_x11.AppImage`. It's about 30 MiB in size.
+1. You can then optionally either install it as usual for the current user by running directly *or* system-wide with `make install-appimage`. If you do the latter: Depending on your distribution, you might need to update the mime and desktop database with `sudo -i bash -c 'umask 0022 && update-mime-database /usr/share/mime && update-desktop-database'`.
 
-There's a script to call `./build.sh`, make a new release and publish it etc., it's `../release.sh`. You most likely can't run it yourself though.
+There's a script that does these things, makes a new release and publishes it etc., it's `./release.sh`. You most likely can't run it yourself though.
 
 ### Docker
 
-In the rare case that you want to use ahk_x11 containerized for headless purposes, you can find a working Dockerfile example in `./ahk_x11.alpine.Dockerfile`. Run it in the parent (main) directory like so:
+In the rare case that you want to use ahk_x11 containerized for headless purposes, you can find a working Dockerfile example in `./ahk_x11.alpine.Dockerfile`. Build it in the parent (main) directory like so:
 
 ```bash
 cp .gitignore .dockerignore && \
