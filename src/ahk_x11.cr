@@ -33,6 +33,8 @@ HEADLESS = ! ENV["DISPLAY"]? || ENV["DISPLAY"].empty?
 def build_error(msg)
 	if msg.is_a?(Exception)
 		msg.inspect_with_backtrace(STDERR)
+	else
+		STDERR.puts msg
 	end
 	STDERR.flush
 	msg = "#{msg}\n\nThe program will exit."
