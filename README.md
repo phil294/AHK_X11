@@ -9,12 +9,13 @@ AutoHotkey for Linux.
 `MsgBox, AHK_X11` (*)
 </div>
 
-- **Scripts from Windows will usually NOT WORK without modifications.** If you want this to become a reality, you're welcome to contribute, and/or join the [AHK Discord](https://autohotkey.com/discord/)'s #ahk_x11 channel.
+- **Scripts from Windows will usually NOT WORK without modifications.**
 - **Requires X11**, does not work with Wayland yet ([details](https://github.com/phil294/AHK_X11/issues/2#issuecomment-1616051073)). This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
 - [**Direct Download**](https://github.com/phil294/AHK_X11/releases/latest) (all Linux distributions, x86_64, single executable)
 - [**Full Documentation**](https://phil294.github.io/AHK_X11) (single HTML page)
 - [**Go to Installation Instructions**](#installation)
 - [**Demo Video**](https://raw.githubusercontent.com/phil294/AHK_X11/master/assets/demo.mp4): Installation, script creation, compilation
+- [**AHK Discord**](https://autohotkey.com/discord/) - channel **#ahk_x11**.
 
 [AutoHotkey](https://www.autohotkey.com/) is "Powerful. Easy to learn. The ultimate automation scripting language for Windows.". This project tries to bring large parts of that to Linux. This README mostly tells you about the differences between Win AHK and AHK_X11. If you have no prior experience with AutoHotkey, read [the docs tailored to this project](https://phil294.github.io/AHK_X11).
 
@@ -192,7 +193,7 @@ Also planned, even though it's not part of 1.0.24 spec:
 
 - [Vimium Everywhere](https://github.com/phil294/vimium-everywhere): Keyboard navigation for the whole desktop
 - [Activity monitor](https://github.com/phil294/activity-monitor): Demonstrates keyboard tracking, window, control listing and more
-- ...did you create something with AHK_X11 that could potentially be useful to others too? Suggestions for this list? Please open an issue or [write me a mail](mailto:github@waritschlager.de)!
+- ...did you create something with AHK_X11 that could potentially be useful to others too? Suggestions for this list? Please open an issue or [write me a mail](mailto:philip+ahk_x11@waritschlager.de)!
 
 ## Installation
 
@@ -226,6 +227,8 @@ There are different ways to use it.
     - Hashbang supported if first line starts with `#!`
     - You can disable graphical commands by manually unsetting the DISPLAY variable. Example: `DISPLAY= ./ahk_x11 <<< 'Echo abc'` just prints `abc` to the console (`Echo` command is a special ahk_x11-only command). The only advantage is faster startup time.
 
+If you run a script that contains e.g. a Hotkey, an icon will appear in your task bar tray notification area. You can right click that icon to quit. If you're not familiar with these basics of AutoHotkey, please read the [AutoHotkey Tutorial and Overview](https://phil294.github.io/AHK_X11/#TutorialHelp.htm) from the docs.
+
 ### Caveats
 
 #### Remapping mouse
@@ -234,6 +237,7 @@ You can't send / remap mouse buttons when triggered by another mouse button's `{
 
 ```ahk
 F1::LButton ; Works!
+RButton::Tab ; Works!
 RButton up::Send {LButton} ; Works!
 RButton::Send {LButton} ; DOES NOT WORK
 RButton::LButton ; DOES NOT WORK
