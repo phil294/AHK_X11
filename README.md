@@ -298,6 +298,7 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
   new_c += 3
   MsgBox, c plus 3 is %new_c%.
   ```
+- `If(my_var = "my string")` -> `If my_var = my string`
 - `If(d == e && f == "x") {` ->
   ```ahk
   If d = %e%
