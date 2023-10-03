@@ -38,7 +38,7 @@ class Hacks
 	# Crystal doesn't seem to support any such functionality?
 	def self.is_utf8_file_no_bom(path)
 		begin
-			return Process.run("iconv", ["-f", "utf8", path, "-t", "utf8"]).exit_code == 0 &&
+			return Process.run("iconv", ["-f", "utf8", "-t", "utf8", path]).exit_code == 0 &&
 				! `file -b #{path}`.includes?("BOM")
 		rescue
 			return true
