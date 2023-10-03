@@ -198,6 +198,8 @@ Also planned, even though it's not part of 1.0.24 spec:
 
 **[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)**. Make the downloaded file executable ([how?](https://askubuntu.com/a/484719/378854)) and you should be good to go: Just double click it *or* run it in the console without arguments (**without** sudo).
 
+If this doesn't work, you might have to also install FUSE for now: `sudo apt-get install libfuse2`
+
 Prerequisites:
 - X11 is the only dependency. You most likely have them already. Wayland support would be cool too some day.
 - Old distros like Debian *before* 10 (Buster) or Ubuntu *before* 18.04 are not supported ([reason](https://github.com/jhass/crystal-gobject/issues/73#issuecomment-661235729)). Otherwise, it should not matter what system you use.
