@@ -177,7 +177,7 @@ module Run
 			rescue e
 				# TODO: msgbox?
 				STDERR.puts e
-				STDERR.puts "The script will continue but some features (esp. Hotstrings) may not work. Please also consider opening an issue at github.com/phil294/ahk_x11 and tell us about your system details."
+				STDERR.puts "The script will continue but some features (esp. Hotstrings) may not work. Please also consider opening an issue at https://github.com/phil294/ahk_x11 and tell us about your system details."
 			end
 		end
 
@@ -232,6 +232,7 @@ module Run
 				::X11::C::X.get_error_text display, error_event.value.error_code, buffer.to_unsafe, 1024
 				error_message = String.new buffer.to_unsafe
 				if error_event.value.error_code == 10
+					# Grabbing failed, most likely because already grabbed by other program / script instance
 					STDERR.puts error_message + " (You can probably ignore this error)"
 				else
 					STDERR.puts "Display server unexpectedly failed with the following error message:\n\n#{error_message}\n\nThe script will exit."
