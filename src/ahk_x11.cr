@@ -53,6 +53,10 @@ Hacks.set_fiber_on_unhandled_exception do |ex|
 	build_error(ex)
 end
 
+if ENV["XDG_SESSION_TYPE"]? != "x11"
+	STDERR.puts "WARNING: Your system seems to NOT be running X11 but '#{ENV["XDG_SESSION_TYPE"]? || "undefined"}'. A LOT of things won't work (yet), such as hotkeys, sending keys, and window operations."
+end
+
 def filename_to_path(filename)
 	filename = filename[7..] if filename.starts_with?("file://")
 	Path[filename].expand
