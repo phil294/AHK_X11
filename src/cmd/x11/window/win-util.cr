@@ -34,7 +34,7 @@ class Cmd::X11::Window::Util
 					end
 					if title.starts_with?("ahk_class ")
 						# TODO: these/name etc should all be case sensitive. Maybe double filter below? How performant is querying for .name etc?
-						window_class_name title[10..] # TODO: is this regex? how to make partial matches like ahk?
+						window_class title[10..] # TODO: is this regex? how to make partial matches like ahk?
 					else
 						title = ".*" if title.empty?
 						window_name title # todo same as above / seems to be partial match but only at *start* of string
