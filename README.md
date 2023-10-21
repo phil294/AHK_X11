@@ -246,7 +246,7 @@ RButton::LButton ; DOES NOT WORK
 
 #### Accessibility
 
-All commands or command options related to Controls (e.g. `ControlClick` or `WinGetText`) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
+Some commands or options related to Controls (e.g. `ControlClick` or `ControlGetPos` or `WinGetText` which is just an accumulation of `ControlGetText` or `WinActivate, , Match by Text...`) relies on assistive technologies. While almost all windows support this, this typically needs adjustments on the running system. Read [the documentation section on accessibility](https://phil294.github.io/AHK_X11/#Accessibility.htm) for instructions.
 
 #### Focus stealing prevention
 
