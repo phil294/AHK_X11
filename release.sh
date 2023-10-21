@@ -49,6 +49,11 @@ cp "$bin" "$bin.release"
 ls -la "$bin"
 pause
 
+make ahk_x11.deb
+bin_deb="ahk-x11_${version}-1_all.deb"
+ls -la "$bin_deb"
+pause
+
 make test-appimage
 pause
 
@@ -80,7 +85,7 @@ if [[ -z $version || -z $release_message ]]; then
 fi
 echo 'will create github release'
 pause
-gh release create "$version" --target master --title "$version" --notes "$release_message" --verify-tag "$bin"
+gh release create "$version" --target master --title "$version" --notes "$release_message" --verify-tag "$bin" "$bin_deb"
 echo 'github release created'
 
 echo 'update dependent projects'

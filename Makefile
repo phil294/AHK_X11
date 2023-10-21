@@ -23,6 +23,9 @@ ahk_x11.AppImage: bin/ahk_x11 linuxdeploy-plugin-gtk.sh linuxdeploy-x86_64.AppIm
 	OUTPUT=ahk_x11.AppImage ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage --desktop-file ./assets/ahk_x11.desktop --icon-file ./assets/ahk_x11.png --executable ./bin/ahk_x11 --library /usr/lib/x86_64-linux-gnu/libthai.so.0 --plugin gtk
 	rm -rf AppDir
 
+ahk_x11.deb: ahk_x11.AppImage
+	fpm -s dir -t deb -n ahk_x11 -v "$$(shards version)" --architecture all --deb-no-default-config-files --iteration 1 --description "AHK_X11: AutoHotkey for Linux" --maintainer "Philip Waritschlager <philip+ahk_x11@waritschlager.de>" --url "https://github.com/phil294/ahk_x11" --license "GPL v2" --category "Development" --depends libfuse2 ahk_x11.AppImage=/usr/bin/ahk_x11
+
 bin/ahk_x11:
 ifneq ($(MAKECMDGOALS), ahk_x11.AppImage)
 	@echo -e "WARNING: You are building the native release binary WITHOUT AppImage wrapper. The resulting program will work but not be very portable as dependencies are not bundled. This means that if you use AHK_X11's COMPILER FEATURE to bundle a script into a standalone binary, this binary will then VERY LIKELY NOT RUN ON OTHER LINUX SYSTEMS, or may fail to run on your system in the future. \n\nIt is highly recommended you make the "ahk_x11.AppImage" target instead. The file output size will be three times larger but eternally portable."
