@@ -160,7 +160,10 @@ module Run
 			{% if ! flag?(:release) %}
 				puts "[debug] x11: root_win = #{@root_win}"
 			{% end %}
-			@_NET_ACTIVE_WINDOW = @display.intern_atom("_NET_ACTIVE_WINDOW", false)
+			@_NET_ACTIVE_WINDOW = @display.intern_atom("_NET_ACTIVE_WINDOW", true)
+			{% if ! flag?(:release) %}
+				puts "[debug] x11: _NET_ACTIVE_WINDOW = #{@_NET_ACTIVE_WINDOW}"
+			{% end %}
 			root_win_attributes = ::X11::SetWindowAttributes.new
 			root_win_attributes.event_mask = ::X11::PropertyChangeMask
 			# So we get notified of active window change
@@ -182,8 +185,18 @@ module Run
 		end
 
 		private def active_window
-			# TODO: manybe use @x_do.active_window if it's similarly fast?
-			win = @display.window_property(@root_win, @_NET_ACTIVE_WINDOW, 0_i64, 1_i64, false, ::X11::C::XA_WINDOW.to_u64)[:prop].unsafe_as(Pointer(UInt64)).value
+			# TODO: manybe use @x_do.active_window if it's similarly fast? (evdev branch)
+			return 0_u64 if @_NET_ACTIVE_WINDOW < 1
+			prop = @display.window_property(@root_win, @_NET_ACTIVE_WINDOW, 0_i64, 1_i64, false, ::X11::C::XA_WINDOW.to_u64)
+			nitems = prop[:nitems]
+			data = prop[:prop].unsafe_as(Pointer(UInt64))
+			if data.null? || nitems.nil? || nitems < 1
+				{% if ! flag?(:release) %}
+					puts "[debug] x11: active window detection: _NET_ACTIVE_WINDOW returned NULL prop data"
+				{% end %}
+				return 0_u64
+			end
+			win = data.value
 			{% if ! flag?(:release) %}
 				puts "[debug] x11: active window detection: #{win}"
 			{% end %}
