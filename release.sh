@@ -41,6 +41,7 @@ pause
 
 version=$(shards version)
 
+rm -f ahk_x11.AppImage bin/ahk_x11 bin/ahk_x11.dev
 docker run --rm -it -v /b/ahk_x11:/a -w /a --privileged ahk_x11-builder-ubuntu.20.04 \
     make ahk_x11.AppImage
 
