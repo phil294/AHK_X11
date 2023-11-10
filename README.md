@@ -11,7 +11,7 @@ AutoHotkey for Linux.
 
 - **Scripts from Windows will usually NOT WORK without modifications.**
 - **Requires X11**, does not work with Wayland yet ([details](https://github.com/phil294/AHK_X11/issues/2#issuecomment-1616051073)). This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
-- [**Direct Download**](https://github.com/phil294/AHK_X11/releases/latest) (all Linux distributions, x86_64, single executable)
+- [**Direct Download**](https://github.com/phil294/AHK_X11/releases/latest) (all Linux distributions, x86_64, single executable - choose `ahk_x11.AppImage` under `assets`)
 - [**Full Documentation**](https://phil294.github.io/AHK_X11) (single HTML page)
 - [**Go to Installation Instructions**](#installation)
 - [**Demo Video**](https://raw.githubusercontent.com/phil294/AHK_X11/master/assets/demo.mp4): Installation, script creation, compilation
@@ -207,6 +207,7 @@ Prerequisites:
 
 
 There is no auto updater yet! (but planned) You will probably want to get the latest version then and again.
+On Debian-based distributions like Ubuntu, you can also download and install the `.deb` file. Might be easier to install?
 
 ## Usage
 
