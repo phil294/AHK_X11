@@ -438,6 +438,9 @@
                 <a href="#Edit.htm">Edit</a>
               </li>
               <li>
+                <a class="x11" href="#Eval.htm">Eval</a>
+              </li>
+              <li>
                 <a class="tbd" href="#ListLines.htm">ListLines</a>
               </li>
               <li>
@@ -733,6 +736,7 @@
               <li>
                 <a class="tbd" href="#WinGetActiveStats.htm">WinGetActiveStats</a>
               </li>
+
               <li>
                 <a class="tbd" href="#WinGetActiveTitle.htm">WinGetActiveTitle</a>
               </li>
@@ -2149,6 +2153,10 @@ else
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#EnvSub.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">EnvSub</a></td>
                 <td height="16" class="calibre4">Sets a <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variable</a> to itself minus the given value (can also compare <a href="#FileSetTime.htm__YYYYMMDD" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">date-time</a> values). Synonymous with: var -= value</td>
+              </tr>
+              <tr class="calibre3">
+                <td height="16" class="calibre4"><a href="#Eval.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Eval</a></td>
+                <td height="16" class="calibre4">Takes a string argument and runs it as commands.</td>
               </tr>
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#Exit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Exit</a></td>
@@ -9571,6 +9579,38 @@ if var is time
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
           <p class="calibre8">Edit ; opens the script for editing. </p>
           <p class="calibre8"> </p>
+        </div>
+      </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="Eval.htm" href="#Eval.htm">#</a> <h2 class="calibre17">Eval</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Takes a string argument and runs it as commands.</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">Eval, Commands</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">Commands</td>
+                <td width="85%" class="calibre4">
+                  The commands to run. May include line breaks to run multiple. E.g. <code>Eval, Msgbox 1`nMsgbox 2</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8">Thread variables such as ErrorLevel cannot be accessed as the code is executed in its own thread, run immediately.</p>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Example</strong></p>
+          <p class="calibre8">; Run a dynamic command:<br class="calibre12" /> cmd = MsgBox<br class="calibre12" /> Eval, %cmd% Hello</p>
         </div>
       </div>
       <div class="calibreMain tbd">

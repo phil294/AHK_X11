@@ -214,14 +214,18 @@ module Run
 						break # i.e. there is no stdin, it was closed or never existed like when run via double click.
 					end
 					begin
-						@builder.build [line]
-						add_thread @builder.start.not_nil!, "", 0 if @builder.start
-						Fiber.yield
+						eval [line]
 					rescue e
 						STDERR.puts e.message
 					end
 				end
 			end
+		end
+
+		def eval(lines)
+			@builder.build lines
+			add_thread @builder.start.not_nil!, "", 0 if @builder.start
+			Fiber.yield
 		end
 
 		# Do not use directly, use `Thread.get_var` instead.
