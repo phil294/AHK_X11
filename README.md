@@ -367,6 +367,7 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
   ```
 - `my_obj` := { key_a: 1, key_b: "value b" }` -> Doesn't exist. You'll have to use normal variables instead.
 - `class MyClass {}` -> Doesn't exist. You'll have to use normal variables instead.
+- `x := y%z%` (double de-ref) -> `StringTrimLeft, x, y%z%, 0`. You can also use ``Eval, x = `%y%z%`%`` but that's ten times slower as `Eval` is generally very slow.
 
 ## Performance
 
