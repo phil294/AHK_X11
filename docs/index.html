@@ -435,6 +435,9 @@
                 <a href="#ClipWait.htm">ClipWait</a>
               </li>
               <li>
+                <a class="x11" href="#Echo.htm">Echo</a>
+              </li>
+              <li>
                 <a href="#Edit.htm">Edit</a>
               </li>
               <li>
@@ -2131,6 +2134,10 @@ else
                 <td height="16" class="calibre4">Retrieves the free disk space of a drive, in Megabytes.</td>
               </tr>
               <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#Echo.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Echo</a></td>
+                <td height="16" class="calibre4">Prints to the console (standard out).</td>
+              </tr>
+              <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#Edit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Edit</a></td>
                 <td height="16" class="calibre4">Opens the current script for editing in the associated editor. </td>
               </tr>
@@ -2155,7 +2162,7 @@ else
                 <td height="16" class="calibre4">Sets a <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variable</a> to itself minus the given value (can also compare <a href="#FileSetTime.htm__YYYYMMDD" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">date-time</a> values). Synonymous with: var -= value</td>
               </tr>
               <tr class="calibre3">
-                <td height="16" class="calibre4"><a href="#Eval.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Eval</a></td>
+                <td height="16" class="calibre4 x11"><a href="#Eval.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Eval</a></td>
                 <td height="16" class="calibre4">Takes a string argument and runs it as commands.</td>
               </tr>
               <tr class="calibre3">
@@ -9557,6 +9564,38 @@ if var is time
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
           <p class="calibre8">; Place ToolTips at absolute screen coordinates:<br class="calibre12" /> CoordMode, ToolTip, Screen</p>
+        </div>
+      </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="Echo.htm" href="#Echo.htm">#</a> <h2 class="calibre17">Echo</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Prints to the console (standard out).</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">Echo, Text</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">Text</td>
+                <td width="85%" class="calibre4">
+                  Whatever you want to write.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8">You might only need this if you intend to write an application that is meant to be used from the command line. There isn't really any benefit to using Echo over <code>RunWait, echo</code> apart from small performance benefit and shorter instruction length.</p>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Example</strong></p>
+          <p class="calibre8">Echo, Hello World</p>
         </div>
       </div>
       <div class="calibreMain">
