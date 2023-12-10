@@ -47,12 +47,12 @@ docker run --rm -it -v /b/ahk_x11:/a -w /a --privileged ahk_x11-builder-ubuntu.2
 
 bin=ahk_x11.AppImage
 cp "$bin" "$bin.release"
-ls -la "$bin"
+ls -lah "$bin"
 pause
 
 make ahk_x11.deb
 bin_deb="ahk-x11_${version}-1_all.deb"
-ls -la "$bin_deb"
+ls -lah "$bin_deb"
 pause
 
 make test-appimage

@@ -77,7 +77,7 @@ module Run
 		}
 		@stack = [] of Cmd::Base
 		# Cannot save label onto Cmd::Base class directly because multiple labels may point to
-		# the same label. So we need a separate array or extend with another superclass.
+		# the same cmd instance. So we need a separate array or extend with another superclass.
 		@label_stack = [] of String
 		getter priority = 0
 		getter hotkey : Hotkey? = nil
@@ -99,6 +99,7 @@ module Run
 
 		# Spawns the `do_next` fiber if it isn't running already and returns the result channel.
 		protected def next
+			# TODO: bad naming, clashes with 'result' below, should be exit_status_channel (?)
 			result_channel = @result_channel
 			return result_channel if result_channel
 			result_channel = @result_channel = Channel(Int32?).new
@@ -220,11 +221,11 @@ module Run
 			down = var.downcase
 			@runner.get_global_var(down) || @built_in_static_vars[down]? || get_thread_built_in_computed_var(down) || ""
 		end
-		# `var` is case insensitive
+		# *var* is case insensitive
 		def set_thread_built_in_static_var(var, value)
 			@built_in_static_vars[var.downcase] = value
 		end
-		# `var` is case sensitive
+		# *var* is case sensitive
 		private def get_thread_built_in_computed_var(var) : String?
 			case var
 			when "a_index" then (@loop_stack.last?.try &.index || 0).to_s
