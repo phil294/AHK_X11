@@ -1560,7 +1560,7 @@ Please note: This only works unreliably, and in the above example, LControl will
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td class="calibre4">1, 2, 3, etc. </td>
-                <td class="calibre4"><a id="CommandLine" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>These variables are automatically created whenever a script is launched with command line parameters. They can be changed and referenced just like normal variable names (for example: %1%). The variable %0% contains the number of parameters passed (0 if none). See the <a href="#Scripts.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script section</a> for details.</td>
+                <td class="calibre4"><a id="CommandLine" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>These variables are automatically created whenever a script is launched with command line parameters. They can be changed and referenced just like normal variable names (for example: %1%). The variable +% contains the number of parameters passed (0 if none). See the <a href="#Scripts.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script section</a> for details.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_WorkingDir</td>
@@ -1951,12 +1951,10 @@ Please note: This only works unreliably, and in the above example, LControl will
                 <td class="calibre4"><a id="Variables.htm__Cursor" href="#Variables.htm__Cursor" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="rm"> The type of mouse cursor currently being displayed. It will be one of the following words: AppStarting, Arrow, Cross, Help, IBeam, Icon, No, Size, SizeAll, SizeNESW, SizeNS, SizeNWSE, SizeWE, UpArrow, Wait, Unknown. The acronyms used with the size-type cursors are compass directions, e.g. NESW = NorthEast+SouthWest. The hand-shaped cursors (pointing and grabbing) are classfied as Unknown. [requires v1.0.10+]</span></td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">A_CaretX<br class="calibre12" /> A_CaretY</td>
+                <td class="calibre4">A_Param1, A_Param2, ...etc</td>
                 <td class="calibre4">
-                  <div class="rm">
-                    <p class="calibre8"><a id="Caret" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>The current X and Y coordinates of the caret (text insertion point). [requires v1.0.17+] The coordinates are relative to the active window unless <a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a> is used to make them relative to the entire screen. If there is no active window or the caret position cannot be determined, these variables are blank.</p>
-                    <p class="calibre8">The following example script allows you to move the caret around to see its current position displayed in an auto-update tooltip. Note that some windows (e.g. certain versions of MS Word) report the same caret position regardless of its actual position.</p>
-                    <p class="calibre8">#Persistent<br class="calibre12" /> SetTimer, WatchCaret, 100<br class="calibre12" /> return<br class="calibre12" /> WatchCaret:<br class="calibre12" /> display_y = %A_CaretY%<br class="calibre12" /> display_y -= 20 ; Move tooltip up a little so as not to hide the caret.<br class="calibre12" /> ToolTip, X%A_CaretX% Y%A_CaretY%, %A_CaretX%, %display_y%<br class="calibre12" /> return</p>
+                  <div class="x11">
+                    <p class="calibre8"><a id="A_Param" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>The values of the parameters passed into the current invocation of a custom command (see <a href="#h_DefineCommand.htm">#DefineCommand</a>). Only available inside the associated label.</p>
                   </div>
                 </td>
               </tr>
@@ -9700,7 +9698,7 @@ if var is time
           <p class="calibre8">This feature hasn't been optimized a lot. It may not be super fast and it's possible to shadow variable names with a custom command (not built-in commands though). Generally however, it should work great for most use cases.</p>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
-          <p class="calibre8"><pre>
+          <pre>
 ; Registering a new custom command: GetMaximumValue, OutputVar [, Value1, Value2, ...]
 #DefineCommand GetMaximumValue, LblGetMaximumValue
 
@@ -9729,7 +9727,7 @@ Loop
 %A_Param1% = %max%
 max =
 Return
-          </pre></p>
+          </pre>
         </div>
       </div>
       <div class="calibreMain tbd">
