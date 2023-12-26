@@ -223,6 +223,8 @@ module Build
 				case second_word
 				when "="
 					cmd_class = Cmd::Math::SetEnv
+				when ":="
+					cmd_class = Cmd::Math::EnvMath
 				when "+="
 					cmd_class = Cmd::Math::EnvAdd
 					raise "Add value missing for '+=' expression" if ! other_arg
