@@ -106,7 +106,7 @@ Still, here is a brief peek at the syntax. (click the arrows)
     </details>
 
 
-AHK_X11 is a very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up in [Crystal](https://crystal-lang.org/), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 80% of work of getting there is done, but even at 100%, because of the old version of the spec (at least for now), many modern AHK features are missing, especially expressions (`:=`, `% v`), classes, objects and functions, so you probably can't just port your scripts from Windows. More to read: [Project goals](https://github.com/phil294/AHK_X11/issues/8)
+AHK_X11 is a very basic but functional reimplementation AutoHotkey v1.0.24 (2004) for Unix-like systems with an X window system (X11), written from ground up in [Crystal](https://crystal-lang.org/), with the eventual goal of 80% feature parity, but most likely never full compatibility. Currently about 80% of work of getting there is done, but even at 100%, because of the old version of the spec (at least for now), many modern AHK features are missing, especially advanced expressions and functions (`x := y(z)`, `% v`), classes, and objects, so you probably can't just port your scripts from Windows. More to read: [Project goals](https://github.com/phil294/AHK_X11/issues/8)
 
 This AHK is shipped as a single executable native binary with very low resource overhead and fast execution time. You can use AHK_X11 to create stand-alone binaries with no dependencies, including full functionality like Hotkeys and GUIs. (just like on Windows)
 
@@ -291,6 +291,7 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
 - `x := 1` -> `x = 1`
 - `x := y` -> `x = %y%`
 - `b := a + 3` ->
+  Simple math instructions with `:=` like this one are actually wonkily supported, so chances are you can leave it as is. In this case, you'd omit the percent signs `%` unless you want to double-deref, just like on Windows. But for more complicated stuff such as string concatenation, you'll have to resort back to classic syntax:
   ```ahk
   b = %a%
   b += 3
