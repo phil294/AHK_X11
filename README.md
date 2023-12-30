@@ -329,12 +329,20 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
   result += %add_second%
   Return
   ```
-- `my_array := ["one", "two", "three"]` ->
+- ```ahk
+  my_array := ["one", "two", "three"]
+  index = 1
+  MsgBox, % my_array[index]
+  ```
+  ->
   ```ahk
   my_array1 = one
   my_array2 = two
   my_array3 = three
-  ; (For Looping, see below)
+  index = 1
+  ; Use any command that has an "InputVar" argument. StringTrimLeft is a nice choice because it doesn't do anything to the received value if the "Count" argument is 0 as below. Yes, it's weird, AHK_X11 has no actual arrays. In fact, in AHK v1.0, it used to be the same and the official docs also used StringTrimLeft a lot
+  StringTrimLeft, my_value, my_array%index%, 0
+  MsgBox, %my_value%
   ```
 - ```ahk
   colors := "red,green,blue"
