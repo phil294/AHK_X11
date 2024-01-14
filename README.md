@@ -291,6 +291,7 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
 - `x := 1` -> `x = 1`
 - `x := y` -> `x = %y%`
 - `b := a + 3` ->
+
   Simple math instructions with `:=` like this one are actually wonkily supported, so chances are you can leave it as is. In this case, you'd omit the percent signs `%` unless you want to double-deref, just like on Windows. But for more complicated stuff such as string concatenation, you'll have to resort back to classic syntax:
   ```ahk
   b = %a%

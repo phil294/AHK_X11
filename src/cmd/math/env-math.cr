@@ -6,17 +6,17 @@ class Cmd::Math::EnvMath < Cmd::Base
 	def run(thread, args)
 		var = args[0]
 		formula = args[1]? || ""
-		formula = formula.replace_all /\b[^0-9.()%/*<>+-]\w*\b/g do |word|
-			thread.runner.get_var(word)
+		formula = formula.gsub /\b[^0-9.()%\/*<>+-]\w*\b/ do |word|
+			thread.get_var(word)
 		end
 		stdout_m = IO::Memory.new
 		stderr_m = IO::Memory.new
-		result = Process.run "awk", "BEGIN {print #{formula}}", output: stdout_m, error: stderr_m
+		result = Process.run "awk", ["BEGIN {print #{formula}}"], output: stdout_m, error: stderr_m
 		if result.exit_code != 0
 			thread.runner.set_user_var var, ""
 			return stderr_m.to_s
 		end
-		thread.runner.set_user_var var, stdout_m.to_s
+		thread.runner.set_user_var var, stdout_m.to_s.strip
 		return "0"
 	end
 end
