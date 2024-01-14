@@ -435,7 +435,16 @@
                 <a href="#ClipWait.htm">ClipWait</a>
               </li>
               <li>
+                <a class="x11" href="#Echo.htm">Echo</a>
+              </li>
+              <li>
                 <a href="#Edit.htm">Edit</a>
+              </li>
+              <li>
+                <a class="x11" href="#Eval.htm">Eval</a>
+              </li>
+              <li>
+                <a class="x11" href="#h_DefineCommand.htm">#DefineCommand</a>
               </li>
               <li>
                 <a class="tbd" href="#ListLines.htm">ListLines</a>
@@ -733,6 +742,7 @@
               <li>
                 <a class="tbd" href="#WinGetActiveStats.htm">WinGetActiveStats</a>
               </li>
+
               <li>
                 <a class="tbd" href="#WinGetActiveTitle.htm">WinGetActiveTitle</a>
               </li>
@@ -794,6 +804,9 @@
             <ul>
               <li>
                 <a class="tbd" href="#h_CommentFlag.htm">#CommentFlag</a>
+              </li>
+              <li>
+                <a class="x11" href="#h_DefineCommand.htm">#DefineCommand</a>
               </li>
               <li>
                 <a class="tbd" href="#h_ErrorStdOut.htm">#ErrorStdOut</a>
@@ -1547,7 +1560,7 @@ Please note: This only works unreliably, and in the above example, LControl will
             <tbody class="calibre2">
               <tr class="calibre3">
                 <td class="calibre4">1, 2, 3, etc. </td>
-                <td class="calibre4"><a id="CommandLine" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>These variables are automatically created whenever a script is launched with command line parameters. They can be changed and referenced just like normal variable names (for example: %1%). The variable %0% contains the number of parameters passed (0 if none). See the <a href="#Scripts.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script section</a> for details.</td>
+                <td class="calibre4"><a id="CommandLine" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>These variables are automatically created whenever a script is launched with command line parameters. They can be changed and referenced just like normal variable names (for example: %1%). The variable +% contains the number of parameters passed (0 if none). See the <a href="#Scripts.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">script section</a> for details.</td>
               </tr>
               <tr class="calibre3">
                 <td class="calibre4">A_WorkingDir</td>
@@ -1938,12 +1951,10 @@ Please note: This only works unreliably, and in the above example, LControl will
                 <td class="calibre4"><a id="Variables.htm__Cursor" href="#Variables.htm__Cursor" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a><span class="rm"> The type of mouse cursor currently being displayed. It will be one of the following words: AppStarting, Arrow, Cross, Help, IBeam, Icon, No, Size, SizeAll, SizeNESW, SizeNS, SizeNWSE, SizeWE, UpArrow, Wait, Unknown. The acronyms used with the size-type cursors are compass directions, e.g. NESW = NorthEast+SouthWest. The hand-shaped cursors (pointing and grabbing) are classfied as Unknown. [requires v1.0.10+]</span></td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">A_CaretX<br class="calibre12" /> A_CaretY</td>
+                <td class="calibre4">A_Param1, A_Param2, ...etc</td>
                 <td class="calibre4">
-                  <div class="rm">
-                    <p class="calibre8"><a id="Caret" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>The current X and Y coordinates of the caret (text insertion point). [requires v1.0.17+] The coordinates are relative to the active window unless <a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a> is used to make them relative to the entire screen. If there is no active window or the caret position cannot be determined, these variables are blank.</p>
-                    <p class="calibre8">The following example script allows you to move the caret around to see its current position displayed in an auto-update tooltip. Note that some windows (e.g. certain versions of MS Word) report the same caret position regardless of its actual position.</p>
-                    <p class="calibre8">#Persistent<br class="calibre12" /> SetTimer, WatchCaret, 100<br class="calibre12" /> return<br class="calibre12" /> WatchCaret:<br class="calibre12" /> display_y = %A_CaretY%<br class="calibre12" /> display_y -= 20 ; Move tooltip up a little so as not to hide the caret.<br class="calibre12" /> ToolTip, X%A_CaretX% Y%A_CaretY%, %A_CaretX%, %display_y%<br class="calibre12" /> return</p>
+                  <div class="x11">
+                    <p class="calibre8"><a id="A_Param" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2"></a>The values of the parameters passed into the current invocation of a custom command (see <a href="#h_DefineCommand.htm">#DefineCommand</a>). Only available inside the associated label.</p>
                   </div>
                 </td>
               </tr>
@@ -2127,6 +2138,10 @@ else
                 <td height="16" class="calibre4">Retrieves the free disk space of a drive, in Megabytes.</td>
               </tr>
               <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#Echo.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Echo</a></td>
+                <td height="16" class="calibre4">Prints to the console (standard out).</td>
+              </tr>
+              <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#Edit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Edit</a></td>
                 <td height="16" class="calibre4">Opens the current script for editing in the associated editor. </td>
               </tr>
@@ -2151,12 +2166,20 @@ else
                 <td height="16" class="calibre4">Sets a <a href="#Variables.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">variable</a> to itself minus the given value (can also compare <a href="#FileSetTime.htm__YYYYMMDD" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">date-time</a> values). Synonymous with: var -= value</td>
               </tr>
               <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#Eval.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Eval</a></td>
+                <td height="16" class="calibre4">Takes a string argument and runs it as commands.</td>
+              </tr>
+              <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#Exit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Exit</a></td>
                 <td height="16" class="calibre4">Exits the <a href="#Threads.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">current thread</a> or (if the script is not <a href="#h_Persistent.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">persistent</a> contains no hotkeys) the entire script.</td>
               </tr>
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#ExitApp.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ExitApp</a></td>
                 <td height="16" class="calibre4">Terminates the script unconditionally. </td>
+              </tr>
+              <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#h_DefineCommand.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DefineCommand</a></td>
+                <td height="16" class="calibre4">Registers a new command.</td>
               </tr>
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#FileAppend.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileAppend</a></td>
@@ -9551,6 +9574,38 @@ if var is time
           <p class="calibre8">; Place ToolTips at absolute screen coordinates:<br class="calibre12" /> CoordMode, ToolTip, Screen</p>
         </div>
       </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="Echo.htm" href="#Echo.htm">#</a> <h2 class="calibre17">Echo</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Prints to the console (standard out).</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">Echo, Text</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">Text</td>
+                <td width="85%" class="calibre4">
+                  Whatever you want to write.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8">You might only need this if you intend to write an application that is meant to be used from the command line. There isn't really any benefit to using Echo over <code>RunWait, echo</code> apart from small performance benefit and shorter instruction length.</p>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Example</strong></p>
+          <p class="calibre8">Echo, Hello World</p>
+        </div>
+      </div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="Edit.htm" href="#Edit.htm">#</a> <h2 class="calibre17">Edit</h2>
@@ -9571,6 +9626,108 @@ if var is time
           <p class="calibre8"><strong class="calibre14">Example</strong></p>
           <p class="calibre8">Edit ; opens the script for editing. </p>
           <p class="calibre8"> </p>
+        </div>
+      </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="Eval.htm" href="#Eval.htm">#</a> <h2 class="calibre17">Eval</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Takes a string argument and runs it as commands.</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">Eval, Commands</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">Commands</td>
+                <td width="85%" class="calibre4">
+                  The commands to run. May include line breaks to run multiple. E.g. <code>Eval, Msgbox 1`nMsgbox 2</code>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8">Thread variables such as ErrorLevel cannot be accessed as the code is executed in its own thread, run immediately.</p>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Example</strong></p>
+          <p class="calibre8">; Run a dynamic command:<br class="calibre12" /> cmd = MsgBox<br class="calibre12" /> Eval, %cmd% Hello</p>
+        </div>
+      </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="h_DefineCommand.htm" href="#h_DefineCommand.htm">#</a> <h2 class="calibre17">#DefineCommand</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Registers a new command. Comparable but inferior to "function"s in modern Windows AHK.</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">#DefineCommand, Name, Label</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">Name</td>
+                <td width="85%" class="calibre4">
+                  The name of the new command which you can then invoke in subsequent lines.
+                </td>
+              </tr>
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">Label</td>
+                <td width="85%" class="calibre4">
+                  The name of the label or hotkey label to which to jump when the newly registered command is invoked. Internally this behaves like <a href="#Gosub.htm">GoSub</a>, check there for details.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8">You should use this directive if you need to encapsulate logic that you use multiple times in your script, to prevent repeating yourself. Only do this if you can't find another built-in command that already does what you need.</p>
+          <p class="calibre8">This directive can be used multiple times to register multiple commands. It will only affect code in subsequent lines. This means that you will likely want to put it at the top of your script. The labels, however, can be placed anywhere in your script.</p>
+          <p class="calibre8">Inside the respective label, you can access the passed parameters using the pseudo-built-in vars A_Param1, A_Param2 and so on. Check the example below.</p>
+          <p class="calibre8">This feature hasn't been optimized a lot. It may not be super fast and it's possible to shadow variable names with a custom command (not built-in commands though). Generally however, it should work great for most use cases.</p>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Example</strong></p>
+          <pre>
+; Registering a new custom command: GetMaximumValue, OutputVar [, Value1, Value2, ...]
+#DefineCommand GetMaximumValue, LblGetMaximumValue
+
+GetMaximumValue, var1, 7, 8, 26, 12, 15
+GetMaximumValue, var2, 4, %var1%
+
+; Prints: 26
+MsgBox, Maximum: %var2%
+Return
+
+LblGetMaximumValue:
+max = 0
+; Iterating A_Param1, A_Param2 and so on until no more params are found:
+Loop
+{
+    param_index = %A_Index%
+    ; We skip the first param as it's the OutputVar
+    param_index += 1
+    StringTrimLeft, value, A_Param%param_index%, 0
+    If value =
+        Break
+    If value > %max%
+        max = %value%
+}
+; We have defined OutputVar as our first parameter. This will set the out value:
+%A_Param1% = %max%
+max =
+Return
+          </pre>
         </div>
       </div>
       <div class="calibreMain tbd">

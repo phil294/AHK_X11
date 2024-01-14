@@ -135,7 +135,7 @@ AHK_X11 can be used completely without a terminal. You can however if you want u
 <details><summary>*Click here* to see which commands are implemented and which are missing. Note however that this is not very representative. For example, no `Gui` sub command is included in the listing. For a better overview on what is already done, skim through the <a href="https://phil294.github.io/AHK_X11"><b>full documentation here</b></a>. Generally speaking, everything important is done.</summary>
 
 ```diff
-DONE      57% (126/220):
+DONE      57% (126/222):
 + Else, { ... }, Break, Continue, Return, Exit, GoSub, GoTo, IfEqual, Loop, SetEnv, Sleep, FileCopy,
 + SetTimer, WinActivate, MsgBox, Gui, SendRaw, #Persistent, ExitApp,
 + EnvAdd, EnvSub, EnvMult, EnvDiv, ControlSendRaw, IfWinExist/IfWinNotExist, SetWorkingDir,
@@ -155,11 +155,12 @@ DONE      57% (126/220):
 + WinWaitClose, WinWaitActive, WinWaitNotActive, DriveSpaceFree, FileGetSize, FileRecycle,
 + FileRecycleEmpty, SplitPath, StringSplit
 
-NEW       4% (9/220): (not part of spec or from a more recent version)
+NEW       4% (11/222): (not part of spec or from a more recent version)
 @@ Echo, ahk_x11_print_vars, FileRead, RegExGetPos, RegExReplace, EnvGet, Click @@
-@@ ahk_x11_track_performance_start, ahk_x11_track_performance_stop @@
+@@ Eval, ahk_x11_track_performance_start, ahk_x11_track_performance_stop @@
+@@ #DefineCommand @@
 
-REMOVED   5% (11/220):
+REMOVED   5% (11/222):
 # ### Those that simply make no sense in Linux:
 # EnvUpdate, PostMessage, RegDelete, RegRead, RegWrite, SendMessage, #InstallKeybdHook,
 # #InstallMouseHook, #UseHook, Loop (registry)
@@ -168,7 +169,7 @@ REMOVED   5% (11/220):
 # AutoTrim: It's always Off. It would not differentiate between %a_space% and %some_var%.
 #           It's possible but needs significant work.
 
-TO DO     32% (71/220): alphabetically
+TO DO     32% (71/222): alphabetically
 - BlockInput, Control, ControlFocus, ControlGet, ControlGetFocus, ControlMove, DetectHiddenText,
 - DetectHiddenWindows, Drive, DriveGet, FileCopyDir, FileCreateShortcut, FileInstall, FileGetAttrib,
 - FileGetShortcut, FileGetTime, FileGetVersion, FileMove, FileMoveDir, FileRemoveDir, FormatTime,
@@ -299,6 +300,7 @@ Like covered above, AHK_X11 is vastly different to modern Windows-AutoHotkey bec
 - `#NoEnv` is the default, this means, to access environment variables, you'll have to use `EnvGet`.
 - All arguments are always evaluated only at runtime, even if they are static. This can lead to slightly different behavior or error messages at runtime vs. build time.
 - Several more small subtle differences highlighted in green throughout the docs page
+- There are a few commands present which are missing from Windows AHK, i.e. prominently [`#DefineCommand`](https://phil294.github.io/AHK_X11#h_DefineCommand.htm), [`Echo`](https://phil294.github.io/AHK_X11#Echo.htm) and [`Eval`](https://phil294.github.io/AHK_X11#Eval.htm).
 
 Besides, it should be noted that un[documented](https://phil294.github.io/AHK_X11) == undefined.
 
@@ -350,6 +352,20 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
   result += %add_second%
   Return
   ```
+  **or** you can use the special built-in command (AHK_X11-only) [`#DefineCommand`](https://phil294.github.io/AHK_X11#h_DefineCommand.htm) to reduce code repetition:
+  ```ahk
+  #DefineCommand Add, LblAdd
+
+  Add, result, 7, 8
+  Send, %result%
+  Return
+
+  LblAdd:
+  %A_Param1% = %A_Param2%
+  %A_Param1% += %A_Param3%
+  Return
+  ```
+- `my_array := ["one", "two", "three"]` ->
 - ```ahk
   my_array := ["one", "two", "three"]
   index = 1
@@ -382,6 +398,7 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
   ```
 - `my_obj` := { key_a: 1, key_b: "value b" }` -> Doesn't exist. You'll have to use normal variables instead.
 - `class MyClass {}` -> Doesn't exist. You'll have to use normal variables instead.
+- `x := y%z%` (double de-ref) -> `StringTrimLeft, x, y%z%, 0`. You can also use ``Eval, x = `%y%z%`%`` but that's ten times slower as `Eval` is generally very slow.
 
 ## Performance
 

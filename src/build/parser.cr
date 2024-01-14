@@ -25,6 +25,7 @@ module Build
 		@block_comment = false
 		@hotstring_default_options = ""
 		@already_included = [] of Path
+		@user_defined_command_label_by_name = {} of String => String
 
 		def parse_into_cmds!(lines : Indexable(String))
 			@cmds.clear
@@ -66,8 +67,7 @@ module Build
 				raise "Unexpected */" if ! @block_comment
 				@block_comment = false
 			elsif @block_comment
-				#
-			# This is the "normal" case where 90% of all commands fall into. All other if-clauses
+			# Below is the "normal" case where 90% of all commands fall into. All other if-clauses
 			# are special cases.
 			elsif cmd_class
 				csv_args = split_args(args, cmd_class.multi_command ? cmd_class.max_args + 1 : cmd_class.max_args)
@@ -122,6 +122,10 @@ module Build
 				@runner_settings.x11_grab_from_root = true
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
 			elsif first_word == "#noenv"
+			elsif first_word == "#definecommand"
+				split = split_args(args)
+				raise "#DefineCommand requires two arguments" if split.size < 2
+				@user_defined_command_label_by_name[split[0].downcase] = split[1].downcase
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				var_name = split[0]
@@ -213,6 +217,14 @@ module Build
 				comma = rest_args.empty? ? "" : ","
 				add_line "Gui#{sub_cmd}, #{gui_id}#{comma} #{rest_args}", line_no
 				@runner_settings.persistent = true
+			elsif label = @user_defined_command_label_by_name[first_word]?
+				split_args(args).each_with_index do |arg, i|
+					add_line "SetEnv, A_Param#{i+1}, #{arg}", line_no
+				end
+				add_line "GoSub, #{label}", line_no
+				split_args(args).each_with_index do |arg, i|
+					add_line "SetEnv, A_Param#{i+1}", line_no
+				end
 			elsif first_word.ends_with?(':')
 				@cmds << Cmd::ControlFlow::Label.new line_no, [first_word[...-1]]
 			elsif first_word.ends_with?("++")

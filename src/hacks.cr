@@ -7,6 +7,7 @@ end
 
 class Hacks
 	# https://stackoverflow.com/q/67591891
+	# TODO: why not `whoami`?
 	def self.username
 		System::User.find_by(id: LibC.getuid.to_s).username
 	end

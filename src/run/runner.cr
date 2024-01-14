@@ -117,6 +117,7 @@ module Run
 				handle_single_instance
 			end
 			Fiber.yield
+			# TODO: does this run? as exit handlers are excluded somewhere with process.exit(0)
 			at_exit do
 				if sound_play_pid = @settings.sound_play_pid
 					Process.signal(Signal::KILL, sound_play_pid)
@@ -136,6 +137,7 @@ module Run
 			thread = Thread.new(self, cmd, label, priority, @default_thread_settings, hotkey, gui_id, gui_control)
 			i = @threads.index { |t| t.priority > thread.priority } || @threads.size
 			@threads.insert(i, thread)
+			# TODO: should these not happen on thread start in clock instead of here?
 			if hotkey
 				set_global_built_in_static_var "A_PriorHotkey", @built_in_static_vars["a_thishotkey"]
 				set_global_built_in_static_var "A_ThisHotkey", hotkey.key_str
@@ -161,6 +163,7 @@ module Run
 		# another thread takes the lead.
 		#
 		# There must only be one instance of this running.
+		# TODO: change name, as this does *not* fire continuously
 		private def clock
 			loop do
 				while thread = @threads.last?
@@ -218,17 +221,22 @@ module Run
 					begin
 						line = read_line
 					rescue e
+						# TODO: what does break do? doesnt exit, but keeps hanging?
 						break # i.e. there is no stdin, it was closed or never existed like when run via double click.
 					end
 					begin
-						@builder.build [line]
-						add_thread @builder.start.not_nil!, "", 0 if @builder.start
-						Fiber.yield
+						eval [line]
 					rescue e
 						STDERR.puts e.message
 					end
 				end
 			end
+		end
+
+		def eval(lines)
+			@builder.build lines
+			add_thread @builder.start.not_nil!, "", 0 if @builder.start
+			Fiber.yield
 		end
 
 		# Do not use directly, use `Thread.get_var` instead.

@@ -14,7 +14,7 @@ download-appimage:
 
 ahk_x11.AppImage: bin/ahk_x11 linuxdeploy-plugin-gtk.sh linuxdeploy-x86_64.AppImage
 	(cat /etc/lsb-release |grep "Ubuntu 20.04") || \
-		(echo "It seems you're NOT on Ubuntu 20.04. AppImages should be build on that distribution for cross-distro compatibility. Please change your system e.g. by running all of this in a 20.04 Docker container. Alternatively, you can build for your local system only with the bin/ahk_x11 make target (not recommended)."; exit 1)
+		(echo "It seems you're NOT on Ubuntu 20.04. AppImages should be built on that distribution for cross-distro compatibility. Please change your system e.g. by running all of this in a 20.04 Docker container. Alternatively, you can build for your local system only with the bin/ahk_x11 make target (not recommended)."; exit 1)
 	rm -rf AppDir
 # libthai: https://github.com/phil294/AHK_X11/issues/45 https://github.com/AppImageCommunity/pkg2appimage/issues/538
 # Other libraries that are missing on docker debian and frolvlad/alpine-glibc but are on excludelist
