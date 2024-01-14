@@ -11,7 +11,7 @@ AutoHotkey for Linux.
 
 - **Scripts from Windows will usually NOT WORK without modifications.**
 - **Requires X11**, does not work with Wayland yet ([details](https://github.com/phil294/AHK_X11/issues/2#issuecomment-1616051073)). This is important for Ubuntu version 22.04 and up ([link](https://askubuntu.com/q/1410256))
-- [**Direct Download**](https://github.com/phil294/AHK_X11/releases/latest) (all Linux distributions, x86_64, single executable)
+- [**Direct Download**](https://github.com/phil294/AHK_X11/releases/latest) (all Linux distributions, x86_64, single executable - choose `ahk_x11.AppImage` under `assets`)
 - [**Full Documentation**](https://phil294.github.io/AHK_X11) (single HTML page)
 - [**Go to Installation Instructions**](#installation)
 - [**Demo Video**](https://raw.githubusercontent.com/phil294/AHK_X11/master/assets/demo.mp4): Installation, script creation, compilation
@@ -198,7 +198,7 @@ Also planned, even though it's not part of 1.0.24 spec:
 
 ## Installation
 
-**[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)**. Make the downloaded file executable ([how?](https://askubuntu.com/a/484719/378854)) and you should be good to go: Just double click it *or* run it in the console without arguments (**without** sudo).
+**[Download the latest binary from the release section](https://github.com/phil294/AHK_X11/releases)** (the file called `ahk_x11.AppImage`). Make the downloaded file executable ([how?](https://askubuntu.com/a/484719/378854)) and you should be good to go: Just double click it *or* run it in the console without arguments (**without** sudo).
 
 If this doesn't work, you might have to also install FUSE for now: `sudo apt-get install libfuse2`
 
@@ -208,6 +208,7 @@ Prerequisites:
 
 
 There is no auto updater yet! (but planned) You will probably want to get the latest version then and again.
+On Debian-based distributions like Ubuntu, you can also download and install the `.deb` file. Might be easier to install?
 
 ## Usage
 
@@ -344,11 +345,20 @@ Besides the [Legacy Syntax](https://www.autohotkey.com/docs/v1/Language.htm#lega
   Return
   ```
 - `my_array := ["one", "two", "three"]` ->
+- ```ahk
+  my_array := ["one", "two", "three"]
+  index = 1
+  MsgBox, % my_array[index]
+  ```
+  ->
   ```ahk
   my_array1 = one
   my_array2 = two
   my_array3 = three
-  ; (For Looping, see below)
+  index = 1
+  ; Use any command that has an "InputVar" argument. StringTrimLeft is a nice choice because it doesn't do anything to the received value if the "Count" argument is 0 as below. Yes, it's weird, AHK_X11 has no actual arrays. In fact, in AHK v1.0, it used to be the same and the official docs also used StringTrimLeft a lot
+  StringTrimLeft, my_value, my_array%index%, 0
+  MsgBox, %my_value%
   ```
 - ```ahk
   colors := "red,green,blue"

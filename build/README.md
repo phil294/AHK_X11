@@ -12,7 +12,7 @@ These are the steps required to build this project locally, such as if you want 
     1. Ubuntu 20.04 and up:
         1. Dependencies
             ```
-            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev libnotify-dev
+            sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev libnotify-dev libyaml-dev
             ```
         1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
     1. Arch Linux:
