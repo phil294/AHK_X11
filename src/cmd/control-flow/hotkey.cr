@@ -20,7 +20,7 @@ class Cmd::ControlFlow::Hotkey < Cmd::Base
 
 		buffer = false # TODO: not used
 		priority = 0
-		max_threads = nil # TODO: not used
+		max_threads = nil # TODO: not used FIXME: now is?
 		thread.parse_letter_options options do |char, n|
 			case char
 			when 'B' then buffer = n == 0

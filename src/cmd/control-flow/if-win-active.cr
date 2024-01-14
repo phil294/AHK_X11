@@ -7,7 +7,7 @@ class Cmd::ControlFlow::IfWinActive < Cmd::Base
 	def run(thread, args)
 		active = false
 		Cmd::X11::Window::Util.match_win(thread, args, empty_is_last_found: true, a_is_active: false) do |win|
-			thread.settings.last_found_window = win.window
+			thread.settings.last_found_window = win
 			active = win == thread.runner.display.x_do.active_window
 		end
 		active

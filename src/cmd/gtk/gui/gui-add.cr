@@ -7,16 +7,20 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 		type = args[1]
 		options = args[2]? || ""
 		text = args[3]? || ""
-		
+
 		opt = thread.parse_word_options options
 		runner = thread.runner
 		g_label = opt["g"]?.try &.[:v].downcase
+		gui_control_id = ""
 		run_g_label = ->{
 			if g_label
-				runner.add_thread g_label, 0
+				runner.add_thread g_label, 0, gui_id: gui_id, gui_control: gui_control_id
 			end
 		}
-		
+
+		w = (opt["w"]?.try &.[:n] || -1).to_i
+		h = (opt["h"]?.try &.[:n] || -1).to_i
+
 		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			widget : ::Gtk::Widget? = nil
 			case type.downcase
@@ -41,7 +45,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				widget.clicked_signal.connect run_g_label
 				button_click_label = "button" + text.gsub(/[ &\n\r]/, "").downcase
 				widget.clicked_signal.connect do
-					runner.add_thread button_click_label, 0
+					runner.add_thread button_click_label, 0, gui_id: gui_id
 				end
 			when "checkbox"
 				widget = ::Gtk::CheckButton.new label: text
@@ -56,13 +60,39 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 						widget.append_text option
 					end
 				end
-				widget.active = (opt["choose"][:n] || 1) - 1 if opt["choose"]?
+				widget.active = ((opt["choose"][:n] || 1_i64) - 1).to_i if opt["choose"]?
 				widget.changed_signal.connect run_g_label
 			when "picture", "pic"
-				widget = ::Gtk::Image.new_from_file text
-				widget.has_window = true
-				widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
+				# Shortest, non-canonical way: Doesn't work because when setting x/y the image is clipped (why????)
+				# widget.has_window = true
+				# widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
+				# widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
+				widget = ::Gtk::EventBox.new
 				widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))
+				if text.starts_with?("icon:")
+					size = case w > 1 ? w : h > 1 ? h : 48
+					when 16 then ::Gtk::IconSize::Menu
+					when 24 then ::Gtk::IconSize::LargeToolbar
+					when 32 then ::Gtk::IconSize::Dnd
+					when 48 then ::Gtk::IconSize::Dialog
+					else
+						raise Run::RuntimeException.new "For Gui pictures with icon paths, the height/width needs to be either 16, 24, 32, 48 or unspecified."
+					end
+					img = ::Gtk::Image.new_from_icon_name text[5..], size.value.to_i
+				else
+					img = ::Gtk::Image.new_from_file text
+				end
+				# Icon pictures have no pixbuf, so this applies only to external files
+				if (pixbuf = img.pixbuf) && (w > -1 || h > -1)
+					if w == -1 || w == 1
+						w = (h * pixbuf.width / pixbuf.height).to_i
+					elsif h == -1 || h == 1
+						h = (w * pixbuf.height / pixbuf.width).to_i
+					end
+					pixbuf_scaled = pixbuf.scale_simple w, h, GdkPixbuf::InterpType::Bilinear
+					img.pixbuf = pixbuf_scaled if pixbuf_scaled
+				end
+				widget.add img
 			else
 				widget = ::Gtk::Label.new text
 				widget.has_window = true
@@ -73,8 +103,12 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			widget.override_background_color(::Gtk::StateFlags::Normal, gui.control_color) if gui.control_color
 
 			if opt["v"]?
+				variable = opt["v"][:v]
 				alt_submit = !! opt["altsubmit"]?
-				gui.var_control_info[opt["v"][:v]] = Run::Gtk::ControlInfo.new widget, alt_submit
+				gui.var_control_info[variable] = Run::Gtk::ControlInfo.new widget, alt_submit
+				gui_control_id = variable
+			else
+				gui_control_id = text[..63]
 			end
 
 			gui.padding = 7 if gui.padding == 0 # TODO:
@@ -94,13 +128,13 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			# end
 			x = case
 			when opt["xp"]?
-				gui.last_x + (opt["xp"][:n] || 0) * (opt["xp"][:minus] ? -1 : 1)
+				gui.last_x + (opt["xp"][:n] || 0).to_i * (opt["xp"][:minus] ? -1 : 1)
 			when opt["xm"]?
-				gui.padding + (opt["xm"][:n] || 0) * (opt["xm"][:minus] ? -1 : 1)
+				gui.padding + (opt["xm"][:n] || 0).to_i * (opt["xm"][:minus] ? -1 : 1)
 			when opt["xs"]?
-				gui.last_section_x + (opt["xs"][:n] || 0) * (opt["xs"][:minus] ? -1 : 1)
+				gui.last_section_x + (opt["xs"][:n] || 0).to_i * (opt["xs"][:minus] ? -1 : 1)
 			when opt["x"]?
-				x_ = opt["x"][:n] || 0
+				x_ = (opt["x"][:n] || 0).to_i
 				# x_ += gui.last_x + last_w if opt["x"][:plus]
 				# x_ = gui.last_x + last_w - x_ if opt["x"][:minus]
 				x_
@@ -114,13 +148,13 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 
 			y = case
 			when opt["yp"]?
-				gui.last_y + (opt["yp"][:n] || 0) * (opt["yp"][:minus] ? -1 : 1)
+				gui.last_y + (opt["yp"][:n] || 0).to_i * (opt["yp"][:minus] ? -1 : 1)
 			when opt["ym"]?
-				gui.padding + (opt["ym"][:n] || 0) * (opt["ym"][:minus] ? -1 : 1)
+				gui.padding + (opt["ym"][:n] || 0).to_i * (opt["ym"][:minus] ? -1 : 1)
 			when opt["ys"]?
-				gui.last_section_y + (opt["ys"][:n] || 0) * (opt["ys"][:minus] ? -1 : 1)
+				gui.last_section_y + (opt["ys"][:n] || 0).to_i * (opt["ys"][:minus] ? -1 : 1)
 			when opt["y"]?
-				opt["y"][:n] || 0
+				(opt["y"][:n] || 0).to_i
 			else
 				if gui.last_y == 0
 					gui.padding
@@ -128,14 +162,12 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					gui.last_y + 12 + gui.padding # TODO:
 				end
 			end
-			
+
 			if opt["section"]?
 				gui.last_section_x = x
 				gui.last_section_y = y
 			end
 
-			w = opt["w"]?.try &.[:n] || -1
-			h = opt["h"]?.try &.[:n] || -1
 			if w > -1 || h > -1
 				widget.style_context.add_class("no-padding")
 			end

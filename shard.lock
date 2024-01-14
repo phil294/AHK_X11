@@ -2,7 +2,7 @@ version: 2.0
 shards:
   atspi:
     git: https://github.com/phil294/atspi.cr.git
-    version: 0.12.0+git.commit.dc31620f1cc66f9fce2f4d0ed3114dc22a15ccf1
+    version: 0.12.0+git.commit.7aec8d3604313da415e54e654c1dc6b33ae05d8d
 
   cron_parser:
     git: https://github.com/kostya/cron_parser.git
@@ -18,7 +18,7 @@ shards:
 
   gi-crystal:
     git: https://github.com/hugopl/gi-crystal.git
-    version: 0.16.0+git.commit.2874e31eaa7339cb4e0d6b504c19b872c0c202c4
+    version: 0.17.0
 
   gio:
     git: https://github.com/hugopl/gio.cr.git
@@ -26,11 +26,15 @@ shards:
 
   gtk3:
     git: https://github.com/phil294/gtk3.cr.git
-    version: 0.14.0+git.commit.0c3f29395a7e543a17cda38b5bf9edf18765994d
+    version: 0.14.0+git.commit.362ff38bc33a3406d3d8ea95475b04062399d644
 
   harfbuzz:
     git: https://github.com/hugopl/harfbuzz.cr.git
-    version: 0.1.0
+    version: 0.2.0
+
+  notify:
+    git: https://github.com/phil294/notify.cr.git
+    version: 0.12.0+git.commit.0c9880e6169e09f0db1cb40432e0b76651d15ad3
 
   pango:
     git: https://github.com/hugopl/pango.cr.git
@@ -38,11 +42,11 @@ shards:
 
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
-    version: 2.0.7
+    version: 2.1.4
 
   x11:
-    git: https://github.com/tamasszekeres/x11-cr.git
-    version: 1.1.1
+    git: https://github.com/phil294/x11-cr.git
+    version: 1.0.0+git.commit.5a937d647d8eac29106602fcdeb161a78eb3d59d
 
   x_do:
     git: https://github.com/phil294/x_do.cr.git
@@ -50,5 +54,5 @@ shards:
 
   xtst:
     git: https://github.com/phil294/xtst-cr.git
-    version: 1.0.0+git.commit.202d2aefd912355c78378789ca6ada082d835111
+    version: 1.0.0+git.commit.f731b708e1789d039258ecd62f7b0d1107a00b78
 

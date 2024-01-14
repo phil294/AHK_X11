@@ -22,6 +22,11 @@ class Cmd::X11::Keyboard::ControlSend < Cmd::Base
 							end
 						end
 					end
+					if pressed
+						sleep thread.settings.key_press_duration.milliseconds if thread.settings.key_press_duration > -1
+					else
+						sleep thread.settings.key_delay.milliseconds if thread.settings.key_delay > -1
+					end
 				end
 			end
 		else

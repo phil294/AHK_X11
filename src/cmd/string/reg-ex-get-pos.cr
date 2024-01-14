@@ -7,7 +7,7 @@ class Cmd::String::RegExGetPos < Cmd::Base
 		out_var, in_var, search_text = args
 		search_text = Regex.new(search_text, Regex::Options::IGNORE_CASE)
 		opt = (args[3]? || "").downcase
-		text = thread.runner.get_user_var(in_var)
+		text = thread.get_var(in_var)
 		if opt == "1" || opt == "r"
 			i = text.rindex(search_text) || -1
 		else

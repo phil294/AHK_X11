@@ -11,7 +11,7 @@ module Run
 
 	# see Thread.settings
 	private struct ThreadSettings
-		# Is the window ID (X11) or the hash (see ThreadCache) of the top level accessible (Wayland)
+		# Is the window ID (X11) or the hash (see ThreadCache) of the top level accessible (Wayland). < TODO: rename accordingly
 		property last_found_window : UInt64?
 		property msgbox_response : Gtk::MsgBoxButton?
 		property coord_mode_tooltip = CoordMode::RELATIVE
@@ -19,6 +19,10 @@ module Run
 		property coord_mode_mouse = CoordMode::RELATIVE
 		property coord_mode_caret = CoordMode::RELATIVE
 		property coord_mode_menu = CoordMode::RELATIVE
+		property detect_hidden_windows = false
+		property key_delay = 10
+		property key_press_duration = -1
+		property mouse_delay = 10
 		property ahk_x11_track_performance = false
 	end
 
@@ -73,7 +77,13 @@ module Run
 			"errorlevel" => "0"
 		}
 		@stack = [] of Cmd::Base
+		# Cannot save label onto Cmd::Base class directly because multiple labels may point to
+		# the same label. So we need a separate array or extend with another superclass.
+		@label_stack = [] of String
 		getter priority = 0
+		getter hotkey : Hotkey? = nil
+		getter gui_id : String? = nil
+		getter gui_control : String? = nil
 		@exit_code = 0
 		getter done = false
 		@result_channel : Channel(Int32?)?
@@ -81,13 +91,14 @@ module Run
 		getter paused = false
 		getter loop_stack = [] of Cmd::ControlFlow::Loop
 		property performance_by_cmd = {} of String => CmdPerformance
-		def initialize(@runner, start, @priority, @settings)
+		def initialize(@runner, start, label, @priority, @settings, @hotkey, @gui_id, @gui_control)
 			@@id_counter += 1
 			@id = @@id_counter
 			@stack << start
 			{% if ! flag?(:release) %}
 				STDOUT.puts "[debug] new thread[#{@id}]"
 			{% end %}
+			@label_stack << label
 		end
 
 		# Spawns the `do_next` fiber if it isn't running already and returns the result channel.
@@ -176,6 +187,7 @@ module Run
 			if @stack[stack_i]? == cmd # not altered
 				if ! next_cmd
 					@stack.delete_at(stack_i) # thread finished
+					@label_stack.delete_at(stack_i)
 				else
 					@stack[stack_i] = next_cmd # proceed
 				end
@@ -187,18 +199,22 @@ module Run
 			cmd = @runner.labels[label]?
 			raise RuntimeException.new "gosub: target label '#{label}' does not exist" if ! cmd
 			@stack << cmd
+			@label_stack << label
 		end
 		def goto(label)
 			cmd = @runner.labels[label]?
 			raise RuntimeException.new "goto: target label '#{label}' does not exist" if ! cmd
 			@stack[@stack.size - 1] = cmd
+			@label_stack[@label_stack.size - 1] = label
 		end
 		def return
 			@stack.pop
+			@label_stack.pop
 		end
 		def exit(code)
 			@exit_code = code || 0
 			@stack.clear
+			@label_stack.clear
 		end
 
 		# Get the value of both thread-local and global values,
@@ -213,13 +229,17 @@ module Run
 			@built_in_static_vars[var.downcase] = value
 		end
 		# `var` is case sensitive
-		private def get_thread_built_in_computed_var(var)
+		private def get_thread_built_in_computed_var(var) : String?
 			case var
-			when "a_index"
-				(@loop_stack.last?.try &.index || 0).to_s
-			else
-				nil
-			end
+			when "a_index" then (@loop_stack.last?.try &.index || 0).to_s
+			when "a_detecthiddenwindows" then @settings.detect_hidden_windows ? "On" : "Off"
+			when "a_keydelay" then @settings.key_delay.to_s
+			when "a_mousedelay" then @settings.mouse_delay.to_s
+			when "a_linenumber" then (@stack.last.line_no + 1).to_s
+			when "a_thislabel" then @label_stack.last
+			when "a_gui" then @gui_id
+			when "a_guicontrol" then @gui_control
+			else nil end
 		end
 
 		def parse_key_combinations(str, *, implicit_braces = false)

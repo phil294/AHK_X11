@@ -1,6 +1,6 @@
 module Run
 	# The combination of ONE "normal" key and optional modifiers and up/down/repeat.
-	# Does *not* support prefix keys like `Space & ^a`.
+	# Does *not* yet support prefix keys like `Space & ^a`.
 	# Similar to `::X11::KeyEvent`.
 	class KeyCombination
 		class Modifiers
@@ -19,6 +19,7 @@ module Run
 		getter repeat = 0
 		getter up = false
 		getter down = false
-		def initialize(@key_name, *, @text, @modifiers, @up, @down, @repeat) end
+		getter blind = false
+		def initialize(@key_name, *, @text, @modifiers, @up, @down, @repeat, @blind = false) end
 	end
 end

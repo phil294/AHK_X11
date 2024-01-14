@@ -45,8 +45,9 @@ module Build
 			{% if ! flag?(:release) %}
 				puts "[debug] #{line_no}: #{line}" # TODO: externalize / use logger
 			{% end %}
-			line_content = line.strip
+			line_content = line
 				.sub(/(^| |\t)#{@comment_flag}.*$/, "") # rm comments
+				.strip
 			match = line_content
 				.match(/^\s*([^\s,]*)(\s*,?)(.*)$/).not_nil!
 			first_word_case_sensitive = match[1]
@@ -112,7 +113,15 @@ module Build
 			elsif first_word == "#inputdevice"
 				param = args.strip.downcase
 				@runner_settings.input_interface = param == "xtest" ? Run::InputInterface::XTest : param == "xgrab" ? Run::InputInterface::XGrab : param == "evdev" ? Run::InputInterface::Evdev : param == "off" ? Run::InputInterface::Off : nil
+			elsif first_word.starts_with?("#maxthreadsperhotkey")
+				@runner_settings.max_threads_per_hotkey = args.to_u8? || 1_u8
+				raise "#MaxThreadsPerHotkey maximum value is 20" if @runner_settings.max_threads_per_hotkey > 20
+			elsif first_word == "#notrayicon"
+				@runner_settings.no_tray_icon = true
+			elsif first_word == "#xgrabroot"
+				@runner_settings.x11_grab_from_root = true
 			elsif line.starts_with?("#!") && line_no == 0 # hashbang
+			elsif first_word == "#noenv"
 			elsif first_word == "if"
 				split = args.split(/ |\n/, 3, remove_empty: true)
 				var_name = split[0]
@@ -163,13 +172,28 @@ module Build
 						add_line "Return", line_no
 					end
 				else # Hotkey
+					if ! instant_action.empty?
+						instant_action_first_word = instant_action.split(/[\s,]/)[0].downcase
+						if ! @@cmd_class_by_name[instant_action_first_word]?
+							remap_key = instant_action_first_word
+							label = "*" + label
+						end
+					end
 					@cmds << Cmd::ControlFlow::Label.new line_no, [label.downcase]
 					key_combo = Util::AhkString.parse_key_combinations(label.gsub("*","").gsub("~",""), @runner_settings.escape_char, implicit_braces: true)[0]?
 					raise Run::RuntimeException.new "Hotkey '#{label}' not understood" if ! key_combo
-					@hotkey_definitions << Run::HotkeyDefinition.new(label, key_combo, 0)
+					@hotkey_definitions << Run::HotkeyDefinition.new(label, key_combo: key_combo, priority: 0, max_threads: @runner_settings.max_threads_per_hotkey)
 					if ! instant_action.empty?
-						add_line "#{instant_action}", line_no
-						add_line "Return", line_no
+						if remap_key
+							add_line "Send, {blind}{#{remap_key} down}", line_no
+							add_line "Return", line_no
+							add_line "#{label} up::", line_no
+							add_line "Send, {blind}{#{remap_key} up}", line_no
+							add_line "Return", line_no
+						else
+							add_line "#{instant_action}", line_no
+							add_line "Return", line_no
+						end
 					end
 				end
 			elsif first_word == "gui"

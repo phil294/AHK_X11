@@ -7,3 +7,10 @@
 todo*
 AutoHotkey*.chm
 .vscode/.history
+
+linuxdeploy-x86_64.AppImage
+linuxdeploy-plugin-gtk.sh
+*.AppImage*
+
+# for generating a .dockerignore based on .gitignore:
+.git

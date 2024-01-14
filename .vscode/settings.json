@@ -21,11 +21,12 @@
         "Thunar",
         "ungrab",
         "XFCE",
-        "xtst",
         "evdev",
         "xtest",
         "keymap",
         "uinput",
-        "charcodemap"
-    ]
+        "charcodemap",
+        "xtst"
+    ],
+    "files.trimTrailingWhitespace": true
 }

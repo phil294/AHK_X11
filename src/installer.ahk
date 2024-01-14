@@ -4,8 +4,14 @@ Echo, Starting graphical installer. Please see --help for more options.
 
 If A_IsAdmin = 1
 {
-	MsgBox, It seems you are running this installer for AHK_X11 with administrator permission. This is currently not supported, so please don't do that.`n`nThis means you probably ran the installer with "sudo". Please omit the sudo and try again.`n`nThe installer will exit now.
+	MsgBox, It seems you are running this installer for AHK_X11 with administrator permission. This is currently not supported, so please don't do that. For a system-wide install, clone and install from the repository.`n`nThis means you probably ran the installer with "sudo". Please omit the sudo and try again.`n`nThe installer will exit now.
 	ExitApp
+}
+IfExist, /usr/bin/ahk_x11
+{
+	MsgBox, 4,, It seems like AHK_X11 is already installed globally. By continuing, this version will also be installed, but locally for the current user. Two simultaneous installations ins probably a bad idea. Are you sure you want to continue?
+	    IfMsgBox, No
+	        ExitApp
 }
 
 app_name = ahk_x11
@@ -31,11 +37,11 @@ Install:
 	FileCreateDir, %binary_dir%
 	if binary_path = %A_ScriptFullPath%
 	{
-	    MsgBox, 4,, It looks like you are trying to install the very same version that is already running. Are you sure you want to continue?
-	    IfMsgBox, No
-	        ExitApp
+		MsgBox, 4,, It looks like you are trying to install the very same version that is already running. Are you sure you want to continue?
+		IfMsgBox, No
+			ExitApp
 	} else {
-	    FileCopy, %A_ScriptFullPath%, %binary_path%, 1
+		FileCopy, %A_ScriptFullPath%, %binary_path%, 1
 	}
 
 	; Icon
@@ -80,6 +86,7 @@ Install:
 	FileAppend, [Desktop Entry]`n, %app_name%-windowspy.desktop
 	FileAppend, Name=Window Spy`n, %app_name%-windowspy.desktop
 	FileAppend, Exec=%binary_path% --windowspy`n, %app_name%-windowspy.desktop
+	FileAppend, MimeType=application/x-%app_name%`n, %app_name%-windowspy.desktop
 	FileAppend, Icon=application-x-%app_name%`n, %app_name%-windowspy.desktop
 	FileAppend, Terminal=false`n, %app_name%-windowspy.desktop
 	FileAppend, Type=Application`n, %app_name%-windowspy.desktop
@@ -88,7 +95,7 @@ Install:
 	RunWait, desktop-file-install --dir=%A_Home%/.local/share/applications %app_name%-windowspy.desktop
 	FileDelete, %app_name%-windowspy.desktop
 
-	RunWait, update-desktop-database %A_Home%/.local/share/applications	
+	RunWait, update-desktop-database %A_Home%/.local/share/applications
 
 	MsgBox, Installation complete.
 Return

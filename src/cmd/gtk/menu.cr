@@ -16,7 +16,7 @@ class Cmd::Gtk::Gui::Menu < Cmd::Base
 					label = name if label.empty?
 					item = ::Gtk::MenuItem.new_with_label name
 					item.activate_signal.connect do
-						thread.runner.add_thread label.downcase, priority
+						thread.runner.add_thread label.downcase, priority, menu_item_name: name
 					end
 					tray_menu.append item
 				end
@@ -36,8 +36,10 @@ class Cmd::Gtk::Gui::Menu < Cmd::Base
 				tray.from_pixbuf = icon_pixbuf
 				# TODO: how to skip this line? (so that icon_pixbuf= above already sets the one in gui because we're in `with self` here)
 				thread.runner.display.gtk.icon_pixbuf = icon_pixbuf
+				thread.runner.set_global_built_in_static_var("A_IconHidden", "0")
 			when "noicon"
 				thread.runner.set_global_built_in_static_var("A_IconFile", "")
+				thread.runner.set_global_built_in_static_var("A_IconHidden", "1")
 				tray.from_pixbuf = nil
 			when "tip"
 				new_tip = args[2]? || ""

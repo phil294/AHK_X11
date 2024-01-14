@@ -37,18 +37,26 @@ module Run
 				other_keysyms.join[...other_size].downcase == @abbrev.downcase
 			end
 		end
-		def trigger(runner)
-			if @automatic_backspacing
-				runner.display.pause do
+		def trigger(runner, trigger_char_key_event)
+			runner.display.pause do
+				if @automatic_backspacing
 					(@abbrev.size + (@immediate ? 0 : 1)).times do
 						# TODO: allow passing BS as keysym const somehow here
 						runner.display.adapter.send [KeyCombination.new("BackSpace", text: nil, modifiers: KeyCombination::Modifiers.new, up: true, down: true, repeat: 1)]
 						sleep @delay.milliseconds if @delay != -1
 					end
 				end
+				# Same xdotool workaround as in send.cr.
+				# Trigger char is either end key or the last key of an immediate hotstring.
+				# TODO: tests for both cases:
+				# end key space: `::btw::by the way` without this the first space is missing (test didn;t fail though??)
+				# no end key: `:*:btw::wy the way` the `w` wasn't typed
+				end_char_key_up = XDo::LibXDo::Charcodemap.new
+				end_char_key_up.code = trigger_char_key_event.keycode
+				runner.display.x_do.keys_raw [end_char_key_up], pressed: false, delay: 0
 			end
 
-			runner.add_thread @cmd.not_nil!, @priority
+			runner.add_thread @cmd.not_nil!, @label, @priority
 		end
 	end
 end

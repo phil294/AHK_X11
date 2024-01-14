@@ -1,9 +1,14 @@
+TODO:
+the changes to this file from the evdev branch were ignored because they somehow were the same as from x11 but still conflicts? review
 ; AUTOMATED TEST SUITE
 ; Mostly to prevent regression bugs
 ; Right now, only commands that can be easily tested in 1-2 lines are tested.
 ;;;;;;;;;;;;;;;;;;;;;;
 
-N_TESTS = 48
+N_TESTS = 70
+
+SetKeyDelay, 0
+SetMouseDelay, 0
 
 GoSub, run_tests
 if tests_run != %N_TESTS%
@@ -44,9 +49,21 @@ assert:
 	StringMid, test_value, expect, %second_comma_pos%, 9999
 
 	StringLeft, test_var_value, %test_var%, 9999
-	If test_var_value <> %test_value%
+	test_success = 0
+	if assert_as_opposite <>
 	{
-		fail_reason = ❌ (%tests_run%/%N_TESTS%) %test_title%: '%test_var%' is '%test_var_value%' but should be '%test_value%'
+		if test_var_value != %test_value%
+			test_success = 1
+	} else {
+		if test_var_value = %test_value%
+			test_success = 1
+	}
+	If test_success != 1
+	{
+		if assert_as_opposite <>
+			fail_reason_not = not%a_space%
+		fail_reason = ❌ (%tests_run%/%N_TESTS%) %test_title%: '%test_var%' is '%test_var_value%' but should %fail_reason_not%be '%test_value%'
+		fail_reason_not =
 		GoSub, fail
 	}
 	echo ✔ (%tests_run%/%N_TESTS%) %test_title%
@@ -57,10 +74,17 @@ assert:
 	test_var =
 	test_value =
 	test_var_value =
+	assert_as_opposite =
+	test_success =
 Return
+assert_false:
+	assert_as_opposite = 1
+	gosub assert
+return
 
 fail:
 	echo %fail_reason%
+	msgbox %fail_reason%
 	exitapp 1
 Return
 
@@ -106,9 +130,23 @@ gosub timeout
 expect = test setup: timeout: reset timeout_var,test_setup_timeout_works,
 gosub assert
 
+var1 = v1
+expect = equality check,var1,%var1%
+gosub assert
+var1 =   v1  ; ; ;
+/*
+*/
+expect = equality check spaced,var1,v1
+gosub assert
+var1 = v1%a_space%
+expect = disparity check,var1,v1
+gosub assert_false
+expect = equality check spaced var,v1,%v1%
+gosub assert
+
 ; helper gui for various interaction tests:
 gui -caption
-gui add, picture, x0 y0, assets/logo.png
+gui add, picture, x0 y0 h47 w-1, assets/logo.png
 gui add, button, x10 y50 ggui_button_clicked, btn txt 1
 gui add, edit, x20 y70 vgui_edit, edit txt 1
 gui +resize
@@ -119,6 +157,9 @@ goto l_after_gui
 			return
 l_after_gui:
 sleep 10
+
+;;;;;;;;;;;;;;;;;;; TESTS ;;;;;;;;;;;;;;;;;;;
+
 ifwinnotexist, ahk_x11_test_gui
 {
 	fail_reason = gui win not exist
@@ -149,7 +190,7 @@ ifwinnotexist, ahk_x11_test_gui, btn txt 1,banana,btn txt 2
 	fail_reason = gui win not exist 5
 	gosub fail
 }
-ifwinexist,,,ahk_x11_test_gui
+ifwinexist, ahk_x11_test_gui,,ahk_x11_test_gui
 {
 	fail_reason = gui win not exist 6
 	gosub fail
@@ -211,12 +252,12 @@ gui_button_clicked_success =
 ;;ControlGet, OutputVar, Cmd [, Value, Control, WinTitle, WinText, ExcludeTitle, ExcludeText]
 ;;ControlGetFocus, OutputVar [WinTitle, WinText, ExcludeTitle, ExcludeText]
 
-ControlGetPos, x, y, w, h, icon_0_0
+ControlGetPos, x, y, w, h, icon_0_0_0
 expect = controlgetpos,x,0
 gosub assert
 expect = controlgetpos,y,0
 gosub assert
-expect = controlgetpos,w,48
+expect = controlgetpos,w,47
 gosub assert
 
 ControlGetText, edit_txt, edit txt 1
@@ -238,6 +279,7 @@ expect = coordmode mousepos,x,10
 gosub assert
 expect = coordmode mousepos,y,20
 gosub assert
+CoordMode, Mouse, Relative
 
 ;;DetectHiddenText, On|Off
 ;;DetectHiddenWindows, On|Off
@@ -398,8 +440,8 @@ _errorlevel =
 ;Loop, Read, InputFile [, OutputFile, FutureUse]
 ;Menu, MenuName, Cmd [, P3, P4, P5, FutureUse]
 
-MouseClick, L, 45, 80
-sleep 20
+MouseClick, L, 35, 60
+sleep 50
 expect = click gui button,gui_button_clicked_success,1
 gosub assert
 gui_button_clicked_success =
@@ -417,10 +459,10 @@ gosub assert
 
 coordmode, pixel, relative
 PixelGetColor, color, 26, 8, rgb
-expect = pixelgetcolor,color,7BC07B
+expect = pixelgetcolor,color,79BE79
 gosub assert
 
-PixelSearch, x, y, 0, 0, 100, 100, 0x7BC07B, 0, rgb
+PixelSearch, x, y, 0, 0, 100, 100, 0x79BE79, 0, rgb
 expect = pixelsearch,x,26
 gosub assert
 expect = pixelsearch,y,8
@@ -515,45 +557,54 @@ gosub assert
 ;;WinWaitClose, WinTitle, WinText, Seconds [, ExcludeTitle, ExcludeText]
 ;;WinWaitNotActive [, WinTitle, WinText, Seconds, ExcludeTitle, ExcludeText]
 
-; ### SEND/HOTKEY/HOTSTRING TESTS ###
-
 send {tab}^a{del} ; focus and reset
 sleep 20
-send 123
-sleep 20
-gui submit, nohide
-expect = send numbers - issue 22,gui_edit,123
-gosub assert
 
-send ^a{del}
-sleep 20
-send aBc
-sleep 20
-gui submit, nohide
-expect = send aBc - issue 13,gui_edit,aBc
-gosub assert
+; ;;;;;;;;;;;;;;;;;
 
-send ^a{del}
-sleep 20
-send +d
-sleep 20
-gui submit, nohide
-expect = send +d,gui_edit,D
-gosub assert
+goto l_send_tests
+			test_send:
+				send %to_send%
+				sleep 50
+				gui submit, nohide
+				if to_send_output =
+					to_send_output = %to_send%
+				expect = send %to_send%,gui_edit,%to_send_output%
+				gosub assert
+				to_send_output =
+				send ^a{del}
+				sleep 20
+			return
+l_send_tests:
 
-; TODO
-; send ^a{del}
-; sleep 20
-; send @
-; sleep 20
-; gui submit, nohide
-; expect = send @ - issue 32,gui_edit,@
-; gosub assert
+to_send = 123
+gosub test_send
+
+to_send = aBc
+gosub test_send
+
+to_send = +d
+to_send_output = D
+gosub test_send
+
+; issue #32
+; TODO:
+; to_send = @_
+; gosub test_send
+
+send {lshift down}
+sleep 20
+to_send = revert-modifiers
+gosub test_send
+GetKeyState, shift_state, lshift
+expect = revert modifiers after send,shift_state,D
+gosub assert
+send {lshift up}
+
+; ;;;;;;;;;;;;;;;
 
 goto l_hotstring_tests
 			test_hotstring:
-				send ^a{del}
-				sleep 10
 				runwait xdotool type --delay=0 %hotstring_input%
 				loop
 				{
@@ -565,8 +616,10 @@ goto l_hotstring_tests
 					if a_index > 50
 						break
 				}
-				expect = hotstring testhotstringbtw,gui_edit,%hotstring_output%
+				expect = hotstring %hotstring_input%,gui_edit,%hotstring_output%
 				gosub assert
+				send ^a{del}
+				sleep 10
 			return
 l_hotstring_tests:
 
@@ -591,7 +644,7 @@ gosub test_hotstring
 
 ; :o:testhotstringbs::{bs}
 hotstring_input = .testhotstringbs.
-hotstring_output = 
+hotstring_output =
 gosub test_hotstring
 
 ; :*:testhotstringnoendchar::immediate
@@ -599,44 +652,173 @@ hotstring_input = .testhotstringnoendchar
 hotstring_output = .immediate
 gosub test_hotstring
 
-goto l_after_f2_hotkey
-			hotkey_f2:
-				hotkey_f2_success = 1
-			return
-l_after_f2_hotkey:
-hotkey, f2, hotkey_f2
-runwait, xdotool key F2
-expect = hotkey f2 lowercase,hotkey_f2_success,1
-gosub assert
-hotkey_f2_success =
-hotkey, f2, off
-hotkey, F2, hotkey_f2
-runwait, xdotool key F2
-expect = hotkey f2 uppercase,hotkey_f2_success,1
-gosub assert
-hotkey, F2, off
+; ;;;;;;;;;;;;;;
 
-goto l_after_shift_s_hotkey
-			hotkey_shift_s:
-				hotkey_shift_s_success = 1
-			return
-l_after_shift_s_hotkey:
-hotkey, +s, hotkey_shift_s
-runwait, xdotool key shift+s
-expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
+runwait xdotool key --delay=0 ctrl+shift+alt+s
+sleep 100
+expect = hotkey with inline command,gui_button_clicked_success,1
 gosub assert
-hotkey_shift_s_success =
-hotkey, +s, off
-hotkey, +S, hotkey_shift_s
-runwait, xdotool key shift+s
-expect = hotkey shift_s lowercase,hotkey_shift_s_success,1
-gosub assert
+gui_button_clicked_success =
+send {tab}
 
-Send, {LButton}
+goto l_hotkey_tests
+			hotkey_test_success:
+				hotkey_test_success = 1
+			return
+			test_hotkey_success:
+				hotkey, %key%, hotkey_test_success
+				runwait, bash -c 'xdotool %xdotool_run% --delay=0',,,,xdotool_o,xdotool_e
+				sleep 50
+				expect = hotkey %key%,hotkey_test_success,1
+				gosub assert
+				hotkey_test_success =
+				hotkey, %key%, off
+			return
+
+			hotkey_test_send:
+				if hokey_send_raw <>
+					sendraw, %hotkey_send%
+				else
+					send, %hotkey_send%
+			return
+			test_hotkey_send:
+				hotkey %key%, hotkey_test_send
+				runwait, bash -c 'xdotool %xdotool_run% --delay=0',,,,xdotool_o,xdotool_e
+				sleep 50
+				gui submit, nohide
+				if hotkey_sent =
+					hotkey_sent = %hotkey_send%
+				expect = hotkey with send %key%:%hokey_send_raw%:%hotkey_sent%:%xdotool_run%,gui_edit,%hotkey_sent%
+				gosub assert
+				hotkey, %key%, off
+				hotkey_sent =
+				send ^a{del}
+				sleep 10
+			return
+l_hotkey_tests:
+
+key = f2
+xdotool_run = key F2
+gosub test_hotkey_success
+
+key = F2
+xdotool_run = key F2
+gosub test_hotkey_success
+
+key = +s
+xdotool_run = key shift+s
+gosub test_hotkey_success
+
+key = +S
+xdotool_run = key shift+s
+gosub test_hotkey_success
+
+key = *s
+xdotool_run = key shift+s
+gosub test_hotkey_success
+
+; esc and xbutton2 share the same keycode:
+key = esc
+xdotool_run = key Escape
+gosub test_hotkey_success
+
+key = xbutton2
+xdotool_run = click 9
+gosub test_hotkey_success
+
+key = lbUTton
+xdotool_run = click 1
+gosub test_hotkey_success
+
+key = a
+xdotool_run = key a
+hotkey_send = bcd
+gosub test_hotkey_send
+
+; This functionality works but the test doesn't because xdotool cannot reliably send
+; Ctrl down and up again it seems. Same with shift. Try doing `xdotool keydown shift_l`
+; in a terminal - it works but only the first time and doesn't cooperate with the keyboard.
+; key = ^a
+; xdotool_run = key ctrl+a
+; hotkey_send = kja
+; gosub test_hotkey_send
+
+; sending itself
+key = a
+xdotool_run = key a
+hotkey_send = abc
+gosub test_hotkey_send
+hotkey_send = ade
+hokey_send_raw = raw
+gosub test_hotkey_send
+hokey_send_raw =
+
+key = *s
+hotkey_send = {blind}v
+	xdotool_run = key shift+s
+	hotkey_sent = V
+	gosub test_hotkey_send
+
+	xdotool_run = key s
+	hotkey_sent = v
+	gosub test_hotkey_send
+
+	; TODO: somehow test {blind}: ^!s -> ^!v and ^+s => ^+v
+
+	xdotool_run = key ctrl+s
+	clipboard = clp
+	hotkey_sent = clp
+	gosub test_hotkey_send
+
+; remap tests
+runwait, xdotool keydown bracketleft
 sleep 20
+GetKeyState, bracket_state, ]
+expect = remap getkeystate down,bracket_state,D
+gosub assert
+runwait, xdotool keyup bracketleft
+sleep 20
+GetKeyState, bracket_state, ]
+expect = remap getkeystate up,bracket_state,U
+gosub assert
+send ^a{del}
+sleep 10
+
+; ;;;;;;;;;;
+
+Send, {LButTon}
+sleep 50
 expect = send {lbutton},gui_button_clicked_success,1
 gosub assert
 gui_button_clicked_success =
+
+clipboard = clp
+MouseClick, R, 62, 81 ; Context menu of text field
+sleep 20
+send p ; paste
+sleep 100
+gui submit, nohide
+expect = clipboard paste,gui_edit,clp
+gosub assert
+send ^a{del}
+sleep 10
+
+Clipboard =
+expect = clipboard unsetting,clipboard,
+gosub assert
+
+send clp-del-test
+sleep 10
+Clipboard =
+Send, ^a^c
+ClipWait, 1
+expect = clipboard unsetting race condition,clipboard,clp-del-test
+gosub assert
+send ^a{del}
+sleep 10
+
+; Tests missing / need manual testing for now:
+; - Vimium Everywhere with FF Context Menus
 
 Return
 
@@ -649,4 +831,9 @@ Return
 :o:testhotstringbs::{bs}
 :*:testhotstringnoendchar::immediate
 
-F11::ExitApp
+^+!s::MouseClick, L
+
+[::]
+
+noop:
+return

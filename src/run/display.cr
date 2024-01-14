@@ -40,7 +40,8 @@ module Run
 				{% if ! flag?(:release) %}
 					puts "[debug] using input device backend: X11"
 				{% end %}
-				@adapter = X11.new @x_do.not_nil!, xtest: @runner.settings.input_interface == InputInterface::XTest
+				# todo: @runner arg still really necessary?
+				@adapter = X11.new @runner, @x_do.not_nil!, xtest: @runner.settings.input_interface == InputInterface::XTest
 			elsif @runner.settings.input_interface == InputInterface::Evdev
 				{% if ! flag?(:release) %}
 					puts "[debug] using input device backend: Evdev"
@@ -161,10 +162,13 @@ module Run
 			@unsuspend_listeners.each &.call
 		end
 
+		getter last_event_received = Time.monotonic
+
 		private def handle_event(key_event, keysym)
 			{% if ! flag?(:release) %}
 				puts "[debug] key event key:#{key_event.key_name}, text:#{key_event.text}, sym:#{keysym}, modifiers:#{key_event.modifiers}, up:#{key_event.up}, down:#{key_event.down}, repeat:#{key_event.repeat}"
 			{% end %}
+			@last_event_received = Time.monotonic
 			@key_listeners.each do |sub|
 				spawn same_thread: true do
 					sub.call(key_event, keysym, @is_paused)
@@ -178,6 +182,15 @@ module Run
 		end
 		def unregister_key_listener(proc)
 			@key_listeners.reject! &.== proc
+		end
+
+		def block_input
+			adapter.grab_keyboard
+			adapter.grab_pointer
+		end
+		def unblock_input
+			adapter.ungrab_keyboard
+			adapter.ungrab_pointer
 		end
 
 		def at_spi(&block : AtSpi -> T) forall T

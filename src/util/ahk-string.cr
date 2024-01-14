@@ -44,9 +44,11 @@ class Util::AhkString
 	# When *implicit_braces* is set, there should be no `{}` around key names and
 	# thus everything is treated as a single key press (such as Hotkey definitions).
 	# In this case, `a b` would be an error, when it otherwise wouldn't.
+	# FIXME: make str.downcase because fc88e1b. This fix was lost while merging and might need to be applied in more (all?) invocations of parse_key_combinations / where else? do it in here?
 	def self.parse_key_combinations(str, escape_char : Char, *, implicit_braces = false)
 		escape = false
 		modifiers = Run::KeyCombination::Modifiers.new
+		blind = false
 		str = str.sub("<^>!", "\0")
 		iter = str.each_char
 		while (char = iter.next) != Iterator::Stop::INSTANCE
@@ -93,11 +95,16 @@ class Util::AhkString
 				end
 				escape = false
 				if key_name
-					{% if ! flag?(:release) %}
-						puts "[debug] #{key_name}"
-					{% end %}
-					yield Run::KeyCombination.new(key_name.downcase, text: nil, modifiers: modifiers, up: up, down: down, repeat: repeat)
-					modifiers = Run::KeyCombination::Modifiers.new
+					if key_name.downcase == "blind"
+						blind = true
+					else
+						{% if ! flag?(:release) %}
+							puts "[debug] #{key_name}"
+						{% end %}
+						yield Run::KeyCombination.new(key_name.downcase, text: nil, modifiers: modifiers, up: up, down: down, repeat: repeat, blind: blind)
+						modifiers = Run::KeyCombination::Modifiers.new
+						blind = false
+					end
 				end
 			end
 		end
@@ -145,12 +152,11 @@ class Util::AhkString
 	# Every word is also treated as a single letter + body as a second entry.
 	# e.g. `+center ab8cd2` returns (pseudo) `{ "center" => {plus: true}, "c" => {v: "enter", plus: true}, "abcd" => {n: 82}, "a" => {v: "b8cd2"} }`
 	def self.parse_word_options(str, escape_char : Char)
-		ret = {} of String => NamedTuple(n: Int32?, v: String, minus: Bool, plus: Bool)
+		ret = {} of String => NamedTuple(n: Int64?, v: String, minus: Bool, plus: Bool)
 		str.split().each do |part|
 			minus = false
 			plus = false
 			n = ""
-			i = 1
 			word = ""
 			part.each_char do |char|
 				case char
@@ -158,13 +164,19 @@ class Util::AhkString
 				when '+' then plus = true
 				when '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
 					n += char
+				when 'x'
+					if n[-1]? == '0'
+						n += 'x'
+					else
+						word += char
+					end
 				else
 					word += char
 				end
 			end
 			down = word.downcase
 			ret[down] = ret[part[0].downcase.to_s] = {
-				n: n.to_i? || nil,
+				n: n.to_i64?(prefix: true) || nil,
 				v: part[1..]? || "",
 				minus: minus,
 				plus: plus

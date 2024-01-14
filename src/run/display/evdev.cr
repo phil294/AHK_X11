@@ -145,7 +145,7 @@ module Run
 			end
 		end
 
-		def send(key_combos)
+		def send(thread, key_combos)
 			uinput = @uinput.not_nil!
 			key_combos.each do |combo|
 				keysym = key_combination_to_keysym(combo)
@@ -186,7 +186,7 @@ module Run
 			end
 		end
 
-		def send_raw(text)
+		def send_raw(thread, text)
 			uinput = @uinput.not_nil!
 			text.each_char do |char|
 				keysym = key_name_to_keysym(char.to_s)
@@ -255,7 +255,7 @@ module Run
 			uinput.write_event(::Evdev::Codes::Syn::Report, 0)
 		end
 
-		# doesn't seem to be possible with evdev (?)
+		# doesn't seem to be possible with evdev (?) todo
 		def grab_hotkey(hotkey)
 		end
 		def ungrab_hotkey(hotkey)

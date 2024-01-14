@@ -5,7 +5,7 @@ class Cmd::Gtk::Gui::GuiSubmit < Cmd::Base
 	def run(thread, args)
 		gui_id = args[0]
 		no_hide = args[1]? && args[1].downcase == "nohide"
-		
+
 		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			gui.var_control_info.each do |var_name, info|
 				ctrl = info.control

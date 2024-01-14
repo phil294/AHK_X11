@@ -4,7 +4,7 @@ module Run
 	class Timer
 		@task : Tasker::Repeat(Thread)?
 		@last_thread : Run::Thread?
-		def initialize(@runner : Run::Runner, @cmd : Cmd::Base, @period : Time::Span, @priority : Int32)
+		def initialize(@runner : Run::Runner, @cmd : Cmd::Base, @label : String, @period : Time::Span, @priority : Int32)
 			update
 		end
 		def cancel
@@ -21,7 +21,7 @@ module Run
 				if last_thread && ! last_thread.done
 					next last_thread # skip
 				end
-				@last_thread = @runner.add_thread @cmd, @priority
+				@last_thread = @runner.add_thread @cmd, @label, @priority
 			end
 		end
 	end

@@ -19,7 +19,7 @@ module Run
 		end
 
 		@hotkeys = [] of Hotkey
-		def add(hotkey_definition : HotkeyDefinition, subscribe = true)
+		def add(hotkey_definition : HotkeyDefinition, *, subscribe = true)
 			cmd = @runner.labels[hotkey_definition.label.downcase]
 			keysym = @runner.display.adapter.key_combination_to_keysym(hotkey_definition)
 			raise Run::RuntimeException.new "key name '#{hotkey_definition.key_name}' not found" if ! keysym
@@ -31,7 +31,7 @@ module Run
 				@runner.display.adapter.grab_hotkey(hotkey)
 			end
 		end
-		def remove(hotkey, unsubscribe = true)
+		def remove(hotkey, *, unsubscribe = true)
 			@runner.display.adapter.ungrab_hotkey(hotkey)
 			if unsubscribe
 				@hotkeys.delete hotkey
@@ -48,12 +48,12 @@ module Run
 				active_state = hotkey.active if active_state.nil?
 			else
 				raise RuntimeException.new "Nonexistent Hotkey.\n\nSpecifically: #{key_str}" if ! label
-				# these two lines are duplicate with parser
+				# these two lines are duplicate with parser. todo?
 				key_combo = Util::AhkString.parse_key_combinations(key_str.gsub("*","").gsub("~",""), @runner.settings.escape_char, implicit_braces: true)[0]?
 				raise RuntimeException.new "Hotkey '#{key_str}' not understood" if ! key_combo
 				keysym = @runner.display.adapter.key_combination_to_keysym(key_combo)
 				raise RuntimeException.new "Hotkey '#{key_str}' not understood" if ! keysym
-				hotkey = Hotkey.new(key_str, label, key_combo, cmd.not_nil!, keysym, priority)
+				hotkey = Hotkey.new(key_str, label, key_combo, cmd.not_nil!, keysym, priority, max_threads: @runner.settings.max_threads_per_hotkey)
 				@hotkeys << hotkey
 				active_state = true if active_state.nil?
 			end
@@ -80,14 +80,18 @@ module Run
 			end
 			if hotkey
 				# FIXME: test if still works with new conditions, and write tests if they don't exist yet,
-				# including expected failing test such as `f::echo 1,send g`
-				if @runner.display.adapter_x11? && ! hotkey.up && ! hotkey.no_grab && (hotkey.cmd.is_a?(Cmd::X11::Keyboard::Send) || Cmd::X11::Keyboard::SendRaw)
-					@runner.display.adapter_x11.key_combination_to_charcodemap(hotkey) do |key_map, pressed, mouse_button|
-						if ! mouse_button
-							# Fix https://github.com/jordansissel/xdotool/pull/406#issuecomment-1280013095
-							@runner.display.x_do.keys_raw key_map, pressed: false, delay: 0
-						end
-					end
+				# including expected failing test such as `f::echo 1,send g` < latter pbly outdated now
+				if @runner.display.adapter_x11? && ! hotkey.up && ! hotkey.no_grab
+					# Fixing https://github.com/jordansissel/xdotool/issues/210:
+ 					# Doing a `hotkey.keycode` UP event works great but breaks key remaps.
+					# Instead, the following magic seems to work reliably, as long as the hotkey key
+					# isn't sent itself (see Send for that other fix).
+					# Note that both grab and ungrab may fail / not work as expected but that's fine.
+					# This would better be placed at the *first* `Send`/`SendRaw` command on a per-hotkey
+					# basis, but since the performance penalty is negligible and it has no negative
+					# side effects, we just put it at the start of any grabbing hotkey trigger:
+					@runner.display.adapter_x11.grab_keyboard
+					@runner.display.adapter_x11.ungrab_keyboard
 				end
 				hotkey.trigger(@runner)
 			end
@@ -117,6 +121,7 @@ module Run
 				end
 			end
 		end
+		# todo doesnt belong here
 		def block_input
 			@runner.display.adapter.grab_keyboard
 		end

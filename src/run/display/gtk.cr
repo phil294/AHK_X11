@@ -1,5 +1,6 @@
 require "gtk3"
 require "../../logo"
+require "notify"
 
 module Run
 	# Please note that all GUI logic needs to happen on the same worker thread where `run` was called
@@ -43,34 +44,76 @@ module Run
 			GC.enable
 			GC.collect
 			@act_mutex.unlock
+			# TODO: sub stack trace is lost here, e.g. if thrown somewhere inside gui-show
 			raise exception if exception
 			result.as(T)
 		end
 
 		def clipboard(&block : ::Gtk::Clipboard -> _)
 			act do
-				clip = ::Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", true))
+				clip = ::Gtk::Clipboard.get(Gdk::Atom.intern("CLIPBOARD", false))
 				block.call(clip)
 			end
 		end
+		def set_clipboard(text : String)
+			if text.empty?
+				clipboard do |clip|
+					# clip.clear # Doesn't do anything
+					# Doesn't work for access from outside of ahkx11 itself, even though https://stackoverflow.com/q/2418487 says so. Maybe a Crystal GIR bug?:
+					# clip.set_text("", 0)
+					# Ugly but works:
+					clip.image = GdkPixbuf::Pixbuf.new
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.empty?)
+					raise Run::RuntimeException.new "Unsetting Clipboard failed [1]"
+				end
+				# But even now that we have confirmation that it was unset, the clipboard is sometimes still
+				# in the process of being reported to the active window. Setting it to a text and then unsetting
+				# it again seems to resolve it somehow. All of this is necessary, putting a sleep of the same duration
+				# instead is not enough.
+				clipboard do |clip|
+					clip.set_text("_ahk_x11_clipboard_internal", 27)
+					clip.store
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.==("_ahk_x11_clipboard_internal"))
+					raise Run::RuntimeException.new "Unsetting Clipboard failed [2]"
+				end
+				clipboard do |clip|
+					clip.set_text("", 0)
+					clip.store
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.empty?)
+					raise Run::RuntimeException.new "Unsetting Clipboard failed [3]"
+				end
+			else
+				clipboard do |clip|
+					clip.set_text(text, text.size)
+					clip.store
+				end
+				if ! Cmd::Misc::ClipWait.clip_wait(self, 2.seconds, &.==(text))
+					raise Run::RuntimeException.new "Setting Clipboard failed"
+				end
+			end
+		end
 
-		@[Flags]
-		private enum MsgBoxOptions
-			OK_Cancel
-			Abort_Retry_Ignore
-			# Yes_No_Cancel = 3 # 3 for some reason which is not the same as 1+2 so it needs special handling. Similar below
-			Yes_No
-			# Retry_Cancel # 5
-			Unused_8
+		# Can't use @[Flags] because some values are *not* strict 2^n
+		enum MsgBoxOptions
+			OK = 0
+			OK_Cancel = 1
+			Abort_Retry_Ignore = 2
+			Yes_No_Cancel = 3 # for some reason which is not the same as 1+2. Similar below
+			Yes_No = 4
+			Retry_Cancel = 5 # .
+			# Unused_8 = 8
 			Icon_Stop = 16
 			Icon_Question = 32
-			# Icon_Exclamation = 48
+			Icon_Exclamation = 48 # .
 			Icon_Info = 64
-			Unused_128
+			# Unused_128
 			Button_2_Default = 256
 			Button_3_Default = 512
-			Unused_1024
-			Unused_2048
+			# Unused_1024
+			# Unused_2048
 			Always_On_Top = 4096
 			# TODO: ?
 			Task_Modal = 8192
@@ -91,15 +134,12 @@ module Run
 		# If you don't see the popup, it may be because of focus stealing prevention from the
 		# window manager, please see the README.
 		def msgbox(text, options = 0, title = nil, timeout = nil)
-			msg_box_option_yes_no_cancel = MsgBoxOptions::OK_Cancel.value | MsgBoxOptions::Abort_Retry_Ignore.value
-			msg_box_option_retry_cancel = MsgBoxOptions::OK_Cancel.value | MsgBoxOptions::Yes_No.value
-			msg_box_option_icon_exclamation = MsgBoxOptions::Icon_Stop.value | MsgBoxOptions::Icon_Question.value
 			buttons = case
-			when options & msg_box_option_retry_cancel == msg_box_option_retry_cancel
+			when options & MsgBoxOptions::Retry_Cancel.value == MsgBoxOptions::Retry_Cancel.value
 				[MsgBoxButton::Retry, MsgBoxButton::Cancel]
 			when options & MsgBoxOptions::Yes_No.value == MsgBoxOptions::Yes_No.value
 				[MsgBoxButton::Yes, MsgBoxButton::No]
-			when options & msg_box_option_yes_no_cancel == msg_box_option_yes_no_cancel
+			when options & MsgBoxOptions::Yes_No_Cancel.value == MsgBoxOptions::Yes_No_Cancel.value
 				[MsgBoxButton::Yes, MsgBoxButton::No, MsgBoxButton::Cancel]
 			when options & MsgBoxOptions::Abort_Retry_Ignore.value == MsgBoxOptions::Abort_Retry_Ignore.value
 				[MsgBoxButton::Abort, MsgBoxButton::Retry, MsgBoxButton::Ignore]
@@ -107,14 +147,18 @@ module Run
 				[MsgBoxButton::OK, MsgBoxButton::Cancel]
 			else [MsgBoxButton::OK]
 			end
-			# TODO: Deletable=false removes the x button but pressing Escape still works and returns delete(cancel) event response... wasn't easily fixable when I researched this.
+			# Deletable=false removes the x button but pressing Escape still works and returns delete(cancel) event response.
+			# Wasn't easily fixable when I researched this.
 			deletable = buttons.includes?(MsgBoxButton::Cancel)
-			# TODO: Setting message_type does not show an image on many distros, only on Ubuntu: https://discourse.gnome.org/t/gtk3-message-dialog-created-with-gtk-message-dialog-new-shows-no-icon-on-fedora/8607
-			# Setting dialog.image does not work either. The only solution appears to be to switch to ::Gtk::Dialog and add text and image manually (refer to Ubuntu patch from link).
+			# Note that setting message_type does not show an image on many distros, only on Ubuntu: https://discourse.gnome.org/t/gtk3-message-dialog-created-with-gtk-message-dialog-new-shows-no-icon-on-fedora/8607
+			# Setting dialog.image does not work either. The only native fix appears to be to switch to ::Gtk::Dialog
+			# and add text and image manually (refer to Ubuntu patch from link).
+			# However, since ahk_x11 is now officially always packaged using AppImage, built on *Ubuntu* 20.04, the
+			# images will correctly appear everywhere, always.
 			message_type = case
 			when options & MsgBoxOptions::Icon_Info.value == MsgBoxOptions::Icon_Info.value
 				::Gtk::MessageType::Info
-			when options & msg_box_option_icon_exclamation == msg_box_option_icon_exclamation
+			when options & MsgBoxOptions::Icon_Exclamation.value == MsgBoxOptions::Icon_Exclamation.value
 				::Gtk::MessageType::Warning
 			when options & MsgBoxOptions::Icon_Question.value == MsgBoxOptions::Icon_Question.value
 				::Gtk::MessageType::Question
@@ -150,6 +194,63 @@ module Run
 			end
 		end
 
+		def inputbox(title, prompt, hide, w, h, x, y, timeout, default)
+			title ||= @default_title
+			prompt ||= ""
+			w ||= 375
+			h ||= 189
+			timeout ||= 3_000_000_000_f64
+			channel = Channel(NamedTuple(status: MsgBoxButton, response: String)).new
+			gtk_window = act do
+				window = ::Gtk::Window.new title: title, window_position: ::Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: true
+				vbox = ::Gtk::Box.new orientation: ::Gtk::Orientation::Vertical
+				window.add vbox
+				lbl = ::Gtk::Label.new label: prompt, xalign: 0, yalign: 0, margin_left: 5, margin_top: 5
+				vbox.pack_start lbl, true, true, 0
+				entry = ::Gtk::Entry.new text: default, visibility: !hide, margin_left: 5, margin_right: 5
+				entry.activate_signal.connect do
+					channel.send({ status: MsgBoxButton::OK, response: entry.text })
+				end
+				vbox.pack_start entry, false, false, 5
+				hbox = ::Gtk::Box.new
+				vbox.pack_start hbox, false, false, 5
+				ok_btn = ::Gtk::Button.new label: "OK", width_request: 70
+				ok_btn.clicked_signal.connect do
+					channel.send({ status: MsgBoxButton::OK, response: entry.text })
+				end
+				hbox.pack_start ok_btn, true, false, 5
+				cancel_btn = ::Gtk::Button.new label: "Cancel", width_request: 70
+				cancel_btn.clicked_signal.connect do
+					channel.send({ status: MsgBoxButton::Cancel, response: entry.text })
+				end
+				hbox.pack_start cancel_btn, true, false, 5
+				window.key_press_event_signal.connect do |event|
+					if event.keyval == 65307 # Esc
+						channel.send({ status: MsgBoxButton::Cancel, response: entry.text })
+					end
+					false
+				end
+				window.destroy_signal.connect do
+					if ! channel.closed?
+						channel.send({ status: MsgBoxButton::Cancel, response: entry.text })
+					end
+				end
+				window.set_default_size w, h
+				window.move x, y if x && y
+				window.show_all
+				window
+			end
+			r = select
+			when response = channel.receive
+				response
+			when timeout(timeout.seconds)
+				{ status: MsgBoxButton::Timeout, response: "" }
+			end
+			channel.close
+			act { gtk_window.destroy }
+			r
+		end
+
 		@tray_menu : ::Gtk::Menu? = nil
 		@tray : ::Gtk::StatusIcon? = nil
 		property icon_pixbuf : GdkPixbuf::Pixbuf? = nil
@@ -162,7 +263,8 @@ module Run
 			act do
 				@tray = tray = ::Gtk::StatusIcon.new
 				@icon_pixbuf = @default_icon_pixbuf = bytes_to_pixbuf logo_blob
-				tray.from_pixbuf = @icon_pixbuf
+				tray.from_pixbuf = @icon_pixbuf if ! runner.settings.no_tray_icon
+				tray.tooltip_text = @default_title
 
 				@tray_menu = tray_menu = ::Gtk::Menu.new
 
@@ -216,6 +318,7 @@ module Run
 				".to_slice)
 			end
 			init_menu(runner)
+			Notify.init @default_title
 		end
 		def tray
 			with self yield @tray.not_nil!, @tray_menu.not_nil!
@@ -281,13 +384,26 @@ module Run
 			end
 		end
 		getter guis = {} of String => GuiInfo
+		# This is necessary to be able to pass flags to the Gui Gtk Window *at creation time*, because
+		# the respective flags can't be set again at a later time.
+		# This is a rare occurrence and currently only necessary to set the type to Popup.
+		# Note that this is different from properties that can only be set before a window is *shown*.
+		# For that, the only thing that matters is the ordering of ahk commands.
+		class GuiCreationInfo
+			property type : ::Gtk::WindowType
+			def initialize(*, @type)
+			end
+		end
+		# :ditto:
+		getter guis_creation_info = {} of String => GuiCreationInfo
 		# Yields (and if not yet exists, creates) the gui info referring to *gui_id*,
 		# including the `window`, and passes the block on to the GTK idle thread so
 		# you can run GTK code with it.
 		def gui(thread, gui_id, &block : GuiInfo -> _)
 			if ! @guis[gui_id]?
 				act do
-					window = ::Gtk::Window.new title: @default_title, window_position: ::Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: false
+					type = @guis_creation_info[gui_id]?.try &.type || ::Gtk::WindowType::Toplevel
+					window = ::Gtk::Window.new title: @default_title, window_position: ::Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: false, type: type
 					# , border_width: 20
 					fixed = ::Gtk::Fixed.new
 					window.add fixed

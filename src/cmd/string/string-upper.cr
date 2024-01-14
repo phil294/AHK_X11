@@ -5,7 +5,7 @@ class Cmd::String::StringUpper < Cmd::Base
 	def run(thread, args)
 		out_var, in_var = args
 		title_case = args[2]? && args[2].downcase == "t"
-		text = thread.runner.get_user_var(in_var)
+		text = thread.get_var(in_var)
 		if title_case
 			text = text.titleize
 		else

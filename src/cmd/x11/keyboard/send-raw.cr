@@ -6,7 +6,7 @@ class Cmd::X11::Keyboard::SendRaw < Cmd::Base
 	def run(thread, args)
 		# FIXME reactivate
 		# thread.runner.display.pause do # to prevent hotkey from triggering other hotkey or itself
-			thread.runner.display.adapter.send_raw(args[0])
+			thread.runner.display.adapter.send_raw(thread, args[0])
 		# end
 	end
 end

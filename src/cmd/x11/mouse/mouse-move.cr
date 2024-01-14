@@ -5,9 +5,11 @@ class Cmd::X11::Mouse::MouseMove < Cmd::Base
 	def run(thread, args)
 		x = args[0]?.try &.to_i?
 		y = args[1]?.try &.to_i?
+		# todo: speed. can be done in evdev
 		relative = args[3]?.try &.downcase == "r"
 		thread.runner.display.pause do
 			thread.runner.display.adapter.mouse_move thread, x, y, relative
 		end
+		sleep thread.settings.mouse_delay.milliseconds if thread.settings.mouse_delay > -1
 	end
 end

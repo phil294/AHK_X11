@@ -6,7 +6,7 @@ class Cmd::Gtk::Msgbox < Cmd::Base
 	def run(thread, args)
 		text = "Press OK to continue."
 		if args[0]?
-			maybe_options = args[0].to_i?
+			maybe_options = @args[0].to_i?
 			if maybe_options && args[1]?
 				options = maybe_options
 				title = args[1].empty? ? nil : args[1]

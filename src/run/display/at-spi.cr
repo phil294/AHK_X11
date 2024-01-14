@@ -20,39 +20,38 @@ module Run
 			@is_init = true
 		end
 
-		# Finds the first window-like accessible that matches one of the windows (or window-like on Wayland).
+		# Finds the window-like accessible(s) that match one of the windows' (or
+		# window-like on Wayland) pid and name, and match text and exclude text.
 		# No results caching here.
-		def find_top_level_accessible(thread, windows, match_text = nil, exclude_text = nil, include_hidden = false)
+		def find_top_level_accessibles(thread, windows, match_text = nil, exclude_text = nil, include_hidden = false)
 			init
 			apps = all_apps
 			# There is no match by window XID (https://gitlab.gnome.org/GNOME/at-spi2-core/-/issues/21),
 			# so bland comparison by pid or title or size is necessary, even on X11:
 			pids = windows
-				.map { |w| w.pid }
+				.map &.pid
 				.reject &.nil?
 			if ! pids.empty?
 				app = apps.find do |a|
 					pids.includes?(a.process_id)
 				end
-				return nil if ! app
-				apps = [ app ]
+				apps = app ? [ app ] : [] of ::Atspi::Accessible
 			end
-			return nil if apps.empty?
+			return [] of ::Atspi::Accessible if apps.empty?
 			tl_children = apps.flat_map { |app|
 				children(app, include_hidden: include_hidden).select { |tl_child|
 					top_level_window?(tl_child) } }
-			return nil if tl_children.empty?
-			return tl_children.first if tl_children.size == 1
+			return tl_children if tl_children.empty?
 			names = windows
-				.map { |w| w.name }
+				.map &.name
 				.reject &.nil?
 			if ! names.empty?
 				tl_children.select! { |t| names.includes?(t.name) }
+				# False positives *are* possible here, e.g. if the popup has the same window title
+				# as another window of the same PID while the popup has no atspi title (e.g.
+				# the default in ahk guis, see below)
+				return tl_children if tl_children.empty?
 			end
-			# False positives *are* possible here, e.g. if the popup has the same window title
-			# as another window of the same PID while the popup has no atspi title (e.g.
-			# the default in ahk guis, see below)
-			return tl_children.first if tl_children.size == 1
 			if match_text && ! match_text.empty? || exclude_text && ! exclude_text.empty?
 				tl_children.select! do |tl_child|
 					win_texts = get_all_texts_of_top_level_accessible(thread, tl_child, include_hidden: false)
@@ -65,8 +64,13 @@ module Run
 					end
 					true
 				end
-				return tl_children.first if tl_children.size == 1
 			end
+			tl_children
+		end
+		# :ditto:
+		def find_top_level_accessible(thread, windows, match_text = nil, exclude_text = nil, include_hidden = false)
+			tl_children = find_top_level_accessibles(thread, windows, match_text, exclude_text, include_hidden)
+			return nil if tl_children.empty?
 			win_with_size = windows.find &.size
 			if win_with_size
 				# Some windows have no or missing title in atspi. Example: Gtk alerts, such as our
@@ -82,8 +86,9 @@ module Run
 					(window_size - t1_e.width - t1_e.height).abs - (window_size - t2_e.width - t2_e.height).abs
 				}
 			end
-			return tl_children.first?
+			return tl_children.first
 		end
+
 		# Finds the first match for *text_or_class_NN* inside *top_level_accessible* or `nil` if
 		# no match was found.
 		def find_descendant_of_top_level_accessible(thread, top_level_accessible, text_or_class_NN, include_hidden = false)
@@ -180,6 +185,7 @@ module Run
 			# `top_level_accessible` directly, but this way, it is usually very fast.
 			# This is in contrast to find-by-text (see comment inside find_descendant above)
 			# where manual seems to be the only way.
+			# So most of the time, we expect *no* descendants / iterations here:
 			iter_descendants(match, nil, false) do |acc, path, class_NN, nest_level|
 				if nest_level <= match_nest_level
 					next nil # stop
@@ -207,7 +213,7 @@ module Run
 				match_path = top_match_path + match_path
 			end
 			match_class_NN = to_class_NN(match_path, match.role_name)
-			
+
 			thread.cache.accessible_by_class_nn_by_top_level_accessible[top_level_accessible.hash][match_class_NN] = match
 			{% if ! flag?(:release) %}
 				puts "[debug] find_descendant name:#{match.name}, role:#{match.role}, classNN:#{match_class_NN}, text:#{match ? get_text(match) : ""}, actions:#{get_actions(match)[1]}, selectable:#{selectable?(match)}. top_match_path:#{top_match_path}, match_path:#{match_path}, top_match role:#{top_match.role}, top_match name:#{top_match.name}"
@@ -363,6 +369,7 @@ module Run
 		end
 		private def click_action(accessible)
 			# sorted by what would be most preferable
+			# TODO: case sensitivity?
 			names = StaticArray["click", "press", "push", "activate", "trigger", "mousedown", "mouse_down", "jump", "dodefault", "default", "start", "run", "submit", "select", "toggle", "send", "enable", "disable", "open", "into", "do", "make", "go", "expand", "on", "down", "enter", "focus", "have", "hold", "mouse", "pointer", "button"]
 			actions = [] of String
 			action_indexes = loop do
@@ -386,6 +393,7 @@ module Run
 				# `clickAncestor` sometimes fails (doesn't do anything) most notably in
 				# VSCode, Electron apps in general perhaps? So let's go to that ancestor
 				# ourselves, if encountered
+				# TODO: isnt the casing wrong here?
 				if actions[match_i].includes?("ancestor")
 					accessible = accessible.parent
 				else
