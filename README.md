@@ -208,7 +208,6 @@ Prerequisites:
 
 
 There is no auto updater yet! (but planned) You will probably want to get the latest version then and again.
-On Debian-based distributions like Ubuntu, you can also download and install the `.deb` file. Might be easier to install?
 
 ## Usage
 
