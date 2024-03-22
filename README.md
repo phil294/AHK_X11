@@ -414,9 +414,9 @@ More tips:
 - The first time an AtSpi-related command (`Control`-*, `WinGetText`, ... see "Accessibility" section above) runs, the interface needs to be initialized which can take some time (0-5s)
 - Searching for windows is slow. Querying the active window is not. Also, windows are internally cached by their ID during the lifetime of the thread, so e.g. `WinActivate, ahk_id %win_id%` will be much much faster than `WinActivate, window name`. So for many window operations you might want to do a single `WinGet, win_id, ID` beforehand and then reuse that `%win_id`.
 
-## Contributing
+## Build from source / Contribute
 
-If you want to help with AHK_X11 development or prefer to build from source instead of using the prebuilt binaries, detailed build instructions are to be found in [./build/README.md](./build).
+If you want to help with AHK_X11 development or prefer to build from source instead of using the prebuilt binaries, detailed build instructions are to be found in [./build/README.md](./build). *Most users will **not** want to do that, please go to [Installation](#installation) if you're not sure.*
 
 ## Issues
 
