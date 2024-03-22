@@ -18,7 +18,7 @@ shards:
 
   gtk3:
     git: https://github.com/phil294/gtk3.cr.git
-    version: 0.14.0+git.commit.362ff38bc33a3406d3d8ea95475b04062399d644
+    version: 0.16.0+git.commit.3105fc24ef5e841791f8c30002db998b9c20a677
 
   harfbuzz:
     git: https://github.com/hugopl/harfbuzz.cr.git
