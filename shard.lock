@@ -30,7 +30,7 @@ shards:
 
   pango:
     git: https://github.com/hugopl/pango.cr.git
-    version: 0.2.0
+    version: 0.3.1
 
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
