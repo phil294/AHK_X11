@@ -60,7 +60,7 @@ xdotool/libxdo.a: xdotool/.git
 	$(MAKE) -C xdotool libxdo.a
 
 lib/configured:
-	shards install
+	shards install --frozen
 	./bin/gi-crystal
 # TODO: can be fixed in application code?
 	sed -i -E 's/private getter xdo_p/getter xdo_p/' lib/x_do/src/x_do.cr
