@@ -305,8 +305,14 @@ module Run
 			parent.select_child(child_i) if parent
 		end
 		def get_text(accessible)
-			text = accessible.text_iface.text(0, -1).gsub('￼', "").strip()
-			text = accessible.name.gsub('￼', "").strip() if text.empty?
+			# the null pointer check is missing so this needs some improved handling. TODO: probably should be fixed in atspi shard instead?
+			_txt_iface = LibAtspi.atspi_accessible_get_text(accessible.to_unsafe)
+			if ! _txt_iface.null?
+				text = ::Atspi::AbstractText.new(_txt_iface, GICrystal::Transfer::Full).text(0, -1).gsub('￼', "").strip()
+			end
+			if text.nil? || text.empty?
+				text = accessible.name.gsub('￼', "").strip()
+			end
 			text.empty? ? nil : text
 		end
 		def set_text(accessible, text)
