@@ -14,11 +14,7 @@ shards:
 
   gi-crystal:
     git: https://github.com/hugopl/gi-crystal.git
-    version: 0.17.0
-
-  gio:
-    git: https://github.com/hugopl/gio.cr.git
-    version: 0.1.0
+    version: 0.22.1
 
   gtk3:
     git: https://github.com/phil294/gtk3.cr.git
