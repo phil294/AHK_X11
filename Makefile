@@ -80,15 +80,15 @@ clean:
 install: install-bin install-assets
 install-appimage: install-bin-appimage install-assets
 install-bin:
-	install -D -m 0755 bin/ahk_x11 $(DESTDIR)$(PREFIX)/bin/
+	install -D -m 0755 -t $(DESTDIR)$(PREFIX)/bin/ bin/ahk_x11
 install-bin-appimage:
 	install -D -m 0755 ahk_x11.AppImage $(DESTDIR)$(PREFIX)/bin/ahk_x11
 install-assets:
 	install -D -m 0644 assets/ahk_x11.png $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-ahk_x11.png
-	install -D -m 0644 assets/ahk_x11-mime.xml $(DESTDIR)$(PREFIX)/share/mime/packages/
-	install -D -m 0644 assets/ahk_x11.desktop $(DESTDIR)$(PREFIX)/share/applications/
-	install -D -m 0644 assets/ahk_x11-compiler.desktop $(DESTDIR)$(PREFIX)/share/applications/
-	install -D -m 0644 assets/ahk_x11-windowspy.desktop $(DESTDIR)$(PREFIX)/share/applications/
+	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/mime/packages/ assets/ahk_x11-mime.xml
+	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ assets/ahk_x11.desktop
+	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ assets/ahk_x11-compiler.desktop
+	install -D -m 0644 -t $(DESTDIR)$(PREFIX)/share/applications/ assets/ahk_x11-windowspy.desktop
 # Setting a default ahk_x11.desktop for mime application/x-ahk_x11 seems to not really be possible by standard and it also would be too intrusive probably
 
 uninstall:
