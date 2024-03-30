@@ -40,7 +40,7 @@ class Hacks
 	def self.is_utf8_file_no_bom(path)
 		begin
 			return Process.run("iconv", ["-f", "utf8", "-t", "utf8", path]).exit_code == 0 &&
-				! `file -b #{path}`.includes?("BOM")
+				! `command -v file && file -b #{path}`.includes?("BOM")
 		rescue
 			return true
 		end
