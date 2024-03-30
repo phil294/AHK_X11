@@ -54,7 +54,7 @@ linuxdeploy-plugin-gtk.sh linuxdeploy-x86_64.AppImage:
 	chmod +x linuxdeploy-*
 
 xdotool/.git:
-	git submodule update --init
+	test -d .git && git submodule update --init || echo 'No .git folder present'
 
 xdotool/libxdo.a: xdotool/.git
 	$(MAKE) -C xdotool libxdo.a
