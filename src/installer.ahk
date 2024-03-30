@@ -10,8 +10,10 @@ If A_IsAdmin = 1
 IfExist, /usr/bin/ahk_x11
 {
 	MsgBox, 4,, It seems like AHK_X11 is already installed globally. By continuing, this version will also be installed, but locally for the current user. Two simultaneous installations ins probably a bad idea. Are you sure you want to continue?
-	    IfMsgBox, No
-	        ExitApp
+	IfMsgBox, No
+		ExitApp
+	IfMsgBox, Cancel
+		ExitApp
 }
 
 app_name = ahk_x11
