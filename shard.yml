@@ -10,7 +10,7 @@ targets:
 
 crystal: 1.5.1
 
-license: MIT
+license: GPL-2.0
 
 dependencies:
   tasker:
