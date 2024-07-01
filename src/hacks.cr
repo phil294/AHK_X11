@@ -66,23 +66,18 @@ class Fiber
 			STDERR.flush
 		end
 	ensure
-		{% if flag?(:preview_mt) %}
-			Crystal::Scheduler.enqueue_free_stack @stack
-		{% elsif flag?(:interpreted) %}
-			# For interpreted mode we don't need a new stack, the stack is held by the interpreter
-		{% else %}
-			Fiber.stack_pool.release(@stack)
-		{% end %}
-
 		# Remove the current fiber from the linked list
-		Fiber.fibers.delete(self)
-
-		# Delete the resume event if it was used by `yield` or `sleep`
-		@resume_event.try &.free
-		@timeout_event.try &.free
-		@timeout_select_action = nil
-
-		@alive = false
-		Crystal::Scheduler.reschedule
+	    Fiber.inactive(self)
+	
+	    # Delete the resume event if it was used by `yield` or `sleep`
+	    @resume_event.try &.free
+	    @timeout_event.try &.free
+	    @timeout_select_action = nil
+	
+	    @alive = false
+	    {% unless flag?(:interpreted) %}
+	      Crystal::Scheduler.stack_pool.release(@stack)
+	    {% end %}
+	    Crystal::Scheduler.reschedule
 	end
 end
