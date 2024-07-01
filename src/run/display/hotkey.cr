@@ -22,9 +22,9 @@ module Run
 		@@available_modifier_combinations : Array(Int32)
 		# TODO: this can probably be done much easier, it's just all possible combinations of all possible sizes >= 1 of all relevant modifiers. Could actually also be a macro except that then you'd need the integers directly, not the X11 synonyms
 		@@available_modifier_combinations =
-			[1,2,3,4,5].reduce([] of Array(Int32)) do |all, i|
-				# ctrl, shift, 1=alt, 4=super, 5=altgr, 2=numlock
-				[::X11::ControlMask, ::X11::ShiftMask, ::X11::Mod1Mask, ::X11::Mod4Mask, ::X11::Mod5Mask, ::X11::Mod2Mask].combinations(i).each do |mod_combo|
+			[1,2,3,4,5,6].reduce([] of Array(Int32)) do |all, i|
+				# caps, ctrl, shift, 1=alt, 4=super, 5=altgr, 2=numlock
+				[::X11::LockMask, ::X11::ControlMask, ::X11::ShiftMask, ::X11::Mod1Mask, ::X11::Mod4Mask, ::X11::Mod5Mask, ::X11::Mod2Mask].combinations(i).each do |mod_combo|
 					all << mod_combo
 				end
 				all
