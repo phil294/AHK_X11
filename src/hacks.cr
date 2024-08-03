@@ -68,12 +68,12 @@ class Fiber
 	ensure
 		# Remove the current fiber from the linked list
 	    Fiber.inactive(self)
-	
+
 	    # Delete the resume event if it was used by `yield` or `sleep`
 	    @resume_event.try &.free
 	    @timeout_event.try &.free
 	    @timeout_select_action = nil
-	
+
 	    @alive = false
 	    {% unless flag?(:interpreted) %}
 	      Crystal::Scheduler.stack_pool.release(@stack)
