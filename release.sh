@@ -46,14 +46,15 @@ docker run --rm -it -v /b/ahk_x11:/a -w /a --privileged ahk_x11-builder-ubuntu.2
     make ahk_x11.AppImage
 
 bin=ahk_x11.AppImage
+
 cp "$bin" "$bin.release"
-ls -lah "$bin"
+ls -lah "$bin"*
 pause
 
-make ahk_x11.deb
-bin_deb="ahk-x11_${version}-1_all.deb"
-ls -lah "$bin_deb"
-pause
+#make ahk_x11.deb
+#bin_deb="ahk-x11_${version}-1_all.deb"
+#ls -lah "$bin_deb"
+#pause
 
 make test-appimage
 pause
@@ -62,7 +63,7 @@ echo test installers
 pause
 
 sc git fetch
-release_message=$(sc git log --reverse "$(sc git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/')
+release_message=$(sc git log --reverse "$(sc git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/') ||:
 
 echo edit release message
 pause
@@ -86,7 +87,11 @@ if [[ -z $version || -z $release_message ]]; then
 fi
 echo 'will create github release'
 pause
-gh release create "$version" --target master --title "$version" --notes "$release_message" --verify-tag "$bin" "$bin_deb"
+while :; do
+    gh release create "$version" --target master --title "$version" --notes "$release_message" --verify-tag "$bin" && break || true
+    echo 'gh failed. retrying...'
+    pause
+done
 echo 'github release created'
 
 echo 'update dependent projects'
