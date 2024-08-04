@@ -14,7 +14,7 @@ These are the steps required to build this project locally, such as if you want 
             ```
             sudo apt-get install libxinerama-dev libxkbcommon-dev libxtst-dev libgtk-3-dev libxi-dev libx11-dev libgirepository1.0-dev libatspi2.0-dev libssl-dev libnotify-dev libyaml-dev
             ```
-        1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation)
+        1. [Install](https://crystal-lang.org/install/) Crystal and Shards (Shards is typically included in Crystal installation) (**due to issue #89, you currently need version 1.11 or (slightly) below**)
     1. Arch Linux:
         ```
         sudo pacman -S crystal shards gcc libxkbcommon libxinerama libxtst libnotify gtk3 gc
