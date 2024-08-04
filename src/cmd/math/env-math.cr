@@ -7,8 +7,8 @@ class Cmd::Math::EnvMath < Cmd::Base
 		var = args[0]
 		formula = args[1]? || ""
 		formula = formula.gsub /\b[^0-9.()%\/*<>+-]\w*\b/ do |word|
-			var = thread.get_var(word)
-			var.empty? ? word : var # so that awk functions like int(x) work
+			val = thread.get_var(word)
+			val.empty? ? word : val # so that awk functions like int(x) work
 		end
 		stdout_m = IO::Memory.new
 		stderr_m = IO::Memory.new
