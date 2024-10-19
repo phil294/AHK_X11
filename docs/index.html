@@ -10018,8 +10018,9 @@ return
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#PixelSearch.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">PixelSearch</a>, <a href="#CoordMode.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">CoordMode</a>, <a href="#MouseGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">MouseGetPos</a></p>
           <p class="calibre8"> </p>
-          <p class="calibre8"><strong class="calibre14">Example</strong></p>
+          <p class="calibre8"><strong class="calibre14">Examples</strong></p>
           <p class="calibre8">^!z::<br class="calibre12" /> MouseGetPos, MouseX, MouseY<br class="calibre12" /> PixelGetColor, color, %MouseX%, %MouseY%<br class="calibre12" /> MsgBox, The color at the current cursor position is %color%.<br class="calibre12" /> return</p>
+          <p class="calibre8">PixelGetColor, color, 1000, 500<br />StringMid, red, color, 5, 2<br />StringMid, green, color, 3, 2<br />StringMid, blue, color, 0, 2<br />MsgBox, color is %red% %green% %blue%</p>
         </div>
       </div>
       <div class="calibreMain">
@@ -12445,9 +12446,8 @@ if pos &gt;= 0
           <p class="calibre8"><strong class="calibre14">Related</strong></p>
           <p class="calibre8"><a href="#IfInString.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">IfInString</a>, <a href="#StringGetPos.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringGetPos</a>, <a href="#StringLeft.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringLeft</a>, <a href="#StringLeft.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringRight</a>, <a href="#StringTrimLeft.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringTrimLeft</a>, <a href="#StringTrimLeft.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringTrimRight</a>, <a href="#StringLen.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringLen</a>, <a href="#StringLower.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringLower</a>, <a href="#StringLower.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringUpper</a>, <a href="#StringReplace.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">StringReplace</a></p>
           <p class="calibre8"> </p>
-          <p class="calibre8"><strong class="calibre14">Examples</strong></p>
+          <p class="calibre8"><strong class="calibre14">Example</strong></p>
           <p class="calibre8">Source = Hello this is a test. <br class="calibre12" /> StringMid, the_word_this, Source, 7, 4 <br class="calibre12" />
-          <p class="calibre8">PixelGetColor, color, 1000, 500<br />StringMid, red, color, 5, 2<br />StringMid, green, color, 3, 2<br />StringMid, blue, color, 0, 2<br />MsgBox, color is %red% %green% %blue%</p>
         </div>
       </div>
       <div class="calibreMain">
