@@ -15,6 +15,7 @@ class Cmd::X11::Mouse::Click < Cmd::X11::Mouse::MouseClick
 			when "down","up","d","u"
 				mouse_click_args[5] = param[0].to_s
 			when "rel","relative"
+				# TODO: this crashes ahk somehow, bug in mouse-click.cr
 				mouse_click_args[6] = "r"
 			else
 				ints << param if param.to_i?

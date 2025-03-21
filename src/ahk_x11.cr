@@ -39,6 +39,7 @@ def build_error(msg)
 	STDERR.flush
 	msg = "#{msg}\n\nThe program will exit."
 	if ! HEADLESS
+		# TODO: also works then gui has already been created? (fiber spawn error unhandled exception handler)
 		gtk = Run::Gtk.new "AHK_X11"
 		spawn gtk.run
 		gtk.msgbox msg
