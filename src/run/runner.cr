@@ -109,6 +109,7 @@ module Run
 			# TODO: does this run? as exit handlers are excluded somewhere with process.exit(0)
 			at_exit do
 				if sound_play_pid = @settings.sound_play_pid
+					# TODO: the pid isn't unset after soundplay finishes, leading to process not found error here at exit
 					Process.signal(Signal::KILL, sound_play_pid)
 				end
 			end
@@ -271,9 +272,9 @@ module Run
 			when "a_mm", "a_mon" then Time.local.month.to_s(precision: 2)
 			when "a_dd", "a_mday" then Time.local.day.to_s(precision: 2)
 			when "a_mmmm" then Time.local.to_s("%B")
-			when "a_mmm"  then Time.local.to_s("%b")
-			when "a_dddd"  then Time.local.to_s("%A")
-			when "a_ddd"  then Time.local.to_s("%a")
+			when "a_mmm" then Time.local.to_s("%b")
+			when "a_dddd" then Time.local.to_s("%A")
+			when "a_ddd" then Time.local.to_s("%a")
 			when "a_wday" then (Time.local.day_of_week.value % 7 + 1).to_s
 			when "a_yday" then Time.local.day_of_year.to_s
 			when "a_yweek"
@@ -289,9 +290,10 @@ module Run
 			when "a_screenwidth" then display.adapter.display.default_screen.width.to_s
 			when "a_screenheight" then display.adapter.display.default_screen.height.to_s
 			when "a_username" then Hacks.username
-			when "a_computername" then `uname -n`
+			when "a_computername" then `uname -n`.strip
 			when "a_issuspended" then @suspension ? "1" : "0"
 			when "a_iscompiled" then @is_compiled ? "1" : ""
+			# TODO: this doesn't consider mouse movement
 			when "a_timeidle" then (Time.monotonic - display.last_event_received).total_milliseconds.round.to_i.to_s
 			when "a_language" then Util::LcidMapping.mapping[ENV["LANG"].split('.')[0]]? || ""
 			when "a_desktop" then `xdg-user-dir DESKTOP`.strip
@@ -327,9 +329,9 @@ module Run
 			lock = File.open(lock_path, "a+")
 			begin
 				lock.flock_exclusive(blocking: false)
-      		rescue e
-        		already_running_pid = lock.gets_to_end.to_i
-    		end
+			rescue e
+				already_running_pid = lock.gets_to_end.to_i
+			end
 			if already_running_pid > -1
 				case @settings.single_instance
 				when SingleInstance::Force
