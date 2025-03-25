@@ -86,3 +86,19 @@ class Fiber
 		Crystal::Scheduler.reschedule
 	end
 end
+
+# DllCall:
+# https://github.com/crystal-lang/crystal/issues/2800#issuecomment-2744568398
+class Crystal::Loader
+	def self.library_filename(libname : String) : String
+		libname = "lib" + libname if ! libname.starts_with?("lib")
+		libname += ".so" if ! libname.match /\.so\b/
+		libname
+	end
+end
+# DllCall:
+# When building with musl, this is necessary because
+# In /usr/lib/crystal/core/compiler/crystal/loader/unix.cr:220:10
+# 220 | `#{Crystal::Compiler::DEFAULT_LINKER} -print-search-dirs`
+# And cc is at least a symlink on all unix systems anyway (?)
+class Crystal::Compiler DEFAULT_LINKER = "cc" end

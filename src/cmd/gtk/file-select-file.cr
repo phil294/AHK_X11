@@ -6,7 +6,7 @@ class Cmd::Gtk::FileSelectFile < Cmd::Base
 		out_var = args[0]
 		options = (args[1]? || "").downcase
 		root_dir = args[2]?
-		prompt = args[3]? || "Select File - " + thread.runner.get_global_var("a_scriptname").not_nil!
+		prompt = args[3]? || "Select File - " + thread.runner.get_global_var_str("a_scriptname").not_nil!
 		channel = Channel(::String).new
 		thread.runner.display.gtk.act do
 			if options.includes?('s')

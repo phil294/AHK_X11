@@ -18,6 +18,7 @@ class Util::AhkString
 						when 'v' then '\v'
 						when 'a' then '\a'
 						when 'f' then '\f'
+						when '0' then '\0'
 						else char
 						end
 						build << char

@@ -6,7 +6,7 @@ class Cmd::Gtk::FileSelectFolder < Cmd::Base
 		out_var = args[0]
 		options = (args[2]? || "").downcase
 		root_dir = args[1]?
-		prompt = args[3]? || "Select Folder - " + thread.runner.get_global_var("a_scriptname").not_nil!
+		prompt = args[3]? || "Select Folder - " + thread.runner.get_global_var_str("a_scriptname").not_nil!
 		channel = Channel(::String).new
 		thread.runner.display.gtk.act do
 			dialog = ::Gtk::FileChooserDialog.new title: prompt, action: ::Gtk::FileChooserAction::SelectFolder

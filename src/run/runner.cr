@@ -41,8 +41,11 @@ module Run
 	#
 	# All Runner state (vars, labels, etc.) is global (cross-thread).
 	class Runner
-		# These are editable by the user
-		@user_vars = {} of String => String
+		# These are editable by the user. User vars are all String except when passed or retrieved as type Ptr
+		# to low level commands DllCall, VarSetCapacity, NumPut, and NumGet. Could also be Pointer(Void) instead of Bytes.
+		# This distinction is unfortunately necessary because writing memory to my_str.to_unsafe somehow segfaults
+		# while doing the same to a bare slice (with the same contents!) doesn't.
+		@user_vars = {} of ::String => ::String | Bytes
 		# These are only set by the program. See also `get_global_built_in_computed_var`
 		@built_in_static_vars = {
 			"a_space" => " ",
@@ -232,12 +235,22 @@ module Run
 		# Do not use directly, use `Thread.get_var` instead.
 		# Get the value of global values, regardless if user set or not.
 		# Case sensitive.
-		def get_global_var(var)
-			@user_vars[var]? || @built_in_static_vars[var]? || get_global_built_in_computed_var(var)
+		def get_global_var_str(var)
+			user_var = @user_vars[var.downcase]?
+			if user_var
+				return user_var.is_a?(Bytes) ? ::String.new(user_var) : user_var
+			end
+			@built_in_static_vars[var]? || get_global_built_in_computed_var(var)
+		end
+		# Case insensitive
+		def get_user_var_str(var)
+			var = @user_vars[var.downcase]?
+			return "" if ! var
+			var.is_a?(Bytes) ? ::String.new(var) : var
 		end
 		# Case insensitive
 		def get_user_var(var)
-			@user_vars[var.downcase]? || ""
+			@user_vars[var.downcase]?
 		end
 		def print_user_vars # TODO is that true / ListVars shouldnt print builtins / threadlocals like errorlevel?
 			puts @user_vars
@@ -245,20 +258,20 @@ module Run
 		# `var` is case insensitive
 		def set_user_var(var, value)
 			down = var.downcase
-			case down
-			when "clipboard"
-				display.gtk.set_clipboard(value)
-			else
+			if ! value.is_a?(Bytes)
+				case down
+				when "clipboard"
+					return display.gtk.set_clipboard(value)
+				end
 				return if @built_in_static_vars[down]? || get_global_built_in_computed_var(down)
-				{% if ! flag?(:release) %}
-					puts "[debug] set_user_var '#{var}': #{value}"
-				{% end %}
 				if value.empty?
-					@user_vars.delete down
-				else
-					@user_vars[down] = value
+					return @user_vars.delete down
 				end
 			end
+			{% if ! flag?(:release) %}
+				puts "[debug] set_user_var '#{var}': #{value}"
+			{% end %}
+			@user_vars[down] = value
 		end
 		# `var` is case insensitive
 		def set_global_built_in_static_var(var, value)

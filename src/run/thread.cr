@@ -219,7 +219,7 @@ module Run
 		# Case insensitive
 		def get_var(var)
 			down = var.downcase
-			@runner.get_global_var(down) || @built_in_static_vars[down]? || get_thread_built_in_computed_var(down) || ""
+			@runner.get_global_var_str(down) || @built_in_static_vars[down]? || get_thread_built_in_computed_var(down) || ""
 		end
 		# *var* is case insensitive
 		def set_thread_built_in_static_var(var, value)
