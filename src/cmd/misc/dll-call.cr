@@ -1,45 +1,6 @@
 require "compiler/crystal/ffi"
 require "compiler/crystal/loader"
 
-# ; pi = 3.14
-# ; DllCall, out_var, libm.so.6/cos, Double, pi, Double
-#
-# ; txt = abc`n
-# ; DllCall, , libc.so.6/printf, Str, txt
-#
-# EnvGet, display_name, DISPLAY
-# DllCall, display, X11/XOpenDisplay, Str, display_name, Ptr
-# if display = `0`0`0`0`0`0`0`0 ; Pointers have a length of 8 Bytes.
-# {
-# 	MsgBox, 48, DllCall Demo, Cannot open Display "%display_name%"!
-# 	Return
-# }
-# DllCall, screen, X11/XDefaultScreen, Ptr, display, Ptr
-# DllCall, root_window, X11/XRootWindow, Ptr, display, Ptr, screen, UInt64
-# DllCall, black_pixel, X11/XBlackPixel, Ptr, display, Ptr, screen, UInt64
-# DllCall, white_pixel, X11/XWhitePixel, Ptr, display, Ptr, screen, UInt64
-# x = 10
-# y = 10
-# w = 400
-# h = 700
-# border_width = 20
-# DllCall, window, X11/XCreateSimpleWindow, Ptr, display, UInt64, root_window, Int, x, Int, y, Int, w, Int, h, Int, border_width, UInt64, black_pixel, UInt64, white_pixel, UInt64
-# gc_valuemask = 0
-# gc_values = `0 ; NULL
-# DllCall, gc, X11/XCreateGC, Ptr, display, UInt64, window, UInt64, gc_valuemask, Ptr, gc_values, Ptr
-# DllCall, , X11/XSetForeground, Ptr, display, Ptr, gc, UInt64, black_pixel
-# ExposureMask = 32768
-# DllCall, , X11/XSelectInput, Ptr, display, UInt64, window, UInt64, ExposureMask
-# DllCall, , X11/XMapWindow, Ptr, display, UInt64, window
-# ; to do: settimer xnextevent
-# ; event_type = "0"
-# ; DllCall, , X11/XNextEvent, Ptr, display, Int*, event_type
-# ; varsetcapacity event 10525
-# ; DllCall, , X11/XNextEvent, Ptr, display, Ptr, event
-# event = 1
-# DllCall, , X11/XNextEvent, Ptr, display, Ptr, event
-# sleep 1000
-
 # AHK_X11 only / is a function in win ahk1.1+
 # DllCall, OutputVar, [DllFile\]Function [, Type1, Arg1Var, Type2, Arg2Var, ReturnType]
 class Cmd::Misc::DllCall < Cmd::Base
@@ -57,21 +18,15 @@ class Cmd::Misc::DllCall < Cmd::Base
 			var_type = args[i * 2 + 2].downcase
 			var_name = args[i * 2 + 3].downcase
 			user_var = thread.runner.get_user_var(var_name)
-			return "-2" if user_var == nil
-			write_memory = true
-			if user_var.is_a?(Bytes)
-				user_var_value = "0"
-				user_var_slice = user_var
-				write_memory = false
-			else
-				user_var_value = user_var
-				# FFI below needs pointers only, that's why there's an extra Slice wrapper around all vars everywhere
-				user_var_slice = Bytes.new(8) # 64b to accommodate size of any param except string TODO:
-				thread.runner.set_user_var(var_name, user_var_slice)
+			return "-2" if user_var.nil?
+
+			p! user_var
+			param = TypedParam.new(type_str: var_type, slice: user_var, transform_memory: true)
+			if param.slice.to_unsafe.address != user_var.to_unsafe.address
+				user_var = param.slice
+				thread.runner.set_user_var(var_name, user_var)
 			end
-			# May mutate user_var_slice's underlying value to set up the correct type
-			param = TypedParam.new(type: var_type, slice: user_var_slice, value: user_var_value.not_nil!, write_memory: write_memory)
-			p! user_var_value, param.value_as_user_var, write_memory
+			p! user_var, param.value_as_user_var
 			return "-2" if param.type == Crystal::FFI::Type.void
 			params << param
 		end
@@ -79,7 +34,7 @@ class Cmd::Misc::DllCall < Cmd::Base
 		if args.size - params.size * 2 - 2 == 1
 			return_type_str = args.last.downcase
 		end
-		return_param = TypedParam.new(type: return_type_str, slice: Bytes.new(8), value: "0", write_memory: false)
+		return_param = TypedParam.new(type_str: return_type_str, slice: Bytes.new(8, 48_u8), transform_memory: false) # 48 == "0"
 		return "-2" if return_param.type == Crystal::FFI::Type.void
 
 		# TODO: fails for deep paths
@@ -101,7 +56,9 @@ class Cmd::Misc::DllCall < Cmd::Base
 			# 	tmp_ptr = pointerof(tmp_var)
 			# 	pointerof(tmp_ptr).as(Pointer(Void))
 			# else
-			if param.type_str == "str"
+			p! param.slice, param.slice.hexdump
+			p! Bytes.new(param.slice.to_unsafe, 10)
+			if param.type_str == "str" # < unify with as_pointer somehow?
 				# TODO: othe rnotation using pointer.new etc?
 				addr = param.slice.to_unsafe.address
 				pointerof(addr).as(Pointer(Void))
@@ -109,7 +66,6 @@ class Cmd::Misc::DllCall < Cmd::Base
 				param.slice.to_unsafe.as(Pointer(Void))
 			end
 		end
-
 		call_interface.call(function_pointer, arg_pointers.to_unsafe, return_param.slice.to_unsafe.as(Pointer(Void)))
 		typed_return_value = return_param.value_as_user_var
 		thread.runner.set_user_var(out_var, typed_return_value)
@@ -121,54 +77,68 @@ class Cmd::Misc::DllCall < Cmd::Base
 		getter type_str : ::String
 		getter as_pointer : Bool
 		getter slice : Bytes
-		# Mutates the underlying value of *slice*
-		def initialize(*, type : ::String, slice : Bytes, value : ::String, write_memory = true)
+		# Modifies *slice* and/or sets a new one if too small or not writable
+		def initialize(*, type_str : ::String, slice : Bytes, transform_memory = false)
 			@slice = slice
-			@as_pointer = type.ends_with?("p") || type.ends_with?("*")
-			type = type[..-1] if @as_pointer
-			@type_str = type
+			@as_pointer = type_str.ends_with?("p") || type_str.ends_with?("*")
+			type_str = type_str[..-1] if @as_pointer
+			@type_str = type_str
+			if type_str == "ptr"
+				return @type = Crystal::FFI::Type.sint64
+			end
+			as_string = ::String.new(@slice)
 			@type = Crystal::FFI::Type.void
-			case type
+			case type_str
 				# Need separate helper vars to take the pointer from because if it's a unified one,
 				# the union type has an unpredictable(?) length and copying fails
-				when "str" then @type = Crystal::FFI::Type.pointer; v_str = value.to_s; value_slice = v_str.to_slice
-				when "int64" then @type = Crystal::FFI::Type.sint64; v_int64 = value.to_i64; value_slice = Bytes.new(pointerof(v_int64).as(Pointer(UInt8)), 8)
-				when "ptr" then @type = Crystal::FFI::Type.sint64
-				when "int" then @type = Crystal::FFI::Type.sint32; v_int = value.to_i32; value_slice = Bytes.new(pointerof(v_int).as(Pointer(UInt8)), 4)
-				when "short" then @type = Crystal::FFI::Type.sint16; v_short = value.to_i16; value_slice = Bytes.new(pointerof(v_short).as(Pointer(UInt8)), 2)
-				when "char" then @type = Crystal::FFI::Type.sint8; v_char = value.to_i8; value_slice = Bytes.new(pointerof(v_char).as(Pointer(UInt8)), 1)
-				when "uint64" then @type = Crystal::FFI::Type.uint64; v_uint64 = value.to_u64; value_slice = Bytes.new(pointerof(v_uint64).as(Pointer(UInt8)), 8)
-				when "uint" then @type = Crystal::FFI::Type.uint32; v_uint = value.to_u32; value_slice = Bytes.new(pointerof(v_uint).as(Pointer(UInt8)), 4)
-				when "ushort" then @type = Crystal::FFI::Type.uint16; v_ushort = value.to_u16; value_slice = Bytes.new(pointerof(v_ushort).as(Pointer(UInt8)), 2)
-				when "uchar" then @type = Crystal::FFI::Type.uint8; v_uchar = value.to_u8; value_slice = Bytes.new(pointerof(v_uchar).as(Pointer(UInt8)), 1)
-				when "float" then @type = Crystal::FFI::Type.float; v_float = value.to_f32; value_slice = Bytes.new(pointerof(v_float).as(Pointer(UInt8)), 4)
-				when "double" then @type = Crystal::FFI::Type.double; v_double = value.to_f64; value_slice = Bytes.new(pointerof(v_double).as(Pointer(UInt8)), 8)
+				# TODO: ^v revise
+				when "str" then @type = Crystal::FFI::Type.pointer; as_type = Bytes.new(@slice.to_unsafe, @slice.size + 1) # + \0. # TODO: revert
+				when "int64" then @type = Crystal::FFI::Type.sint64; v_int64 = as_string.to_i64; as_type = Bytes.new(pointerof(v_int64).as(Pointer(UInt8)), 8)
+				when "int" then @type = Crystal::FFI::Type.sint32; v_int = as_string.to_i32; as_type = Bytes.new(pointerof(v_int).as(Pointer(UInt8)), 4)
+				when "short" then @type = Crystal::FFI::Type.sint16; v_short = as_string.to_i16; as_type = Bytes.new(pointerof(v_short).as(Pointer(UInt8)), 2)
+				when "char" then @type = Crystal::FFI::Type.sint8; v_char = as_string.to_i8; as_type = Bytes.new(pointerof(v_char).as(Pointer(UInt8)), 1)
+				when "uint64" then @type = Crystal::FFI::Type.uint64; v_uint64 = as_string.to_u64; as_type = Bytes.new(pointerof(v_uint64).as(Pointer(UInt8)), 8)
+				when "uint" then @type = Crystal::FFI::Type.uint32; v_uint = as_string.to_u32; as_type = Bytes.new(pointerof(v_uint).as(Pointer(UInt8)), 4)
+				when "ushort" then @type = Crystal::FFI::Type.uint16; v_ushort = as_string.to_u16; as_type = Bytes.new(pointerof(v_ushort).as(Pointer(UInt8)), 2)
+				when "uchar" then @type = Crystal::FFI::Type.uint8; v_uchar = as_string.to_u8; as_type = Bytes.new(pointerof(v_uchar).as(Pointer(UInt8)), 1)
+				when "float" then @type = Crystal::FFI::Type.float; v_float = as_string.to_f32; as_type = Bytes.new(pointerof(v_float).as(Pointer(UInt8)), 4)
+				when "double" then @type = Crystal::FFI::Type.double; v_double = as_string.to_f64; as_type = Bytes.new(pointerof(v_double).as(Pointer(UInt8)), 8)
 			end
-			if write_memory && ! value_slice.is_a?(Nil)
-				# p! "before", value, @slice, @slice.to_unsafe, @slice.to_unsafe.address, @slice.to_unsafe.value.unsafe_as(Float64), Slice.new(@slice.to_unsafe.as(Pointer(UInt8)), 8).hexdump, @slice.hexdump, @slice.size, type, value_slice.unsafe_as(Float64), Slice.new(pointerof(value_slice).as(Pointer(UInt8)), 16).hexdump, sizeof(typeof(value_slice)), sizeof(Float64)
-				@slice.copy_from(value_slice) # can fail with large strings TODO:
-				# p! value, type, value_slice, @slice, @slice.to_unsafe.value.unsafe_as(Float64), Slice.new(@slice.to_unsafe.as(Pointer(UInt8)), 8).hexdump, @slice.hexdump, @slice.size
+			if transform_memory && ! as_type.nil?
+				if as_type.size > @slice.size
+					p! "#### extending to new slice(8) because too smol beforehand", as_type.size, @slice.size, as_string, @type_str
+					@slice = Bytes.new(8)
+				elsif @slice.read_only?
+					p! "~~~ slice readonly, duping", as_string, @type_str
+					@slice = @slice.dup
+				end
+				# p! "before", value, @slice, @slice.to_unsafe, @slice.to_unsafe.address, @slice.to_unsafe.value.unsafe_as(Float64), Slice.new(@slice.to_unsafe.as(Pointer(UInt8)), 8).hexdump, @slice.hexdump, @slice.size, type, as_type.unsafe_as(Float64), Slice.new(pointerof(as_type).as(Pointer(UInt8)), 16).hexdump, sizeof(typeof(as_type)), sizeof(Float64)
+				@slice.copy_from(as_type)
+				# p! value, type, as_type, @slice, @slice.to_unsafe.value.unsafe_as(Float64), Slice.new(@slice.to_unsafe.as(Pointer(UInt8)), 8).hexdump, @slice.hexdump, @slice.size
 			end
 		end
 		def value_as_user_var
-			addr = @slice.to_unsafe.address
 			# TODO: there's probably a better way. also using as(typeof())?
 			formatted = case @type_str
-				when "str" then ::String.new(Pointer(UInt8).new(addr))
-				when "int64" then Pointer(Int64).new(addr).value.to_s
+				when "str" then @slice
+				# TODO: unify all types)
+				# There doesn't seem to be a Int::to_s_bytes method so this string instantiation takes place
+				# unnecessarily (because follow-up dllcalls need to make a writable .dup again).
+				when "int64" then @slice.unsafe_as(Slice(Int64)).to_unsafe.value.to_s.to_slice
 				when "ptr" then
-					ptr = Pointer(UInt64).new(addr)
+					# TODO: change to return @slice
+					ptr = Pointer(UInt64).new(@slice.to_unsafe.address)
 					puts "got pointer: #{ptr.value}"
 					Bytes.new(ptr.unsafe_as(Pointer(UInt8)), 8)
-				when "int" then Pointer(Int32).new(addr).value.to_s
-				when "short" then Pointer(Int16).new(addr).value.to_s
-				when "char" then Pointer(Int8).new(addr).value.to_s
-				when "uint64" then Pointer(UInt64).new(addr).value.to_s
-				when "uint" then Pointer(UInt32).new(addr).value.to_s
-				when "ushort" then Pointer(UInt16).new(addr).value.to_s
-				when "uchar" then Pointer(UInt8).new(addr).value.to_s
-				when "float" then Pointer(Float32).new(addr).value.to_s
-				when "double" then Pointer(Float64).new(addr).value.to_s
+				when "int" then @slice.unsafe_as(Slice(Int32)).to_unsafe.value.to_s.to_slice
+				when "short" then @slice.unsafe_as(Slice(Int16)).to_unsafe.value.to_s.to_slice
+				when "char" then @slice.unsafe_as(Slice(Int8)).to_unsafe.value.to_s.to_slice
+				when "uint64" then @slice.unsafe_as(Slice(UInt64)).to_unsafe.value.to_s.to_slice
+				when "uint" then @slice.unsafe_as(Slice(UInt32)).to_unsafe.value.to_s.to_slice
+				when "ushort" then @slice.unsafe_as(Slice(UInt16)).to_unsafe.value.to_s.to_slice
+				when "uchar" then @slice.unsafe_as(Slice(UInt8)).to_unsafe.value.to_s.to_slice
+				when "float" then @slice.unsafe_as(Slice(Float32)).to_unsafe.value.to_s.to_slice
+				when "double" then @slice.unsafe_as(Slice(Float64)).to_unsafe.value.to_s.to_slice
 			end
 			raise "?????" if ! formatted
 			# if @as_pointer

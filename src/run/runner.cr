@@ -42,10 +42,10 @@ module Run
 	# All Runner state (vars, labels, etc.) is global (cross-thread).
 	class Runner
 		# These are editable by the user. User vars are all String except when passed or retrieved as type Ptr
-		# to low level commands DllCall, VarSetCapacity, NumPut, and NumGet. Could also be Pointer(Void) instead of Bytes.
-		# This distinction is unfortunately necessary because writing memory to my_str.to_unsafe somehow segfaults
-		# while doing the same to a bare slice (with the same contents!) doesn't.
-		@user_vars = {} of ::String => ::String | Bytes
+		# to low level commands DllCall, VarSetCapacity, NumPut, and NumGet.
+		# This distinction is necessary because both Crystal String slices and their underlying allocated memory
+		# are read-only which can only be changed by altering the compiler (and probably a bad idea anyway)
+		@user_vars = {} of ::String => Bytes
 		# These are only set by the program. See also `get_global_built_in_computed_var`
 		@built_in_static_vars = {
 			"a_space" => " ",
@@ -237,16 +237,14 @@ module Run
 		# Case sensitive.
 		def get_global_var_str(var)
 			user_var = @user_vars[var.downcase]?
-			if user_var
-				return user_var.is_a?(Bytes) ? ::String.new(user_var) : user_var
-			end
+			return ::String.new(user_var) if user_var
 			@built_in_static_vars[var]? || get_global_built_in_computed_var(var)
 		end
 		# Case insensitive
 		def get_user_var_str(var)
 			var = @user_vars[var.downcase]?
 			return "" if ! var
-			var.is_a?(Bytes) ? ::String.new(var) : var
+			::String.new(var)
 		end
 		# Case insensitive
 		def get_user_var(var)
@@ -257,8 +255,11 @@ module Run
 		end
 		# `var` is case insensitive
 		def set_user_var(var, value)
+			{% if ! flag?(:release) %}
+				puts "[debug] set_user_var '#{var}': #{value}"
+			{% end %}
 			down = var.downcase
-			if ! value.is_a?(Bytes)
+			if value.is_a?(::String)
 				case down
 				when "clipboard"
 					return display.gtk.set_clipboard(value)
@@ -267,10 +268,8 @@ module Run
 				if value.empty?
 					return @user_vars.delete down
 				end
+				return @user_vars[down] = value.to_slice
 			end
-			{% if ! flag?(:release) %}
-				puts "[debug] set_user_var '#{var}': #{value}"
-			{% end %}
 			@user_vars[down] = value
 		end
 		# `var` is case insensitive
