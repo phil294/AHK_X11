@@ -40,7 +40,7 @@ bin/ahk_x11.dev: lib/configured xdotool/libxdo.a
 # Xinerama etc. are its dependencies - these we keep dynamic.
 # Cannot overwrite CRYSTAL_LIBRARY_PATH because crystal#12380, need link-flag instead.
 	shards build -Dpreview_mt --link-flags="-no-pie \
-        -L'${PWD}/xdotool' \
+        -L'$${PWD}/xdotool' \
         -Wl,-Bstatic -lxdo \
         -Wl,-Bdynamic -lxkbcommon -lXinerama -lXext -lXtst -lXi" \
         $(BUILD_EXTRA_ARGS)
