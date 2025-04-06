@@ -435,6 +435,9 @@
                 <a href="#ClipWait.htm">ClipWait</a>
               </li>
               <li>
+                <a class="x11" href="#DllCall.htm">DllCall</a>
+              </li>
+              <li>
                 <a class="x11" href="#Echo.htm">Echo</a>
               </li>
               <li>
@@ -460,6 +463,12 @@
               </li>
               <li>
                 <a href="#Menu.htm">Menu</a>
+              </li>
+              <li>
+                <a class="x11" href="#NumGet.htm">NumGet</a>
+              </li>
+              <li>
+                <a class="x11" href="#NumPut.htm">NumPut</a>
               </li>
               <li>
                 <a href="#PixelGetColor.htm">PixelGetColor</a>
@@ -490,6 +499,9 @@
               </li>
               <li>
                 <a href="#URLDownloadToFile.htm">URLDownloadToFile</a>
+              </li>
+              <li>
+                <a class="x11" href="#VarSetCapacity.htm">VarSetCapacity</a>
               </li>
             </ul>
           </li>
@@ -2125,6 +2137,10 @@ else
                 <td height="16" class="calibre4">Determines whether invisible windows are "seen" by the script.</td>
               </tr>
               <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#DllCall.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DllCall</a></td>
+                <td height="16" class="calibre4">Calls a function inside a .so system library.</td>
+              </tr>
+              <tr class="calibre3">
                 <td height="16" class="tbd calibre4"><a href="#Drive.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Drive</a></td>
                 <td height="16" class="calibre4">Ejects/retracts the tray in a CD or DVD drive, or sets a drive's volume label. </td>
               </tr>
@@ -2476,6 +2492,14 @@ else
                 <td height="16" class="calibre4">Displays a simple message box with one or more buttons and with optional timeout.</td>
               </tr>
               <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#NumGet.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">NumGet</a></td>
+                <td height="16" class="calibre4">Returns the binary number stored at the specified address+offset.</td>
+              </tr>
+              <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#NumPut.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">NumPut</a></td>
+                <td height="16" class="calibre4">Stores a number in binary format at the specified address+offset.</td>
+              </tr>
+              <tr class="calibre3">
                 <td height="16" class="tbd calibre4"><a href="#OnExit.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">OnExit</a></td>
                 <td height="16" class="calibre4">Specifies a subroutine to run when the script exits.</td>
               </tr>
@@ -2738,6 +2762,10 @@ else
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#URLDownloadToFile.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">URLDownloadToFile</a></td>
                 <td height="16" class="calibre4">Downloads a file from the Internet. </td>
+              </tr>
+              <tr class="calibre3">
+                <td height="16" class="calibre4 x11"><a href="#VarSetCapacity.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">VarSetCapacity</a></td>
+                <td height="16" class="calibre4">Enlarges a variable's holding capacity or frees its memory. Normally, this is necessary only for unusual circumstances such as DllCall.</td>
               </tr>
               <tr class="calibre3">
                 <td height="16" class="calibre4"><a href="#WinActivate.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">WinActivate</a></td>
@@ -10474,15 +10502,15 @@ Loop, %MonitorCount%
           <p class="calibre8">; Make each newly launched thread immediately interruptible:<br class="calibre12" /> Thread, interrupt, 0</p>
         </div>
       </div>
-      <div class="calibreMain">
+      <div class="calibreMain x11">
         <div class="calibreEbookContent">
-          <a id="URLDownloadToFile.htm" href="#URLDownloadToFile.htm">#</a> <h2 class="calibre17">URLDownloadToFile</h2>
+          <a id="DllCall.htm" href="#DllCall.htm">#</a> <h2 class="calibre17">DllCall</h2>
           <hr size="2" class="calibre24" />
-          <p class="calibre8">Downloads a file from the Internet.</p>
+          <p class="calibre8">Calls a function inside a system library <code>.so</code> file.</p>
           <table cellspacing="5" width="100%" class="calibre28">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td height="48" class="calibre4">URLDownloadToFile, URL, Filename </td>
+                <td height="48" class="calibre4">DllCall, OutputVar, LibFile/Function [, Type1, Arg1Var, Type2, Arg2Var, ReturnType]</td>
               </tr>
             </tbody>
           </table>
@@ -10491,32 +10519,199 @@ Loop, %MonitorCount%
           <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
             <tbody class="calibre2">
               <tr class="calibre3">
-                <td width="15%" class="calibre4">URL</td>
-                <td width="85%" class="calibre4">URL of the file to download. For example, http://someorg.org might retrieve the welcome page for that organization. </td>
+                <td class="calibre4">OutputVar</td>
+                <td class="calibre4">The actual value returned by Function. If Function is of a type that does not return a value, the result is an undefined integer. <span class="rm">If Function cannot be called due to an error, the return value is blank (an empty string).</span></td>
               </tr>
               <tr class="calibre3">
-                <td class="calibre4">Filename</td>
-                <td class="calibre4">Name of the file to be created locally, which is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified. Any existing file will be <strong class="calibre14">overwritten</strong> by the new file. </td>
+                <td width="15%" class="calibre4">LibFile/Function</td>
+                <td width="85%" class="calibre4">
+                  <p>
+                    The <span class="rm">DLL or EXE</span> .so file name followed by a backslash and the name of the function. For example: "my_lib/MyFunction" (the file extension ".so" is the default when omitted). If an absolute or relative path like ./path/my-lib.so/myFunction isn't specified, LibFile is assumed to be in the system's system library paths. <span class="rm">Note that DllCall() expects a path with backslashes (\). Forward slashes (/) are not supported.</span> The lib- Prefix at the beginning is also optional. You can not omit the library name altogether, however. Libraries that are set up using GNU linker scripts need to have their full name including version number supplied too currently, such as LibMath: `m/functionName` isn't enough in this case. You need to write `libm.so.6/functionName` instead. <span class="rm">LibFile may be omitted when calling a function that resides in User32.dll, Kernel32.dll, ComCtl32.dll, or Gdi32.dll. For example, "User32\IsWindowVisible" produces the same result as "IsWindowVisible". If no function can be found by the given name, an A (ANSI) or W (Unicode) suffix is automatically appended based on which version of AutoHotkey is running the script. For example, "MessageBox" is the same as "MessageBoxA" in ANSI versions and "MessageBoxW" in Unicode versions. Performance can be dramatically improved when making repeated calls to a DLL by loading it beforehand.</span> <span class="tbd">[v1.0.46.08+]: This parameter may also consist solely of an integer, which is interpreted as the address of the function to call. Sources of such addresses include COM and RegisterCallback().</span>
+                  </p>
+                </td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Type1, Arg1</td>
+                <td class="calibre4">Each of these pairs represents a single parameter to be passed to the function. The number of pairs is unlimited. For Type, see the types table below. For Arg, specify <span class="rm">the value</span> the variable to be passed to the function. The variable's contents will be modified in place before calling the function (except type Ptr). In other words, Type specifies the way the contents of the variable will be interpreted as.</td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4"><span class="rm">Cdecl</span> ReturnType</td>
+                <td class="calibre4"><span class="tbd">If the function returns a 32-bit signed integer (Int), BOOL, or nothing at all, ReturnType may be omitted.</span> Otherwise, specify one of the argument types from the types table below. The asterisk suffix is also supported.</td>
               </tr>
             </tbody>
           </table>
+<p class="calibre8"><strong class="calibre14">Types of Arguments and Return Values</strong></p>
+          <table class="info" style="word-break: normal;">
+<tbody><tr>
+<th>Type</th>
+<th abbr="Descr">Description</th>
+</tr>
+<tr id="str">
+<td>Str</td>
+<td><p>A variable holding a string such as <code>Blue</code>. If the called function modifies the string, the variable's contents will be updated. For example, the following call would convert the contents of <em>MyVar</em> to uppercase in place, assuming libglib is installed (which it usually is): <code class=" highlight">DllCall, , glib-2.0/g_strup, Str, MyVar, Str</code>.</p>
+  <p>However, if the function is designed to store a string larger than a variable's current capacity, ensure that the variable is large enough before calling the function. This can be achieved by calling VarSetCapacity, , MyVar, <span class="num">123</span></code>, where 123 is the length that <em>MyVar</em> must be able to hold.</p>
+</tr>
+<tr>
+  <td>Int64</td>
+  <td>A variable representing a 64-bit integer, whose range is -9223372036854775808 (-0x8000000000000000) to 9223372036854775807 (0x7FFFFFFFFFFFFFFF).</td>
+</tr>
+<tr id="Int">
+  <td>Int</td>
+  <td><p>A variable representing a 32-bit integer (the most common integer type), whose range is -2147483648 (-0x80000000) to 2147483647 (0x7FFFFFFF). An Int is sometimes called a "Long".</p>
+    <p>An Int should also be used for each BOOL argument expected by a function (a BOOL value should be either 1 or 0).</p>
+    <p>An <a href="#unsigned">unsigned</a> Int (UInt) is also used quite frequently, such as for DWORD.</p></td>
+</tr>
+<tr>
+  <td>Short</td>
+  <td>A variable representing a 16-bit integer, whose range is -32768 (-0x8000) to 32767 (0x7FFF). An <a href="#unsigned">unsigned</a> Short (UShort) can be used with functions that expect a WORD.</td>
+</tr>
+<tr>
+  <td>Char</td>
+  <td>A variable representing an 8-bit integer, whose range is -128 (-0x80) to 127 (0x7F). An <a href="#unsigned">unsigned</a> character (UChar) can be used with functions that expect a BYTE.</td>
+</tr>
+<tr>
+  <td>Float</td>
+  <td>A variable representing a 32-bit floating point number, which provides 6 digits of precision.</td>
+</tr>
+<tr>
+  <td>Double</td>
+  <td>A variable representing an 64-bit floating point number, which provides 15 digits of precision.</td>
+</tr>
+<tr id="ptr">
+  <td>Ptr</td>
+  <td><p><span class="ver"></span>: A variable holding a <a href="../Variables.htm#PtrSize">pointer-sized</a> integer, equivalent to Int or Int64 depending on whether the exe running the script is 32-bit or 64-bit. This is the only type that isn't transformed before invoking the library function, so you likely only want to use it for passing on return values from other DllCalls. <i>Ptr</i> should be used for pointers to arrays or structures (such as RECT* or LPPOINT) and almost all handles (such as HWND, HBRUSH or HBITMAP). If the parameter is a pointer to a single numeric value such as LPDWORD or int*, generally the * or P suffix can be used instead of "Ptr".</p>
+  <p class="tbd"><i>Ptr</i> can also be used with the * or P suffix; it should be used with functions that output a pointer via LPVOID* or similar.</p>
+  <p class="tbd"><i>UPtr</i> is also valid, but is only unsigned in 32-bit builds as AutoHotkey does not support unsigned 64-bit integers.</p>
+  <p class="note"><strong>Note:</strong> To pass a <strong>NULL</strong> handle or pointer, pass the integer 0. (?unsure)</p></td>
+</tr>
+<tr id="asterisk">
+  <td>* or P<br>
+    (suffix)</td>
+  <td><p>Append an asterisk (with optional preceding space) to any of the above types to cause the address of the argument to be passed rather than the value itself (the called function must be designed to accept it). Since the value of such an argument might be modified by the function, whenever a naked variable is passed as the argument, that variable's contents will be updated. For example, the following call would pass the contents of MyVar to MyFunction by address, but would also update MyVar to reflect any changes made to it by MyFunction: <code class=" highlight"><span class="bif"><a href="https://www.autohotkey.com/docs/v1/static/../lib/DllCall.htm">DllCall</a></span><span class="str">, , MyDll\MyFunction</span>, <span class="str">"Int*"</span>, MyVar</code>.</p>
+    <p class="rm">In general, an asterisk is used whenever a function has an argument type or return type that starts with "LP". The most common example is LPDWORD, which is a pointer to a DWORD. Since a DWORD is an unsigned 32-bit integer, use "UInt*" or "UIntP" to represent LPDWORD. An asterisk should not be used for string types such as LPTSTR, pointers to structures such as LPRECT, or arrays; for these, <a href="#str">"Str"</a> or "Ptr" should be used, depending on whether you pass a variable or its address.</p>
+    <p class="note rm"><strong>Note:</strong> "Char*" is not the same as <a href="#str">"Str"</a> because "Char*" passes the address of an 8-bit number, whereas <a href="#str">"Str"</a> passes the address of a series of characters which may be either 8-bit (ANSI) or 16-bit (Unicode), depending on the version of AutoHotkey. Similarly, "UInt*" passes the address of a 32-bit number, so should not be used if the function expects an array of values or a structure larger than 32 bits.</p>
+    <p>Since variables in AutoHotkey have no fixed type, the address passed to the function points to temporary memory rather than the variable itself. It is not necessary to call <a href="VarSetCapacity.htm">VarSetCapacity()</a> on the variable as DllCall will update it correctly after the function returns.</p>
+    </td>
+</tr>
+<tr id="unsigned">
+  <td>U (prefix)</td>
+  <td><p>Prepend the letter U to any of the integer types above to interpret it as an unsigned integer (UInt64, UInt, UShort, and UChar). Strictly speaking, this is necessary only for return values and <a href="#asterisk">asterisk variables</a> because it does not matter whether an argument passed by value is unsigned or signed (except for Int64).</p>
+    <p class="tbd">If a negative integer is specified for an unsigned argument, the integer wraps around into the unsigned domain. For example, when -1 is sent as a UInt, it would become 0xFFFFFFFF.</p>
+    <p class="rm"><em>Unsigned</em> 64-bit integers produced by a function are not supported. Therefore, to work with numbers greater or equal to 0x8000000000000000, omit the U prefix and interpret any negative values received from the function as large integers. For example, a function that yields -1 as an Int64 is really yielding 0xFFFFFFFFFFFFFFFF if it is designed to yield a UInt64.</p>
+    <p>For parameters of type UInt64, large unsigned values may be passed as strings. For all smaller integer types without the * or P suffix, or when passing pure 64-bit integers to the function, signed vs. unsigned makes no difference due to the use of two's complement to represent signed integers. However, using the U prefix for values intended to be unsigned may improve clarity.</p></td>
+</tr>
+</tbody></table>
           <p class="calibre8"> </p>
           <p class="calibre8"><strong class="calibre14">ErrorLevel</strong></p>
-          <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
-          <p class="calibre8">  </p>
+          <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to one of the following values to indicate whether the call succeeded or failed.</p>
+          <p class="calibre8"> 
+          0: Success.<br>
+-2: The return type or one of the specified arg types is invalid. This error can also be caused by passing an expression that evaluates to a number to a string (str) argument.<br>
+-3: The specified DllFile could not be accessed or loaded. If no explicit path was specified for DllFile, the file must exist in the system's library paths or be specified by relative or absolute path, e.g. ./my/libs/libmylib.so/myfunction. This error might also occur if the user lacks permission to access the file.<br>
+-4: The specified function could not be found inside the DLL.<br>
+ </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
-          <p class="calibre8">The download might appear to succeed even when the remote file doesn't exist. This is because many web servers send an error page instead of the missing file. This error page is what will be saved in place of <em class="calibre21">Filename</em>.</p>
-          <p class="calibre8 rm">Due to the nature of this command, there might be some keyboard or mouse lag (reduced responsiveness) during the download if the script executing it has the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard</a> and/or <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">mouse</a> hooks installed. This limitation will be resolved in a future release, if possible.</p>
-          <p class="calibre8 rm">Internet Explorer 3 or greater must be installed for this function to work. Firewalls or the presence of multiple network adapters may cause this function to fail. Also, some websites may block such downloads.</p>
-          <p class="calibre8 rm">The file is obtained from IE cache whenever possible. You might be able to force a (re)download from the Internet by supplying a fake cgi parameter, for example: <em class="calibre21">"http://.../test.exe?fakeParam=42" </em></p>
-          <p class="calibre8 rm">Remember that backslash (\) is used within <em class="calibre21">Filename, </em>in contrast to <em class="calibre21">URL</em>, which uses forward-slash (/).</p>
-          <p class="calibre8"> </p>
-          <p class="calibre8"><strong class="calibre14">Related</strong></p>
-          <p class="calibre8"><a href="#FileCopy.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileCopy</a></p>
-          <p class="calibre8"> </p>
+          <p class="calibre8">Preloading a .so or calling a memory address like with DllCall on Windows is not possible and not necessary. Dlls are loaded only once internally. <br> Also read <a href="https://www.autohotkey.com/docs/v1/lib/DllCall.htm">the windows docs on DllCall</a> for informations on structures and arrays. Most stuff applies here too. You'll likely want to use NumGet and NumPut at some time which are available.</p>
           <p class="calibre8"><strong class="calibre14">Examples</strong></p>
-          <p class="calibre8">URLDownloadToFile, http://www.someorg.org, /tmp/SomeOrg's Welcome.htm</p>
-          <p class="calibre8">URLDownloadToFile, http://someorg.org/archive.zip, /tmp/SomeOrg's Archive.zip</p>
+          <p>
+            <pre>
+pi = 3.14
+DllCall, cosine, libm.so.6/cos, Double, pi, Double
+MsgBox, Cosine of %pi% is %cosine%
+            </pre>
+          </p>
+          <p>
+            <pre>
+; Printing something to standard out (also possible with AHK_X11-only command Echo):
+text = abc`n
+DllCall, , libc.so.6/printf, Str, text
+            </pre>
+          </p>
+          <p>
+            <pre>
+; Advanced example, somewhat pointless:
+; Creating a very basic window using low-level X11 API that shows a few rectangles and can be clicked.
+; Docs: https://www.x.org/releases/current/doc/libX11/libX11/libX11.html
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+win_x = 10
+win_y = 10
+win_w = 400
+win_h = 300
+win_border_width = 1
+rect0 = 3
+rect1 = 50, 50, 100, 80 ; x, y, w, h
+rect2 = 200, 100, 50, 120
+rect3 = 300, 50, 75, 75
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+NULL = `0`0`0`0`0`0`0`0
+ExposureMask = 32768 ; See: /usr/include/X11/X.h
+ButtonPressMask = 4
+Expose = 12
+ButtonPress = 4
+EnvGet, display_name, DISPLAY
+DllCall, display, X11/XOpenDisplay, Str, display_name, Ptr
+
+If ErrorLevel != 0
+{
+	MsgBox, 48, DllCall Demo, Could not invoke X11 library. ErrorLevel: %ErrorLevel%
+	Return
+}
+If display = %NULL%
+{
+	MsgBox, 48, DllCall Demo, Cannot open Display "%display_name%"!
+	Return
+}
+DllCall, screen, X11/XDefaultScreen, Ptr, display, Ptr
+DllCall, root_window, X11/XRootWindow, Ptr, display, Ptr, screen, UInt64
+DllCall, black_pixel, X11/XBlackPixel, Ptr, display, Ptr, screen, UInt64
+DllCall, white_pixel, X11/XWhitePixel, Ptr, display, Ptr, screen, UInt64
+DllCall, window, X11/XCreateSimpleWindow, Ptr, display, UInt64, root_window, Int, win_x, Int, win_y, Int, win_w, Int, win_h, Int, win_border_width, UInt64, black_pixel, UInt64, white_pixel, UInt64
+gc_valuemask = 0
+DllCall, gc, X11/XCreateGC, Ptr, display, UInt64, window, UInt64, gc_valuemask, Ptr, NULL, Ptr
+DllCall, , X11/XSetForeground, Ptr, display, Ptr, gc, UInt64, black_pixel
+input_mask = %ExposureMask%
+input_mask += %ButtonPressMask%
+DllCall, , X11/XSelectInput, Ptr, display, UInt64, window, UInt64, input_mask
+DllCall, , X11/XMapWindow, Ptr, display, UInt64, window
+Loop
+{
+	VarSetCapacity, , event, 192
+	DllCall, , X11/XNextEvent, Ptr, display, Ptr*, event
+	NumGet, event_type, event, 0, Int ; See: https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Event_Structures
+	If event_type = %Expose% ; https://www.x.org/releases/current/doc/libX11/libX11/libX11.html#Expose_Events
+	{
+		rect_array_size = 8 ; 2B per x/y/w/y
+		rect_array_size *= %rect0%
+		VarSetCapacity, , rect_array, %rect_array_size%
+		offset = 0
+		Loop, %rect0%
+		{
+			StringTrimLeft, rect, rect%A_Index%, 0
+			StringSplit, rect_prop, rect, `,, %A_Space%
+			Loop, 4
+			{
+				StringTrimLeft, prop, rect_prop%A_Index%, 0
+				NumPut, %prop%, rect_array, %offset%, Short
+				offset += 2
+			}
+		}
+		DllCall, , X11/XDrawRectangles, Ptr, display, UInt64, window, Ptr, gc, Ptr*, rect_array, Int, rect0
+		DllCall, , X11/XFlush, Ptr, display
+	}
+	Else If event_type = %ButtonPress%
+	{
+		MsgBox, Button Press! Will exit application.
+		Break
+	}
+	sleep 500
+}
+DllCall, , X11/XFreeGC, Ptr, display, Ptr, gc
+DllCall, , X11/XDestroyWindow, Ptr, display, UInt64, window
+DllCall, , X11/XCloseDisplay, Ptr, display
+            </pre>
+          </p>
         </div>
       </div>
       <div class="calibreMain">
