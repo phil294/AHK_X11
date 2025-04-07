@@ -14,7 +14,7 @@ pause() {
 echo update readme
 pause
 
-if ! [ -z "$(sc git status --porcelain)" ]; then
+if ! [ -z "$(git status --porcelain)" ]; then
     echo 'sc git working tree not clean'
     exit 1
 fi
