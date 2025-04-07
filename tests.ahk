@@ -563,7 +563,7 @@ sleep 20
 goto l_send_tests
 			test_send:
 				send %to_send%
-				sleep 50
+				sleep 100
 				gui submit, nohide
 				if to_send_output =
 					to_send_output = %to_send%
@@ -751,6 +751,7 @@ hokey_send_raw = raw
 gosub test_hotkey_send
 hokey_send_raw =
 
+; TODO: these three tests are very unreliable
 key = *s
 hotkey_send = {blind}v
 	xdotool_run = key shift+s
