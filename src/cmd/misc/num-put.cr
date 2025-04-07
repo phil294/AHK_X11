@@ -7,7 +7,10 @@ class Cmd::Misc::NumPut < Cmd::Base
 	def run(thread, args)
         input = args[0]
 		user_var = thread.runner.get_user_var(args[1])
-		return if ! user_var
+		if ! user_var || user_var.read_only?
+			user_var = Bytes.new(8)
+			thread.runner.set_user_var(args[1], user_var)
+		end
 		offset = 0
 		type_str = "uptr"
 		if args.size == 4

@@ -1065,7 +1065,7 @@ if %MyVar% &gt; %MyVarLimit%  ; Wrong because MyVar should not have percent sign
           <p class="calibre8"> </p>
           <p class="style1"><a id="TutorialHelp.htm__Files" href="#TutorialHelp.htm__Files" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Manipulating files and folders</p>
           <p class="calibre8">To append text to a file, consider the following example. Note that it uses `n (linefeed) to start a new line of text afterward:<br class="calibre12" />
-            <a href="#FileAppend.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileAppend</a>, A line of text to append.`n, C:\My Documents\My Text File.txt
+            <a href="#FileAppend.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileAppend</a>, A line of text to append.`n, %A_MyDocuments%/My Text File.txt
           </p>
           <p class="calibre8">Some of the other commonly used file and folder commands are:</p>
           <ul class="calibre10">
@@ -10003,6 +10003,95 @@ MsgBox, You selected "%A_ThisMenuItem%" in menu "%A_ThisMenu%".
 return
 
 </pre>
+        </div>
+      </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="NumGet.htm" href="#NumGet.htm">#</a> <h2 class="calibre17">NumGet</h2>
+          <hr size="2" class="calibre24" />
+          <table cellspacing="5" width="100%" class="calibre28">
+          <p class="calibre8">Returns the binary number stored at the specified address+offset.</p>
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">NumGet, OutVar, Var [, Offset, Type]<br>NumGet, OutVar, Var [, Type]</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">OutVar</td>
+                <td width="85%" class="calibre4">
+                  <p class="calibre8">The variable name to store the number at the specified address+offset.</p>
+                </td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Var </td>
+                <td class="calibre4">A <span class="tbd">memory address or</span> variable. If VarOrAddress is a variable such as MyVar, the address of the variable's string buffer is used. <span class="tbd">This is usually equivalent to passing &MyVar, but omitting the "&" performs better and ensures that the target address + offset is valid.</span> </td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Offset</td>
+                <td class="calibre4">If blank or omitted (or when using 2-parameter mode), it defaults to 0. Otherwise, specify an offset in bytes which is added to VarOrAddress to determine the target address.</td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Type</td>
+                <td class="calibre4">
+                  If blank or omitted, it defaults to UPtr. Otherwise, specify UInt, Int, Int64, Short, UShort, Char, UChar, Double, Float, Ptr or UPtr.<br>
+                  <span class="rm">Unsigned 64-bit integers are not supported, as AutoHotkey's native integer type is Int64. Therefore, to work with numbers greater than or equal to 0x8000000000000000, omit the U prefix and interpret any negative values as large integers. For example, a value of -1 as an Int64 is really 0xFFFFFFFFFFFFFFFF if it is intended to be a UInt64. On 64-bit builds, UPtr is equivalent to Int64.</span><br>
+                  <span class="rm">Unlike DllCall(), these must be enclosed in quotes when used as literal strings.</span><br>
+                  For details see <a href="#DllCall.htm">DllCall Types</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8">If only two parameters are present, the second parameter can be either Offset or Type. For example, "NumGet, num, var, int" is valid.</p>
+        </div>
+      </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="NumPut.htm" href="#NumPut.htm">#</a> <h2 class="calibre17">NumPut</h2>
+          <hr size="2" class="calibre24" />
+          <table cellspacing="5" width="100%" class="calibre28">
+          <p class="calibre8">Stores a number in binary format at the specified address+offset.</p>
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">NumPut, Number, Var [, Offset, Type]<br>NumPut, Number, Var [, Type]</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">Number</td>
+                <td width="85%" class="calibre4">
+                  <p class="calibre8">The number to store.</p>
+                </td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Var </td>
+                <td class="calibre4">A <span class="tbd">memory address or</span> variable. If VarOrAddress is a variable such as MyVar, the address of the variable's string buffer is used. <span class="tbd">This is usually equivalent to passing &MyVar, but omitting the "&" performs better and ensures that the target address + offset is valid.</span> </td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Offset</td>
+                <td class="calibre4">If blank or omitted (or when using 2-parameter mode), it defaults to 0. Otherwise, specify an offset in bytes which is added to VarOrAddress to determine the target address.</td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Type</td>
+                <td class="calibre4">
+                  If blank or omitted, it defaults to UPtr. Otherwise, specify UInt, Int, Int64, Short, UShort, Char, UChar, Double, Float, Ptr or UPtr.<br>
+                  <span class="rm">Unsigned 64-bit integers are not supported, as AutoHotkey's native integer type is Int64. Therefore, to work with numbers greater than or equal to 0x8000000000000000, omit the U prefix and interpret any negative values as large integers. For example, a value of -1 as an Int64 is really 0xFFFFFFFFFFFFFFFF if it is intended to be a UInt64. On 64-bit builds, UPtr is equivalent to Int64.</span><br>
+                  <span class="rm">Unlike DllCall(), these must be enclosed in quotes when used as literal strings.</span><br>
+                  For details see <a href="#DllCall.htm">DllCall Types</a>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8">If only two parameters are present, the second parameter can be either Offset or Type. For example, "NumPut, 123, myVar, int" is valid.</p>
+          <p class="tbd">If an integer is too large to fit in the specified Type, its most significant bytes are ignored; e.g. NumPut(257, var, 0, "Char") would store the number 1.</p>
         </div>
       </div>
       <div class="calibreMain">
