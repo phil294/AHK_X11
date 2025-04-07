@@ -20,7 +20,6 @@ class Util::AhkBinVar
 	# In and out: force-casted as Bytes (Slice(UInt8)). Out: Heap
 	def self.str_to_type(str : Bytes, type : Type) : Bytes
 		as_string = ::String.new(str)
-		p! as_string
 		case type
 			when Type.pointer then return str
 			when Type.sint64 then return Bytes.new(Slice(Int64).new(1, as_string.to_i64).to_unsafe.as(Pointer(UInt8)), sizeof(Int64))
