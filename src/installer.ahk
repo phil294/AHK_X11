@@ -9,7 +9,7 @@ If A_IsAdmin = 1
 }
 IfExist, /usr/bin/ahk_x11
 {
-	MsgBox, 4,, It seems like AHK_X11 is already installed globally. By continuing, this version will also be installed, but locally for the current user. Two simultaneous installations ins probably a bad idea. Are you sure you want to continue?
+	MsgBox, 4,, AHK_X11 is installed and seems to be working well. Congrats!`n`nTo learn what to do next, please read "Creating a script" at`nhttps://phil294.github.io/AHK_X11/`n`nPlease click NO below.`n`n--------------------------------------------`n`nOtherwise, if you click YES, AHK_X11 will be installed ANOTHER TIME, but locally for the current user. Two simultaneous installations ins PROBABLY A BAD IDEA. Are you sure you want to continue?
 	IfMsgBox, No
 		ExitApp
 	IfMsgBox, Cancel
@@ -23,10 +23,10 @@ binary_dir = %A_Home%/.local/bin
 binary_path = %binary_dir%/ahk_x11.AppImage
 app_logo = /tmp/tmp_ahk_x11_logo.png
 
-Gui, Add, Text, x180, %app_comment%
-Gui, Add, Text, xm0 y100, Installer`n`nNo script specified to execute. You can use AHK_X11 from command line if you want.`nOtherwise, click INSTALL below (recommended). This will install the binary and associate`nall .ahk files with it,so you can double click your scripts for execution.
-Gui, Add, Button, x180 y210 gInstall, %A_Space%%A_Space%%A_Space%->  INSTALL  <-%A_Space%%A_Space%%A_Space%
-Gui, Add, Button, x180 y250 gUninstall, Uninstall
+Gui, Add, Text, xm0, %app_comment%
+Gui, Add, Text, xm0 y50, This is the installer.`nDocumentation: https://phil294.github.io/AHK_X11/#TutorialHelp.htm`n`nIf you click INSTALL below (recommended), this will install the binary and associate`nall .ahk files with it,so you can double click your scripts for execution.
+Gui, Add, Button, xm0 y200 gInstall, Click here to Install
+Gui, Add, Button, xm0 y235 gUninstall, Click here to Uninstall
 Gui, Show, w300 h280, AHK_X11 Installer
 Sleep, 9999999999999 ; no repl
 Return
@@ -43,6 +43,7 @@ Install:
 		IfMsgBox, No
 			ExitApp
 	} else {
+		msgbox FileCopy, %A_ScriptFullPath%, %binary_path%, 1
 		FileCopy, %A_ScriptFullPath%, %binary_path%, 1
 	}
 
