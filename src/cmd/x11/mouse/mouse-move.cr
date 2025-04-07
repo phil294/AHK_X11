@@ -3,9 +3,6 @@ class Cmd::X11::Mouse::MouseMove < Cmd::Base
 	def self.min_args; 2 end
 	def self.max_args; 4 end
 	def run(thread, args)
-		x_current, y_current, screen = thread.runner.display.x_do.mouse_location
-		x = args[0]?.try &.to_i? || x_current
-		y = args[1]?.try &.to_i? || y_current
 		# Regarding speed: In Win AHK, speed is realized by moving the mouse step-wise,
 		# with each step being 32px in w/h at least (but also somehow it works differently?!)
 		# https://github.com/AutoHotkey/AutoHotkey/blob/e18a857e2d6d57d73643fbdd57d739a88ea499e5/source/keyboard_mouse.cpp#L2330
@@ -16,10 +13,18 @@ class Cmd::X11::Mouse::MouseMove < Cmd::Base
 		# (every xdo request takes ~30ms itself already). So a PR to xdotool implementing steps
 		# would be necessary.
 		relative = args[3]?.try &.downcase == "r"
-		thread.runner.display.pause do
-			if relative
+		# Use strict: false so that floats get truncated instead of being an error.
+		if relative
+			x = args[0]?.try &.to_i?(strict: false) || 0
+			y = args[1]?.try &.to_i?(strict: false) || 0
+			thread.runner.display.pause do
 				thread.runner.display.x_do.move_mouse x, y
-			else
+			end
+		else
+			x_current, y_current, screen = thread.runner.display.x_do.mouse_location
+			x = args[0]?.try &.to_i?(strict: false) || x_current
+			y = args[1]?.try &.to_i?(strict: false) || y_current
+			thread.runner.display.pause do
 				if thread.settings.coord_mode_mouse == ::Run::CoordMode::RELATIVE
 					x, y = Cmd::X11::Window::Util.coord_relative_to_screen(thread, x, y)
 				end
