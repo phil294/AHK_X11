@@ -10637,8 +10637,8 @@ Loop, %MonitorCount%
 </tr>
 <tr id="str">
 <td>Str</td>
-<td><p>A variable holding a string such as <code>Blue</code>. If the called function modifies the string, the variable's contents will be updated. For example, the following call would convert the contents of <em>MyVar</em> to uppercase in place, assuming libglib is installed (which it usually is): <code class=" highlight">DllCall, , glib-2.0/g_strup, Str, MyVar, Str</code>.</p>
-  <p>However, if the function is designed to store a string larger than a variable's current capacity, ensure that the variable is large enough before calling the function. This can be achieved by calling VarSetCapacity, , MyVar, <span class="num">123</span></code>, where 123 is the length that <em>MyVar</em> must be able to hold.</p>
+<td><p>A variable holding a string such as <code>Blue</code>. If the called function modifies the string, the variable's contents will be updated. For example, the following call would convert the contents of <em>MyVar</em> to uppercase in place, assuming libglib is installed (which it usually is): <code class="highlight">DllCall, , glib-2.0/g_strup, Str, MyVar, Str</code>.</p>
+  <p>However, if the function is designed to store a string larger than a variable's current capacity, ensure that the variable is large enough before calling the function. This can be achieved by calling VarSetCapacity, , MyVar, <span class="num">123</span>, where 123 is the length that <em>MyVar</em> must be able to hold.</p>
 </tr>
 <tr>
   <td>Int64</td>
@@ -10702,21 +10702,17 @@ Loop, %MonitorCount%
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
           <p class="calibre8">Preloading a .so or calling a memory address like with DllCall on Windows is not possible and not necessary. Dlls are loaded only once internally. <br> Also read <a href="https://www.autohotkey.com/docs/v1/lib/DllCall.htm">the windows docs on DllCall</a> for informations on structures and arrays. Most stuff applies here too. You'll likely want to use NumGet and NumPut at some time which are available.</p>
           <p class="calibre8"><strong class="calibre14">Examples</strong></p>
-          <p>
             <pre>
+; Cosine: Also possible with command Transform
 pi = 3.14
 DllCall, cosine, libm.so.6/cos, Double, pi, Double
 MsgBox, Cosine of %pi% is %cosine%
             </pre>
-          </p>
-          <p>
             <pre>
 ; Printing something to standard out (also possible with AHK_X11-only command Echo):
 text = abc`n
 DllCall, , libc.so.6/printf, Str, text
             </pre>
-          </p>
-          <p>
             <pre>
 ; Advanced example, somewhat pointless:
 ; Creating a very basic window using low-level X11 API that shows a few rectangles and can be clicked.
@@ -10800,7 +10796,6 @@ DllCall, , X11/XFreeGC, Ptr, display, Ptr, gc
 DllCall, , X11/XDestroyWindow, Ptr, display, UInt64, window
 DllCall, , X11/XCloseDisplay, Ptr, display
             </pre>
-          </p>
         </div>
       </div>
       <div class="calibreMain x11">
