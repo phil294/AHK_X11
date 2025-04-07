@@ -92,7 +92,7 @@ install-assets:
 # Setting a default ahk_x11.desktop for mime application/x-ahk_x11 seems to not really be possible by standard and it also would be too intrusive probably
 
 uninstall:
-	rm -f $(DESTDIR)$(PREFIX)/bin/ahk_x11*
+	rm -f $(DESTDIR)$(PREFIX)/bin/ahk_x11
 	rm -f $(DESTDIR)$(PREFIX)/share/icons/hicolor/48x48/mimetypes/application-x-ahk_x11.png
 	rm -f $(DESTDIR)$(PREFIX)/share/mime/packages/ahk_x11-mime.xml
 	rm -f $(DESTDIR)$(PREFIX)/share/mime/application/x-ahk_x11.xml
