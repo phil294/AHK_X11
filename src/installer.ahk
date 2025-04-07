@@ -43,7 +43,6 @@ Install:
 		IfMsgBox, No
 			ExitApp
 	} else {
-		msgbox FileCopy, %A_ScriptFullPath%, %binary_path%, 1
 		FileCopy, %A_ScriptFullPath%, %binary_path%, 1
 	}
 
