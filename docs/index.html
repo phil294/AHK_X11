@@ -10803,6 +10803,99 @@ DllCall, , X11/XCloseDisplay, Ptr, display
           </p>
         </div>
       </div>
+      <div class="calibreMain x11">
+        <div class="calibreEbookContent">
+          <a id="VarSetCapacity.htm" href="#VarSetCapacity.htm">#</a> <h2 class="calibre17">VarSetCapacity</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Enlarges a variable's holding capacity or frees its memory. Normally, this is necessary only for unusual circumstances such as DllCall.</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">VarSetCapacity, GrantedCapacity, TargetVar [, RequestedCapacity, FillByte] </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">GrantedCapacity</td>
+                <td width="85%" class="calibre4">The number of bytes that TargetVar can hold after the operation, which will be <span class="rm">greater than or</span> equal to RequestedCapacity. If TargetVar is not a valid variable name (such as a literal string or number), 0 is returned. <span class="rm">If the system has insufficient memory to make the change (very rare), an error dialog is displayed and the current capacity is returned - this behaviour may change in a future version.</span></td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">TargetVar</td>
+                <td class="calibre4">A reference to a variable. For example: VarSetCapacity, , MyVar, 1000. This can also be a dynamic variable such as Array%i%.</td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">RequestedCapacity</td>
+                <td class="calibre4">
+                  If omitted, the variable's current capacity will be returned and its contents will not be altered. Otherwise, anything currently in the variable is lost (the variable becomes blank).<br>
+                  Specify for RequestedCapacity the number of bytes that the variable should be able to hold after the adjustment. <span class="rm">For Unicode strings, this should be the length times two.</span> RequestedCapacity does not include the internal zero terminator. For example, specifying 1 would allow the variable to hold up to one byte in addition to its internal terminator. Note: the variable will auto-expand if the script assigns it a larger value later.<br>
+                  <span class="rm">Since this function is often called simply to ensure the variable has a certain minimum capacity, for performance reasons, it shrinks the variable only when RequestedCapacity is 0. In other words, if the variable's capacity is already greater than RequestedCapacity, it will not be reduced (but the variable will still made blank for consistency).</span><br>
+                  <span class="rm">
+                    Therefore, to explicitly shrink a variable, first free its memory with VarSetCapacity(Var, 0) and then use VarSetCapacity(Var, NewCapacity) -- or simply let it auto-expand from zero as needed.<br>
+                    For performance reasons, freeing a variable whose previous capacity was less than 64 characters (128 bytes in Unicode builds) might have no effect because its memory is of a permanent type. In this case, the current capacity will be returned rather than 0.<br>
+                    For performance reasons, the memory of a variable whose capacity is less than 4096 bytes is not freed by storing an empty string in it (e.g. Var := ""). However, VarSetCapacity(Var, 0) does free it.<br>
+                  </span>
+                  <span class="tbd">[v1.0.44.03+]: Specify -1 for RequestedCapacity to update the variable's internally-stored string length to the length of its current contents. This is useful in cases where the variable has been altered indirectly, such as by passing its address via DllCall(). In this mode, VarSetCapacity() returns the length in bytes rather than the capacity.</span></td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">FillByte</td>
+                <td class="calibre4">This parameter is normally omitted, in which case the memory of the target variable is not initialized (instead, the variable is simply made blank as described above). Otherwise, specify a number between 0 and 255. Each byte in the target variable's memory area (its current capacity, which might be greater than RequestedCapacity) is set to that number. Zero is by far the most common value, which is useful in cases where the variable will hold raw binary data such as a DllCall structure.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8 tbd">In addition to its uses described at DllCall(), this function can also be used to enhance performance when building a string by means of gradual concatenation. This is because multiple automatic resizings can be avoided when you have some idea of what the string's final length will be. In such a case, RequestedCapacity need not be accurate: if the capacity is too small, performance is still improved and the variable will begin auto-expanding when the capacity has been exhausted. If the capacity is too large, some of the memory is wasted, but only temporarily because all the memory can be freed after the operation by means of VarSetCapacity(Var, 0) or Var := "".</p>
+        </div>
+      </div>
+      <div class="calibreMain">
+        <div class="calibreEbookContent">
+          <a id="URLDownloadToFile.htm" href="#URLDownloadToFile.htm">#</a> <h2 class="calibre17">URLDownloadToFile</h2>
+          <hr size="2" class="calibre24" />
+          <p class="calibre8">Downloads a file from the Internet.</p>
+          <table cellspacing="5" width="100%" class="calibre28">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td height="48" class="calibre4">URLDownloadToFile, URL, Filename </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Parameters</strong></p>
+          <table border="1" bordercolor="#C0C0C0" cellpadding="3" cellspacing="0" width="100%" class="calibre1">
+            <tbody class="calibre2">
+              <tr class="calibre3">
+                <td width="15%" class="calibre4">URL</td>
+                <td width="85%" class="calibre4">URL of the file to download. For example, http://someorg.org might retrieve the welcome page for that organization. </td>
+              </tr>
+              <tr class="calibre3">
+                <td class="calibre4">Filename</td>
+                <td class="calibre4">Name of the file to be created locally, which is assumed to be in <a href="#Variables.htm__WorkingDir" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">%A_WorkingDir%</a> if an absolute path isn't specified. Any existing file will be <strong class="calibre14">overwritten</strong> by the new file. </td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">ErrorLevel</strong></p>
+          <p class="calibre8"><a href="#ErrorLevel.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ErrorLevel</a> is set to 1 if there was a problem or 0 otherwise.</p>
+          <p class="calibre8">  </p>
+          <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
+          <p class="calibre8">The download might appear to succeed even when the remote file doesn't exist. This is because many web servers send an error page instead of the missing file. This error page is what will be saved in place of <em class="calibre21">Filename</em>.</p>
+          <p class="calibre8 rm">Due to the nature of this command, there might be some keyboard or mouse lag (reduced responsiveness) during the download if the script executing it has the <a href="#h_InstallKeybdHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">keyboard</a> and/or <a href="#h_InstallMouseHook.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">mouse</a> hooks installed. This limitation will be resolved in a future release, if possible.</p>
+          <p class="calibre8 rm">Internet Explorer 3 or greater must be installed for this function to work. Firewalls or the presence of multiple network adapters may cause this function to fail. Also, some websites may block such downloads.</p>
+          <p class="calibre8 rm">The file is obtained from IE cache whenever possible. You might be able to force a (re)download from the Internet by supplying a fake cgi parameter, for example: <em class="calibre21">"http://.../test.exe?fakeParam=42" </em></p>
+          <p class="calibre8 rm">Remember that backslash (\) is used within <em class="calibre21">Filename, </em>in contrast to <em class="calibre21">URL</em>, which uses forward-slash (/).</p>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Related</strong></p>
+          <p class="calibre8"><a href="#FileCopy.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">FileCopy</a></p>
+          <p class="calibre8"> </p>
+          <p class="calibre8"><strong class="calibre14">Examples</strong></p>
+          <p class="calibre8">URLDownloadToFile, http://www.someorg.org, /tmp/SomeOrg's Welcome.htm</p>
+          <p class="calibre8">URLDownloadToFile, http://someorg.org/archive.zip, /tmp/SomeOrg's Archive.zip</p>
+        </div>
+      </div>
       <div class="calibreMain">
         <div class="calibreEbookContent">
           <a id="ControlClick.htm" href="#ControlClick.htm">#</a> <h2 class="calibre17">ControlClick</h2>
@@ -18422,8 +18515,8 @@ b::a</pre>
 <p>You can try out any of these examples by copying them into a new text file such as "Remap.ahk", then launching the file.</p>
 <p>See the <a href="../KeyList.htm">Key List</a> for a complete list of key and mouse button names.</p>
 <h2 id="remarks">Remarks</h2>
-<p>The directives <a href="../lib/_IfWinActive.htm">#IfWinActive/Exist</a> can be used to make selected remappings active only in the windows you specify. For example:</p>
-<pre>#IfWinActive ahk_class Notepad
+<p class="tbd">The directives <a href="../lib/_IfWinActive.htm">#IfWinActive/Exist</a> can be used to make selected remappings active only in the windows you specify. For example:</p>
+<pre class="tbd">#IfWinActive ahk_class Notepad
 a::b  <em>; Makes the 'a' key send a 'b' key, but only in Notepad.</em>
 #IfWinActive  <em>; This puts subsequent remappings and hotkeys in effect for all windows.</em></pre>
 <p>Remapping a key or button is "complete" in the following respects:</p>
