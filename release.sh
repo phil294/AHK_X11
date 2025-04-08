@@ -41,7 +41,7 @@ pause
 
 version=$(shards version)
 
-rm -f ahk_x11.AppImage bin/ahk_x11 bin/ahk_x11.dev
+rm -f ahk_x11.AppImage ahk_x11.AppImage.release bin/ahk_x11 bin/ahk_x11.dev
 docker run --rm -it -v /b/ahk_x11:/a -w /a --privileged ahk_x11-builder-ubuntu.20.04-crystal-1.11 \
     make ahk_x11.AppImage
 
@@ -63,7 +63,7 @@ echo test installers
 pause
 
 sc git fetch
-release_message=$(sc git log --reverse "$(sc git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/') ||:
+release_message=$(git log --reverse "$(git describe --tags --abbrev=0)".. --pretty=format:"%h___%B" |grep . |sed -E 's/^([0-9a-f]{6,})___(.)/- [`\1`](https:\/\/github.com\/phil294\/ahk_x11\/commit\/\1) \U\2/') ||:
 
 echo edit release message
 pause
