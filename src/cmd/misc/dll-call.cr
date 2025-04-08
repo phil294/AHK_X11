@@ -50,7 +50,10 @@ class Cmd::Misc::DllCall < Cmd::Base
 		library = split[...-1].join("/")
 		if ! @@loader.loaded_libraries.includes? library
 			loaded = @@loader.load_library? library
-			return "-3" if ! loaded
+			if ! loaded
+				# return "-3"
+				raise Crystal::Loader::LoadError.new_dl_error "cannot load '#{library}'"
+			end
 		end
 
 		call_interface = Crystal::FFI::CallInterface.new return_param.type, params.map &.type

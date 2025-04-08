@@ -10696,7 +10696,7 @@ Loop, %MonitorCount%
           <p class="calibre8"> 
           0: Success.<br>
 -2: The return type or one of the specified arg types is invalid. This error can also be caused by passing an expression that evaluates to a number to a string (str) argument.<br>
--3: The specified DllFile could not be accessed or loaded. If no explicit path was specified for DllFile, the file must exist in the system's library paths or be specified by relative or absolute path, e.g. ./my/libs/libmylib.so/myfunction. This error might also occur if the user lacks permission to access the file.<br>
+-3: The specified DllFile could not be accessed or loaded. If no explicit path was specified for DllFile, the file must exist in the system's library paths or be specified by relative or absolute path, e.g. ./my/libs/libmylib.so/myfunction. This error might also occur if the user lacks permission to access the file. NOTE: Currently, this error level is never set. Instead, an error pop up is shown and the thread exits. Some libraries need their dependencies to be loaded first. For example, if you're loading something from `libnotify` and the error says `undefined symbol: g_once_init_leave_pointer`, this means that you need to load `libglib-2.0` beforehand. You can do so by running some harmless function from said lib first: `DllCall, , glsb-2.0/glib_check_version`.<br>
 -4: The specified function could not be found inside the DLL.<br>
  </p>
           <p class="calibre8"><strong class="calibre14">Remarks</strong></p>
