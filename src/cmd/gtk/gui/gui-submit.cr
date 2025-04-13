@@ -25,6 +25,14 @@ class Cmd::Gtk::Gui::GuiSubmit < Cmd::Base
 							""
 						end
 					end
+				when ctrl.is_a?(::Gtk::ListBox) then
+					ctrl.selected_rows.map do |row|
+						if info.alt_submit
+							row.index.to_s
+						else
+							row.children[0].as(::Gtk::Label).text
+						end
+					end.join('|')
 				end
 				next if ! value
 				thread.runner.set_user_var(var_name, value)

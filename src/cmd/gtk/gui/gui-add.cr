@@ -63,6 +63,26 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				end
 				widget.active = ((opt["choose"][:n] || 1_i64) - 1).to_i if opt["choose"]?
 				widget.changed_signal.connect run_g_label
+			when "listbox"
+				widget = ::Gtk::ListBox.new
+				if opt["multi"]?
+					widget.selection_mode = ::Gtk::SelectionMode::Multiple
+				end
+				text.split('|').each_with_index do |option, i|
+					if option.empty? && i > 0
+						widget.select_row(widget.row_at_index(i.to_i32 - 1))
+					else
+						row = ::Gtk::ListBoxRow.new
+						lbl = ::Gtk::Label.new option
+						lbl.halign = ::Gtk::Align::Start
+						row.add lbl
+						widget.add row
+					end
+				end
+				if opt["choose"]?
+					widget.select_row(widget.row_at_index((opt["choose"][:n] || 1).to_i32 - 1))
+				end
+				widget.row_selected_signal.connect run_g_label.unsafe_as(Proc(::Gtk::ListBoxRow, Nil))
 			when "picture", "pic"
 				# Shortest, non-canonical way: Doesn't work because when setting x/y the image is clipped (why????)
 				# widget.has_window = true
@@ -103,6 +123,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				new_container = true
 			else
 				widget = ::Gtk::Label.new text
+				widget.halign = ::Gtk::Align::Start
 				widget.has_window = true
 				widget.events = ::Gdk::EventMask::ButtonPressMask.to_i
 				widget.button_press_event_signal.connect run_g_label.unsafe_as(Proc(Gdk::EventButton, Bool))

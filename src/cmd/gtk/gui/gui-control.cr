@@ -28,6 +28,22 @@ class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 					ctrl.label = value
 				when ::Gtk::Entry
 					ctrl.text = value
+				when ::Gtk::ListBox
+					value.split('|').each_with_index do |option, i|
+						if option.empty?
+							if i == 0
+								ctrl.children.each { |row| ctrl.remove(row) }
+							else
+								ctrl.select_row(ctrl.row_at_index(i.to_i32 - 1))
+							end
+						else
+							row = ::Gtk::ListBoxRow.new
+							lbl = ::Gtk::Label.new option
+							lbl.halign = ::Gtk::Align::Start
+							row.add lbl
+							ctrl.add row
+						end
+					end
 				when ::Gtk::EventBox
 					img = ctrl.children[0].unsafe_as(::Gtk::Image)
 					pixbuf_before = img.pixbuf
