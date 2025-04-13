@@ -23,6 +23,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 
 		thread.runner.display.gtk.gui(thread, gui_id) do |gui|
 			widget : ::Gtk::Widget? = nil
+			new_container = false
 			case type.downcase
 			when "edit"
 				if opt["r"]?.try &.[:n].try &.> 1
@@ -93,6 +94,13 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 					img.pixbuf = pixbuf_scaled if pixbuf_scaled
 				end
 				widget.add img
+			when "scroll"
+				widget = ::Gtk::ScrolledWindow.new vexpand: true, hexpand: false, shadow_type: ::Gtk::ShadowType::In, hscrollbar_policy: ::Gtk::PolicyType::Automatic, vscrollbar_policy: ::Gtk::PolicyType::Always, overlay_scrolling: false
+				scroll_fixed = ::Gtk::Fixed.new
+				widget.add scroll_fixed
+				gui.scroll_areas << scroll_fixed
+				gui.active_scroll_area = scroll_fixed
+				new_container = true
 			else
 				widget = ::Gtk::Label.new text
 				widget.has_window = true
@@ -126,6 +134,9 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			# else
 			# 	last_w = last_h = 0
 			# end
+			last_h = 28
+			last_h = 12 if gui.last_widget.is_a?(::Gtk::Label)
+
 			x = case
 			when opt["xp"]?
 				gui.last_x + (opt["xp"][:n] || 0).to_i * (opt["xp"][:minus] ? -1 : 1)
@@ -159,7 +170,7 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 				if gui.last_y == 0
 					gui.padding
 				else
-					gui.last_y + 12 + gui.padding # TODO:
+					gui.last_y + last_h + gui.padding
 				end
 			end
 
@@ -171,12 +182,21 @@ class Cmd::Gtk::Gui::GuiAdd < Cmd::Base
 			if w > -1 || h > -1
 				widget.style_context.add_class("no-padding")
 			end
-
 			widget.set_size_request w, h
-			gui.fixed.put widget, x, y
 
-			gui.last_x = x
-			gui.last_y = y
+			if new_container # don't nest scroll in scroll
+				container = gui.window_fixed
+				# We don't keep track of different pos counters for different containers currently.
+				# Also unset in gui-scroll.
+				gui.last_x = 0
+				gui.last_y = 0
+			else
+				container = gui.active_container
+				gui.last_x = x
+				gui.last_y = y
+			end
+			container.put widget, x, y
+
 			gui.last_widget = widget
 		end
 	end

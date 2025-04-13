@@ -6048,7 +6048,7 @@ return</pre>
                 <li class="calibre11"><a href="#Gui.htm__Text" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Text</a>, <a href="#Gui.htm__Edit" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Edit</a>, <a href="#Gui.htm__Hotkey" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Hotkey</a>, <a href="#Gui.htm__Picture" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Picture</a></li>
                 <li class="calibre11"><a href="#Gui.htm__GroupBox" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">GroupBox</a>, <a href="#Gui.htm__Button" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Button</a>, <a href="#Gui.htm__Checkbox" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Checkbox</a>, <a href="#Gui.htm__Radio" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Radio</a></li>
                 <li class="calibre11"><a href="#Gui.htm__DropDownList" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">DropDownList</a>, <a href="#Gui.htm__ComboBox" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ComboBox</a>, <a href="#Gui.htm__ListBox" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">ListBox</a></li>
-                <li class="calibre11"><a href="#Gui.htm__Slider" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Slider</a>, <a href="#Gui.htm__Progress" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Progress</a>, <a href="#Gui.htm__Tab" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Tab</a></li>
+                <li class="calibre11"><a href="#Gui.htm__Slider" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Slider</a>, <a href="#Gui.htm__Progress" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Progress</a>, <a href="#Gui.htm__Scroll" class="x11 pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Scroll</a>, <a href="#Gui.htm__Tab" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Tab</a></li>
               </ul>
             </li>
             <li class="calibre11"><a href="#Gui.htm__Position" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">Positioning and sizing of controls</a></li>
@@ -6241,6 +6241,17 @@ return</pre>
           <p class="calibre8">Range: Sets the range to be something other than 0 to 100. After the word Range, specify the minimum, a dash, and maximum. For example, Range1-1000 would allow a numbers between 1 and 1000; Range-50-50 would allow numbers between -50 and 50; and Range-10--5 would allow numbers between -10 and -5. On Windows 95 and NT4, negative ranges and ranges beyond 65535 will not behave correctly unless Internet Explorer 3.0 or later is installed.</p>
           <p class="calibre8">-Smooth (minus Smooth): Displays a length of segments rather than a smooth continuous bar. Specifying -Smooth is also one of the requirements to show a themed progress bar on Windows XP or later. The other requirement is that the bar not have any custom colors; that is, that the C and Background options be omitted. Windows 95 and NT4 require Internet Explorer 3.0 or later to support this option.</p>
           <p class="calibre8">The above options can be changed after the control is created via <a href="#GuiControl.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">GuiControl</a>. </p>
+</div>
+<div class="x11">
+          <p class="calibre8"><br class="calibre12" />
+            <strong class="calibre14"><span class="calibre30"><a id="Gui.htm__Scroll" href="#Gui.htm__Scroll" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Scroll</span></strong> A container with a vertical scroll bar which contains other controls.
+          </p>
+          <p class="calibre8">The <em class="calibre21">Text</em> parameter is ignored.
+          <p class="calibre8">After creating a Scroll control, subsequently-added controls automatically belong to it. This can be changed at any time by following these examples:</p>
+          <p class="calibre8">Gui, Scroll -- Future controls are not part of any scroll control.<br class="calibre12" /> Gui, Scroll, 2 -- Future controls are owned by the second scroll control.</p>
+          <p class="calibre8">Positioning: When each scroll of a Scroll control receives its first sub-control, that sub-control will have a special default position under the following conditions: The sub-control is positioned at the upper-left corner of the scroll control's interior (with a standard margin)
+</div>
+<div class="tbd">
           <p class="calibre8"><br class="calibre12" />
             <strong class="calibre14"><span class="calibre30"><a id="Gui.htm__Tab" href="#Gui.htm__Tab" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> Tab</span></strong> [v1.0.22+]: A relatively large control containing multiple pages, each of which contains other controls. From this point forward, these pages are referred to as "tabs".
           </p>

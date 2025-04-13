@@ -370,7 +370,12 @@ module Run
 		end
 		private class GuiInfo
 			getter window : ::Gtk::Window
-			getter fixed : ::Gtk::Fixed
+			getter window_fixed : ::Gtk::Fixed
+			property scroll_areas = [] of ::Gtk::Fixed
+			property active_scroll_area : ::Gtk::Fixed? = nil
+			def active_container
+				@active_scroll_area || @window_fixed
+			end
 			property last_widget : ::Gtk::Widget? = nil
 			property last_x = 0
 			property last_y = 0
@@ -380,7 +385,7 @@ module Run
 			getter var_control_info = {} of String => ControlInfo
 			property window_color : Gdk::RGBA? = nil
 			property control_color : Gdk::RGBA? = nil
-			def initialize(@window, @fixed)
+			def initialize(@window, @window_fixed)
 			end
 		end
 		getter guis = {} of String => GuiInfo
@@ -405,8 +410,8 @@ module Run
 					type = @guis_creation_info[gui_id]?.try &.type || ::Gtk::WindowType::Toplevel
 					window = ::Gtk::Window.new title: @default_title, window_position: ::Gtk::WindowPosition::Center, icon: @icon_pixbuf, resizable: false, type: type
 					# , border_width: 20
-					fixed = ::Gtk::Fixed.new
-					window.add fixed
+					window_fixed = ::Gtk::Fixed.new
+					window.add window_fixed
 					window_on_destroy = ->do
 						close_label_id = gui_id == "1" ? "" : gui_id
 						close_label = "#{close_label_id}GuiClose".downcase
@@ -416,7 +421,7 @@ module Run
 					# To support transparent background when invoked via WinSet:
 					# Appears to be impossible to set dynamically, so needed at win build time:
 					window.visual = window.screen.rgba_visual
-					@guis[gui_id] = GuiInfo.new(window, fixed)
+					@guis[gui_id] = GuiInfo.new(window, window_fixed)
 				end
 			end
 			act { block.call(@guis[gui_id]) }
