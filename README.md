@@ -225,7 +225,7 @@ There are different ways to use it.
     - When you don't want to pass a script and jump to this mode directly, you can specify `--repl` instead (implicit `#Persistent`).
     - Compile scripts with `./ahk_x11 --compile "path/script.ahk"`
     - Run Window Spy with `./ahk_x11 --windowspy`
-    - Hashbang supported if first line starts with `#!`
+    - Hashbang supported if first line starts with `#!`. This means you can do `chmod +x your-script.ahk`, and put `#!/path/to/ahk_x11` at the top of your script (with `/path/to/ahk_x11` typically being `/home/your_username/.local/bin/ahk_x11.AppImage` as written above), and then simply run like `./your-script.ahk`
     - You can disable graphical commands by manually unsetting the DISPLAY variable. Example: `DISPLAY= ./ahk_x11 <<< 'Echo abc'` just prints `abc` to the console (`Echo` command is a special ahk_x11-only command). The only advantage is faster startup time.
 
 If you run a script that contains e.g. a Hotkey, an icon will appear in your task bar tray notification area. You can right click that icon to quit. If you're not familiar with these basics of AutoHotkey, please read the [AutoHotkey Tutorial and Overview](https://phil294.github.io/AHK_X11/#TutorialHelp.htm) from the docs.
