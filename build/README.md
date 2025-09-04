@@ -38,7 +38,7 @@ There's a script that does these things, makes a new release and publishes it et
 
 ### Docker
 
-In the rare case that you want to use ahk_x11 containerized for headless purposes, you can find a working Dockerfile example in `./ahk_x11.alpine.Dockerfile`. Build it in the parent (main) directory like so:
+In the rare case that you want to use ahk_x11 containerized for headless purposes, such showing GUIs without Hotkeys in a controlled VNC connection, you can find a working Dockerfile example in `./ahk_x11.alpine.Dockerfile`. Build it in the parent (main) directory like so:
 
 ```bash
 cp .gitignore .dockerignore && \
