@@ -116,7 +116,7 @@ module Run
 					Process.signal(Signal::KILL, sound_play_pid)
 				end
 			end
-			spawn same_thread: true { clock }
+			better_spawn same_thread: true { clock }
 			if (auto_execute_section = @builder.start)
 				@auto_execute_thread = add_thread auto_execute_section, "", 0
 			else
@@ -207,7 +207,7 @@ module Run
 			repl
 		end
 		private def repl
-			spawn do
+			better_spawn do
 				puts "Interactive AHK_X11 console (REPL). Type any command. Multi-line text not supported. Press {CTRL}+C to exit."
 				loop do
 					print "ahk_x11> "

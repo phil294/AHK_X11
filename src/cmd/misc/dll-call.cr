@@ -81,6 +81,7 @@ class Cmd::Misc::DllCall < Cmd::Base
 		getter as_pointer : Bool
 		property slice : Bytes
 		getter var_name : ::String
+		# TODO: v still true? not here anymore. also should this class be struct?
 		# Modifies *slice* and/or sets a new one if too small or not writable
 		def initialize(*, var_name : ::String, type_str : ::String, slice : Bytes)
 			@slice = slice

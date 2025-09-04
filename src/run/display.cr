@@ -1,4 +1,5 @@
 require "x_do"
+require "../hacks"
 require "./display/x11"
 require "./display/hotstrings"
 require "./display/hotkeys"
@@ -28,7 +29,7 @@ module Run
 		end
 
 		def run(*, hotstrings, hotkeys)
-			spawn do
+			better_spawn do
 				@adapter.run key_handler: ->handle_event(::X11::KeyEvent, UInt64, Char?)
 			end
 			@hotstrings.run
@@ -107,7 +108,7 @@ module Run
 		private def handle_event(key_event, keysym, char)
 			@last_event_received = Time.monotonic
 			@key_listeners.each do |sub|
-				spawn same_thread: true do
+				better_spawn same_thread: true do
 					sub.call(key_event, keysym, char, @is_paused)
 				end
 			end

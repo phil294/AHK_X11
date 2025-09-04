@@ -63,6 +63,7 @@ def filename_to_path(filename)
 	Path[filename].expand
 end
 
+
 script_file = nil
 version = {{ read_file("./shard.yml").split("\n")[1][9..] }}
 lines = Compiler.new.extract.try &.split('\n')

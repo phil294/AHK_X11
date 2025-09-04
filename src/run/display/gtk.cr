@@ -279,7 +279,7 @@ module Run
 				tray_menu.append item_help
 				tray_menu.append ::Gtk::SeparatorMenuItem.new
 				item_window_spy = ::Gtk::MenuItem.new_with_label "Window Spy"
-				item_window_spy.activate_signal.connect { spawn { runner.launch_window_spy } }
+				item_window_spy.activate_signal.connect { better_spawn { runner.launch_window_spy } }
 				tray_menu.append item_window_spy
 				item_reload = ::Gtk::MenuItem.new_with_label "Reload this script"
 				item_reload.activate_signal.connect { runner.reload }
@@ -289,10 +289,10 @@ module Run
 				tray_menu.append item_edit
 				tray_menu.append ::Gtk::SeparatorMenuItem.new
 				item_suspend = ::Gtk::MenuItem.new_with_label "Suspend Hotkeys"
-				item_suspend.activate_signal.connect { spawn { runner.suspend } }
+				item_suspend.activate_signal.connect { better_spawn { runner.suspend } }
 				tray_menu.append item_suspend
 				item_pause = ::Gtk::MenuItem.new_with_label "Pause script"
-				item_pause.activate_signal.connect { spawn { runner.pause_thread(self_is_thread: false) } }
+				item_pause.activate_signal.connect { better_spawn { runner.pause_thread(self_is_thread: false) } }
 				tray_menu.append item_pause
 				item_exit = ::Gtk::MenuItem.new_with_label "Exit"
 				item_exit.activate_signal.connect { runner.exit_app(0) }

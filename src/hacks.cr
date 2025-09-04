@@ -48,17 +48,15 @@ class Hacks
 end
 
 # https://github.com/crystal-lang/crystal/issues/13297
-class Fiber
-	OLD_NEW = method :new
-	def self.new(*args, **opts, &block)
-		OLD_NEW.call(*args, **opts) do
-			block.call
-		rescue ex
-			if handler = Hacks.fiber_on_unhandled_exception
-				handler.call(ex)
-			else
-				raise ex
-			end
+# https://github.com/phil294/AHK_X11/issues/89
+def better_spawn(*, name = nil, same_thread = false, &block)
+	::spawn(name: name, same_thread: same_thread) do
+		block.call
+	rescue ex
+		if handler = Hacks.fiber_on_unhandled_exception
+			handler.call(ex)
+		else
+			raise ex
 		end
 	end
 end

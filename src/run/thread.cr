@@ -103,7 +103,7 @@ module Run
 			result_channel = @result_channel
 			return result_channel if result_channel
 			result_channel = @result_channel = Channel(Int32?).new
-			spawn same_thread: true do
+			better_spawn same_thread: true do
 				result = do_next
 				@unpause_channel.receive if @paused
 				result_channel.send(result)
