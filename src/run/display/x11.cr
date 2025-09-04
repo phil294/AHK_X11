@@ -267,7 +267,7 @@ module Run
 					end
 					record_fd = IO::FileDescriptor.new record.data_display.connection_number
 					loop do
-						record_fd.not_nil!.wait_readable
+						Crystal::EventLoop.current.wait_readable(record_fd.not_nil!)
 						@mutex.lock
 						record.process_replies
 						@mutex.unlock
@@ -285,7 +285,7 @@ module Run
 					# This very solution, `wait_readable`, has shown to *sometimes* be unreliable, i.e. hotkeys aren't
 					# grabbed properly because some pending events somehow aren't visible. To solve this,
 					# `flush_event_queue` is also called from a few other places.
-					event_fd.wait_readable
+					Crystal::EventLoop.current.wait_readable(event_fd)
 					@flush_event_queue.send(nil)
 				end
 			end
