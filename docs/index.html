@@ -1284,7 +1284,14 @@ Please note: This only works unreliably, and in the above example, LControl will
           <p class="calibre8">See <a href="#HotkeyFeatures.htm" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">advanced features</a> for an overview. Here is some more detailed information:<br class="calibre12" />
             <span class="tbd">
               <br class="calibre12" /> You can define a custom combination of two keys by using " &amp; " between them. In the below example, you would hold down Numpad0 then press the second key to trigger the hotkey:<br class="calibre12" /> Numpad0 &amp; Numpad1::AltTab<br class="calibre12" /> Numpad0 &amp; Numpad2::ShiftAltTab<br class="calibre12" />
-              <br class="calibre12" /> In the above example, Numpad0 becomes a <em class="calibre21">prefix key</em>. Prefix keys can also be assigned their own actions such as in this example, but their action will only be triggered when the key is released and didn't modify any hotkeys while it was held down:<br class="calibre12" /> Numpad0::Run, calc.exe<br class="calibre12" />
+              <br class="calibre12" /> In the above example, Numpad0 becomes a <em class="calibre21">prefix key</em>.
+</span><br>
+<span class="x11">As this isn't supported by AHK_X11, you can write a workaround yourself. A working example for this is given here: <a href="https://www.autohotkey.com/boards/viewtopic.php?p=602249#p602249" target="_blank">https://www.autohotkey.com/boards/viewtopic.php?p=602249#p602249</a>.
+</span>
+<span class="tbd">
+
+		<br>
+Prefix keys can also be assigned their own actions such as in this example, but their action will only be triggered when the key is released and didn't modify any hotkeys while it was held down:<br class="calibre12" /> Numpad0::Run, calc.exe<br class="calibre12" />
               <br class="calibre12" /> In v1.0.10+, if the tilde (~) operator is used with a <em class="calibre21">prefix key</em> even once, that prefix will always be sent through to the active window. For example, in both of the below hotkeys, the right-click will be non-suppressed even though only one of the definitions contains a tilde:<br class="calibre12" /> ~RButton &amp; LButton::MsgBox You pressed the left mouse button while holding down the right.<br class="calibre12" /> RButton &amp; WheelUp::MsgBox You turned the mouse wheel up while holding down the right button.<br class="calibre12" />
               <br class="calibre12" />
               <a id="Hotkeys.htm__AltTab" href="#Hotkeys.htm__AltTab" class="pcalibre3 pcalibre1 pcalibre calibre5 pcalibre2">#</a> AltTab and ShiftAltTab are two of the special commands that are only recognized when used with hotkeys. They can also be used with mouse buttons and mousewheel rotation, as can any other script commands as well. Example: <br class="calibre12" /> LAlt &amp; LButton::AltTab<br class="calibre12" /> LAlt &amp; WheelDown::AltTab<br class="calibre12" /> LAlt &amp; WheelUp::ShiftAltTab<br class="calibre12" />
