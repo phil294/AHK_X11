@@ -303,6 +303,7 @@ module Run
 					tray_menu.show_all
 					tray_menu.popup(nil, nil, nil, nil, button, time)
 				end
+				tray.visible = true # not actually necessary, already the default upon creation
 			end
 		end
 		def init(runner)
