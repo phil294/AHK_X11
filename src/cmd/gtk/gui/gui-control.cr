@@ -44,6 +44,8 @@ class Cmd::Gtk::Gui::GuiControl < Cmd::Base
 							ctrl.add row
 						end
 					end
+					# Unsure why necessary. ctrl.show() also doesn't suffice.
+					gui.window.show_all
 				when ::Gtk::EventBox
 					img = ctrl.children[0].unsafe_as(::Gtk::Image)
 					pixbuf_before = img.pixbuf
