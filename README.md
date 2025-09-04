@@ -232,6 +232,12 @@ If you run a script that contains e.g. a Hotkey, an icon will appear in your tas
 
 ### Caveats
 
+#### Sending special keys
+
+Things like `Send, §` or `s::§` or `::abcd::§` don't work. `SendRaw` is more reliable.
+
+Try `SendRaw, §`, `s::SendRaw, §` and `:R:abcd::§`, respectively.
+
 #### Remapping mouse
 
 You can't send / remap mouse buttons when triggered by another mouse button's `{Down}` event. For example:
