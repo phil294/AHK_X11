@@ -67,4 +67,6 @@ There's also several `TODO:`s scattered around all source files mostly around te
 
 While Crystal brings its own hidden `::Thread` class, any reference to `Thread` in the source refers to `Run::Thread` which actually are no real threads (see [`Run::Thread`](https://github.com/phil294/AHK_X11/blob/master/src/run/thread.cr) docs).
 
+Don't use Crystal's `spawn`, always use `better_spawn` instead.
+
 There is a basic test script: `../tests.ahk`. Running it should complete without errors. It only covers the core functionality and a few edge cases right now, so the more tests we add, the better.
