@@ -39,10 +39,13 @@ bin/ahk_x11.dev: lib/configured xdotool/libxdo.a
 # the recent fixes from master branch, also its abi bump, we depend on v2021+.
 # Xinerama etc. are its dependencies - these we keep dynamic.
 # Cannot overwrite CRYSTAL_LIBRARY_PATH because crystal#12380, need link-flag instead.
+# Even though --debug doesn't seem to do anything (symbols still stripped by --release),
+# this prevents crashes (??!)
 	shards build -Dpreview_mt --link-flags="-no-pie \
         -L'$${PWD}/xdotool' \
         -Wl,-Bstatic -lxdo \
         -Wl,-Bdynamic -lxkbcommon -lXinerama -lXext -lXtst -lXi" \
+        --debug \
         $(BUILD_EXTRA_ARGS)
 	mv bin/ahk_x11 bin/ahk_x11.dev
 
