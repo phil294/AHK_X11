@@ -10,9 +10,6 @@ class Compiler
 		end
 		@bin_file = File.new(bin_path)
 	end
-	def finalize
-		@bin_file.close
-	end
 	def compile(script_path, out_path)
 		if ! @is_appimage
 			STDERR.puts "WARNING: AHK_X11 Binary does not appear to be inside an AppImage. Compilation will succeed but the resulting standalone program will not be very portable as dependencies are not bundled. This means that it may not run on other systems, or may fail to run on your system in the future. It is highly recommended you download the official ahk_x11.AppImage file instead, or add the packaging step to your build process (check ahk_x11's latest build instructions)."
