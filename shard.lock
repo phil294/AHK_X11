@@ -22,7 +22,7 @@ shards:
 
   harfbuzz:
     git: https://github.com/hugopl/harfbuzz.cr.git
-    version: 0.2.0
+    version: 0.2.1
 
   notify:
     git: https://github.com/phil294/notify.cr.git
