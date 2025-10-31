@@ -80,13 +80,14 @@ module Run
 		getter script_file : Path?
 		getter is_compiled : Bool
 		getter headless : Bool
+		getter repl : Bool
 		@display : Display?
 		def display
 			raise "Cannot access Display in headless mode" if @headless
 			@display.not_nil!
 		end
 
-		def initialize(*, @builder, @script_file, @is_compiled, @headless)
+		def initialize(*, @builder, @script_file, @is_compiled, @headless, @repl)
 			@labels = @builder.labels
 			@settings = @builder.runner_settings
 			script = @script_file ? @script_file.not_nil! : Path[binary_path].expand
@@ -203,7 +204,7 @@ module Run
 		end
 
 		private def auto_execute_section_ended
-			exit_app @exit_code if ! @settings.persistent
+			exit_app @exit_code if ! @settings.persistent && ! @repl
 			repl
 		end
 		private def repl
@@ -214,14 +215,17 @@ module Run
 					begin
 						line = read_line
 					rescue e
-						# TODO: what does break do? doesnt exit, but keeps hanging?
-						break # i.e. there is no stdin, it was closed or never existed like when run via double click.
+						break # i.e. there is no stdin, it was closed (e.g. ^D) or never existed in the first place like when run via double click.
 					end
 					begin
 						eval [line]
 					rescue e
 						STDERR.puts e.message
 					end
+				end
+				if @repl
+					puts
+					exit_app @exit_code
 				end
 			end
 		end

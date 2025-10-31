@@ -68,6 +68,7 @@ script_file = nil
 version = {{ read_file("./shard.yml").split("\n")[1][9..] }}
 lines = Compiler.new.extract.try &.split('\n')
 is_compiled = !! lines
+repl = false
 if ! lines
 	# Only needed for installer script, this can't (yet) really be part of ahk code. TODO: rm on exit
 	File.write("/tmp/tmp_ahk_x11_logo.png", logo_blob)
@@ -79,7 +80,8 @@ if ! lines
 			puts "AHK_X11 is a Linux implementation for AutoHotkey classic version 1.0.24 (2004). Internal version: #{version}. Full up to date documentation can be found at https://phil294.github.io/AHK_X11/.\n\nPossible methods of invocation:\n\nahk_x11.AppImage \"path to script.ahk\"\nahk_x11.AppImage <<< $'MsgBox, 1\\nMsgBox, 2'\nahk_x11.AppImage --repl\nahk_x11.AppImage --windowspy\nahk_x11.AppImage --compile \"path to script.ahk\" \"optional: output executable file path\"\n\nAlternatively, just run the program without arguments to open the graphical installer. Once installed, you should be able to run and/or compile any .ahk file in your file manager by selecting it from the right click context menu."
 			::exit
 		elsif ARGV[0] == "--repl"
-			lines = ["#Persistent"]
+			lines = [] of ::String
+			repl = true
 		elsif ARGV[0] == "--windowspy"
 			lines = {{ read_file("./src/window-spy.ahk").split("\n") }}
 		elsif ARGV[0] == "--compile"
@@ -116,7 +118,7 @@ rescue e : Build::SyntaxException | Build::ParsingException
 end
 
 begin
-	runner = Run::Runner.new builder: builder, script_file: script_file, is_compiled: is_compiled, headless: HEADLESS
+	runner = Run::Runner.new builder: builder, script_file: script_file, is_compiled: is_compiled, headless: HEADLESS, repl: repl
 	runner.run
 rescue e : Run::RuntimeException
 	build_error e
