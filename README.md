@@ -250,6 +250,13 @@ RButton::Send {LButton} ; DOES NOT WORK
 RButton::LButton ; DOES NOT WORK
 ```
 
+#### Sending a key while that same key is physically pressed down
+
+Is not possible. This might be an X11 limitation.
+
+#### If your keys aren't grabbed properly
+
+...and they still get sent to the window sometimes: Try adding `#XGrabRoot` anywhere in your script, it might fix it. Observed in a few cases on KDE.
 
 #### Accessibility
 
